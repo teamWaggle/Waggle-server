@@ -12,28 +12,29 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Board {
     @Id @GeneratedValue
     @Column(name = "board_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;
+    protected Member member;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdDate;
+    protected LocalDateTime createdDate;
 
     @Lob
-    private String content;
+    protected String content;
 
     @OneToMany(mappedBy = "board")
-    private List<BoardHashtag> boardHashtags;
+    protected List<BoardHashtag> boardHashtags;
 
     @OneToMany(mappedBy = "board")
-    private List<Media> medias;
+    protected List<Media> medias;
 
     @OneToMany(mappedBy = "board")
-    private List<Comment> comments;
+    protected List<Comment> comments;
 
 }
