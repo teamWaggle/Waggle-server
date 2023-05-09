@@ -23,10 +23,9 @@ public class Member {
 
     private String username;
 
-    private String email;   // email vs nickname
+    private String nickname;
 
-    @Embedded
-    private Address address;
+    private String address; // 도로명 주소
 
     private String phone;
 
