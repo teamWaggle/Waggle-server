@@ -2,6 +2,7 @@ package com.example.waggle.domain.member;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,23 @@ public class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+
+    @Builder
+    public Pet(Long id, String name, String breed, Sex sex, LocalDateTime birthday, String profileImg, Member member) {
+        this.id = id;
+        this.name = name;
+        this.breed = breed;
+        this.sex = sex;
+        this.birthday = birthday;
+        this.profileImg = profileImg;
+        if(member != null) setMember(member);
+    }
+
+    // 연관관계 편의 메서드
+    public void setMember(Member member) {
+        this.member = member;
+        member.getPets().add(this);
+    }
+
 }
