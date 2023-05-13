@@ -46,18 +46,19 @@ public class MemberServiceImpl implements MemberService{
         return null;
     }
 
-    @Override
-    public List<StoryDto> findStories(String username) {
-        return null;
-    }
-
-    @Override
-    public List<QuestionDto> findQuestions(String username) {
-        return null;
-    }
-
-    @Override
-    public List<SosDto> findSoss(String username) {
-        return null;
-    }
+    // TODO
+//    @Override
+//    public List<StoryDto> findStories(String username) {
+//        return null;
+//    }
+//
+//    @Override
+//    public List<QuestionDto> findQuestions(String username) {
+//        return null;
+//    }
+//
+//    @Override
+//    public List<SosDto> findSoss(String username) {
+//        return null;
+//    }
 }

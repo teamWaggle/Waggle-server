@@ -12,7 +12,8 @@ public interface MemberService {
     void signOut(HttpSession session);
     List<PetDto> findPets(String username);
     List<TeamDto> findTeams(String username);
-    List<StoryDto> findStories(String username);
-    List<QuestionDto> findQuestions(String username);
-    List<SosDto> findSoss(String username);
+    // TODO
+//    List<StoryDto> findStories(String username);
+//    List<QuestionDto> findQuestions(String username);
+//    List<SosDto> findSoss(String username);
 }

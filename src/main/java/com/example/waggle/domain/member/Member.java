@@ -4,10 +4,7 @@ package com.example.waggle.domain.member;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.TeamMember;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = "id")
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -53,10 +51,9 @@ public class Member {
         this.address = address;
         this.phone = phone;
         this.profileImg = profileImg;
-        this.pets = pets;
-        this.teamMembers = teamMembers;
-        this.scheduleMembers = scheduleMembers;
+        if (pets != null) this.pets = pets;
+        if (teamMembers != null) this.teamMembers = teamMembers;
+        if (scheduleMembers != null) this.scheduleMembers = scheduleMembers;
     }
-
 
 }
