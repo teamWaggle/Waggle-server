@@ -1,10 +1,7 @@
 package com.example.waggle.domain.member;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -40,7 +37,7 @@ public class Pet {
         this.sex = sex;
         this.birthday = birthday;
         this.profileImg = profileImg;
-        if(member != null) setMember(member);
+        setMember(member);
     }
 
     // 연관관계 편의 메서드

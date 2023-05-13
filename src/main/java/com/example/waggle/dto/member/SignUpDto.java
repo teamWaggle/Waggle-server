@@ -11,12 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@ToString
 @NoArgsConstructor
 public class SignUpDto {
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     private String username;
     private String password;
@@ -30,7 +26,7 @@ public class SignUpDto {
         List<Pet> petList = new ArrayList<>();
         if (pets != null) {
             petList = pets.stream()
-                    .map(petDto -> modelMapper.map(petDto, Pet.class))
+                    .map(petDto -> petDto.toEntity())
                     .collect(Collectors.toList());
         }
 
@@ -53,6 +49,6 @@ public class SignUpDto {
         this.address = address;
         this.phone = phone;
         this.profileImg = profileImg;
-        this.pets = pets;
+        if (pets != null) this.pets = pets;
     }
 }

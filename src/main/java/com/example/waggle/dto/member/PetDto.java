@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 
 @Getter
-@ToString
 @NoArgsConstructor
 public class PetDto {
     private Long id;
@@ -23,7 +22,20 @@ public class PetDto {
     private Sex sex;
     private LocalDateTime birthday;
     private String profileImg;
-    private Member member;
+    private Member member;  // 순환 참조 방지 위해 MemberDto 대신 Member 사용
+
+    static public PetDto toDto(Pet pet) {
+        return PetDto.builder()
+                .id(pet.getId())
+                .name(pet.getName())
+                .breed(pet.getBreed())
+                .sex(pet.getSex())
+                .birthday(pet.getBirthday())
+                .profileImg(pet.getProfileImg())
+                .member(pet.getMember())
+                .build();
+
+    }
 
     public Pet toEntity() {
         return Pet.builder()
@@ -35,7 +47,6 @@ public class PetDto {
                 .profileImg(profileImg)
                 .member(member)
                 .build();
-
     }
 
     @Builder
