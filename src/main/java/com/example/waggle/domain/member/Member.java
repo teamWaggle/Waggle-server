@@ -12,7 +12,10 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
+@ToString
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -30,30 +33,19 @@ public class Member {
 
     private String profileImg;
 
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<Pet> pets = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<ScheduleMember> scheduleMembers = new ArrayList<>();
 
     // question List, answer List, comment List, reply List
 
-
-    @Builder
-    public Member(Long id, String username, String password, String nickname, String address, String phone, String profileImg, List<Pet> pets, List<TeamMember> teamMembers, List<ScheduleMember> scheduleMembers) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.address = address;
-        this.phone = phone;
-        this.profileImg = profileImg;
-        if (pets != null) this.pets = pets;
-        if (teamMembers != null) this.teamMembers = teamMembers;
-        if (scheduleMembers != null) this.scheduleMembers = scheduleMembers;
-    }
 
 }

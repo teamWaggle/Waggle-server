@@ -80,7 +80,6 @@ public class TeamService {
             List<TeamMember> teamMembers = new ArrayList<>(t.getTeamMembers());  // ConcurrentModificationException 방지하기 위하여
 
             for (TeamMember teamMember : teamMembers) {
-                log.info("Remove teamMember id: {}, team id: {}, member id: {}", teamMember.getId(), teamMember.getTeam().getId(), teamMember.getMember().getId());
 
                 Optional<Member> findMember = memberRepository.findByTeamMembers(teamMember);
                 if (findMember.isPresent()) {
@@ -118,6 +117,7 @@ public class TeamService {
     }
 
     // team의 member 삭제
+    @Transactional
     void removeMember(TeamDto teamDto, String username) {
         // member가 한 명밖에 없으면 해당 팀도 삭제
         Optional<Team> team = teamRepository.findById(teamDto.getId());
@@ -130,16 +130,10 @@ public class TeamService {
             // team 통해서 teamMember list 가져옴
             List<TeamMember> teamMembers = findTeam.getTeamMembers();
 
-            for (TeamMember teamMember : teamMembers) {
-                System.out.println("teamMember.getMember().teamMembers() = " + teamMember.getMember().getTeamMembers());
-            }
-            System.out.println("findMember.teamMembers() = " + findMember.getTeamMembers());
-
             // teamMember list에서 우리가 찾는 member 찾아옴
             Optional<TeamMember> teamMemberToRemove = teamMembers.stream()
                     .filter(teamMember -> teamMember.getMember().equals(findMember))
                     .findFirst();
-            log.info("teamMemberToRemove = {}", teamMemberToRemove);
 
             teamMemberToRemove.ifPresent(teamMember -> {
                 teamMembers.remove(teamMember);

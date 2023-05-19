@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PetDto {
     private Long id;
     private String name;
@@ -47,16 +49,5 @@ public class PetDto {
                 .profileImg(profileImg)
                 .member(member)
                 .build();
-    }
-
-    @Builder
-    public PetDto(Long id, String name, String breed, Sex sex, LocalDateTime birthday, String profileImg, Member member) {
-        this.id = id;
-        this.name = name;
-        this.breed = breed;
-        this.sex = sex;
-        this.birthday = birthday;
-        this.profileImg = profileImg;
-        this.member = member;
     }
 }

@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SignUpDto {
 
     private String username;
@@ -20,6 +22,7 @@ public class SignUpDto {
     private String address;
     private String phone;
     private String profileImg;
+    @Builder.Default
     private List<PetDto> pets = new ArrayList<>();
 
     public Member toEntity() {
@@ -39,16 +42,5 @@ public class SignUpDto {
                 .profileImg(profileImg)
                 .pets(petList)
                 .build();
-    }
-
-    @Builder
-    public SignUpDto(String username, String password, String nickname, String address, String phone, String profileImg, List<PetDto> pets) {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.address = address;
-        this.phone = phone;
-        this.profileImg = profileImg;
-        if (pets != null) this.pets = pets;
     }
 }
