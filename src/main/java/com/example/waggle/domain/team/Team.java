@@ -9,6 +9,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
 public class Team {
     @Id @GeneratedValue
@@ -17,17 +19,11 @@ public class Team {
 
     private String name;
 
+    @Builder.Default
     @OneToMany(mappedBy = "team")
     private List<Schedule> schedules = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
-
-    @Builder
-    public Team(Long id, String name, List<Schedule> schedules, List<TeamMember> teamMembers) {
-        this.id = id;
-        this.name = name;
-        if (schedules != null) this.schedules = schedules;
-        if (teamMembers != null) this.teamMembers = teamMembers;
-    }
 }

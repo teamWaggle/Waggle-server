@@ -7,6 +7,8 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString
 @EqualsAndHashCode
 public class TeamMember {
@@ -22,13 +24,6 @@ public class TeamMember {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
-    @Builder
-    public TeamMember(Long id, Team team, Member member) {
-        this.id = id;
-        this.team = team;
-        this.member = member;
-    }
     // Team과의 연관관계 편의 메서드
     public void setTeam(Team team) {
         this.team = team;

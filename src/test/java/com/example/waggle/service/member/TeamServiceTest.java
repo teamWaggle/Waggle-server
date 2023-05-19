@@ -3,6 +3,7 @@ package com.example.waggle.service.member;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.member.TeamDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,12 +16,14 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
+@Transactional(readOnly = true)
 class TeamServiceTest {
     @Autowired MemberService memberService;
     @Autowired TeamService teamService;
 
     @Test
-    @Rollback(value = false)
+    @Transactional
+    @DisplayName("1명의 멤버를 통해 초기 팀 생성")
     public void createTeamWithMemberTest() {
         SignUpDto signUpDto = SignUpDto.builder()
                 .username("user")
@@ -39,7 +42,7 @@ class TeamServiceTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
+    @DisplayName("초기 팀 생성 -> username 통해 새로운 멤버 추가")
     public void createThenAddMemberTest() {
         // Member 회원가입
         SignUpDto signUpDto1 = SignUpDto.builder()
@@ -79,7 +82,7 @@ class TeamServiceTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
+    @DisplayName("초기 팀 생성 -> 새로운 멤버 추가 -> 팀 삭제")
     public void createThenAddMemberThenRemoveTeamTest() {
         // Member 회원가입
         SignUpDto signUpDto1 = SignUpDto.builder()
@@ -117,7 +120,7 @@ class TeamServiceTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
+    @DisplayName("team id를 통해 해당 팀에 속한 멤버들 조회")
     public void findTeamMembersTest() {
         // Member 회원가입
         SignUpDto signUpDto1 = SignUpDto.builder()
@@ -147,7 +150,7 @@ class TeamServiceTest {
         // member2 가입
         TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1, savedMemberDto2.getUsername());
 
-        // team 삭제
+        // team member 조회
         List<MemberDto> teamMembers = teamService.findTeamMembers(savedTeamDto2.getId());
         assertThat(teamMembers.size()).isEqualTo(2);
 
@@ -156,7 +159,7 @@ class TeamServiceTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
+    @DisplayName("팀에서 username 통해 특정 멤버 제거")
     public void removeMemberTest() {
         // Member 회원가입
         SignUpDto signUpDto1 = SignUpDto.builder()
@@ -193,6 +196,4 @@ class TeamServiceTest {
 
         assertThat(teamDto.getTeamMembers().size()).isEqualTo(1);
     }
-
-
 }
