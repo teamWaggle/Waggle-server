@@ -36,7 +36,6 @@ public class PetDto {
                 .profileImg(pet.getProfileImg())
                 .member(pet.getMember())
                 .build();
-
     }
 
     public Pet toEntity() {
