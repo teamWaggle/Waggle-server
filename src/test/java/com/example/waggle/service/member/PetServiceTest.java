@@ -5,7 +5,7 @@ import com.example.waggle.domain.member.Sex;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.PetDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.repository.MemberRepository;
+import com.example.waggle.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

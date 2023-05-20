@@ -1,4 +1,4 @@
-package com.example.waggle.repository;
+package com.example.waggle.repository.member;
 
 import com.example.waggle.domain.member.Pet;
 import org.springframework.data.jpa.repository.JpaRepository;
