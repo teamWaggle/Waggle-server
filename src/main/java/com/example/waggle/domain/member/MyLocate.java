@@ -1,6 +1,5 @@
-package com.example.waggle.domain.board;
+package com.example.waggle.domain.member;
 
-import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,17 +8,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberMention {
+public class MyLocate {
+
     @Id
     @GeneratedValue
-    @Column(name = "member_mention_id")
+    @Column(name = "mylocate_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_id")
-    private Reply reply;
+    private String name;
+    private String address;
+    @Enumerated
+    private Locate locate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
 }
