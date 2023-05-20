@@ -39,8 +39,4 @@ public class BoardHashtag {
         board.getBoardHashtags().remove(this);
         hashtag.getBoardHashtags().remove(this);
     }
-
-//    protected void setBoard(Board board) {
-//        this.board = board;
-//    }
 }
