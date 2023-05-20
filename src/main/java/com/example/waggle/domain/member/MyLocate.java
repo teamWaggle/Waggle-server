@@ -17,7 +17,7 @@ public class MyLocate {
 
     private String name;
     private String address;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Locate locate;
 
     @ManyToOne(fetch = FetchType.LAZY)
