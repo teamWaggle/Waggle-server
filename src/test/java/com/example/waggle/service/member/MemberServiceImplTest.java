@@ -40,7 +40,7 @@ class MemberServiceImplTest {
                 .sex(Sex.MALE)
                 .birthday(LocalDateTime.now()).build();
 
-        PetDto savedPetDto = petService.addPet(petDto, savedMemberDto);
+        PetDto savedPetDto = petService.addPet(petDto, savedMemberDto.getId());
 
         assertThat(savedMemberDto.getId()).isEqualTo(savedPetDto.getMember().getId());
     }

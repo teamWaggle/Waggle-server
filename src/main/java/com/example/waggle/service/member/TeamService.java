@@ -35,15 +35,15 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
-    // team id로 team 조회
-    Optional<TeamDto> findByTeamId(Long id) {
-        Optional<Team> findTeam = teamRepository.findById(id);
+    // teamId로 team 조회
+    Optional<TeamDto> findByTeamId(Long teamId) {
+        Optional<Team> findTeam = teamRepository.findById(teamId);
         return findTeam.map(TeamDto::toDto);
     }
 
-    // team id로 해당 team의 member들 조회
-    List<MemberDto> findTeamMembers(Long id) {
-        Optional<Team> team = teamRepository.findById(id);
+    // teamId로 해당 team의 member들 조회
+    List<MemberDto> findTeamMembers(Long teamId) {
+        Optional<Team> team = teamRepository.findById(teamId);
         List<MemberDto> result = new ArrayList<>();
 
         team.ifPresent(t -> {
@@ -57,7 +57,7 @@ public class TeamService {
         return result;
     }
 
-    // 초기 team 생성 (대표 member 한 명 추가)
+    // 새로운 team 생성 (대표 member 한 명 추가)
     @Transactional
     TeamDto createTeamWithMember(TeamDto teamDto, MemberDto memberDto) {
         Team savedTeam = teamRepository.save(teamDto.toEntity());
@@ -71,39 +71,10 @@ public class TeamService {
         return TeamDto.toDto(savedTeam);
     }
 
-    // team 삭제 (team, member, team_member 삭제)
+    // 기존 team에 새로운 member 추가
     @Transactional
-    void removeTeam(TeamDto teamDto) {
-        Optional<Team> removalTeam = teamRepository.findById(teamDto.getId());
-
-        removalTeam.ifPresent(t -> {
-            List<TeamMember> teamMembers = new ArrayList<>(t.getTeamMembers());  // ConcurrentModificationException 방지하기 위하여
-
-            for (TeamMember teamMember : teamMembers) {
-
-                Optional<Member> findMember = memberRepository.findByTeamMembers(teamMember);
-                if (findMember.isPresent()) {
-                    Member member = findMember.get();
-                    member.getTeamMembers().remove(teamMember);
-                    memberRepository.save(member);
-                }
-                Optional<Team> findTeam = teamRepository.findByTeamMembers(teamMember);
-                if (findTeam.isPresent()) {
-                    Team team = findTeam.get();
-                    team.getTeamMembers().remove(teamMember);
-                    teamRepository.save(team);
-                }
-                teamMemberRepository.delete(teamMember);
-            }
-            // 팀 삭제
-            teamRepository.delete(t);
-        });
-    }
-
-    // 이미 생성된 team에 member 추가
-    @Transactional
-    TeamDto addMember(TeamDto teamDto, String username) {
-        Optional<Team> team = teamRepository.findById(teamDto.getId());
+    TeamDto addMember(Long teamId, String username) {
+        Optional<Team> team = teamRepository.findById(teamId);
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (team.isPresent() && member.isPresent()) {
@@ -116,11 +87,42 @@ public class TeamService {
         return null;
     }
 
+    // team 삭제 (team, member, team_member 삭제)
+    @Transactional
+    Boolean removeTeam(Long teamId) {
+        Optional<Team> removalTeam = teamRepository.findById(teamId);
+        if(removalTeam.isPresent()) {
+            Team team = removalTeam.get();
+            List<TeamMember> teamMembers = new ArrayList<>(team.getTeamMembers());  // ConcurrentModificationException 방지하기 위하여
+
+            for (TeamMember teamMember : teamMembers) {
+
+                Optional<Member> findMember = memberRepository.findByTeamMembers(teamMember);
+                if (findMember.isPresent()) {
+                    Member member = findMember.get();
+                    member.getTeamMembers().remove(teamMember);
+                    memberRepository.save(member);
+                }
+                Optional<Team> findTeam = teamRepository.findByTeamMembers(teamMember);
+                if (findTeam.isPresent()) {
+                    Team t = findTeam.get();
+                    t.getTeamMembers().remove(teamMember);
+                    teamRepository.save(t);
+                }
+                teamMemberRepository.delete(teamMember);
+            }
+            // 팀 삭제
+            teamRepository.delete(team);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
     // team의 member 삭제
     @Transactional
-    void removeMember(TeamDto teamDto, String username) {
+    Boolean removeMember(Long teamId, String username) {
         // member가 한 명밖에 없으면 해당 팀도 삭제
-        Optional<Team> team = teamRepository.findById(teamDto.getId());
+        Optional<Team> team = teamRepository.findById(teamId);
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (team.isPresent() && member.isPresent()) {
@@ -147,6 +149,8 @@ public class TeamService {
             if (teamMembers.isEmpty()) {
                 teamRepository.delete(findTeam);
             }
+            return Boolean.TRUE;
         }
+        return Boolean.FALSE;
     }
 }
