@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 @Builder
 public class MemberDto {
