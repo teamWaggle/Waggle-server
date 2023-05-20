@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-@ToString
 public class Member {
     @Id @GeneratedValue
     @Column(name = "member_id")

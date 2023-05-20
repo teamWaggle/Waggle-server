@@ -19,7 +19,7 @@ public class Pet {
 
     private String breed;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private LocalDateTime birthday;
