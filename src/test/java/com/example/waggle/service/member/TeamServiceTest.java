@@ -70,7 +70,7 @@ class TeamServiceTest {
         TeamDto savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
 
         // member2 가입
-        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1, savedMemberDto2.getUsername());
+        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
 
         // team 테이블의 전체 개수 1개
         assertThat(teamService.findAllTeam().size()).isEqualTo(1);
@@ -110,11 +110,11 @@ class TeamServiceTest {
         TeamDto savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
 
         // member2 가입
-        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1, savedMemberDto2.getUsername());
+        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
 
         // team 삭제
         TeamDto findTeam = teamService.findByTeamId(savedTeamDto2.getId()).get();
-        teamService.removeTeam(findTeam);
+        teamService.removeTeam(findTeam.getId());
         assertThat(teamService.findAllTeam().size()).isEqualTo(0);
     }
 
@@ -148,7 +148,7 @@ class TeamServiceTest {
         TeamDto savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
 
         // member2 가입
-        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1, savedMemberDto2.getUsername());
+        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
 
         // team member 조회
         List<MemberDto> teamMembers = teamService.findTeamMembers(savedTeamDto2.getId());
@@ -187,10 +187,10 @@ class TeamServiceTest {
         TeamDto savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
 
         // member2 가입
-        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1, savedMemberDto2.getUsername());
+        TeamDto savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
 
         // member1 삭제 -> team에 속한 전체 member 수는 1이 되어야 함
-        teamService.removeMember(savedTeamDto2, savedMemberDto1.getUsername());
+        teamService.removeMember(savedTeamDto2.getId(), savedMemberDto1.getUsername());
 
         TeamDto teamDto = teamService.findByTeamId(savedTeamDto2.getId()).get();
 

@@ -17,14 +17,18 @@ public class PetService {
     private final PetRepository petRepository;
 
     @Transactional
-    public PetDto addPet(PetDto petDto, MemberDto memberDto) {
-        Member member = memberRepository.findById(memberDto.getId()).orElse(null);
+    public PetDto addPet(PetDto petDto, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElse(null);
         // DB에 저장
         Pet pet = petRepository.save(petDto.toEntity());
         // 연관관계 설정
         pet.setMember(member);
-        System.out.println("pet = " + pet);
         return PetDto.toDto(pet);
+    }
+
+    @Transactional
+    public void removePet(Long petId) {
+
     }
 
 }
