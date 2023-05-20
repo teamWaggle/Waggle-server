@@ -16,6 +16,7 @@ public class Schedule {
     @Id @GeneratedValue
     @Column(name = "schedule_id")
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
