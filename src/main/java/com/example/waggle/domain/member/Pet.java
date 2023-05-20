@@ -1,16 +1,14 @@
 package com.example.waggle.domain.member;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Pet {
     @Id @GeneratedValue
     @Column(name = "pet_id")
@@ -20,7 +18,7 @@ public class Pet {
 
     private String breed;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private LocalDateTime birthday;
@@ -31,12 +29,10 @@ public class Pet {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Builder
-    Pet(String name, String breed, Sex sex, String profileImg, Member member) {
-        this.name = name;
-        this.breed =breed;
-        this.sex = sex;
-        this.profileImg = profileImg;
+    // 연관관계 편의 메서드
+    public void setMember(Member member) {
         this.member = member;
+        member.getPets().add(this);
     }
+
 }
