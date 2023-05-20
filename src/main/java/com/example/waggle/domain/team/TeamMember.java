@@ -2,13 +2,14 @@ package com.example.waggle.domain.team;
 
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode
 public class TeamMember {
     @Id @GeneratedValue
     @Column(name = "team_member_id")
@@ -21,5 +22,31 @@ public class TeamMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    // Team과의 연관관계 편의 메서드
+    public void setTeam(Team team) {
+        this.team = team;
+        team.getTeamMembers().add(this);
+    }
+
+    public void removeTeam() {
+        if (team != null) {
+            team.getTeamMembers().remove(this);
+            team = null;
+        }
+    }
+
+    // Member와의 연관관계 편의 메서드
+    public void setMember(Member member) {
+        this.member = member;
+        member.getTeamMembers().add(this);
+    }
+
+    public void removeMember() {
+        if (member != null) {
+            member.getTeamMembers().remove(this);
+            member = null;
+        }
+    }
 
 }
