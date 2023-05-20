@@ -2,6 +2,7 @@ package com.example.waggle.domain.member;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,13 @@ public class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    Pet(String name, String breed, Sex sex, String profileImg, Member member) {
+        this.name = name;
+        this.breed =breed;
+        this.sex = sex;
+        this.profileImg = profileImg;
+        this.member = member;
+    }
 }

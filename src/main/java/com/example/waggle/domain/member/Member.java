@@ -32,7 +32,7 @@ public class Member {
     private String profileImg;
 
     @OneToMany(mappedBy = "member")
-    private List<Pet> pets;
+    private List<Pet> pets = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
