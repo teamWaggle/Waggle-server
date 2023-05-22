@@ -11,15 +11,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Transactional(readOnly = true)
+@Transactional
 @Slf4j
 class PetServiceTest {
     @Autowired MemberRepository memberRepository;
@@ -30,8 +32,7 @@ class PetServiceTest {
     private MemberDto savedMemberDto;
     private PetDto savedPetDto;
 
-    @BeforeEach
-    void beforeEach() {
+    void init() {
         // member 저장
         SignUpDto signUpDto = SignUpDto.builder()
                 .username("user")
@@ -50,12 +51,12 @@ class PetServiceTest {
                 .birthday(LocalDateTime.now()).build();
 
         savedPetDto = petService.addPet(petDto, savedMemberDto.getId());
-        log.info("savedMemberDto.getPets().size() = {}", savedMemberDto.getPets().size());
-        log.info("savedPetDto = {}", savedPetDto.getName());
     }
+
 
     @Test
     void findByPetId() {
+        init();
         // petId로 조회
         PetDto findPet = petService.findByPetId(savedPetDto.getId()).get();
         assertThat(savedPetDto).usingRecursiveComparison().isEqualTo(findPet);  // 객체의 참조 값이 동등하지 않을 때 필드 값을 비교
@@ -63,6 +64,7 @@ class PetServiceTest {
 
     @Test
     void findByMemberId() {
+        init();
         // memberId로 조회
         List<PetDto> findPetDtos = petService.findByMemberId(savedMemberDto.getId());
         assertThat(findPetDtos).usingRecursiveFieldByFieldElementComparator().contains(savedPetDto);
@@ -70,22 +72,26 @@ class PetServiceTest {
 
     @Test
     void findByUsername() {
+        init();
         // username으로 조회
+        Optional<Member> byUsername = memberRepository.findByUsername(savedMemberDto.getUsername());
+
         List<PetDto> findPetDtos = petService.findByUsername(savedMemberDto.getUsername());
         assertThat(findPetDtos).usingRecursiveFieldByFieldElementComparator().contains(savedPetDto);
+
     }
 
     @Test
-    @Transactional
     void addPet() {
+        init();
         List<PetDto> pets = petService.findByMemberId(savedMemberDto.getId());
         assertThat(pets.get(0)).usingRecursiveComparison().isEqualTo(savedPetDto);
         assertThat(savedPetDto.getName()).isEqualTo("루이");
     }
 
     @Test
-    @Transactional
     void updatePet() {
+        init();
         // pet 수정 (변경 사항만 수정하는 건 컨트롤러 계층에서 처리)
         PetDto updatePetDto = PetDto.builder()
                 .name("루이2")
@@ -102,8 +108,8 @@ class PetServiceTest {
     }
 
     @Test
-    @Transactional
     void removePet() {
+        init();
         // pet 삭제
         petService.removePet(savedPetDto.getId());
 
