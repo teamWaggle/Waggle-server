@@ -34,8 +34,6 @@ public class PetService {
 
     List<PetDto> findByUsername(String username) {
         Member findMember = memberRepository.findByUsername(username).orElse(null);
-        log.info("findMember.username = {}", findMember.getUsername());
-
         return findMember.getPets().stream().map(PetDto::toDto).collect(Collectors.toList());
     }
 
