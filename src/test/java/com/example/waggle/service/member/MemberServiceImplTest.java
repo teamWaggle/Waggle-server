@@ -24,6 +24,7 @@ class MemberServiceImplTest {
     @Autowired private PetService petService;
 
     @Test
+    @Transactional
     public void signUp() {
         SignUpDto signUpDto = SignUpDto.builder()
                 .username("user1")
@@ -42,6 +43,6 @@ class MemberServiceImplTest {
 
         PetDto savedPetDto = petService.addPet(petDto, savedMemberDto.getId());
 
-        assertThat(savedMemberDto.getId()).isEqualTo(savedPetDto.getMember().getId());
+        assertThat(savedMemberDto.getPets().get(0)).usingRecursiveComparison().isEqualTo(savedPetDto);
     }
 }

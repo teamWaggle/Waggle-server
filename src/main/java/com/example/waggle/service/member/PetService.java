@@ -6,6 +6,7 @@ import com.example.waggle.dto.member.*;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PetService {
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
@@ -29,6 +31,15 @@ public class PetService {
         Member findMember = memberRepository.findById(memberId).orElse(null);
         return findMember.getPets().stream().map(PetDto::toDto).collect(Collectors.toList());
     }
+
+    List<PetDto> findByUsername(String username) {
+        Member findMember = memberRepository.findByUsername(username).orElse(null);
+        log.info("findMember.username = {}", findMember.getUsername());
+
+        return findMember.getPets().stream().map(PetDto::toDto).collect(Collectors.toList());
+    }
+
+
 
     @Transactional
     public PetDto addPet(PetDto petDto, Long memberId) {

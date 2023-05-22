@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -35,9 +34,9 @@ class PetServiceTest {
     void beforeEach() {
         // member 저장
         SignUpDto signUpDto = SignUpDto.builder()
-                .username("user1")
+                .username("user")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -51,6 +50,8 @@ class PetServiceTest {
                 .birthday(LocalDateTime.now()).build();
 
         savedPetDto = petService.addPet(petDto, savedMemberDto.getId());
+        log.info("savedMemberDto.getPets().size() = {}", savedMemberDto.getPets().size());
+        log.info("savedPetDto = {}", savedPetDto.getName());
     }
 
     @Test
@@ -68,9 +69,17 @@ class PetServiceTest {
     }
 
     @Test
+    void findByUsername() {
+        // username으로 조회
+        List<PetDto> findPetDtos = petService.findByUsername(savedMemberDto.getUsername());
+        assertThat(findPetDtos).usingRecursiveFieldByFieldElementComparator().contains(savedPetDto);
+    }
+
+    @Test
     @Transactional
     void addPet() {
-        assertThat(savedMemberDto.getId()).isEqualTo(savedPetDto.getMember().getId());
+        List<PetDto> pets = petService.findByMemberId(savedMemberDto.getId());
+        assertThat(pets.get(0)).usingRecursiveComparison().isEqualTo(savedPetDto);
         assertThat(savedPetDto.getName()).isEqualTo("루이");
     }
 
@@ -94,7 +103,6 @@ class PetServiceTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     void removePet() {
         // pet 삭제
         petService.removePet(savedPetDto.getId());
