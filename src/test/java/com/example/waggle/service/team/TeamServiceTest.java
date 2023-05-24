@@ -56,7 +56,7 @@ class TeamServiceTest {
     @DisplayName("1명의 멤버를 통해 초기 팀 생성")
     public void createTeamWithMemberTest() {
         SignUpDto signUpDto = SignUpDto.builder()
-                .username("user")
+                .username("test")
                 .password("12345678")
                 .nickname("닉네임")
                 .address("서울시 광진구")
