@@ -24,6 +24,7 @@ public class PetDto {
     private Sex sex;
     private LocalDateTime birthday;
     private String profileImg;
+    private String username;
 
     static public PetDto toDto(Pet pet) {
         return PetDto.builder()
@@ -33,11 +34,12 @@ public class PetDto {
                 .sex(pet.getSex())
                 .birthday(pet.getBirthday())
                 .profileImg(pet.getProfileImg())
+                .username(pet.getMember().getUsername())
                 .build();
 
     }
 
-    public Pet toEntity() {
+    public Pet toEntity(Member member) {
         return Pet.builder()
                 .id(id)
                 .name(name)
@@ -45,6 +47,7 @@ public class PetDto {
                 .sex(sex)
                 .birthday(birthday)
                 .profileImg(profileImg)
+                .member(member)
                 .build();
     }
 }
