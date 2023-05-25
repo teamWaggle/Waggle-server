@@ -23,9 +23,10 @@ public class TeamMember {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // Team과의 연관관계 편의 메서드
-    public void setTeam(Team team) {
+    // 연관관계 편의 메서드
+    public void setTeamMember(Team team, Member member) {
         this.team = team;
+        this.member = member;
         team.getTeamMembers().add(this);
     }
 
@@ -33,19 +34,6 @@ public class TeamMember {
         if (team != null) {
             team.getTeamMembers().remove(this);
             team = null;
-        }
-    }
-
-    // Member와의 연관관계 편의 메서드
-    public void setMember(Member member) {
-        this.member = member;
-        member.getTeamMembers().add(this);
-    }
-
-    public void removeMember() {
-        if (member != null) {
-            member.getTeamMembers().remove(this);
-            member = null;
         }
     }
 

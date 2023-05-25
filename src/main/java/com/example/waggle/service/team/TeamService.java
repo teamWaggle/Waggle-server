@@ -63,8 +63,7 @@ public class TeamService {
         Team savedTeam = teamRepository.save(teamDto.toEntity());
 
         TeamMember teamMember = new TeamMember();
-        teamMember.setTeam(savedTeam);
-        teamMember.setMember(memberDto.toEntity());
+        teamMember.setTeamMember(savedTeam, memberDto.toEntity());  // Team-TeamMember 연관관계 편의 메소드
 
         teamMemberRepository.save(teamMember);
 
@@ -79,8 +78,7 @@ public class TeamService {
 
         if (team.isPresent() && member.isPresent()) {
             TeamMember teamMember = new TeamMember();
-            teamMember.setTeam(team.get());
-            teamMember.setMember(member.get());
+            teamMember.setTeamMember(team.get(), member.get());
             teamMemberRepository.save(teamMember);
             return TeamDto.toDto(team.get());
         }
@@ -96,13 +94,6 @@ public class TeamService {
             List<TeamMember> teamMembers = new ArrayList<>(team.getTeamMembers());  // ConcurrentModificationException 방지하기 위하여
 
             for (TeamMember teamMember : teamMembers) {
-
-                Optional<Member> findMember = memberRepository.findByTeamMembers(teamMember);
-                if (findMember.isPresent()) {
-                    Member member = findMember.get();
-                    member.getTeamMembers().remove(teamMember);
-                    memberRepository.save(member);
-                }
                 Optional<Team> findTeam = teamRepository.findByTeamMembers(teamMember);
                 if (findTeam.isPresent()) {
                     Team t = findTeam.get();
@@ -139,11 +130,9 @@ public class TeamService {
 
             teamMemberToRemove.ifPresent(teamMember -> {
                 teamMembers.remove(teamMember);
-                findMember.getTeamMembers().remove(teamMember);
                 teamMemberRepository.delete(teamMember);
 
                 teamRepository.save(findTeam);
-                memberRepository.save(findMember);
             });
             // member가 비어있는 team 삭제
             if (teamMembers.isEmpty()) {
