@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +23,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Transactional
 @Slf4j
 class PetServiceTest {
-    @Autowired MemberRepository memberRepository;
     @Autowired PetRepository petRepository;
 
     @Autowired MemberService memberService;
@@ -60,6 +59,7 @@ class PetServiceTest {
 
 
     @Test
+    @Transactional
     void findByPetId() {
         // petId로 조회
         PetDto findPet = petService.findByPetId(savedPetDto.getId()).get();
@@ -67,6 +67,7 @@ class PetServiceTest {
     }
 
     @Test
+    @Transactional
     void findByMemberId() {
         // memberId로 조회
         List<PetDto> findPetDtos = petService.findByMemberId(savedMemberDto.getId());
@@ -74,16 +75,16 @@ class PetServiceTest {
     }
 
     @Test
+    @Transactional
     void findByUsername() {
         // username으로 조회
-        Optional<Member> byUsername = memberRepository.findByUsername(savedMemberDto.getUsername());
-
         List<PetDto> findPetDtos = petService.findByUsername(savedMemberDto.getUsername());
         assertThat(findPetDtos).usingRecursiveFieldByFieldElementComparator().contains(savedPetDto);
 
     }
 
     @Test
+    @Transactional
     void addPet() {
         List<PetDto> pets = petService.findByMemberId(savedMemberDto.getId());
         assertThat(pets.get(0)).usingRecursiveComparison().isEqualTo(savedPetDto);
@@ -91,16 +92,17 @@ class PetServiceTest {
     }
 
     @Test
+    @Transactional
     void updatePet() {
         // pet 수정 (변경 사항만 수정하는 건 컨트롤러 계층에서 처리)
         PetDto updatePetDto = PetDto.builder()
                 .name("루이2")
                 .breed("포메라니안2")
                 .sex(Sex.MALE)
-                .birthday(LocalDateTime.now()).build();
+                .birthday(LocalDate.of(2016, 9, 17).atStartOfDay()).build();
 
         PetDto updatedPetDto = petService.updatePet(savedPetDto.getId(), updatePetDto);
-        assertThat(updatedPetDto).usingRecursiveComparison().isEqualTo(updatedPetDto);
+        assertThat(updatedPetDto.getName()).isEqualTo(updatePetDto.getName());
 
         // repository에서 member 조회시 펫 수정 확인
         List<PetDto> petDtoList = petService.findByUsername(savedMemberDto.getUsername());
@@ -108,6 +110,7 @@ class PetServiceTest {
     }
 
     @Test
+    @Transactional
     void removePet() {
         // pet 삭제
         petService.removePet(savedPetDto.getId());

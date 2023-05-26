@@ -76,6 +76,8 @@ public class TeamService {
         Optional<Team> team = teamRepository.findById(teamId);
         Optional<Member> member = memberRepository.findByUsername(username);
 
+        log.info("team = {}, member = {}", team, member);
+
         if (team.isPresent() && member.isPresent()) {
             TeamMember teamMember = new TeamMember();
             teamMember.setTeamMember(team.get(), member.get());
