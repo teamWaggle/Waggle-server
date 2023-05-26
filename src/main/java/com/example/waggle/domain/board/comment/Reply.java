@@ -67,5 +67,9 @@ public class Reply {
         memberMention.setReply(this);
     }
 
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
 
 }

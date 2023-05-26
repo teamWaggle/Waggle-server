@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
+import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -14,7 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -32,6 +35,11 @@ public class Story extends Board {
           int recommend, String thumbnail) {
         super(id, member, createdDate, content,boardHashtags,medias, comments);
         this.recommend = recommend;
+        this.thumbnail = thumbnail;
+    }
+
+    public void changeStory(String content, String thumbnail) {
+        this.content = content;
         this.thumbnail = thumbnail;
     }
 

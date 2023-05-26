@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 public class ReplyDto {
+
+    private Long id;
     private String content;
     private int orders;
     @Builder.Default
@@ -22,6 +24,7 @@ public class ReplyDto {
 
     static public ReplyDto toDto(Reply reply) {
         return ReplyDto.builder()
+                .id(reply.getId())
                 .content(reply.getContent())
                 .orders(reply.getOrders())
                 .mentionMembers(reply.getMemberMentions().stream()
