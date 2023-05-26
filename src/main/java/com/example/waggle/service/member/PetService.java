@@ -62,12 +62,9 @@ public class PetService {
                     .member(pet.getMember())
                     .build();
 
-            // 업데이트된 펫을 저장합니다
+            // 업데이트 된 펫 저장
             Pet savedPet = petRepository.save(updatedPet);
-
-            PetDto updatedPetDto = PetDto.toDto(savedPet);
-
-            return updatedPetDto;
+            return PetDto.toDto(savedPet);
         } else {
             // 존재하지 않는 펫 처리
             return null;

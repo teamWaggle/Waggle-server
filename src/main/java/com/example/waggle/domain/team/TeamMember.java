@@ -34,6 +34,7 @@ public class TeamMember {
         if (team != null) {
             team.getTeamMembers().remove(this);
             team = null;
+            member = null;
         }
     }
 
