@@ -21,4 +21,6 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             " JOIN hashtag AS h ON bh.hashtag_id = h.hashtag_id" +
             " WHERE h.h_content = :content", nativeQuery = true)
     List<Story> findByHashtag(@Param("content") String content);
+
+    List<Story> findByUsername(@Param("username") String username);
 }

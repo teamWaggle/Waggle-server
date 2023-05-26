@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 public class CommentDto {
 
+    private Long id;
     private String content;
     private int orders;
     @Builder.Default
@@ -23,6 +24,7 @@ public class CommentDto {
 
     static public CommentDto toDto(Comment comment) {
         return CommentDto.builder()
+                .id(comment.getId())
                 .content(comment.getContent())
                 .orders(comment.getOrders())
                 .replies(comment.getReplies().stream()

@@ -28,4 +28,9 @@ public class Media {
         this.board = board;
     }
 
+    public void changeURL(String url) {
+        this.url = url;
+    }
+
+
 }
