@@ -17,7 +17,7 @@ public class Hashtag {
     @Column(name = "hashtag_id")
     private Long id;
 
-    private String h_content;
+    private String tag;
 /**
  * hashtag내에서 boardHahstag를 컬렉션으로 가질지 에 대해 고민을 많이 해봣는데
  * 아무래도 빼는게 괜찮을 것 같다.

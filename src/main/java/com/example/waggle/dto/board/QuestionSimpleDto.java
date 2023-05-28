@@ -29,7 +29,7 @@ public class QuestionSimpleDto {
                 .title(question.getTitle())
                 .createTime(question.getCreatedDate())
                 .hashtags(question.getBoardHashtags().stream()
-                        .map(h->h.getHashtag().getH_content()).collect(Collectors.toList()))
+                        .map(h->h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
     }
 }
