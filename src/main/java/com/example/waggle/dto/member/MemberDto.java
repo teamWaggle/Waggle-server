@@ -20,10 +20,6 @@ public class MemberDto {
     private String address;
     private String phone;
     private String profileImg;
-    @Builder.Default
-    private List<PetDto> pets = new ArrayList<>();
-    @Builder.Default
-    private List<TeamMember> teamMembers = new ArrayList<>();
 
     static public MemberDto toDto(Member member) {
         return MemberDto.builder()
@@ -32,9 +28,7 @@ public class MemberDto {
                 .nickname(member.getNickname())
                 .address(member.getAddress())
                 .phone(member.getPhone())
-                .profileImg(member.getProfileImg())
-                .pets(member.getPets().stream().map(o -> PetDto.toDto(o)).collect(Collectors.toList()))
-                .teamMembers(member.getTeamMembers()).build();
+                .profileImg(member.getProfileImg()).build();
     }
 
     public Member toEntity() {
@@ -44,8 +38,6 @@ public class MemberDto {
                 .nickname(nickname)
                 .address(address)
                 .phone(phone)
-                .profileImg(profileImg)
-                .pets(pets.stream().map(o -> o.toEntity()).collect(Collectors.toList()))
-                .teamMembers(teamMembers).build();
+                .profileImg(profileImg).build();
     }
 }

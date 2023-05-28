@@ -6,6 +6,7 @@ import com.example.waggle.dto.member.*;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PetService {
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
@@ -26,17 +28,21 @@ public class PetService {
     }
 
     List<PetDto> findByMemberId(Long memberId) {
-        Member findMember = memberRepository.findById(memberId).orElse(null);
-        return findMember.getPets().stream().map(PetDto::toDto).collect(Collectors.toList());
+        List<Pet> petList = petRepository.findByMemberId(memberId);
+        return petList.stream().map(PetDto::toDto).collect(Collectors.toList());
     }
 
+    List<PetDto> findByUsername(String username) {
+        List<Pet> petList = petRepository.findByUsername(username);
+        return petList.stream().map(PetDto::toDto).collect(Collectors.toList());
+    }
+
+
+
     @Transactional
-    public PetDto addPet(PetDto petDto, Long memberId) {
-        Member member = memberRepository.findById(memberId).orElse(null);
-        // DB에 저장
-        Pet pet = petRepository.save(petDto.toEntity());
-        // 연관관계 설정
-        pet.setMember(member);
+    public PetDto addPet(PetDto petDto) {
+        Member member = memberRepository.findByUsername(petDto.getUsername()).get();
+        Pet pet = petRepository.save(petDto.toEntity(member));
         return PetDto.toDto(pet);
     }
 
@@ -53,14 +59,12 @@ public class PetService {
                     .sex(petDto.getSex())
                     .birthday(petDto.getBirthday())
                     .profileImg(petDto.getProfileImg())
+                    .member(pet.getMember())
                     .build();
 
-            // 업데이트된 펫을 저장합니다
+            // 업데이트 된 펫 저장
             Pet savedPet = petRepository.save(updatedPet);
-
-            PetDto updatedPetDto = PetDto.toDto(savedPet);
-
-            return updatedPetDto;
+            return PetDto.toDto(savedPet);
         } else {
             // 존재하지 않는 펫 처리
             return null;
@@ -72,8 +76,6 @@ public class PetService {
         Optional<Pet> removalPet = petRepository.findById(petId);
         if(removalPet.isPresent()) {
             Pet pet = removalPet.get();
-            Member member = pet.getMember();
-            member.getPets().remove(pet);
             petRepository.delete(pet);
             return Boolean.TRUE;
         }

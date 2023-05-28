@@ -22,16 +22,8 @@ public class SignUpDto {
     private String address;
     private String phone;
     private String profileImg;
-    @Builder.Default
-    private List<PetDto> pets = new ArrayList<>();
 
     public Member toEntity() {
-        List<Pet> petList = new ArrayList<>();
-        if (pets != null) {
-            petList = pets.stream()
-                    .map(petDto -> petDto.toEntity())
-                    .collect(Collectors.toList());
-        }
 
         return Member.builder()
                 .username(username)
@@ -40,7 +32,6 @@ public class SignUpDto {
                 .address(address)
                 .phone(phone)
                 .profileImg(profileImg)
-                .pets(petList)
                 .build();
     }
 }
