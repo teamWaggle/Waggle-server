@@ -18,6 +18,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             " JOIN board AS b ON q.board_id = b.board_id" +
             " JOIN board_hashtag AS bh ON b.board_id = bh.board_id" +
             " JOIN hashtag AS h ON bh.hashtag_id = h.hashtag_id" +
-            " WHERE h.h_content = :content", nativeQuery = true)
-    List<Question> findByHashtag(@Param("content") String content);
+            " WHERE h.tag = :tag", nativeQuery = true)
+    List<Question> findByHashtag(@Param("tag") String content);
 }

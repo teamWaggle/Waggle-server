@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Slf4j
 public class StoryService {
 
@@ -49,6 +49,7 @@ public class StoryService {
     //1.1.1 전체 조회 -> 후에 시간 순으로 조회
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
+    @Transactional(readOnly = true)
     public List<StorySimpleDto> findAllStory() {
         List<Story> allStory = storyRepository.findAll();
         List<StorySimpleDto> simpleStories = new ArrayList<>();
@@ -60,9 +61,11 @@ public class StoryService {
     }
 
     //1.1.2 회원 정보에 따른 전체 조회
+    @Transactional(readOnly = true)
     public List<StorySimpleDto> findAllStoryByMember(String username) {
         Optional<Member> MemberByUsername = memberRepository.findByUsername(username);
         if (MemberByUsername.isEmpty()) {
+            log.info("can't find user!");
             // error message 출력
         }
         List<Story> storyByUsername = storyRepository.findByUsername(username);
@@ -75,9 +78,13 @@ public class StoryService {
     }
 
     //1.2 낱개 조회
+    @Transactional(readOnly = true)
     public StoryDto findStoryByBoardId(Long id) {
-        Story StoryByBoardId = storyRepository.findByBoardId(id);
-        return StoryDto.toDto(StoryByBoardId);
+        Optional<Story> storyByBoardId = storyRepository.findByBoardId(id);
+        if (storyByBoardId.isEmpty()) {
+            //error and return null
+        }
+        return StoryDto.toDto(storyByBoardId.get());
     }
 
     //2. ===========저장===========
@@ -109,16 +116,18 @@ public class StoryService {
     //2.2 story_comment 저장
     //아직 순서 관련 메서드를 작성하지 않았다.
     public void saveComment(CommentDto commentDto, StoryDto storyDto, MemberDto memberDto) {
-        Story storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
+        Optional<Story> storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
-        Comment buildComment = Comment.builder()
-                .content(commentDto.getContent())
-                .board(storyByBoardId)
-                .member(memberByUsername.get())
-                .build();
+        if (storyByBoardId.isPresent() && memberByUsername.isPresent()) {
+            Comment buildComment = Comment.builder()
+                    .content(commentDto.getContent())
+                    .board(storyByBoardId.get())
+                    .member(memberByUsername.get())
+                    .build();
+            commentRepository.save(buildComment);
+        }
 
-        commentRepository.save(buildComment);
     }
 
     //2.3 story_comment_reply 저장
@@ -126,41 +135,45 @@ public class StoryService {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
-        Reply buildReply = Reply.builder()
-                .content(replyDto.getContent())
-                .comment(commentById.get())
-                .member(memberByUsername.get())
-                .build();
+        if (commentById.isPresent() && memberByUsername.isPresent()) {
+            Reply buildReply = Reply.builder()
+                    .content(replyDto.getContent())
+                    .comment(commentById.get())
+                    .member(memberByUsername.get())
+                    .build();
 
-        replyRepository.save(buildReply);
+            replyRepository.save(buildReply);
+        }
     }
 
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
     public void changeStory(Long BoardId, StoryDto storyDto) {
-        Story storyByBoardId = storyRepository.findByBoardId(BoardId);
-        storyByBoardId.changeStory(storyDto.getContent(),storyDto.getThumbnail());
+        Optional<Story> storyByBoardId = storyRepository.findByBoardId(BoardId);
+        if (storyByBoardId.isPresent()) {
+            storyByBoardId.get().changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
-        //delete(media)
-        for (Media media : storyByBoardId.getMedias()) {
-            mediaRepository.delete(media);
-        }
+            //delete(media)
+            for (Media media : storyByBoardId.get().getMedias()) {
+                mediaRepository.delete(media);
+            }
 
-        //newly insert data(media)
-        for (String media : storyDto.getMedias()) {
-            Media board = Media.builder().url(media).board(storyByBoardId).build();
-            mediaRepository.save(board);
-        }
+            //newly insert data(media)
+            for (String media : storyDto.getMedias()) {
+                Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
+                mediaRepository.save(board);
+            }
 
-        //delete connecting relate (boardHashtag)
-        for (BoardHashtag boardHashtag : storyByBoardId.getBoardHashtags()) {
-            boardHashtag.cancelHashtag();
-        }
+            //delete connecting relate (boardHashtag)
+            for (BoardHashtag boardHashtag : storyByBoardId.get().getBoardHashtags()) {
+                boardHashtag.cancelHashtag();
+            }
 
-        //newly insert data(hashtag, boardHashtag)
-        for (String hashtag : storyDto.getHashtags()) {
-            saveHashtag(storyByBoardId, hashtag);
+            //newly insert data(hashtag, boardHashtag)
+            for (String hashtag : storyDto.getHashtags()) {
+                saveHashtag(storyByBoardId.get(), hashtag);
+            }
         }
 
     }
@@ -172,9 +185,9 @@ public class StoryService {
      * @param hashtag
      */
     private void saveHashtag(Story story, String hashtag) {
-        Optional<Hashtag> hashtagByContent = hashtagRepository.findByH_content(hashtag);
+        Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
         if (hashtagByContent.isEmpty()) {
-            Hashtag buildHashtag = Hashtag.builder().h_content(hashtag).build();
+            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
             hashtagRepository.save(buildHashtag);
             BoardHashtag buildBoardHashtag = BoardHashtag.builder()
                     .hashtag(buildHashtag).board(story).build();
@@ -206,14 +219,15 @@ public class StoryService {
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryDto storyDto) {
-        Story storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
+        Optional<Story> storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
         // solution 1
 //        for (BoardHashtag boardHashtag : storyByBoardId.getBoardHashtags()) {
 //            boardHashtag.cancelHashtag();
 //        }
         // solution 2
-        storyRepository.delete(storyByBoardId);
-
+        if (storyByBoardId.isPresent()) {
+            storyRepository.delete(storyByBoardId.get());
+        }
     }
 
     //4.2 story_comment 저장

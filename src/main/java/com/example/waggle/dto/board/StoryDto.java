@@ -41,7 +41,7 @@ public class StoryDto {
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
                 .hashtags(story.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getH_content()).collect(Collectors.toList()))
+                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
                 .comments(story.getComments().stream()

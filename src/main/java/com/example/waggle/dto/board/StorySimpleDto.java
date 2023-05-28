@@ -29,7 +29,7 @@ public class StorySimpleDto {
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
                 .hashtags(story.getBoardHashtags().stream()
-                        .map(h -> h.getHashtag().getH_content()).collect(Collectors.toList()))
+                        .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
     }
 }

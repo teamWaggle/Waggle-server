@@ -44,7 +44,7 @@ public class QuestionDto {
                 .answers(question.getAnswers().stream()
                         .map(a -> AnswerDto.toDto(a)).collect(Collectors.toList()))
                 .hashtags(question.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getH_content()).collect(Collectors.toList()))
+                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(question.getMedias().stream()
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
                 .comments(question.getComments().stream()

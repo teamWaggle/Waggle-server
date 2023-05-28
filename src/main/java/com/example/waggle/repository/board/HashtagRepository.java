@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface HashtagRepository extends JpaRepository<Hashtag,Long> {
 
-    Optional<Hashtag> findByH_content(String content);
+    Optional<Hashtag> findByTag(String content);
 }
