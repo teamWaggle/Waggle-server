@@ -24,7 +24,7 @@ public class PetDto {
     private Sex sex;
     private LocalDateTime birthday;
     private String profileImg;
-    private Member member;  // 순환 참조 방지 위해 MemberDto 대신 Member 사용
+    private String username;
 
     static public PetDto toDto(Pet pet) {
         return PetDto.builder()
@@ -34,12 +34,12 @@ public class PetDto {
                 .sex(pet.getSex())
                 .birthday(pet.getBirthday())
                 .profileImg(pet.getProfileImg())
-                .member(pet.getMember())
+                .username(pet.getMember().getUsername())
                 .build();
 
     }
 
-    public Pet toEntity() {
+    public Pet toEntity(Member member) {
         return Pet.builder()
                 .id(id)
                 .name(name)

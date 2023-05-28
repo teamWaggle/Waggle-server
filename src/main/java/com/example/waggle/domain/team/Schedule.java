@@ -1,9 +1,7 @@
 package com.example.waggle.domain.team;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +10,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Schedule {
     @Id @GeneratedValue
     @Column(name = "schedule_id")
@@ -27,7 +27,8 @@ public class Schedule {
 
     private LocalDateTime scheduleTime;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ScheduleMember> scheduleMembers = new ArrayList<>();
 
 }
