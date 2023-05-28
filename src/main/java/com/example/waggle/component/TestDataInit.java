@@ -1,5 +1,6 @@
 package com.example.waggle.component;
 
+
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
@@ -99,4 +100,5 @@ public class TestDataInit {
 
 
     }
+
 }

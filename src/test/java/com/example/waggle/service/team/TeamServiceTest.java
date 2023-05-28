@@ -1,27 +1,27 @@
-package com.example.waggle.service.member;
+package com.example.waggle.service.team;
 
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.member.TeamDto;
-import lombok.RequiredArgsConstructor;
+import com.example.waggle.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional(readOnly = true)
 class TeamServiceTest {
-    @Autowired MemberService memberService;
-    @Autowired TeamService teamService;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    TeamService teamService;
 
     private MemberDto savedMemberDto1;
     private MemberDto savedMemberDto2;
@@ -56,7 +56,7 @@ class TeamServiceTest {
     @DisplayName("1명의 멤버를 통해 초기 팀 생성")
     public void createTeamWithMemberTest() {
         SignUpDto signUpDto = SignUpDto.builder()
-                .username("user")
+                .username("test")
                 .password("12345678")
                 .nickname("닉네임")
                 .address("서울시 광진구")

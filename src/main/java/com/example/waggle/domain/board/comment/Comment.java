@@ -70,6 +70,7 @@ public class Comment {
         reply.setComment(this);
     }
 
+
     public void changeContent(String content) {
         this.content = content;
     }

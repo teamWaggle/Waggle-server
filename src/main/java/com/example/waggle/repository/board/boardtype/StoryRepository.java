@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+
 import java.util.Optional;
+
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
@@ -27,4 +29,5 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             " JOIN board" +
             " JOIN member AS m WHERE m.username = :username", nativeQuery = true)
     List<Story> findByUsername(@Param("username") String username);
+
 }

@@ -114,6 +114,7 @@ class CommentRepositoryTest {
         assertThat(byBoardId.get().getComments().size()).isEqualTo(2);
         assertThat(byBoardId.get().getComments().get(0).getReplies().get(0).getContent()).isEqualTo("reply!");
 
+
         //assertThat(by)
     }
 

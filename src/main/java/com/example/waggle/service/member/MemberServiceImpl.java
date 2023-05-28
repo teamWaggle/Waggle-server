@@ -1,12 +1,10 @@
 package com.example.waggle.service.member;
 
-import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.member.*;
-import com.example.waggle.repository.MemberRepository;
+import com.example.waggle.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

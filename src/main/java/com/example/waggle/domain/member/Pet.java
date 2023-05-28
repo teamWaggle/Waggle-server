@@ -1,6 +1,10 @@
 package com.example.waggle.domain.member;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -28,11 +32,5 @@ public class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    // 연관관계 편의 메서드
-    public void setMember(Member member) {
-        this.member = member;
-        member.getPets().add(this);
-    }
 
 }
