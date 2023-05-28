@@ -68,4 +68,10 @@ public class Reply {
     }
 
 
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
+
+
 }

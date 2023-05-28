@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,11 +108,12 @@ class CommentRepositoryTest {
         reply1.addMemberMention(hann);
 
         //find
-        Story byBoardId = storyRepository.findByBoardId(save.getId());
+        Optional<Story> byBoardId = storyRepository.findByBoardId(save.getId());
 //        List<Comment> commentByBoardId = commentRepository.findByBoardId(save.getId());
 //        assertThat(commentByBoardId.size()).isEqualTo(2);
-        assertThat(byBoardId.getComments().size()).isEqualTo(2);
-        assertThat(byBoardId.getComments().get(0).getReplies().get(0).getContent()).isEqualTo("reply!");
+        assertThat(byBoardId.get().getComments().size()).isEqualTo(2);
+        assertThat(byBoardId.get().getComments().get(0).getReplies().get(0).getContent()).isEqualTo("reply!");
+
 
         //assertThat(by)
     }

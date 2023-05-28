@@ -31,16 +31,14 @@ public class BoardHashtag {
         this.board = board;
         this.hashtag = hashtag;
         board.getBoardHashtags().add(this);
-        hashtag.getBoardHashtags().add(this);
+
+        //hashtag.getBoardHashtags().add(this);
     }
 
     //관계 취소(ex. 보드에서 해시태그 삭제)
-    public void cancelHashtag(Board board, Hashtag hashtag) {
+    public void cancelHashtag() {
         board.getBoardHashtags().remove(this);
-        hashtag.getBoardHashtags().remove(this);
+        //hashtag.getBoardHashtags().remove(this);
     }
 
-//    protected void setBoard(Board board) {
-//        this.board = board;
-//    }
 }
