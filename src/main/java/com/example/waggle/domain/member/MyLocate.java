@@ -17,6 +17,7 @@ public class MyLocate {
 
     private String name;
     private String address;
+
     @Enumerated
     private Locate locate;
 

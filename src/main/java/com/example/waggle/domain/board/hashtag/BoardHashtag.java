@@ -31,6 +31,7 @@ public class BoardHashtag {
         this.board = board;
         this.hashtag = hashtag;
         board.getBoardHashtags().add(this);
+
         //hashtag.getBoardHashtags().add(this);
     }
 

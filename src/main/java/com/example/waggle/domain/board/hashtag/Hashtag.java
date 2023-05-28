@@ -1,7 +1,9 @@
 package com.example.waggle.domain.board.hashtag;
 
 import jakarta.persistence.*;
+
 import lombok.*;
+
 
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class Hashtag {
     @Id @GeneratedValue
     @Column(name = "hashtag_id")
     private Long id;
+
 
     private String tag;
 /**

@@ -1,4 +1,4 @@
-package com.example.waggle.repository;
+package com.example.waggle.repository.member;
 
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.Team;
@@ -10,6 +10,4 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByUsername(String username);
-    Optional<Member> findByTeamMembers(TeamMember teamMember);
-
 }

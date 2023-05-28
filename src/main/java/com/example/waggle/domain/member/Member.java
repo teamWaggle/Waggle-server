@@ -31,20 +31,4 @@ public class Member {
     private String phone;
 
     private String profileImg;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Pet> pets = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<TeamMember> teamMembers = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<ScheduleMember> scheduleMembers = new ArrayList<>();
-
-    // question List, answer List, comment List, reply List
-
-
 }
