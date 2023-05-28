@@ -203,9 +203,32 @@ public class StoryService {
 
     //4. ===========삭제(취소)===========
 
-    //4.1 story 저장(media, hashtag 포함)
+    //4.1 story 삭제
+    // (media, hashtag 포함)
+    public void removeStory(StoryDto storyDto) {
+        Story storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
+        // solution 1
+//        for (BoardHashtag boardHashtag : storyByBoardId.getBoardHashtags()) {
+//            boardHashtag.cancelHashtag();
+//        }
+        // solution 2
+        storyRepository.delete(storyByBoardId);
+
+    }
 
     //4.2 story_comment 저장
+    public void removeComment(CommentDto commentDto) {
+        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
+        if (!commentById.isEmpty()) {
+            commentRepository.delete(commentById.get());
+        }
+    }
 
     //4.3 story_comment_reply 저장
+    public void removeReply(ReplyDto replyDto) {
+        Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
+        if (!replyById.isEmpty()) {
+            replyRepository.delete(replyById.get());
+        }
+    }
 }
