@@ -27,12 +27,12 @@ public class PetService {
         return findPet.map(PetDto::toDto);
     }
 
-    List<PetDto> findByMemberId(Long memberId) {
+    public List<PetDto> findByMemberId(Long memberId) {
         List<Pet> petList = petRepository.findByMemberId(memberId);
         return petList.stream().map(PetDto::toDto).collect(Collectors.toList());
     }
 
-    List<PetDto> findByUsername(String username) {
+    public List<PetDto> findByUsername(String username) {
         List<Pet> petList = petRepository.findByUsername(username);
         return petList.stream().map(PetDto::toDto).collect(Collectors.toList());
     }
