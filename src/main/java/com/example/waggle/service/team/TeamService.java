@@ -28,7 +28,7 @@ public class TeamService {
     private final TeamMemberRepository teamMemberRepository;
 
     // 전체 team 조회
-    List<TeamDto> findAllTeam() {
+    public List<TeamDto> findAllTeam() {
         List<Team> result = teamRepository.findAll();
         return result.stream()
                 .map(TeamDto::toDto)
@@ -36,13 +36,13 @@ public class TeamService {
     }
 
     // teamId로 team 조회
-    Optional<TeamDto> findByTeamId(Long teamId) {
+    public Optional<TeamDto> findByTeamId(Long teamId) {
         Optional<Team> findTeam = teamRepository.findById(teamId);
         return findTeam.map(TeamDto::toDto);
     }
 
     // teamId로 해당 team의 member들 조회
-    List<MemberDto> findTeamMembers(Long teamId) {
+    public List<MemberDto> findTeamMembers(Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);
         List<MemberDto> result = new ArrayList<>();
 
@@ -59,7 +59,7 @@ public class TeamService {
 
     // 새로운 team 생성 (대표 member 한 명 추가)
     @Transactional
-    TeamDto createTeamWithMember(TeamDto teamDto, MemberDto memberDto) {
+    public TeamDto createTeamWithMember(TeamDto teamDto, MemberDto memberDto) {
         Team savedTeam = teamRepository.save(teamDto.toEntity());
 
         TeamMember teamMember = new TeamMember();
@@ -72,7 +72,7 @@ public class TeamService {
 
     // 기존 team에 새로운 member 추가
     @Transactional
-    TeamDto addMember(Long teamId, String username) {
+    public TeamDto addMember(Long teamId, String username) {
         Optional<Team> team = teamRepository.findById(teamId);
         Optional<Member> member = memberRepository.findByUsername(username);
 
@@ -89,7 +89,7 @@ public class TeamService {
 
     // team 삭제 (team, member, team_member 삭제)
     @Transactional
-    Boolean removeTeam(Long teamId) {
+    public Boolean removeTeam(Long teamId) {
         Optional<Team> removalTeam = teamRepository.findById(teamId);
         if(removalTeam.isPresent()) {
             Team team = removalTeam.get();
@@ -113,7 +113,7 @@ public class TeamService {
 
     // team의 member 삭제
     @Transactional
-    Boolean removeMember(Long teamId, String username) {
+    public Boolean removeMember(Long teamId, String username) {
         // member가 한 명밖에 없으면 해당 팀도 삭제
         Optional<Team> team = teamRepository.findById(teamId);
         Optional<Member> member = memberRepository.findByUsername(username);

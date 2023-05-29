@@ -24,12 +24,12 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
 
-    Optional<ScheduleDto> findByScheduleId(Long scheduleId) {
+    public Optional<ScheduleDto> findByScheduleId(Long scheduleId) {
         Optional<Schedule> findSchedule = scheduleRepository.findById(scheduleId);
         return findSchedule.map(ScheduleDto::toDto);
     }
 
-    List<ScheduleDto> findByTeamId(Long teamId) {
+    public List<ScheduleDto> findByTeamId(Long teamId) {
         List<Schedule> result = scheduleRepository.findAllByTeamId(teamId);
         return result.stream()
                 .map(ScheduleDto::toDto)
@@ -37,7 +37,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId, List<MemberDto> memberDtos) {
+    public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId, List<MemberDto> memberDtos) {
         Optional<Team> team = teamRepository.findById(teamId);
         Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get()));
 
@@ -50,7 +50,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    ScheduleDto updateSchedule(Long scheduleId, ScheduleDto scheduleDto) {
+    public ScheduleDto updateSchedule(Long scheduleId, ScheduleDto scheduleDto) {
         Optional<Schedule> findSchedule = scheduleRepository.findById(scheduleId);
         if (findSchedule.isPresent()) {
             Schedule schedule = findSchedule.get();
@@ -74,7 +74,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    Boolean removeSchedule(Long scheduleId) {
+    public Boolean removeSchedule(Long scheduleId) {
         Optional<Schedule> removalSchedule = scheduleRepository.findById(scheduleId);
         if(removalSchedule.isPresent()) {
             Schedule schedule = removalSchedule.get();
