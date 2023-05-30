@@ -9,12 +9,13 @@ import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.*;
 import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.repository.MemberRepository;
+
 import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.MediaRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.repository.board.comment.CommentRepository;
 import com.example.waggle.repository.board.comment.ReplyRepository;
+import com.example.waggle.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -80,11 +81,12 @@ public class StoryService {
     //1.2 낱개 조회
     @Transactional(readOnly = true)
     public StoryDto findStoryByBoardId(Long id) {
-        Optional<Story> storyByBoardId = storyRepository.findByBoardId(id);
-        if (storyByBoardId.isEmpty()) {
+        Optional<Story> storyById = storyRepository.findById(id);
+
+        if (storyById.isEmpty()) {
             //error and return null
         }
-        return StoryDto.toDto(storyByBoardId.get());
+        return StoryDto.toDto(storyById.get());
     }
 
     //2. ===========저장===========
@@ -116,7 +118,7 @@ public class StoryService {
     //2.2 story_comment 저장
     //아직 순서 관련 메서드를 작성하지 않았다.
     public void saveComment(CommentDto commentDto, StoryDto storyDto, MemberDto memberDto) {
-        Optional<Story> storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
+        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
         if (storyByBoardId.isPresent() && memberByUsername.isPresent()) {
@@ -149,8 +151,8 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public void changeStory(Long BoardId, StoryDto storyDto) {
-        Optional<Story> storyByBoardId = storyRepository.findByBoardId(BoardId);
+    public void changeStory(StoryDto storyDto) {
+        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         if (storyByBoardId.isPresent()) {
             storyByBoardId.get().changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
@@ -219,7 +221,7 @@ public class StoryService {
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryDto storyDto) {
-        Optional<Story> storyByBoardId = storyRepository.findByBoardId(storyDto.getId());
+        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         // solution 1
 //        for (BoardHashtag boardHashtag : storyByBoardId.getBoardHashtags()) {
 //            boardHashtag.cancelHashtag();
