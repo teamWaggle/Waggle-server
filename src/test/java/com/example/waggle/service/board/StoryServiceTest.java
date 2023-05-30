@@ -21,6 +21,7 @@ class StoryServiceTest {
     @Autowired
     MemberService memberService;
 
+    //read test
 
     @Test
     public void findStories() {
@@ -30,7 +31,8 @@ class StoryServiceTest {
 
     @Test
     public void findMemberStories() {
-        //List<StorySimpleDto> allStoryByMember = storyService.findAllStoryByMember();
+        List<StorySimpleDto> allStoryByMember = storyService.findAllStoryByMember("hann123");
+        assertThat(allStoryByMember.size()).isEqualTo(2);
     }
 
     @Test

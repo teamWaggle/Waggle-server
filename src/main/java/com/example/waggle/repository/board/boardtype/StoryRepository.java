@@ -25,9 +25,10 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             " WHERE h.tag = :tag", nativeQuery = true)
     List<Story> findByHashtag(@Param("tag") String content);
 
-    @Query(value = "SELECT * FROM story AS s" +
+    @Query(value = "SELECT s.thumbnail, s.recommend, b.board_id, b.content, b.created_date ,m.member_id, m.username FROM story AS s" +
             " JOIN board AS b on b.board_id = s.board_id" +
-            " JOIN member AS m WHERE m.username = :username", nativeQuery = true)
+            " JOIN member AS m on m.member_id = b.member_id" +
+            " WHERE m.username = :username", nativeQuery = true)
     List<Story> findByUsername(@Param("username") String username);
 
 }
