@@ -1,5 +1,6 @@
 package com.example.waggle.service.team;
 
+import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.dto.member.MemberDto;
@@ -8,8 +9,10 @@ import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.member.TeamDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.service.member.MemberService;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Slf4j
 class ScheduleServiceTest {
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -69,11 +74,6 @@ class ScheduleServiceTest {
         savedMemberDto1 = memberService.signUp(signUpDto1);
         savedMemberDto2 = memberService.signUp(signUpDto2);
 
-        Optional<Member> tmp1 = memberRepository.findByUsername(signUpDto1.getUsername());
-        Optional<Member> tmp2 = memberRepository.findByUsername(signUpDto2.getUsername());
-        log.info("tmp1 = {}", tmp1);
-        log.info("tmp2 = {}", tmp2);
-
         // teamA
         TeamDto teamA = TeamDto.builder()
                 .name("teamA").build();
@@ -108,6 +108,11 @@ class ScheduleServiceTest {
         savedScheduleDto3 = scheduleService.addSchedule(scheduleDto3, savedTeamB.getId(), new ArrayList<>());
     }
 
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
+
     @Test
     @Transactional
     public void findByScheduleId() {
@@ -124,7 +129,6 @@ class ScheduleServiceTest {
     }
 
     @Test
-    @Transactional
     public void addSchedule() {
         ScheduleDto scheduleDto = ScheduleDto.builder()
                 .title("병원")
@@ -139,8 +143,9 @@ class ScheduleServiceTest {
         assertThat(savedScheduleDto.getScheduleMembers().get(0).getMember()).isEqualTo(savedMember);
     }
 
+
+
     @Test
-    @Transactional
     public void updateSchedule() {
         ScheduleDto updateScheduleDto = ScheduleDto.builder()
                 .title("한강 산책")
@@ -164,5 +169,11 @@ class ScheduleServiceTest {
         List<ScheduleDto> result = scheduleService.findByTeamId(savedTeamDto2.getId());
         assertThat(result.size()).isEqualTo(1);
         assertThat(result).usingRecursiveFieldByFieldElementComparator().doesNotContain(savedScheduleDto1);
+    }
+
+    @Test
+//    @Transactional(readOnly = true)
+    public void test() {
+        log.info("@Transactional(readOnly = true)");
     }
 }
