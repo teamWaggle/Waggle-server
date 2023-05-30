@@ -50,7 +50,7 @@ public class TestDataInit {
         public void initStory() {
             //member save
             Member newMember1 = Member.builder()
-                    .address("pajo")
+                    .address("paju")
                     .nickname("hann")
                     .password("wjdgks2972")
                     .phone("1111.2222")
