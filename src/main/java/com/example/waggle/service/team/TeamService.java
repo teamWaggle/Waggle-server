@@ -1,10 +1,13 @@
 package com.example.waggle.service.team;
 
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.team.Schedule;
+import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
 import com.example.waggle.domain.team.TeamMember;
 import com.example.waggle.dto.member.*;
 import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamMemberRepository;
 import com.example.waggle.repository.team.TeamRepository;
 
@@ -26,6 +29,7 @@ public class TeamService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final ScheduleRepository scheduleRepository;
 
     // 전체 team 조회
     public List<TeamDto> findAllTeam() {
@@ -60,7 +64,17 @@ public class TeamService {
     // 새로운 team 생성 (대표 member 한 명 추가)
     @Transactional
     public TeamDto createTeamWithMember(TeamDto teamDto, MemberDto memberDto) {
-        Team savedTeam = teamRepository.save(teamDto.toEntity());
+        List<TeamMember> teamMembers = teamRepository.findAllTeamMembersByUsername(teamDto.getTeamMembers());
+
+
+        List<Schedule> schedules = teamDto.getSchedules().stream().map(scheduleDto -> {
+                    Team team = teamRepository.findById(scheduleDto.getTeamId()).get();
+                    List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
+                    return scheduleDto.toEntity(team, scheduleMembers);
+                })
+                .collect(Collectors.toList());
+
+        Team savedTeam = teamRepository.save(teamDto.toEntity(teamMembers, schedules));
 
         TeamMember teamMember = new TeamMember();
         teamMember.setTeamMember(savedTeam, memberDto.toEntity());  // Team-TeamMember 연관관계 편의 메소드
@@ -76,8 +90,6 @@ public class TeamService {
         Optional<Team> team = teamRepository.findById(teamId);
         Optional<Member> member = memberRepository.findByUsername(username);
 
-        log.info("team = {}, member = {}", team, member);
-
         if (team.isPresent() && member.isPresent()) {
             TeamMember teamMember = new TeamMember();
             teamMember.setTeamMember(team.get(), member.get());
@@ -91,7 +103,7 @@ public class TeamService {
     @Transactional
     public Boolean removeTeam(Long teamId) {
         Optional<Team> removalTeam = teamRepository.findById(teamId);
-        if(removalTeam.isPresent()) {
+        if (removalTeam.isPresent()) {
             Team team = removalTeam.get();
             List<TeamMember> teamMembers = new ArrayList<>(team.getTeamMembers());  // ConcurrentModificationException 방지하기 위하여
 

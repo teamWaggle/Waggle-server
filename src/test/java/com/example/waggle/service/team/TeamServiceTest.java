@@ -78,7 +78,6 @@ class TeamServiceTest {
 
     @Test
     @DisplayName("초기 팀 생성 -> username 통해 새로운 멤버 추가")
-    @Transactional
     public void createThenAddMemberTest() {
         // Team 생성 (member1 가입)
         TeamDto team = TeamDto.builder()
@@ -136,7 +135,6 @@ class TeamServiceTest {
 
     @Test
     @DisplayName("팀에서 username 통해 특정 멤버 제거")
-    @Transactional
     public void removeMemberTest() {
         // Team 생성 (member1 가입)
         TeamDto team = TeamDto.builder()
