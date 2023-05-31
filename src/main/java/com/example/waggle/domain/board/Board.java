@@ -41,7 +41,7 @@ public abstract class Board {
     protected List<BoardHashtag> boardHashtags = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "board", orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     protected List<Media> medias = new ArrayList<>();
 
     @Builder.Default

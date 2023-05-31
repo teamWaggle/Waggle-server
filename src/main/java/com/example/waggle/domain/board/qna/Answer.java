@@ -31,4 +31,8 @@ public class Answer extends Board {
     protected void setQuestion(Question question) {
         this.question = question;
     }
+
+    public void changeAnswer(String content) {
+        this.content = content;
+    }
 }

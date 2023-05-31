@@ -26,6 +26,7 @@ public class Media {
 
     protected void setBoard(Board board) {
         this.board = board;
+        board.getMedias().add(this);
     }
 
     public void changeURL(String url) {
