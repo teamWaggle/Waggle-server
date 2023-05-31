@@ -1,10 +1,12 @@
 package com.example.waggle.service.team;
 
+import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.ScheduleDto;
+import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
     public Optional<ScheduleDto> findByScheduleId(Long scheduleId) {
         Optional<Schedule> findSchedule = scheduleRepository.findById(scheduleId);
@@ -39,7 +43,9 @@ public class ScheduleService {
     @Transactional
     public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId, List<MemberDto> memberDtos) {
         Optional<Team> team = teamRepository.findById(teamId);
-        Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get()));
+
+        List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
+        Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get(), scheduleMembers));
 
         for (MemberDto memberDto : memberDtos) {
             ScheduleMember scheduleMember = new ScheduleMember();
@@ -54,6 +60,8 @@ public class ScheduleService {
         Optional<Schedule> findSchedule = scheduleRepository.findById(scheduleId);
         if (findSchedule.isPresent()) {
             Schedule schedule = findSchedule.get();
+            List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
+
 
             Schedule updatedSchedule = Schedule.builder()
                     .id(schedule.getId())
@@ -61,7 +69,7 @@ public class ScheduleService {
                     .title(scheduleDto.getTitle())
                     .description(scheduleDto.getDescription())
                     .scheduleTime(scheduleDto.getScheduleTime())
-                    .scheduleMembers(scheduleDto.getScheduleMembers())
+                    .scheduleMembers(scheduleMembers)
                     .build();
 
             // 업데이트 된 스케쥴 저장

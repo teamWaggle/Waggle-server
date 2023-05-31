@@ -114,14 +114,12 @@ class ScheduleServiceTest {
     }
 
     @Test
-    @Transactional
     public void findByScheduleId() {
         ScheduleDto findScheduleDto = scheduleService.findByScheduleId(savedScheduleDto1.getId()).get();
         assertThat(findScheduleDto).usingRecursiveComparison().isEqualTo(savedScheduleDto1);
     }
 
     @Test
-    @Transactional
     public void findByTeamId() {
         List<ScheduleDto> result = scheduleService.findByTeamId(savedTeamDto2.getId());
         assertThat(result.size()).isEqualTo(2);
@@ -140,7 +138,7 @@ class ScheduleServiceTest {
         Member savedMember = memberRepository.findById(savedMemberDto1.getId()).get();
 
         ScheduleDto savedScheduleDto = scheduleService.addSchedule(scheduleDto, savedTeamDto2.getId(), memberDtos);
-        assertThat(savedScheduleDto.getScheduleMembers().get(0).getMember()).isEqualTo(savedMember);
+        assertThat(savedScheduleDto.getScheduleMembers().size()).isEqualTo(1);
     }
 
 
@@ -163,7 +161,6 @@ class ScheduleServiceTest {
     }
 
     @Test
-    @Transactional
     public void removeSchedule() {
         scheduleService.removeSchedule(savedScheduleDto1.getId());
         List<ScheduleDto> result = scheduleService.findByTeamId(savedTeamDto2.getId());
