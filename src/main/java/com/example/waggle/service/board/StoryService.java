@@ -34,7 +34,6 @@ public class StoryService {
     private final StoryRepository storyRepository;
     private final MemberRepository memberRepository;
     private final HashtagRepository hashtagRepository;
-    private final MediaRepository mediaRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
@@ -110,7 +109,6 @@ public class StoryService {
         if (!saveStoryDto.getMedias().isEmpty()) {
             for (String mediaURL : saveStoryDto.getMedias()) {
                 Media buildMedia = Media.builder().url(mediaURL).board(saveStory).build();
-                mediaRepository.save(buildMedia);
             }
         }
     }
@@ -157,20 +155,16 @@ public class StoryService {
             storyByBoardId.get().changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
             //delete(media)
-            for (Media media : storyByBoardId.get().getMedias()) {
-                mediaRepository.delete(media);
-            }
+            storyByBoardId.get().getMedias().clear();
+
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
                 Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
-                mediaRepository.save(board);
             }
 
             //delete connecting relate (boardHashtag)
-            for (BoardHashtag boardHashtag : storyByBoardId.get().getBoardHashtags()) {
-                boardHashtag.cancelHashtag();
-            }
+            storyByBoardId.get().getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : storyDto.getHashtags()) {
@@ -180,25 +174,7 @@ public class StoryService {
 
     }
 
-    /**
-     * private method
-     * use at : 2.1, 3.1
-     * @param story
-     * @param hashtag
-     */
-    private void saveHashtag(Story story, String hashtag) {
-        Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
-        if (hashtagByContent.isEmpty()) {
-            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
-            hashtagRepository.save(buildHashtag);
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(buildHashtag).board(story).build();
-        }//아래 else가 좀 반복되는 것 같다...
-        else{
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(hashtagByContent.get()).board(story).build();
-        }
-    }
+
 
     //3.2 story_comment 수정
     public void changeComment(CommentDto commentDto) {
@@ -222,11 +198,6 @@ public class StoryService {
     // (media, hashtag 포함)
     public void removeStory(StoryDto storyDto) {
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
-        // solution 1
-//        for (BoardHashtag boardHashtag : storyByBoardId.getBoardHashtags()) {
-//            boardHashtag.cancelHashtag();
-//        }
-        // solution 2
         if (storyByBoardId.isPresent()) {
             storyRepository.delete(storyByBoardId.get());
         }
@@ -245,6 +216,27 @@ public class StoryService {
         Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
         if (!replyById.isEmpty()) {
             replyRepository.delete(replyById.get());
+        }
+    }
+
+    //5. ===============else==============
+    /**
+     * private method
+     * use at : 2.1, 3.1
+     * @param story
+     * @param hashtag
+     */
+    private void saveHashtag(Story story, String hashtag) {
+        Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
+        if (hashtagByContent.isEmpty()) {
+            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
+            hashtagRepository.save(buildHashtag);
+            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
+                    .hashtag(buildHashtag).board(story).build();
+        }//아래 else가 좀 반복되는 것 같다...
+        else{
+            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
+                    .hashtag(hashtagByContent.get()).board(story).build();
         }
     }
 }

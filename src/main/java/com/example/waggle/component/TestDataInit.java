@@ -92,13 +92,6 @@ public class TestDataInit {
             //media save
             Media media1 = Media.builder().url("choco1/img").board(newStory1).build();
             Media media2 = Media.builder().url("choco2/img").board(newStory1).build();
-
-            mediaRepository.save(media1);
-            mediaRepository.save(media2);
         }
-
-
-
     }
-
 }

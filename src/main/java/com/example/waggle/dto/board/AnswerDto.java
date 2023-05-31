@@ -45,4 +45,8 @@ public class AnswerDto {
                         .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
+
+    public Answer toEntity() {
+        return Answer.builder().content(content).build();
+    }
 }

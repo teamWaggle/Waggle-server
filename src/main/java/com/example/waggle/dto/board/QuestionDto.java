@@ -51,4 +51,11 @@ public class QuestionDto {
                         .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
+
+    public Question toEntity() {
+        return Question.builder()
+                .title(title)
+                .content(content)
+                .build();
+    }
 }
