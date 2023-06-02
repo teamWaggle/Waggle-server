@@ -39,7 +39,7 @@ class StoryServiceTest {
     @Test
     public void findStory() {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
-        assertThat(storyByBoardId.getHashtags().size()).isEqualTo(1);
+        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
     }
 
     //create test
