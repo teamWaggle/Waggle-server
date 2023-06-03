@@ -3,6 +3,7 @@ package com.example.waggle.service.board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.Story;
 import com.example.waggle.domain.board.comment.Comment;
+import com.example.waggle.domain.board.comment.MemberMention;
 import com.example.waggle.domain.board.comment.Reply;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
@@ -137,8 +138,13 @@ public class StoryService {
     public void saveReply(ReplyDto replyDto, CommentDto commentDto, MemberDto memberDto) {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-
+        //reply order set
         int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
+        //mention member set
+        List<MemberMention> memberMentions = new ArrayList<>();
+        for (String mentionMember : replyDto.getMentionMembers()) {
+            memberMentions.add(MemberMention.builder().username(mentionMember).build());
+        }
 
         if (commentById.isPresent() && memberByUsername.isPresent()) {
             Reply buildReply = Reply.builder()
@@ -146,6 +152,7 @@ public class StoryService {
                     .content(replyDto.getContent())
                     .comment(commentById.get())
                     .member(memberByUsername.get())
+                    .mentionedMembers(memberMentions)
                     .build();
 
             replyRepository.save(buildReply);
@@ -194,7 +201,20 @@ public class StoryService {
     public void changeReply(ReplyDto replyDto) {
         Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
         if (!replyById.isEmpty()) {
+            //change content
             replyById.get().changeContent(replyDto.getContent());
+            //mention member setting
+            //delete older data
+            replyById.get().getMemberMentions().clear();
+            //save mention entity
+            List<MemberMention> memberMentions = new ArrayList<>();
+            for (String mentionMember : replyDto.getMentionMembers()) {
+                memberMentions.add(MemberMention.builder().username(mentionMember).build());
+            }
+            //link relation -> entity save(cascade)
+            for (MemberMention memberMention : memberMentions) {
+                replyById.get().addMemberMention(memberMention);
+            }
         }
     }
 
