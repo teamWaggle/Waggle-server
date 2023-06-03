@@ -119,8 +119,11 @@ public class StoryService {
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
+        int lastOrder = commentRepository.findLastOrderByBoardId(storyDto.getId());
+
         if (storyByBoardId.isPresent() && memberByUsername.isPresent()) {
             Comment buildComment = Comment.builder()
+                    .orders(++lastOrder)
                     .content(commentDto.getContent())
                     .board(storyByBoardId.get())
                     .member(memberByUsername.get())
@@ -135,8 +138,11 @@ public class StoryService {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
+        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
+
         if (commentById.isPresent() && memberByUsername.isPresent()) {
             Reply buildReply = Reply.builder()
+                    .orders(++lastOrder)
                     .content(replyDto.getContent())
                     .comment(commentById.get())
                     .member(memberByUsername.get())

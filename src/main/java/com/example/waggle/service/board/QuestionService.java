@@ -116,8 +116,11 @@ public class QuestionService {
         Optional<Question> questionById = questionRepository.findById(questionDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
+        int lastOrder = commentRepository.findLastOrderByBoardId(questionDto.getId());
+
         if (questionById.isPresent() && memberByUsername.isPresent()) {
             Comment buildComment = Comment.builder()
+                    .orders(++lastOrder)
                     .content(commentDto.getContent())
                     .board(questionById.get())
                     .member(memberByUsername.get())
@@ -130,8 +133,11 @@ public class QuestionService {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
+        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
+
         if (commentById.isPresent() && memberByUsername.isPresent()) {
             Reply buildReply = Reply.builder()
+                    .orders(++lastOrder)
                     .content(replyDto.getContent())
                     .comment(commentById.get())
                     .member(memberByUsername.get())
@@ -173,8 +179,11 @@ public class QuestionService {
         Optional<Answer> answerById = answerRepository.findById(answerDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
+        int lastOrder = commentRepository.findLastOrderByBoardId(answerDto.getId());
+
         if (answerById.isPresent() && memberByUsername.isPresent()) {
             Comment buildComment = Comment.builder()
+                    .orders(++lastOrder)
                     .content(commentDto.getContent())
                     .board(answerById.get())
                     .member(memberByUsername.get())
@@ -188,8 +197,11 @@ public class QuestionService {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
 
+        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
+
         if (commentById.isPresent() && memberByUsername.isPresent()) {
             Reply buildReply = Reply.builder()
+                    .orders(++lastOrder)
                     .content(replyDto.getContent())
                     .comment(commentById.get())
                     .member(memberByUsername.get())
