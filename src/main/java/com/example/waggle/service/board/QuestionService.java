@@ -276,7 +276,7 @@ public class QuestionService {
     //3.3 question(answer)_comment 수정
     public void changeComment(CommentDto commentDto) {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-        if (!commentById.isEmpty()) {
+        if (commentById.isPresent()) {
             commentById.get().changeContent(commentDto.getContent());
         }
     }
@@ -284,7 +284,7 @@ public class QuestionService {
     //3.4 question(answer)_comment_reply 수정
     public void changeReply(ReplyDto replyDto) {
         Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
-        if (!replyById.isEmpty()) {
+        if (replyById.isPresent()) {
             replyById.get().changeContent(replyDto.getContent());
             //mention member setting
             //delete older data
