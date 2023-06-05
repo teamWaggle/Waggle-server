@@ -32,12 +32,10 @@ public class TeamDto {
                 .build();
     }
 
-    public Team toEntity(List<TeamMember> teamMembers, List<Schedule> schedules) {
+    public Team toEntity() {
         Team.TeamBuilder teamBuilder = Team.builder()
                 .id(id)
-                .name(name)
-                .teamMembers(teamMembers)
-                .schedules(schedules);
+                .name(name);
         return teamBuilder.build();
     }
 }

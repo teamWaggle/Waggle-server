@@ -6,7 +6,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
@@ -24,7 +24,7 @@ public class TeamMember {
     private Member member;
 
     // 연관관계 편의 메서드
-    public void setTeamMember(Team team, Member member) {
+    public void addTeamMember(Team team, Member member) {
         this.team = team;
         this.member = member;
         team.getTeamMembers().add(this);
