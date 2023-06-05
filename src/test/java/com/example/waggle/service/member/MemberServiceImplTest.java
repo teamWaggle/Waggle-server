@@ -1,5 +1,6 @@
 package com.example.waggle.service.member;
 
+import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Sex;
 import com.example.waggle.dto.member.MemberDto;
@@ -7,6 +8,7 @@ import com.example.waggle.dto.member.PetDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.repository.member.MemberRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -22,9 +24,10 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 class MemberServiceImplTest {
-    @Autowired private MemberRepository  memberRepository;
-    @Autowired private MemberService memberService;
-    @Autowired private PetService petService;
+    @Autowired DatabaseCleanUp databaseCleanUp;
+    @Autowired MemberRepository  memberRepository;
+    @Autowired MemberService memberService;
+    @Autowired PetService petService;
 
     private MemberDto savedMemberDto1;
     private MemberDto savedMemberDto2;
@@ -54,8 +57,12 @@ class MemberServiceImplTest {
         findMember = memberRepository.findByUsername("member1");
     }
 
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
+
     @Test
-    @Transactional
     public void signUp() {
         assertThat(savedMemberDto1.getUsername()).isEqualTo(findMember.get().getUsername());
     }

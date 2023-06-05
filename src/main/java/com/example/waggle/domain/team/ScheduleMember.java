@@ -4,13 +4,13 @@ package com.example.waggle.domain.team;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.member.ScheduleDto;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class ScheduleMember {
 
     @Id
@@ -27,7 +27,7 @@ public class ScheduleMember {
     private Member member;
 
     // 연관관계 편의 메서드
-    public void setScheduleMember(Schedule schedule, Member member) {
+    public void addScheduleMember(Schedule schedule, Member member) {
         this.schedule = schedule;
         this.member = member;
         schedule.getScheduleMembers().add(this);

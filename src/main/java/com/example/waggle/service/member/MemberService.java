@@ -10,10 +10,4 @@ public interface MemberService {
     MemberDto signIn(SignInDto signInDto);
     MemberDto signUp(SignUpDto signUpDto);
     void signOut(HttpSession session);
-    List<PetDto> findPets(String username);
-    List<TeamDto> findTeams(String username);
-    // TODO
-//    List<StoryDto> findStories(String username);
-//    List<QuestionDto> findQuestions(String username);
-//    List<SosDto> findSoss(String username);
 }
