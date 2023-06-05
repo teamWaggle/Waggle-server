@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
     //boardId를 통해 story 하나를 가져온다.
-    @Query(value = "select * from story join board on board.board_id = :boardId", nativeQuery = true)
-    Optional<Story> findByBoardId(@Param("boardId") Long id);
+//    @Query(value = "select * from story join board on board.board_id = story.board_id where board.board_id = :boardId", nativeQuery = true)
+//    Story findByBoardId(@Param("boardId") Long id);
 
 
     //hashtag를 통해 board를 모두 가져온다.(story에 한해서)
@@ -25,9 +25,10 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             " WHERE h.tag = :tag", nativeQuery = true)
     List<Story> findByHashtag(@Param("tag") String content);
 
-    @Query(value = "SELECT * FROM story AS s" +
-            " JOIN board" +
-            " JOIN member AS m WHERE m.username = :username", nativeQuery = true)
+    @Query(value = "SELECT s.thumbnail, s.recommend, b.board_id, b.content, b.created_date ,m.member_id, m.username FROM story AS s" +
+            " JOIN board AS b on b.board_id = s.board_id" +
+            " JOIN member AS m on m.member_id = b.member_id" +
+            " WHERE m.username = :username", nativeQuery = true)
     List<Story> findByUsername(@Param("username") String username);
 
 }
