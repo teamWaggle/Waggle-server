@@ -1,10 +1,12 @@
 package com.example.waggle.service.team;
 
+import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.ScheduleDto;
+import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,65 +26,67 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
-    Optional<ScheduleDto> findByScheduleId(Long scheduleId) {
+    public Optional<ScheduleDto> findByScheduleId(Long scheduleId) {
         Optional<Schedule> findSchedule = scheduleRepository.findById(scheduleId);
         return findSchedule.map(ScheduleDto::toDto);
     }
 
-    List<ScheduleDto> findByTeamId(Long teamId) {
+    public List<ScheduleDto> findByTeamId(Long teamId) {
         List<Schedule> result = scheduleRepository.findAllByTeamId(teamId);
-        return result.stream()
-                .map(ScheduleDto::toDto)
-                .collect(Collectors.toList());
+        return result.stream().map(ScheduleDto::toDto).collect(Collectors.toList());
     }
 
     @Transactional
-    ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId, List<MemberDto> memberDtos) {
+    public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);
-        Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get()));
 
-        for (MemberDto memberDto : memberDtos) {
-            ScheduleMember scheduleMember = new ScheduleMember();
-            scheduleMember.setScheduleMember(schedule, memberDto.toEntity());
-        }
+        if (team.isPresent()) {
+            Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get()));
 
-        return ScheduleDto.toDto(schedule);
-    }
+            for (String username : scheduleDto.getScheduleMembers()) {
+                Optional<Member> findMember = memberRepository.findByUsername(username);
+                if (findMember.isPresent()) {
+                    Member member = findMember.get();
+                    ScheduleMember scheduleMember = ScheduleMember.builder()
+                            .schedule(schedule)
+                            .member(member).build();
+                    scheduleMember.addScheduleMember(schedule, member); // 연관관계 메서드
+                }
+            }
+            scheduleRepository.save(schedule);
+            return ScheduleDto.toDto(schedule);
 
-    @Transactional
-    ScheduleDto updateSchedule(Long scheduleId, ScheduleDto scheduleDto) {
-        Optional<Schedule> findSchedule = scheduleRepository.findById(scheduleId);
-        if (findSchedule.isPresent()) {
-            Schedule schedule = findSchedule.get();
-
-            Schedule updatedSchedule = Schedule.builder()
-                    .id(schedule.getId())
-                    .team(schedule.getTeam())
-                    .title(scheduleDto.getTitle())
-                    .description(scheduleDto.getDescription())
-                    .scheduleTime(scheduleDto.getScheduleTime())
-                    .scheduleMembers(scheduleDto.getScheduleMembers())
-                    .build();
-
-            // 업데이트 된 스케쥴 저장
-            Schedule savedSchedule = scheduleRepository.save(updatedSchedule);
-            return ScheduleDto.toDto(savedSchedule);
         } else {
-            // 존재하지 않는 스케쥴 처리
+            // TODO 예외 처리
             return null;
         }
     }
 
     @Transactional
-    Boolean removeSchedule(Long scheduleId) {
-        Optional<Schedule> removalSchedule = scheduleRepository.findById(scheduleId);
-        if(removalSchedule.isPresent()) {
-            Schedule schedule = removalSchedule.get();
+    public ScheduleDto updateSchedule(Long scheduleId, ScheduleDto scheduleDto) {
+        Optional<Schedule> scheduleToUpdate = scheduleRepository.findById(scheduleId);
+        if (scheduleToUpdate.isPresent()) {
+            Schedule schedule = scheduleToUpdate.get();
+            List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
+            schedule.update(scheduleDto, scheduleMembers);  // dirty-checking
+            Schedule updatedSchedule = scheduleRepository.findById(scheduleId).get();
+            return ScheduleDto.toDto(updatedSchedule);
+        } else {
+            // TODO 예외 처리
+            return null;
+        }
+    }
+
+    @Transactional
+    public Boolean removeSchedule(Long scheduleId) {
+        Optional<Schedule> scheduleToRemove = scheduleRepository.findById(scheduleId);
+        if (scheduleToRemove.isPresent()) {
+            Schedule schedule = scheduleToRemove.get();
             scheduleRepository.delete(schedule);
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
     }
-
 }
