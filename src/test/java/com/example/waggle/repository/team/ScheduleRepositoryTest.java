@@ -70,9 +70,9 @@ class ScheduleRepositoryTest {
                 .build();
 
 
-        ScheduleDto savedScheduleDto1 = scheduleService.addSchedule(scheduleDto1, savedTeamDto.getId(), new ArrayList<>());
-        ScheduleDto savedScheduleDto2 = scheduleService.addSchedule(scheduleDto2, savedTeamDto.getId(), new ArrayList<>());
-        ScheduleDto savedScheduleDto3 = scheduleService.addSchedule(scheduleDto3, savedTeamDto.getId(), new ArrayList<>());
+        ScheduleDto savedScheduleDto1 = scheduleService.addSchedule(scheduleDto1, savedTeamDto.getId());
+        ScheduleDto savedScheduleDto2 = scheduleService.addSchedule(scheduleDto2, savedTeamDto.getId());
+        ScheduleDto savedScheduleDto3 = scheduleService.addSchedule(scheduleDto3, savedTeamDto.getId());
 
 
         // when

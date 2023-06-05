@@ -103,9 +103,9 @@ class ScheduleServiceTest {
                 .build();
 
 
-        savedScheduleDto1 = scheduleService.addSchedule(scheduleDto1, savedTeamDto2.getId(), new ArrayList<>());
-        savedScheduleDto2 = scheduleService.addSchedule(scheduleDto2, savedTeamDto2.getId(), new ArrayList<>());
-        savedScheduleDto3 = scheduleService.addSchedule(scheduleDto3, savedTeamB.getId(), new ArrayList<>());
+        savedScheduleDto1 = scheduleService.addSchedule(scheduleDto1, savedTeamDto2.getId());
+        savedScheduleDto2 = scheduleService.addSchedule(scheduleDto2, savedTeamDto2.getId());
+        savedScheduleDto3 = scheduleService.addSchedule(scheduleDto3, savedTeamB.getId());
     }
 
     @AfterEach
@@ -133,11 +133,9 @@ class ScheduleServiceTest {
                 .scheduleTime(LocalDateTime.now())
                 .build();
 
-        List<MemberDto> memberDtos = new ArrayList<>();
-        memberDtos.add(savedMemberDto1);
-        Member savedMember = memberRepository.findById(savedMemberDto1.getId()).get();
+        scheduleDto.getScheduleMembers().add(savedMemberDto1.getUsername());
 
-        ScheduleDto savedScheduleDto = scheduleService.addSchedule(scheduleDto, savedTeamDto2.getId(), memberDtos);
+        ScheduleDto savedScheduleDto = scheduleService.addSchedule(scheduleDto, savedTeamDto2.getId());
         assertThat(savedScheduleDto.getScheduleMembers().size()).isEqualTo(1);
     }
 

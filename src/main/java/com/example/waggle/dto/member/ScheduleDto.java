@@ -36,14 +36,13 @@ public class ScheduleDto {
                 .build();
     }
 
-    public Schedule toEntity(Team team, List<ScheduleMember> scheduleMembers) {
+    public Schedule toEntity(Team team) {
         return Schedule.builder()
                 .id(id)
                 .team(team)
                 .title(title)
                 .description(description)
                 .scheduleTime(scheduleTime)
-                .scheduleMembers(scheduleMembers)
                 .build();
     }
 
