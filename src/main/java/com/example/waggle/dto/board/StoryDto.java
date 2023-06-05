@@ -23,6 +23,7 @@ public class StoryDto {
     private int recommend;
     private String thumbnail;
     private LocalDateTime createDate;
+    private int like;
 
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
@@ -37,9 +38,9 @@ public class StoryDto {
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
-                .recommend(story.getRecommend())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
+                .like(story.getLikes().size())
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()
@@ -53,7 +54,6 @@ public class StoryDto {
     public Story toEntity() {
         return Story.builder()
                 .content(content)
-                .recommend(recommend)
                 .thumbnail(thumbnail)
                 .build();
     }
