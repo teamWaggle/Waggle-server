@@ -21,6 +21,7 @@ public class AnswerDto {
     private String content;
     private String username;
     private LocalDateTime createDate;
+    private int like;
     
     @Builder.Default
     private List<String> medias = new ArrayList<>();
@@ -37,6 +38,7 @@ public class AnswerDto {
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
                 .createDate(answer.getCreatedDate())
+                .like(answer.getLikes().size())
                 .hashtags(answer.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(answer.getMedias().stream()

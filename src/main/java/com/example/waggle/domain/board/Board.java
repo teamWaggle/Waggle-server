@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board;
 
+import com.example.waggle.domain.Like;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.member.Member;
@@ -38,6 +39,11 @@ public abstract class Board {
 
     @Builder.Default
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    protected List<Like> likes = new ArrayList<>();
+
+
+    @Builder.Default
+    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     protected List<BoardHashtag> boardHashtags = new ArrayList<>();
 
     @Builder.Default
@@ -49,12 +55,13 @@ public abstract class Board {
     protected List<Comment> comments = new ArrayList<>();
 
 
-    public Board(Long id, Member member, LocalDateTime createdDate, String content,
+    public Board(Long id, Member member, LocalDateTime createdDate, String content, List<Like> likes,
                  List<BoardHashtag> boardHashtags, List<Media> medias, List<Comment> comments) {
         this.id = id;
         this.member = member;
         this.createdDate = createdDate;
         this.content = content;
+        this.likes = likes;
         this.boardHashtags = boardHashtags;
         this.medias = medias;
         this.comments = comments;
