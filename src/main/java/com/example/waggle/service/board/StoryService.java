@@ -115,7 +115,6 @@ public class StoryService {
     }
 
     //2.2 story_comment 저장
-    //아직 순서 관련 메서드를 작성하지 않았다.
     public void saveComment(CommentDto commentDto, StoryDto storyDto, MemberDto memberDto) {
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
@@ -188,11 +187,10 @@ public class StoryService {
     }
 
 
-
     //3.2 story_comment 수정
     public void changeComment(CommentDto commentDto) {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-        if (!commentById.isEmpty()) {
+        if (commentById.isPresent()) {
             commentById.get().changeContent(commentDto.getContent());
         }
     }
@@ -200,7 +198,7 @@ public class StoryService {
     //3.3 story_comment_reply 수정
     public void changeReply(ReplyDto replyDto) {
         Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
-        if (!replyById.isEmpty()) {
+        if (replyById.isPresent()) {
             //change content
             replyById.get().changeContent(replyDto.getContent());
             //mention member setting
@@ -232,7 +230,7 @@ public class StoryService {
     //4.2 story_comment 저장
     public void removeComment(CommentDto commentDto) {
         Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-        if (!commentById.isEmpty()) {
+        if (commentById.isPresent()) {
             commentRepository.delete(commentById.get());
         }
     }
@@ -240,7 +238,7 @@ public class StoryService {
     //4.3 story_comment_reply 저장
     public void removeReply(ReplyDto replyDto) {
         Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
-        if (!replyById.isEmpty()) {
+        if (replyById.isPresent()) {
             replyRepository.delete(replyById.get());
         }
     }
