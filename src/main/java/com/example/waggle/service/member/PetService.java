@@ -48,34 +48,23 @@ public class PetService {
 
     @Transactional
     public PetDto updatePet(Long petId, PetDto petDto) {
-        Optional<Pet> findPet = petRepository.findById(petId);
-        if (findPet.isPresent()) {
-            Pet pet = findPet.get();
-
-            Pet updatedPet = Pet.builder()
-                    .id(pet.getId())
-                    .name(petDto.getName())
-                    .breed(petDto.getBreed())
-                    .sex(petDto.getSex())
-                    .birthday(petDto.getBirthday())
-                    .profileImg(petDto.getProfileImg())
-                    .member(pet.getMember())
-                    .build();
-
-            // 업데이트 된 펫 저장
-            Pet savedPet = petRepository.save(updatedPet);
-            return PetDto.toDto(savedPet);
+        Optional<Pet> petToUpdate = petRepository.findById(petId);
+        if (petToUpdate.isPresent()) {
+            Pet pet = petToUpdate.get();
+            pet.update(petDto);
+            Pet updatedPet = petRepository.findById(petId).get();
+            return PetDto.toDto(updatedPet);
         } else {
-            // 존재하지 않는 펫 처리
+            // TODO 예외 처리
             return null;
         }
     }
 
     @Transactional
     public Boolean removePet(Long petId) {
-        Optional<Pet> removalPet = petRepository.findById(petId);
-        if(removalPet.isPresent()) {
-            Pet pet = removalPet.get();
+        Optional<Pet> petToRemove = petRepository.findById(petId);
+        if(petToRemove.isPresent()) {
+            Pet pet = petToRemove.get();
             petRepository.delete(pet);
             return Boolean.TRUE;
         }
