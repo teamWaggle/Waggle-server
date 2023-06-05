@@ -1,9 +1,11 @@
 package com.example.waggle.service.team;
 
+import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.member.TeamDto;
 import com.example.waggle.service.member.MemberService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@Transactional(readOnly = true)
 class TeamServiceTest {
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
     @Autowired
     MemberService memberService;
     @Autowired
@@ -50,9 +53,12 @@ class TeamServiceTest {
         savedMemberDto2 = memberService.signUp(signUpDto2);
     }
 
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
 
     @Test
-    @Transactional
     @DisplayName("1명의 멤버를 통해 초기 팀 생성")
     public void createTeamWithMemberTest() {
         SignUpDto signUpDto = SignUpDto.builder()
@@ -71,7 +77,6 @@ class TeamServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("초기 팀 생성 -> username 통해 새로운 멤버 추가")
     public void createThenAddMemberTest() {
         // Team 생성 (member1 가입)
@@ -92,7 +97,6 @@ class TeamServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("초기 팀 생성 -> 새로운 멤버 추가 -> 팀 삭제")
     public void createThenAddMemberThenRemoveTeamTest() {
         // Team 생성 (member1 가입)
@@ -111,7 +115,6 @@ class TeamServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("team id를 통해 해당 팀에 속한 멤버들 조회")
     public void findTeamMembersTest() {
         // Team 생성 (member1 가입)
@@ -131,7 +134,6 @@ class TeamServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("팀에서 username 통해 특정 멤버 제거")
     public void removeMemberTest() {
         // Team 생성 (member1 가입)

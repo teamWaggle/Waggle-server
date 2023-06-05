@@ -8,6 +8,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class ScheduleDto {
     private String description;
     private LocalDateTime scheduleTime;
     @Builder.Default
-    private List<ScheduleMember> scheduleMembers = new ArrayList<>();
+    private List<String> scheduleMembers = new ArrayList<>();
 
     static public ScheduleDto toDto(Schedule schedule) {
         return ScheduleDto.builder()
@@ -30,7 +31,8 @@ public class ScheduleDto {
                 .title(schedule.getTitle())
                 .description(schedule.getDescription())
                 .scheduleTime(schedule.getScheduleTime())
-                .scheduleMembers(schedule.getScheduleMembers())
+                .scheduleMembers(schedule.getScheduleMembers().stream()
+                        .map(sm -> sm.getMember().getUsername()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -41,7 +43,6 @@ public class ScheduleDto {
                 .title(title)
                 .description(description)
                 .scheduleTime(scheduleTime)
-                .scheduleMembers(scheduleMembers)
                 .build();
     }
 
