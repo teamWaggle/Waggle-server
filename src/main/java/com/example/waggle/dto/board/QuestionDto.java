@@ -22,6 +22,7 @@ public class QuestionDto {
     private String username;
     private String title;
     private LocalDateTime createDate;
+    private int like;
 
     @Builder.Default
     private List<AnswerDto> answers = new ArrayList<>();
@@ -41,6 +42,7 @@ public class QuestionDto {
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())
                 .createDate(question.getCreatedDate())
+                .like(question.getLikes().size())
                 .answers(question.getAnswers().stream()
                         .map(a -> AnswerDto.toDto(a)).collect(Collectors.toList()))
                 .hashtags(question.getBoardHashtags().stream()
@@ -49,6 +51,13 @@ public class QuestionDto {
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
                 .comments(question.getComments().stream()
                         .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
+                .build();
+    }
+
+    public Question toEntity() {
+        return Question.builder()
+                .title(title)
+                .content(content)
                 .build();
     }
 }

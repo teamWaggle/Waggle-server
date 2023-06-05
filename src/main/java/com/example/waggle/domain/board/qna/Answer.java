@@ -17,7 +17,6 @@ public class Answer extends Board {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    private int recommend;
 
     /**
      * builder를 따로 설정하지 않는 이유
@@ -30,5 +29,9 @@ public class Answer extends Board {
 
     protected void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public void changeAnswer(String content) {
+        this.content = content;
     }
 }

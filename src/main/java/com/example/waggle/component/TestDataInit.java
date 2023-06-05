@@ -5,13 +5,17 @@ import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
+import com.example.waggle.domain.board.qna.Answer;
+import com.example.waggle.domain.board.qna.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.MediaRepository;
+import com.example.waggle.repository.board.boardtype.AnswerRepository;
+import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.repository.board.comment.CommentRepository;
 import com.example.waggle.repository.board.comment.ReplyRepository;
 import com.example.waggle.repository.member.MemberRepository;
+
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +33,14 @@ public class TestDataInit {
 
     @Autowired
     private final InitStoryService initStoryService;
+    @Autowired
+    private final InitQuestionService initQuestionService;
 
     @PostConstruct
     public void init() {
         initStoryService.initStory();
+        initQuestionService.initQuestion();
+        initQuestionService.initAnswer();
     }
 
     @Transactional
@@ -43,14 +51,13 @@ public class TestDataInit {
         private final StoryRepository storyRepository;
         private final MemberRepository memberRepository;
         private final HashtagRepository hashtagRepository;
-        private final MediaRepository mediaRepository;
         private final CommentRepository commentRepository;
         private final ReplyRepository replyRepository;
 
         public void initStory() {
             //member save
             Member newMember1 = Member.builder()
-                    .address("pajo")
+                    .address("paju")
                     .nickname("hann")
                     .password("wjdgks2972")
                     .phone("1111.2222")
@@ -92,13 +99,51 @@ public class TestDataInit {
             //media save
             Media media1 = Media.builder().url("choco1/img").board(newStory1).build();
             Media media2 = Media.builder().url("choco2/img").board(newStory1).build();
+        }
+    }
+    @Transactional
+    @Component
+    @RequiredArgsConstructor
+    static class InitQuestionService{
 
-            mediaRepository.save(media1);
-            mediaRepository.save(media2);
+        private final QuestionRepository questionRepository;
+        private final AnswerRepository answerRepository;
+        private final HashtagRepository hashtagRepository;
+        private final CommentRepository commentRepository;
+        private final ReplyRepository replyRepository;
+        private final MemberRepository memberRepository;
+
+        public void initQuestion() {
+
+            Member newMember1 = Member.builder()
+                    .address("paju")
+                    .nickname("jeonghan")
+                    .password("wjdgks2972")
+                    .phone("1111.2223")
+                    .profileImg("img")
+                    .username("hann111").build();
+            memberRepository.save(newMember1);
+
+            Question first_question = Question.builder()
+                    .content("hello i have a question.")
+                    .title("first question")
+                    .member(newMember1)
+                    .build();
+            questionRepository.save(first_question);
+
+            Media.builder().url("www.choco.com").board(first_question).build();
+
         }
 
-
+        public void initAnswer() {
+            List<Question> hann111 = questionRepository.findByUsername("hann111");
+            Answer buildAnswer = Answer.builder()
+                    .question(hann111.stream().findFirst().get())
+                    .content("i know that")
+                    .member(memberRepository.findByUsername("hann123").get())
+                    .build();
+            answerRepository.save(buildAnswer);
+        }
 
     }
-
 }

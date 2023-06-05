@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,8 +37,8 @@ class QuestionRepositoryTest {
         question.addAnswer(Answer.builder().content("what is it?").build());
         question.addAnswer(Answer.builder().content("what is it???").build());
 
-        Question byBoardId = questionRepository.findByBoardId(question.getId());
-        assertThat(byBoardId.getAnswers().size()).isEqualTo(2);
+        Optional<Question> byBoardId = questionRepository.findById(question.getId());
+        assertThat(byBoardId.get().getAnswers().size()).isEqualTo(2);
 
     }
 

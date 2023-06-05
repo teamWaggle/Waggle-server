@@ -39,7 +39,7 @@ public class Reply {
 
 
     //mention targets
-    @OneToMany(mappedBy = "reply", orphanRemoval = true)
+    @OneToMany(mappedBy = "reply",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MemberMention> memberMentions = new ArrayList<>();
 
     @Builder
@@ -71,7 +71,5 @@ public class Reply {
     public void changeContent(String content) {
         this.content = content;
     }
-
-
 
 }
