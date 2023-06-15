@@ -20,4 +20,4 @@ logging.level:
   org.hibernate.type: trace
 
 jwt:
-  secret: bed97e847755a5e53e5eae4ca9b7c21a0ccbfb347b50e09a4587c8b4deb0dd12c22172915ee080e33915b799aca79c4aaa3a0c2a05256e9e275cbb65f495cbb5
+  secret: 64461f01e1af406da538b9c48d801ce59142452199ff112fb5404c8e7e98e3ff
