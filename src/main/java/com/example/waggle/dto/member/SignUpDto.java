@@ -22,16 +22,18 @@ public class SignUpDto {
     private String address;
     private String phone;
     private String profileImg;
+    private List<String> roles = new ArrayList<>();
 
-    public Member toEntity() {
+    public Member toEntity(String encodedPassword, List<String> roles) {
 
         return Member.builder()
                 .username(username)
-                .password(password)
+                .password(encodedPassword)
                 .nickname(nickname)
                 .address(address)
                 .phone(phone)
                 .profileImg(profileImg)
+                .roles(roles)
                 .build();
     }
 }
