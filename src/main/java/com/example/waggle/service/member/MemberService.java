@@ -5,7 +5,7 @@ import com.example.waggle.dto.member.*;
 import jakarta.servlet.http.HttpSession;
 
 public interface MemberService {
-    JwtToken signIn(String username, String password);
+    JwtToken signIn(SignInDto signInDto);
     MemberDto signUp(SignUpDto signUpDto);
     void signOut(HttpSession session);
 }

@@ -23,10 +23,8 @@ public class MemberController {
 
     @PostMapping("/sign-in")
     public JwtToken signIn(@RequestBody SignInDto signInDto) {
-        String username = signInDto.getUsername();
-        String password = signInDto.getPassword();
-        JwtToken jwtToken = memberService.signIn(username, password);
-        log.info("request username = {}, password = {}", username, password);
+        JwtToken jwtToken = memberService.signIn(signInDto);
+        log.info("request username = {}, password = {}", signInDto.getUsername(), signInDto.getPassword());
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
         return jwtToken;
     }
@@ -35,5 +33,7 @@ public class MemberController {
     public String test() {
         return SecurityUtil.getCurrentUsername();
     }
+
+
 
 }
