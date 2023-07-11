@@ -12,7 +12,6 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.*;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.MediaRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.repository.board.comment.CommentRepository;
