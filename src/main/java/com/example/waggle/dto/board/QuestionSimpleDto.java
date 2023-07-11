@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class QuestionSimpleDto {
 
     private Long questionId;
+    private String username;
     private String title;
     private LocalDateTime createTime;
     @Builder.Default
@@ -26,6 +27,7 @@ public class QuestionSimpleDto {
     static public QuestionSimpleDto toDto(Question question) {
         return QuestionSimpleDto.builder()
                 .questionId(question.getId())
+                .username(question.getMember().getUsername())
                 .title(question.getTitle())
                 .createTime(question.getCreatedDate())
                 .hashtags(question.getBoardHashtags().stream()
