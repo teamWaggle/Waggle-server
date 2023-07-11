@@ -1,5 +1,6 @@
 package com.example.waggle.service.member;
 
+import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Sex;
 import com.example.waggle.dto.member.MemberDto;
@@ -7,7 +8,9 @@ import com.example.waggle.dto.member.PetDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Slf4j
 class PetServiceTest {
+    @Autowired DatabaseCleanUp databaseCleanUp;
     @Autowired PetRepository petRepository;
 
     @Autowired MemberService memberService;
@@ -34,7 +39,7 @@ class PetServiceTest {
     private PetDto savedPetDto;
 
     @BeforeEach
-    void init() {
+    void beforeEach() {
         // member 저장
         SignUpDto signUpDto = SignUpDto.builder()
                 .username("user")
@@ -44,7 +49,6 @@ class PetServiceTest {
                 .phone("010-1234-5678")
                 .build();
         savedMemberDto = memberService.signUp(signUpDto);
-        log.info("suddiyo");
 
         // pet 저장
         PetDto petDto = PetDto.builder()
@@ -57,9 +61,12 @@ class PetServiceTest {
         savedPetDto = petService.addPet(petDto);
     }
 
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
 
     @Test
-    @Transactional
     void findByPetId() {
         // petId로 조회
         PetDto findPet = petService.findByPetId(savedPetDto.getId()).get();
@@ -67,7 +74,6 @@ class PetServiceTest {
     }
 
     @Test
-    @Transactional
     void findByMemberId() {
         // memberId로 조회
         List<PetDto> findPetDtos = petService.findByMemberId(savedMemberDto.getId());
@@ -75,7 +81,6 @@ class PetServiceTest {
     }
 
     @Test
-    @Transactional
     void findByUsername() {
         // username으로 조회
         List<PetDto> findPetDtos = petService.findByUsername(savedMemberDto.getUsername());
@@ -84,7 +89,6 @@ class PetServiceTest {
     }
 
     @Test
-    @Transactional
     void addPet() {
         List<PetDto> pets = petService.findByMemberId(savedMemberDto.getId());
         assertThat(pets.get(0)).usingRecursiveComparison().isEqualTo(savedPetDto);
@@ -92,7 +96,6 @@ class PetServiceTest {
     }
 
     @Test
-    @Transactional
     void updatePet() {
         // pet 수정 (변경 사항만 수정하는 건 컨트롤러 계층에서 처리)
         PetDto updatePetDto = PetDto.builder()
@@ -110,7 +113,6 @@ class PetServiceTest {
     }
 
     @Test
-    @Transactional
     void removePet() {
         // pet 삭제
         petService.removePet(savedPetDto.getId());
