@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -18,18 +20,19 @@ public class StoryController {
     public final StoryService storyService;
 
     /**
-     *view
+     * view
      */
     @GetMapping
-    public String storyMain(){
+    public String storyMain(Model model) {
+        List<StorySimpleDto> allStory = storyService.findAllStory();
+        model.addAttribute("simpleStories", allStory);
         return "public/main";
     }
 
     @GetMapping("/{username}/{boardId}")
-    public String storySingleForm(@PathVariable Long boardId, @PathVariable String username,
-                              Model model) {
+    public String storySingleForm(@PathVariable Long boardId, Model model) {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(boardId);
-        model.addAttribute("story",storyByBoardId);
+        model.addAttribute("story", storyByBoardId);
         return "public/story/storySingle";
     }
 
@@ -47,11 +50,26 @@ public class StoryController {
         storyService.saveStory(storyDto);
         String username = storyDto.getUsername();
         Long boardId = storyDto.getId();
-        return "redirect:/story/"+username+"/"+boardId;
+        return "redirect:/story/" + username + "/" + boardId;
     }
+
     /**
      * edit
      */
+    @GetMapping("/edit/{boardId}")
+    public String storySingleEditForm(Model model, @PathVariable Long boardId) {
+        StoryDto storyByBoardId = storyService.findStoryByBoardId(boardId);
+        model.addAttribute("story", storyByBoardId);
+        return "private/story/storyEdit";
+    }
+
+    @PostMapping("/edit/{boardId}")
+    public String storySingleEdit(@ModelAttribute StoryDto storyDto) {
+        storyService.changeStory(storyDto);
+        String username = storyDto.getUsername();
+        Long boardId = storyDto.getId();
+        return "redirect:/story/" + username + "/" + boardId;
+    }
 
     /**
      * remove
