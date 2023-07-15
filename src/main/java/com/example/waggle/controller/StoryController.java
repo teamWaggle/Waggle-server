@@ -29,6 +29,14 @@ public class StoryController {
         return "public/main";
     }
 
+    @GetMapping("/{username}")
+    public String storyPrivateMain(@PathVariable String username,
+                                   Model model) {
+        List<StorySimpleDto> allStoryByMember = storyService.findAllStoryByMember(username);
+        model.addAttribute("simpleStories", allStoryByMember);
+        return "private/storyView";
+    }
+
     @GetMapping("/{username}/{boardId}")
     public String storySingleForm(@PathVariable Long boardId, Model model) {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(boardId);

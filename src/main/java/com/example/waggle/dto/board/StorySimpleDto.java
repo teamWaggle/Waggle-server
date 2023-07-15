@@ -21,6 +21,7 @@ public class StorySimpleDto {
     private String username;
     private String thumbnail;
     private LocalDateTime createDate;
+    private int likeCount;
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
@@ -30,6 +31,7 @@ public class StorySimpleDto {
                 .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
+                .likeCount(story.getLikes().size())
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
