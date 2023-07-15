@@ -59,6 +59,14 @@ public class TeamService {
         return result;
     }
 
+    // member를 통해 team 조회
+    // **need to test
+    public List<TeamSimpleDto> findSimpleTeam(String username) {
+        List<TeamMember> teamMemberByUsername = teamMemberRepository.findTeamMemberByMemberUsername(username);
+        return teamMemberByUsername.stream().map(TeamSimpleDto::toDto).collect(Collectors.toList());
+    }
+
+
     // 새로운 team 생성 (대표 member 한 명 추가)
     @Transactional
     public TeamDto createTeamWithMember(TeamDto teamDto, MemberDto memberDto) {

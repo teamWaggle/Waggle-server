@@ -23,7 +23,7 @@ public class StoryDto {
     private int recommend;
     private String thumbnail;
     private LocalDateTime createDate;
-    private int like;
+    private int likeCount;
 
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
@@ -40,7 +40,7 @@ public class StoryDto {
                 .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
-                .like(story.getLikes().size())
+                .likeCount(story.getLikes().size())
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()

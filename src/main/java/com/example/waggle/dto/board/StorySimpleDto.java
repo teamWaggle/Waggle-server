@@ -18,16 +18,20 @@ import java.util.stream.Collectors;
 public class StorySimpleDto {
 
     private Long storyId;
+    private String username;
     private String thumbnail;
     private LocalDateTime createDate;
+    private int likeCount;
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
     static public StorySimpleDto toDto(Story story) {
         return StorySimpleDto.builder()
                 .storyId(story.getId())
+                .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
+                .likeCount(story.getLikes().size())
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
