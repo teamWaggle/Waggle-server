@@ -12,7 +12,6 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.*;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.MediaRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.repository.board.comment.CommentRepository;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +87,27 @@ public class QuestionService {
         }
         return QuestionDto.toDto(questionById.get());
     }
+
+//    @Transactional(readOnly = true)
+//    public QuestionDto findQuestionByTitleAndUsername(String title, String username) {
+//        Optional<Member> MemberByUsername = memberRepository.findByUsername(username);
+//        if (MemberByUsername.isEmpty()) {
+//            log.info("can't find user!");
+//            // error message 출력
+//        }
+//        List<Question> questionsByUsername = questionRepository.findByUsername(username);
+//        if (questionsByUsername.isEmpty()) {
+//
+//        }
+//        List<Question> collect = questionsByUsername.stream()
+//                .filter(q -> q.getTitle().equals(title)).collect(Collectors.toList());
+//
+//        if (collect.stream().findFirst().isPresent()) {
+//            QuestionDto questionDto = QuestionDto.toDto(collect.stream().findFirst().get());
+//            return questionDto;
+//        }
+//        return null;
+//    }
 
     //2. ===========저장===========
 
