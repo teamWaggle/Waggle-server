@@ -38,6 +38,7 @@ public class ScheduleService {
         return result.stream().map(ScheduleDto::toDto).collect(Collectors.toList());
     }
 
+
     @Transactional
     public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);

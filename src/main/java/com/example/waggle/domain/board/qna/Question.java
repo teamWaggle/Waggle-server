@@ -45,4 +45,8 @@ public class Question extends Board {
         answer.setQuestion(this);
     }
 
+    public void changeQuestion(String content, String title) {
+        this.content = content;
+        this.title = title;
+    }
 }
