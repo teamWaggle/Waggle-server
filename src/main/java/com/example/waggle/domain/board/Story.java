@@ -27,16 +27,13 @@ import java.util.stream.Collectors;
 @DiscriminatorValue("type_story")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Story extends Board {
-    private int recommend;
     private String thumbnail;
 
 
     public Story(Long id, Member member, LocalDateTime createdDate,
           String content, List<BoardHashtag> boardHashtags,
-          List<Media> medias, List<Comment> comments,
-          int recommend, String thumbnail) {
+          List<Media> medias, List<Comment> comments, String thumbnail) {
         super(id, member, createdDate, content,boardHashtags,medias, comments);
-        this.recommend = recommend;
         this.thumbnail = thumbnail;
     }
 
