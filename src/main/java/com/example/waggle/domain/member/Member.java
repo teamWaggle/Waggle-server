@@ -1,6 +1,8 @@
 package com.example.waggle.domain.member;
 
 
+import com.example.waggle.component.BaseEntity;
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.TeamMember;
 import jakarta.persistence.*;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-public class Member implements UserDetails {
+public class Member extends BaseEntity implements UserDetails {
     @Id @GeneratedValue
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;

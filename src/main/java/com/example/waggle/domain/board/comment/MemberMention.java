@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.comment;
 
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberMention {
+public class MemberMention extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "member_mention_id")

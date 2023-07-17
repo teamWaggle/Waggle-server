@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.qna;
 
+import com.example.waggle.domain.Like;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.comment.Comment;
@@ -29,9 +30,9 @@ public class Question extends Board {
     private List<Answer> answers = new ArrayList<>();
 
     public Question(Long id, Member member, LocalDateTime createdDate,
-                 String content, String title, List<BoardHashtag> boardHashtags,
-                 List<Media> medias, List<Comment> comments, List<Answer> answers) {
-        super(id, member, createdDate, content,boardHashtags,medias, comments);
+                    String content, List<Like> likes, String title, List<BoardHashtag> boardHashtags,
+                    List<Media> medias, List<Comment> comments, List<Answer> answers) {
+        super(id, member, createdDate, content, likes, boardHashtags,medias, comments);
         this.title = title;
         if (answers != null) {
             for (Answer answer : answers) {

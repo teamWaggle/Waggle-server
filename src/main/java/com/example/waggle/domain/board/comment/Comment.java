@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.comment;
 
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "comment_id")
