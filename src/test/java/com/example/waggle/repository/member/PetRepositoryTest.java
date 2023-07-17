@@ -62,6 +62,9 @@ class PetRepositoryTest {
                 .username(savedMemberDto.getUsername())
                 .birthday(LocalDateTime.now()).build();
 
+        System.out.println("petDto1 = " + petDto1);
+        System.out.println("petDto2 = " + petDto2);
+
         Pet savedPet1 = petService.addPet(petDto1).toEntity(savedMemberDto.toEntity());
         Pet savedPet2 = petService.addPet(petDto2).toEntity(savedMemberDto.toEntity());
         savedPetList.add(savedPet1);

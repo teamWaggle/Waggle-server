@@ -1,5 +1,6 @@
 package com.example.waggle.domain.team;
 
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.dto.member.ScheduleDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Schedule {
+public class Schedule extends BaseTimeEntity {
     @Id @GeneratedValue
     @Column(name = "schedule_id")
     private Long id;

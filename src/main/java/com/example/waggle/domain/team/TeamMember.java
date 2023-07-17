@@ -1,5 +1,6 @@
 package com.example.waggle.domain.team;
 
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
-public class TeamMember {
+public class TeamMember extends BaseTimeEntity {
     @Id @GeneratedValue
     @Column(name = "team_member_id")
     private Long id;
