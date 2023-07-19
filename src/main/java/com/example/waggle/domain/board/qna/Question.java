@@ -29,10 +29,10 @@ public class Question extends Board {
     @OneToMany(mappedBy = "question",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
-    public Question(Long id, Member member, LocalDateTime createdDate,
+    public Question(Long id, Member member,
                     String content, List<Like> likes, String title, List<BoardHashtag> boardHashtags,
                     List<Media> medias, List<Comment> comments, List<Answer> answers) {
-        super(id, member, createdDate, content, likes, boardHashtags,medias, comments);
+        super(id, member, content, likes, boardHashtags,medias, comments);
         this.title = title;
         if (answers != null) {
             for (Answer answer : answers) {

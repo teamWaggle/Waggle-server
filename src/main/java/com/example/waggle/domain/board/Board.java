@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board;
 
+import com.example.waggle.component.BaseEntity;
 import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.Like;
 import com.example.waggle.domain.board.comment.Comment;
@@ -22,7 +23,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "DTYPE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Board {
+public abstract class Board extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "board_id")
@@ -33,7 +34,7 @@ public abstract class Board {
     protected Member member;
 
     //@Temporal(TemporalType.TIMESTAMP) -> 현 jpa버전에서는 자동매핑해주기 때문에 필요없다고 함
-    protected LocalDateTime createdDate;
+//    protected LocalDateTime createdDate;
 
     @Lob
     protected String content;
@@ -56,11 +57,10 @@ public abstract class Board {
     protected List<Comment> comments = new ArrayList<>();
 
 
-    public Board(Long id, Member member, LocalDateTime createdDate, String content, List<Like> likes,
+    public Board(Long id, Member member, String content, List<Like> likes,
                  List<BoardHashtag> boardHashtags, List<Media> medias, List<Comment> comments) {
         this.id = id;
         this.member = member;
-        this.createdDate = createdDate;
         this.content = content;
         this.likes = likes;
         this.boardHashtags = boardHashtags;

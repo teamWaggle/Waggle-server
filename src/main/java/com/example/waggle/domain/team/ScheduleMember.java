@@ -7,9 +7,11 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.member.ScheduleDto;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
