@@ -7,6 +7,7 @@ import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.TeamMember;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(of = "id")
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
