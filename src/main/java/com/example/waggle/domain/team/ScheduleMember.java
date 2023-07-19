@@ -1,17 +1,21 @@
 package com.example.waggle.domain.team;
 
 
+import com.example.waggle.component.BaseEntity;
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.member.ScheduleDto;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ScheduleMember {
+public class ScheduleMember extends BaseEntity {
 
     @Id
     @GeneratedValue

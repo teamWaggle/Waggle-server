@@ -91,7 +91,7 @@ class TeamServiceTest {
         // team 테이블의 전체 개수 1개
         assertThat(teamService.findAllTeam().size()).isEqualTo(1);
 
-        TeamDto findTeam = teamService.findByTeamId(1L).get();
+        TeamDto findTeam = teamService.findByTeamId(savedTeamDto1.getId()).get();
         assertThat(findTeam.getTeamMembers().size()).isEqualTo(2);
         assertThat(findTeam.getName()).isEqualTo("team");
     }

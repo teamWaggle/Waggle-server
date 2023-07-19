@@ -1,14 +1,11 @@
 package com.example.waggle.service.member;
 
 import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.domain.member.Member;
-import com.example.waggle.domain.member.Sex;
+import com.example.waggle.domain.member.Gender;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.PetDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
-import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,13 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +47,7 @@ class PetServiceTest {
         PetDto petDto = PetDto.builder()
                 .name("루이")
                 .breed("포메라니안")
-                .sex(Sex.MALE)
+                .gender(Gender.MALE)
                 .username(savedMemberDto.getUsername())
                 .birthday(LocalDateTime.now()).build();
 
@@ -101,7 +94,7 @@ class PetServiceTest {
         PetDto updatePetDto = PetDto.builder()
                 .name("루이2")
                 .breed("포메라니안2")
-                .sex(Sex.MALE)
+                .gender(Gender.MALE)
                 .birthday(LocalDate.of(2016, 9, 17).atStartOfDay()).build();
 
         PetDto updatedPetDto = petService.updatePet(savedPetDto.getId(), updatePetDto);

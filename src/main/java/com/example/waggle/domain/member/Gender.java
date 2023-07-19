@@ -1,5 +1,5 @@
 package com.example.waggle.domain.member;
 
-public enum Sex {
+public enum Gender {
     MALE, FEMALE
 }

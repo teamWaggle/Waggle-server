@@ -1,7 +1,8 @@
 package com.example.waggle.domain;
 
+import com.example.waggle.component.BaseEntity;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.domain.member.Sex;
+import com.example.waggle.domain.member.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Sos {
+public class Sos extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -30,7 +31,7 @@ public class Sos {
     private int age;
 
     @Enumerated
-    private Sex sex;
+    private Gender gender;
 
     private String lostLocate;
     private LocalDateTime lostDate;

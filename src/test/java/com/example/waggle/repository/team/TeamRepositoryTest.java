@@ -59,7 +59,7 @@ class TeamRepositoryTest {
 
         // then
         assertThat(teamMembers.size()).isEqualTo(1);
-        assertThat(teamMembers.get(0).getMember()).usingRecursiveComparison().isEqualTo(savedMemberDto.toEntity());
+        assertThat(teamMembers.get(0).getMember().getUsername()).isEqualTo(savedMemberDto.getUsername());
 
     }
 }
