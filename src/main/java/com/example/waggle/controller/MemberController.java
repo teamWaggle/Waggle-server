@@ -50,7 +50,13 @@ public class MemberController {
 
 
     @PostMapping("/test")
+    @ResponseBody
     public String test() {
+        return SecurityUtil.getCurrentUsername();
+    }
+    @GetMapping("/test")
+    @ResponseBody
+    public String test2() {
         return SecurityUtil.getCurrentUsername();
     }
 
