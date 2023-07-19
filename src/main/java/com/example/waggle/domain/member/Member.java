@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-public class Member extends BaseEntity implements UserDetails {
+public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
@@ -41,9 +41,23 @@ public class Member extends BaseEntity implements UserDetails {
 
     private String profileImg;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<Pet> pets = new ArrayList<>();
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+
+
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
+    }
+
+
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()

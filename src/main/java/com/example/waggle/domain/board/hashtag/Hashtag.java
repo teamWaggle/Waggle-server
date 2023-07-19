@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.hashtag;
 
+import com.example.waggle.component.BaseEntity;
 import com.example.waggle.component.BaseTimeEntity;
 import jakarta.persistence.*;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Hashtag extends BaseTimeEntity {
+public class Hashtag extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "hashtag_id")
     private Long id;
