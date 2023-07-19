@@ -2,38 +2,57 @@ package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.JwtToken;
 import com.example.waggle.component.jwt.SecurityUtil;
+import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignInDto;
+import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/member")
 public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/sign-in")
-    public JwtToken signIn(@RequestBody SignInDto signInDto) {
-        JwtToken jwtToken = memberService.signIn(signInDto);
-        log.info("request username = {}, password = {}", signInDto.getUsername(), signInDto.getPassword());
-        log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
-        return jwtToken;
+    @GetMapping("/sign-in")
+    public String signInForm(Model model) {
+        model.addAttribute("signInDto", new SignInDto());
+        return "member/signIn";
     }
+
+    @PostMapping("/sign-in")
+    public String signIn(@ModelAttribute("signInDto") SignInDto signInDto) {
+        log.info("signInDto = {}", signInDto);
+        JwtToken jwtToken = memberService.signIn(signInDto);
+        log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+        return "redirect:/";
+    }
+
+    @GetMapping("/sign-up")
+    public String signUpForm(Model model) {
+        model.addAttribute("signUpDto", new SignUpDto());
+        return "member/signUp";
+    }
+
+    @PostMapping("/sign-up")
+    public String signUp(@ModelAttribute("signUpDto") SignUpDto signUpDto) {
+        MemberDto signUpMemberDto = memberService.signUp(signUpDto);
+        return "redirect:sign-in";
+    }
+
 
     @PostMapping("/test")
     public String test() {
         return SecurityUtil.getCurrentUsername();
     }
-
 
 
 }

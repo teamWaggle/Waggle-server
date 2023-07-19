@@ -38,9 +38,9 @@ public class TestDataInit {
 
     @PostConstruct
     public void init() {
-        initStoryService.initStory();
-        initQuestionService.initQuestion();
-        initQuestionService.initAnswer();
+//        initStoryService.initStory();
+//        initQuestionService.initQuestion();
+//        initQuestionService.initAnswer();
     }
 
     @Transactional

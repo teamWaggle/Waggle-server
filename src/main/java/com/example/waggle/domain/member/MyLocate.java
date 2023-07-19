@@ -1,5 +1,6 @@
 package com.example.waggle.domain.member;
 
+import com.example.waggle.component.BaseEntity;
 import com.example.waggle.component.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MyLocate extends BaseTimeEntity {
+public class MyLocate extends BaseEntity {
 
     @Id
     @GeneratedValue

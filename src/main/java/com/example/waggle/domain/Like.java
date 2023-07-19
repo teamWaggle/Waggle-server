@@ -1,5 +1,6 @@
 package com.example.waggle.domain;
 
+import com.example.waggle.component.BaseEntity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity(name = "recommend")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like {
+public class Like extends BaseEntity {
 
     @Id
     @GeneratedValue

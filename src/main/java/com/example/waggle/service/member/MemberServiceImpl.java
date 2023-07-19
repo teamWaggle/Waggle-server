@@ -2,8 +2,11 @@ package com.example.waggle.service.member;
 
 import com.example.waggle.component.jwt.JwtToken;
 import com.example.waggle.component.jwt.JwtTokenProvider;
+import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.member.Pet;
 import com.example.waggle.dto.member.*;
 import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.repository.member.PetRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ import java.util.List;
 @Slf4j
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
+    private final PetRepository petRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -53,9 +58,25 @@ public class MemberServiceImpl implements MemberService{
         }
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
+
+        // USER 권한 부여
         List<String> roles = new ArrayList<>();
-        roles.add("USER");  // USER 권한 부여
-        return MemberDto.toDto(memberRepository.save(signUpDto.toEntity(encodedPassword, roles)));
+        roles.add("USER");
+
+        // Member save
+        Member savedMember = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
+
+        // Pet save
+
+        List<PetDto> petDtos = signUpDto.getPets();
+        List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(savedMember)).collect(Collectors.toList()); // PetDto -> Pet mapping
+        for (Pet pet : pets) {
+            petRepository.save(pet);
+        }
+        savedMember.setPets(pets);
+
+
+        return MemberDto.toDto(savedMember);
     }
 
     @Override

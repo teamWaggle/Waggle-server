@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../../../static/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+
+        .pet-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <title>Waggle🐾</title>
+
+    <script th:inline="javascript">
+        function addPetField() {
+            var petContainer = document.getElementById("petContainer");
+            var petIndex = petContainer.childElementCount;
+            var petField = document.createElement("div");
+            petField.classList.add("pet-container");
+            petField.innerHTML = `
+                <h4>펫 ${petIndex + 1}</h4>
+                <div>
+                    <label for="petName${petIndex}">이름</label>
+                    <input type="text" id="petName${petIndex}" name="pets[${petIndex}].name" class="form-control" placeholder="이름을 입력해주세요.">
+                </div>
+                <div>
+                    <label for="petBreed${petIndex}">종</label>
+                    <input type="text" id="petBreed${petIndex}" name="pets[${petIndex}].breed" class="form-control" placeholder="종을 입력해주세요.">
+                </div>
+                <div>
+                    <label for="petGender${petIndex}">성별</label>
+                    <select id="petGender${petIndex}" name="pets[${petIndex}].gender" class="form-control">
+                        <option value="MALE">남자</option>
+                        <option value="FEMALE">여자</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="petBirthday${petIndex}">생일</label>
+                    <input type="date" id="petBirthday${petIndex}" name="pets[${petIndex}].birthday" class="form-control">
+                </div>
+                <div>
+                    <label for="petProfileImg${petIndex}">사진</label>
+                    <input type="file" id="petProfileImg${petIndex}" name="pets[${petIndex}].profileImg" class="form-control">
+                </div>
+            `;
+            petContainer.appendChild(petField);
+        }
+    </script>
+
+</head>
+<body>
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>회원가입</h2>
+    </div>
+
+    <form th:action="@{/member/sign-up}" th:object="${signUpDto}" method="post">
+        <div>
+            <label for="username">아이디</label>
+            <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="아이디를 입력해주세요."
+                   required>
+        </div>
+        <div>
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호를 입력해주세요."
+                   required>
+        </div>
+        <div>
+            <label for="address">주소</label>
+            <input type="text" id="address" th:field="*{address}" class="form-control" placeholder="주소를 입력해주세요."
+                   required>
+        </div>
+        <div>
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" th:field="*{nickname}" class="form-control" placeholder="닉네임을 입력해주세요."
+                   required>
+        </div>
+        <div>
+            <label for="phone">전화번호</label>
+            <input type="tel" id="phone" th:field="*{phone}" class="form-control" pattern="[0-9]+"
+                   placeholder="숫자만 입력해주세요." required>
+        </div>
+
+        <hr class="my-4">
+
+        <h4>반려동물 추가</h4>
+        <div id="petContainer"></div>
+        <button type="button" onclick="addPetField()">➕</button>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">회원가입</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        th:onclick="|location.href='@{/member/sign-in}'|"
+                        type="button">취소
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>
