@@ -8,4 +8,6 @@ public interface MemberService {
     JwtToken signIn(SignInDto signInDto);
     MemberDto signUp(SignUpDto signUpDto);
     void signOut(HttpSession session);
+
+    MemberSimpleDto findMemberSimpleDto(String username);
 }

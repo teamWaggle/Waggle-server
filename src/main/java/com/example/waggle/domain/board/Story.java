@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class Story extends Board {
     private String thumbnail;
 
-
     public Story(Long id, Member member,
                  String content, List<Like> likes, List<BoardHashtag> boardHashtags,
                  List<Media> medias, List<Comment> comments, String thumbnail) {

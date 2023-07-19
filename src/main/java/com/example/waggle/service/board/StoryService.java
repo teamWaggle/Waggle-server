@@ -92,25 +92,27 @@ public class StoryService {
 
     //2.1 story 저장(media, hashtag 포함)
     //***중요!
-    public void saveStory(StoryDto saveStoryDto) {
-        Story saveStory = saveStoryDto.toEntity();
-        storyRepository.save(saveStory);
-        Optional<Member> byUsername = memberRepository.findByUsername(saveStoryDto.getUsername());
-        if (byUsername.isEmpty()) {
+    public StoryDto saveStory(StoryDto storyDto) {
+
+        Member member = memberRepository.findByUsername(storyDto.getUsername()).get();
+        Story story = storyRepository.save(storyDto.toEntity(member));
+
+        if (member == null) {
             //error message
         }
         //hashtag 저장
-        if(!saveStoryDto.getHashtags().isEmpty()){
-            for (String hashtagContent : saveStoryDto.getHashtags()) {
-                saveHashtag(saveStory, hashtagContent);
+        if(!storyDto.getHashtags().isEmpty()){
+            for (String hashtagContent : storyDto.getHashtags()) {
+                saveHashtag(story, hashtagContent);
             }
         }
         //media 저장
-        if (!saveStoryDto.getMedias().isEmpty()) {
-            for (String mediaURL : saveStoryDto.getMedias()) {
-                Media buildMedia = Media.builder().url(mediaURL).board(saveStory).build();
+        if (!storyDto.getMedias().isEmpty()) {
+            for (String mediaURL : storyDto.getMedias()) {
+                Media buildMedia = Media.builder().url(mediaURL).board(story).build();
             }
         }
+        return StoryDto.toDto(story);
     }
 
     //2.2 story_comment 저장
