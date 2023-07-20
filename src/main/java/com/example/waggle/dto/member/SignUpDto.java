@@ -2,9 +2,11 @@ package com.example.waggle.dto.member;
 
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
+import com.example.waggle.domain.member.UploadFile;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ public class SignUpDto {
     private String nickname;
     private String address;
     private String phone;
-    private String profileImg;
+    private MultipartFile profileImg;
 
     @Builder.Default
     private List<PetDto> pets = new ArrayList<>();
@@ -39,7 +41,6 @@ public class SignUpDto {
                 .nickname(nickname)
                 .address(address)
                 .phone(phone)
-                .profileImg(profileImg)
                 .roles(roles)
                 .build();
     }

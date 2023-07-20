@@ -1,6 +1,7 @@
 package com.example.waggle.service.member;
 
 import com.example.waggle.component.jwt.JwtToken;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.*;
 import jakarta.servlet.http.HttpSession;
 
@@ -10,4 +11,5 @@ public interface MemberService {
     void signOut(HttpSession session);
 
     MemberSimpleDto findMemberSimpleDto(String username);
+    MemberDto changeProfileImg(String username, UploadFile profileImg);
 }

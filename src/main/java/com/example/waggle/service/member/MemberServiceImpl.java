@@ -4,6 +4,7 @@ import com.example.waggle.component.jwt.JwtToken;
 import com.example.waggle.component.jwt.JwtTokenProvider;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.*;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
@@ -88,5 +89,13 @@ public class MemberServiceImpl implements MemberService {
     public MemberSimpleDto findMemberSimpleDto(String username) {
         Member findMember = memberRepository.findByUsername(username).orElse(null);
         return MemberSimpleDto.toDto(findMember);
+    }
+
+    @Override
+    @Transactional
+    public MemberDto changeProfileImg(String username, UploadFile profileImg) {
+        Member findMember = memberRepository.findByUsername(username).orElse(null);
+        findMember.changeProfileImg(profileImg);
+        return MemberDto.toDto(findMember);
     }
 }
