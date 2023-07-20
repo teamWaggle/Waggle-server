@@ -32,7 +32,7 @@ public class SecurityConfig {
                 // 해당 API에 대해서는 모든 요청을 허가
                 .requestMatchers("/**").permitAll()
 
-                .requestMatchers("/", "/member/**", "/story", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
+//                .requestMatchers("/", "/member/**", "/story", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
                 // USER 권한이 있어야 요청할 수 있음
 //                .requestMatchers("/member/test", "/story/write", "/story/edit").hasRole("USER")
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
