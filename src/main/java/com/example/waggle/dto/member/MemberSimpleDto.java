@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 @Builder
 public class MemberSimpleDto {
     private String username;
-    private String profileImg;
+
+    @Builder.Default
+    private String profileImg = "https://github.com/suddiyo/suddiyo/assets/88311377/4a78ad58-d17a-4e56-9abd-c0848099f9be";
 
     static public MemberSimpleDto toDto(Member member) {
         return MemberSimpleDto.builder()
