@@ -61,7 +61,7 @@ public class TestDataInit {
                     .nickname("hann")
                     .password("wjdgks2972")
                     .phone("1111.2222")
-                    .profileImg("img")
+//                    .profileImg("img")
                     .username("hann123").build();
             memberRepository.save(newMember1);
 
@@ -120,7 +120,7 @@ public class TestDataInit {
                     .nickname("jeonghan")
                     .password("wjdgks2972")
                     .phone("1111.2223")
-                    .profileImg("img")
+//                    .profileImg("img")
                     .username("hann111").build();
             memberRepository.save(newMember1);
 

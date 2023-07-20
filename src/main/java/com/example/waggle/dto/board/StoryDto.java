@@ -2,6 +2,7 @@ package com.example.waggle.dto.board;
 
 import com.example.waggle.domain.board.Story;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.member.UploadFile;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class StoryDto {
     private Long id;
     private String content;
     private String username;
-    private String profileImg;
+    private UploadFile profileImg;
     private int recommend;
     private String thumbnail;
     private LocalDateTime createDate;
@@ -61,7 +62,7 @@ public class StoryDto {
                 .build();
     }
 
-    public StoryDto(String username, String profileImg) {
+    public StoryDto(String username, UploadFile profileImg) {
         this.username = username;
         this.profileImg = profileImg;
     }

@@ -1,6 +1,8 @@
 package com.example.waggle.controller;
 
+import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.JwtToken;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +27,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final FileStore fileStore;
 
     @GetMapping("/sign-in")
     public String signInForm(Model model) {
@@ -33,7 +37,6 @@ public class MemberController {
 
     @PostMapping("/sign-in")
     public String signIn(@ModelAttribute("signInDto") SignInDto signInDto, HttpServletResponse response) {
-        log.info("signInDto = {}", signInDto);
         JwtToken jwtToken = memberService.signIn(signInDto);
 
         // 로그인 성공 시
@@ -54,8 +57,18 @@ public class MemberController {
     }
 
     @PostMapping("/sign-up")
-    public String signUp(@ModelAttribute("signUpDto") SignUpDto signUpDto) {
-        MemberDto signUpMemberDto = memberService.signUp(signUpDto);
+    public String signUp(@ModelAttribute("signUpDto") SignUpDto signUpDto) throws IOException {
+        // 회원가입
+        memberService.signUp(signUpDto);
+
+        // 프로필 사진 설정
+        UploadFile uploadFile = fileStore.storeFile(signUpDto.getProfileImg());
+        if (uploadFile != null) {
+            memberService.changeProfileImg(signUpDto.getUsername(), uploadFile);
+        } else {
+            // TODO 기본 프로필 사진
+
+        }
         return "redirect:sign-in";
     }
 

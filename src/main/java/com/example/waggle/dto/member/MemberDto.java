@@ -1,6 +1,7 @@
 package com.example.waggle.dto.member;
 
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.domain.team.TeamMember;
 import lombok.*;
 
@@ -19,7 +20,7 @@ public class MemberDto {
     private String nickname;
     private String address;
     private String phone;
-    private String profileImg;
+    private UploadFile profileImg;
 
     static public MemberDto toDto(Member member) {
         return MemberDto.builder()

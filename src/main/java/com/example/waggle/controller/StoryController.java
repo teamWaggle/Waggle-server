@@ -6,13 +6,15 @@ import com.example.waggle.dto.board.StorySimpleDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.StoryService;
 import com.example.waggle.service.member.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 @Controller
@@ -78,6 +80,9 @@ public class StoryController {
         Long boardId = storyDto.getId();
         return "redirect:/story/" + username + "/" + boardId;
     }
+
+
+
 
     /**
      * remove
