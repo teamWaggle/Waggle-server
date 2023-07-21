@@ -1,6 +1,6 @@
 package com.example.waggle.dto.board;
 
-import com.example.waggle.domain.board.qna.Question;
+import com.example.waggle.domain.board.boardType.Question;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.example.waggle.repository;
 
-import com.example.waggle.domain.Sos;
+import com.example.waggle.domain.board.boardType.Sos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

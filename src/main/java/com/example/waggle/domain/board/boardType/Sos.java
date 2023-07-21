@@ -1,4 +1,4 @@
-package com.example.waggle.domain;
+package com.example.waggle.domain.board.boardType;
 
 import com.example.waggle.component.BaseEntity;
 import com.example.waggle.domain.member.Member;
