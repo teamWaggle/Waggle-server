@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Recommend {
+public class Recommend extends BaseEntity {
 
 
     @Id
