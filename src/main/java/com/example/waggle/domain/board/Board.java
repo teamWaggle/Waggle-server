@@ -1,11 +1,7 @@
 package com.example.waggle.domain.board;
 
-<<<<<<< HEAD
-=======
+
 import com.example.waggle.component.BaseEntity;
-import com.example.waggle.component.BaseTimeEntity;
-import com.example.waggle.domain.Like;
->>>>>>> develop
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.member.Member;
@@ -64,6 +60,5 @@ public abstract class Board extends BaseEntity {
         this.medias = medias;
         this.comments = comments;
     }
-
 
 }
