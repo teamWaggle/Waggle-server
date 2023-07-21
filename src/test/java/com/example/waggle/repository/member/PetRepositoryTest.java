@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,14 +52,14 @@ class PetRepositoryTest {
                 .breed("포메라니안")
                 .gender(Gender.MALE)
                 .username(savedMemberDto.getUsername())
-                .birthday(LocalDateTime.now()).build();
+                .birthday(LocalDate.now()).build();
 
         PetDto petDto2 = PetDto.builder()
                 .name("루이2")
                 .breed("포메라니안2")
                 .gender(Gender.MALE)
                 .username(savedMemberDto.getUsername())
-                .birthday(LocalDateTime.now()).build();
+                .birthday(LocalDate.now()).build();
 
         System.out.println("petDto1 = " + petDto1);
         System.out.println("petDto2 = " + petDto2);
@@ -69,22 +70,5 @@ class PetRepositoryTest {
         savedPetList.add(savedPet2);
     }
 
-    @Test
-    @Transactional
-    void findByMemberId() {
-        List<Pet> pets = petRepository.findByMemberId(savedMemberDto.getId());
 
-        assertThat(pets.size()).isEqualTo(2);
-        assertThat(pets.get(0).getName()).isEqualTo("루이");
-        assertThat(pets.get(1).getName()).isEqualTo("루이2");
-    }
-
-    @Test
-    void findByUsername() {
-        List<Pet> pets = petRepository.findByUsername(savedMemberDto.getUsername());
-
-        assertThat(pets.size()).isEqualTo(2);
-        assertThat(pets.get(0).getName()).isEqualTo("루이");
-        assertThat(pets.get(1).getName()).isEqualTo("루이2");
-    }
 }

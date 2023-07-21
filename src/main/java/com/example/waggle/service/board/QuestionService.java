@@ -68,7 +68,7 @@ public class QuestionService {
             log.info("can't find user!");
             // error message 출력
         }
-        List<Question> questionsByUsername = questionRepository.findByUsername(username);
+        List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
         List<QuestionSimpleDto> simpleQuestions = new ArrayList<>();
         for (Question question : questionsByUsername) {
             simpleQuestions.add(QuestionSimpleDto.toDto(question));
