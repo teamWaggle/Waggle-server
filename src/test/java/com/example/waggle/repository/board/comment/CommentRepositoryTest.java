@@ -34,7 +34,7 @@ class CommentRepositoryTest {
     @Transactional
     void test() {
 
-        Story testStory = Story.builder().thumbnail("@hann").recommend(1).content("Board test Repository").build();
+        Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
         storyRepository.save(testStory);
 
         Reply reply1 = Reply.builder().content("reply!").build();
@@ -68,7 +68,7 @@ class CommentRepositoryTest {
     @Transactional
     void testMention() {
 
-        Story testStory = Story.builder().thumbnail("@hann").recommend(1).content("Board test Repository").build();
+        Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
         Story save = storyRepository.save(testStory);
 
         assertThat(save.getId()).isEqualTo(1);

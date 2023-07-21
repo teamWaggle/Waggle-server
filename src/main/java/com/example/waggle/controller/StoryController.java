@@ -1,5 +1,6 @@
 package com.example.waggle.controller;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.board.StoryDto;
 import com.example.waggle.dto.board.StorySimpleDto;
 import com.example.waggle.service.board.StoryService;
@@ -17,14 +18,14 @@ import java.util.List;
 @RequestMapping("/story")
 public class StoryController {
 
-    public final StoryService storyService;
+    private final StoryService storyService;
 
     /**
      * view
      */
     @GetMapping
     public String storyMain(Model model) {
-        List<StorySimpleDto> allStory = storyService.findAllStory();
+        List<StorySimpleDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleStories", allStory);
         return "public/main";
     }
@@ -38,8 +39,8 @@ public class StoryController {
     }
 
     @GetMapping("/{username}/{boardId}")
-    public String storySingleForm(@PathVariable Long boardId, Model model) {
-        StoryDto storyByBoardId = storyService.findStoryByBoardId(boardId);
+    public String storySingleForm(@PathVariable String username, @PathVariable Long boardId, Model model) {
+        StoryDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
         model.addAttribute("story", storyByBoardId);
         return "public/story/storySingle";
     }
@@ -55,7 +56,7 @@ public class StoryController {
 
     @PostMapping("/write")
     public String storySingleWrite(@ModelAttribute StoryDto storyDto) {
-        storyService.saveStory(storyDto);
+        storyService.saveStory(SecurityUtil.getCurrentUsername(),storyDto);
         String username = storyDto.getUsername();
         Long boardId = storyDto.getId();
         return "redirect:/story/" + username + "/" + boardId;
@@ -66,14 +67,14 @@ public class StoryController {
      */
     @GetMapping("/edit/{boardId}")
     public String storySingleEditForm(Model model, @PathVariable Long boardId) {
-        StoryDto storyByBoardId = storyService.findStoryByBoardId(boardId);
+        StoryDto storyByBoardId = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         model.addAttribute("story", storyByBoardId);
         return "private/story/storyEdit";
     }
 
     @PostMapping("/edit/{boardId}")
     public String storySingleEdit(@ModelAttribute StoryDto storyDto) {
-        storyService.changeStory(storyDto);
+        storyService.changeStory(SecurityUtil.getCurrentUsername(),storyDto);
         String username = storyDto.getUsername();
         Long boardId = storyDto.getId();
         return "redirect:/story/" + username + "/" + boardId;

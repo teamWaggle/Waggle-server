@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like {
+public class Recommend {
 
     @Id
     @GeneratedValue
@@ -27,14 +27,10 @@ public class Like {
     private Board board;
 
     @Builder
-    Like(Long id, Member member, Board board) {
+    Recommend(Long id, Member member, Board board) {
         this.id = id;
         this.member = member;
-        setBoard(board);
+        this.board = board;
     }
 
-    protected void setBoard(Board board) {
-        this.board = board;
-        board.getLikes().add(this);
-    }
 }

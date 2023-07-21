@@ -1,6 +1,7 @@
 package com.example.waggle.dto.board;
 
 import com.example.waggle.domain.board.qna.Answer;
+import com.example.waggle.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,8 @@ public class AnswerDto {
     private String content;
     private String username;
     private LocalDateTime createDate;
-    private int like;
+    private int recommendCount;
+    private boolean recommendIt;
     
     @Builder.Default
     private List<String> medias = new ArrayList<>();
@@ -32,13 +34,14 @@ public class AnswerDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public AnswerDto toDto(Answer answer) {
+    static public AnswerDto toDto(Answer answer, int count, boolean recommendIt) {
         return AnswerDto.builder()
                 .id(answer.getId())
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
                 .createDate(answer.getCreatedDate())
-                .like(answer.getLikes().size())
+                .recommendCount(count)
+                .recommendIt(recommendIt)
                 .hashtags(answer.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(answer.getMedias().stream()
@@ -48,7 +51,10 @@ public class AnswerDto {
                 .build();
     }
 
-    public Answer toEntity() {
-        return Answer.builder().content(content).build();
+    public Answer toEntity(Member member) {
+        return Answer.builder()
+                .content(content)
+                .member(member)
+                .build();
     }
 }

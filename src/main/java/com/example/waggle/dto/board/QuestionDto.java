@@ -1,6 +1,7 @@
 package com.example.waggle.dto.board;
 
 import com.example.waggle.domain.board.qna.Question;
+import com.example.waggle.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +23,9 @@ public class QuestionDto {
     private String username;
     private String title;
     private LocalDateTime createDate;
-    private int likeCount;
+    private int recommendCount;
+    private boolean recommendIt;
 
-    @Builder.Default
-    private List<AnswerDto> answers = new ArrayList<>();
     @Builder.Default
     private List<String> medias = new ArrayList<>();
     @Builder.Default
@@ -35,16 +35,15 @@ public class QuestionDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public QuestionDto toDto(Question question) {
+    static public QuestionDto toDto(Question question, int count, boolean recommendIt) {
         return QuestionDto.builder()
                 .id(question.getId())
                 .content(question.getContent())
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())
                 .createDate(question.getCreatedDate())
-                .likeCount(question.getLikes().size())
-                .answers(question.getAnswers().stream()
-                        .map(a -> AnswerDto.toDto(a)).collect(Collectors.toList()))
+                .recommendCount(count)
+                .recommendIt(recommendIt)
                 .hashtags(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(question.getMedias().stream()
@@ -54,10 +53,11 @@ public class QuestionDto {
                 .build();
     }
 
-    public Question toEntity() {
+    public Question toEntity(Member member) {
         return Question.builder()
                 .title(title)
                 .content(content)
+                .member(member)
                 .build();
     }
 }
