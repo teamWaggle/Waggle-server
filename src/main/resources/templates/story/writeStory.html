@@ -52,7 +52,7 @@
                     <div class="row align-items-center">
                         <div class="col-auto" style="padding-right: 0;">
                             <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
-                                <img th:src="|/images/${storyDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
+                                <img th:src="|/images/${profileImg}|" alt="프로필 사진"
                                      style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                         </div>
@@ -70,7 +70,7 @@
             </div>
 
             <input type="hidden" name="username" th:value="*{username}">
-            <input type="hidden" name="profileImg" th:value="*{profileImg}">
+            <input type="hidden" name="profileImg" th:value="${profileImg}">
 
             <div class="col-md-8 right-column">
             <textarea th:field="*{content}" name="content" rows="10" class="form-control" placeholder="내용을 입력해주세요."

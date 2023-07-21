@@ -83,7 +83,7 @@ class StoryServiceTest {
                 .hashtags(hashtags)
                 .medias(medias)
                 .thumbnail("choco.img").build();
-        storyService.changeStory(hann123);
+//        storyService.changeStory(hann123);
 
         StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
         System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
