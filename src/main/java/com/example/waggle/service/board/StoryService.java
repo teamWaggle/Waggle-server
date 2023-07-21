@@ -162,29 +162,35 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public void changeStory(StoryDto storyDto) {
-        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
+    public StoryDto changeStory(StoryDto storyDto, Long boardId) {
+        Optional<Story> storyByBoardId = storyRepository.findById(boardId);
+
         if (storyByBoardId.isPresent()) {
-            storyByBoardId.get().changeStory(storyDto.getContent(),storyDto.getThumbnail());
+            Story story = storyByBoardId.get();
+
+            story.changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
             //delete(media)
-            storyByBoardId.get().getMedias().clear();
+            story.getMedias().clear();
 
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
-                Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
+                Media board = Media.builder().url(media).board(story).build();
             }
 
             //delete connecting relate (boardHashtag)
-            storyByBoardId.get().getBoardHashtags().clear();
+            story.getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : storyDto.getHashtags()) {
-                saveHashtag(storyByBoardId.get(), hashtag);
+                saveHashtag(story, hashtag);
             }
-        }
 
+            return StoryDto.toDto(story);
+
+        }
+        return null;
     }
 
 

@@ -21,7 +21,6 @@ public class StoryDto {
     private Long id;
     private String content;
     private String username;
-    private UploadFile profileImg;
     private int recommend;
     private String thumbnail;
     private LocalDateTime createDate;
@@ -40,7 +39,6 @@ public class StoryDto {
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
-                .profileImg(story.getMember().getProfileImg())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
                 .likeCount(story.getLikes().size())
@@ -62,8 +60,7 @@ public class StoryDto {
                 .build();
     }
 
-    public StoryDto(String username, UploadFile profileImg) {
+    public StoryDto(String username) {
         this.username = username;
-        this.profileImg = profileImg;
     }
 }
