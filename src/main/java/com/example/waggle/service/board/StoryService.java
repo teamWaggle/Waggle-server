@@ -68,7 +68,7 @@ public class StoryService {
             log.info("can't find user!");
             // error message 출력
         }
-        List<Story> storyByUsername = storyRepository.findByUsername(username);
+        List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
         List<StorySimpleDto> simpleStories = new ArrayList<>();
         for (Story story : storyByUsername) {
             simpleStories.add(StorySimpleDto.toDto(story));
