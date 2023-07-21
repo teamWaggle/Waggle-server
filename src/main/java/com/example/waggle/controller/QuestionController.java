@@ -1,5 +1,6 @@
 package com.example.waggle.controller;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.board.QuestionDto;
 import com.example.waggle.dto.board.QuestionSimpleDto;
 import com.example.waggle.service.board.QuestionService;
@@ -25,15 +26,16 @@ public class QuestionController {
      */
     @GetMapping
     public String questionMain(Model model) {
-        List<QuestionSimpleDto> allQuestion = questionService.findAllQuestion();
+        List<QuestionSimpleDto> allQuestion = questionService.findAllQuestion(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleQuestions", allQuestion);
         return "public/question/questionMain";
     }
 
     @GetMapping("/{username}/{title}/{boardId}")
-    public String questionSingleForm(@PathVariable Long boardId,
+    public String questionSingleForm(@PathVariable String username,
+                                     @PathVariable Long boardId,
                                      Model model) {
-        QuestionDto questionByBoardId = questionService.findQuestionByBoardId(boardId);
+        QuestionDto questionByBoardId = questionService.findQuestionByBoardId(username, boardId);
         model.addAttribute("question", questionByBoardId);
         return "public/question/questionSingle";
     }
@@ -49,7 +51,7 @@ public class QuestionController {
 
     @PostMapping("/write")
     public String questionSingleWrite(@ModelAttribute QuestionDto questionDto) {
-        questionService.saveQuestion(questionDto);
+        questionService.saveQuestion(SecurityUtil.getCurrentUsername(), questionDto);
         String username = questionDto.getUsername();
         Long boardId = questionDto.getId();
         return "redirect:/question/" + username + "/" + boardId;
@@ -60,7 +62,7 @@ public class QuestionController {
      */
     @GetMapping("/edit/{title}/{boardId}")
     public String questionSingleEditForm(Model model, @PathVariable Long boardId) {
-        QuestionDto questionDto = questionService.findQuestionByBoardId(boardId);
+        QuestionDto questionDto = questionService.findQuestionByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         model.addAttribute("question", questionDto);
         return "private/question/questionEdit";
     }
