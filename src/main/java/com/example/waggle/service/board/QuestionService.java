@@ -6,8 +6,8 @@ import com.example.waggle.domain.board.comment.MemberMention;
 import com.example.waggle.domain.board.comment.Reply;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.domain.board.qna.Answer;
-import com.example.waggle.domain.board.qna.Question;
+import com.example.waggle.domain.board.boardType.Answer;
+import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.*;
 import com.example.waggle.dto.member.MemberDto;
@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

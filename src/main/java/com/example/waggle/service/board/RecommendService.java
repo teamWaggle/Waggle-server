@@ -1,10 +1,10 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.domain.Recommend;
+import com.example.waggle.domain.board.Recommend;
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.Story;
-import com.example.waggle.domain.board.qna.Answer;
-import com.example.waggle.domain.board.qna.Question;
+import com.example.waggle.domain.board.boardType.Story;
+import com.example.waggle.domain.board.boardType.Answer;
+import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;

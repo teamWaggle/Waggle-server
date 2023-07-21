@@ -51,8 +51,8 @@ public abstract class Board extends BaseEntity {
     protected List<Comment> comments = new ArrayList<>();
 
 
-    public Board(Long id, Member member, LocalDateTime createdDate, String content,
-                 List<BoardHashtag> boardHashtags, List<Media> medias, List<Comment> comments) {
+    public Board(Long id, Member member, String content, List<BoardHashtag> boardHashtags,
+                 List<Media> medias, List<Comment> comments) {
         this.id = id;
         this.member = member;
         this.content = content;

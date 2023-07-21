@@ -1,35 +1,15 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.domain.board.qna.Question;
-import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.QuestionDto;
-import com.example.waggle.dto.board.QuestionSimpleDto;
-import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.boardtype.QuestionRepository;
-import com.example.waggle.repository.board.boardtype.StoryRepository;
-import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.service.member.MemberService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Service;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class QuestionServiceTest {

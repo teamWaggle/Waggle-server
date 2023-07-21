@@ -1,23 +1,16 @@
 package com.example.waggle.repository.board.boardtype;
 
-import com.example.waggle.domain.board.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.domain.board.qna.Answer;
-import com.example.waggle.domain.board.qna.Question;
-import com.example.waggle.repository.board.HashtagRepository;
+import com.example.waggle.domain.board.boardType.Answer;
+import com.example.waggle.domain.board.boardType.Question;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class QuestionRepositoryTest {

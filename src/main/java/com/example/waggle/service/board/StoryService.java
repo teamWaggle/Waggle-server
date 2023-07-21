@@ -1,7 +1,7 @@
 package com.example.waggle.service.board;
 
 import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.Story;
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.comment.MemberMention;
 import com.example.waggle.domain.board.comment.Reply;
