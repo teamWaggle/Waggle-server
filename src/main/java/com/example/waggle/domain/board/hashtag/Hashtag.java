@@ -1,9 +1,11 @@
 package com.example.waggle.domain.board.hashtag;
 
+import com.example.waggle.component.BaseEntity;
+import com.example.waggle.component.BaseTimeEntity;
 import jakarta.persistence.*;
 
 import lombok.*;
-
+import lombok.experimental.SuperBuilder;
 
 
 import java.util.ArrayList;
@@ -11,10 +13,11 @@ import java.util.List;
 
 @Entity
 @Getter
+@SuperBuilder
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Hashtag {
+public class Hashtag extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "hashtag_id")
     private Long id;

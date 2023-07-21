@@ -1,15 +1,18 @@
 package com.example.waggle.domain.board;
 
+import com.example.waggle.component.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Media {
+public class Media extends BaseTimeEntity {
     @Id @GeneratedValue
     @Column(name = "media_id")
     private Long id;

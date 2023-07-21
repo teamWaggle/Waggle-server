@@ -1,23 +1,26 @@
 package com.example.waggle.domain.member;
 
-import com.example.waggle.domain.team.ScheduleMember;
+import com.example.waggle.component.BaseEntity;
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.dto.member.PetDto;
-import com.example.waggle.dto.member.ScheduleDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Pet {
+public class Pet extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "pet_id")
     private Long id;
@@ -27,9 +30,9 @@ public class Pet {
     private String breed;
 
     @Enumerated(EnumType.STRING)
-    private Sex sex;
+    private Gender gender;
 
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 
     private String profileImg;
 
@@ -40,7 +43,7 @@ public class Pet {
     public void update(PetDto petDto) {
         this.name = petDto.getName();
         this.breed = petDto.getBreed();
-        this.sex = petDto.getSex();
+        this.gender = petDto.getGender();
         this.birthday = petDto.getBirthday();
         this.profileImg = petDto.getProfileImg();
     }
