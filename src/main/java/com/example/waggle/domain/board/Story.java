@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board;
 
+import com.example.waggle.domain.Like;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.comment.Comment;
@@ -30,10 +31,10 @@ public class Story extends Board {
     private String thumbnail;
 
 
-    public Story(Long id, Member member, LocalDateTime createdDate,
-          String content, List<BoardHashtag> boardHashtags,
-          List<Media> medias, List<Comment> comments, String thumbnail) {
-        super(id, member, createdDate, content,boardHashtags,medias, comments);
+    public Story(Long id, Member member,
+                 String content, List<Like> likes, List<BoardHashtag> boardHashtags,
+                 List<Media> medias, List<Comment> comments, String thumbnail) {
+        super(id, member, content, likes, boardHashtags, medias, comments);
         this.thumbnail = thumbnail;
     }
 

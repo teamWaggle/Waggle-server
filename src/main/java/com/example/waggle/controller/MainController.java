@@ -14,6 +14,6 @@ public class MainController {
 
     @GetMapping("/")
     public String home() {
-        return "redirect:/story";
+        return "main";
     }
 }

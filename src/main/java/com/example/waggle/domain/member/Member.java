@@ -1,10 +1,13 @@
 package com.example.waggle.domain.member;
 
 
+import com.example.waggle.component.BaseEntity;
+import com.example.waggle.component.BaseTimeEntity;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.TeamMember;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +21,9 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(of = "id")
-public class Member implements UserDetails {
+public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
@@ -39,9 +42,23 @@ public class Member implements UserDetails {
 
     private String profileImg;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<Pet> pets = new ArrayList<>();
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+
+
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
+    }
+
+
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
