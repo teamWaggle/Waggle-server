@@ -27,7 +27,7 @@ public class StoryController {
     public String storyMain(Model model) {
         List<StorySimpleDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleStories", allStory);
-        return "public/main";
+        return "main";
     }
 
     @GetMapping("/{username}")
@@ -35,14 +35,14 @@ public class StoryController {
                                    Model model) {
         List<StorySimpleDto> allStoryByMember = storyService.findAllStoryByMember(username);
         model.addAttribute("simpleStories", allStoryByMember);
-        return "private/storyView";
+        return "story/memberStory";
     }
 
     @GetMapping("/{username}/{boardId}")
     public String storySingleForm(@PathVariable String username, @PathVariable Long boardId, Model model) {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
         model.addAttribute("story", storyByBoardId);
-        return "public/story/storySingle";
+        return "story/story";
     }
 
     /**
@@ -51,7 +51,7 @@ public class StoryController {
     @GetMapping("/write")
     public String storySingleWriteForm(Model model) {
         model.addAttribute("story", new StoryDto());
-        return "/private/story/storyWrite";
+        return "story/addStory";
     }
 
     @PostMapping("/write")
@@ -69,7 +69,7 @@ public class StoryController {
     public String storySingleEditForm(Model model, @PathVariable Long boardId) {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         model.addAttribute("story", storyByBoardId);
-        return "private/story/storyEdit";
+        return "story/editStory";
     }
 
     @PostMapping("/edit/{boardId}")
