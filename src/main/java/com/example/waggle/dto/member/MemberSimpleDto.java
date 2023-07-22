@@ -1,6 +1,7 @@
 package com.example.waggle.dto.member;
 
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.domain.team.TeamMember;
 import lombok.*;
 
@@ -12,32 +13,14 @@ import java.util.stream.Collectors;
 @ToString
 @AllArgsConstructor
 @Builder
-public class MemberDto {
-
-    private Long id;
+public class MemberSimpleDto {
     private String username;
-    private String nickname;
-    private String address;
-    private String phone;
-    private String profileImg;
+    private UploadFile profileImg;
 
-    static public MemberDto toDto(Member member) {
-        return MemberDto.builder()
-                .id(member.getId())
+    static public MemberSimpleDto toDto(Member member) {
+
+        return MemberSimpleDto.builder()
                 .username(member.getUsername())
-                .nickname(member.getNickname())
-                .address(member.getAddress())
-                .phone(member.getPhone())
                 .profileImg(member.getProfileImg()).build();
-    }
-
-    public Member toEntity() {
-        return Member.builder()
-                .id(id)
-                .username(username)
-                .nickname(nickname)
-                .address(address)
-                .phone(phone)
-                .profileImg(profileImg).build();
     }
 }

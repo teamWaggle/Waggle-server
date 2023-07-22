@@ -1,14 +1,11 @@
-package com.example.waggle.component;
+package com.example.waggle.component.auditing;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Super;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,13 +17,13 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class BaseEntity extends BaseTimeEntity{
+public class BaseTimeEntity {
 
-    @CreatedBy
+    @CreatedDate
     @Column(updatable = false)
-    private String createdBy;
+    private LocalDateTime createdDate;
 
-    @LastModifiedBy
-    private String lastModifiedBy;
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
 }

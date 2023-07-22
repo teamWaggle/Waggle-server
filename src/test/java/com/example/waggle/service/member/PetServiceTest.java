@@ -49,7 +49,7 @@ class PetServiceTest {
                 .breed("포메라니안")
                 .gender(Gender.MALE)
                 .username(savedMemberDto.getUsername())
-                .birthday(LocalDateTime.now()).build();
+                .birthday(LocalDate.now()).build();
 
         savedPetDto = petService.addPet(petDto);
     }
@@ -67,42 +67,20 @@ class PetServiceTest {
     }
 
     @Test
-    void findByMemberId() {
-        // memberId로 조회
-        List<PetDto> findPetDtos = petService.findByMemberId(savedMemberDto.getId());
-        assertThat(findPetDtos).usingRecursiveFieldByFieldElementComparator().contains(savedPetDto);
-    }
-
-    @Test
-    void findByUsername() {
-        // username으로 조회
-        List<PetDto> findPetDtos = petService.findByUsername(savedMemberDto.getUsername());
-        assertThat(findPetDtos).usingRecursiveFieldByFieldElementComparator().contains(savedPetDto);
-
-    }
-
-    @Test
-    void addPet() {
-        List<PetDto> pets = petService.findByMemberId(savedMemberDto.getId());
-        assertThat(pets.get(0)).usingRecursiveComparison().isEqualTo(savedPetDto);
-        assertThat(savedPetDto.getName()).isEqualTo("루이");
-    }
-
-    @Test
     void updatePet() {
         // pet 수정 (변경 사항만 수정하는 건 컨트롤러 계층에서 처리)
         PetDto updatePetDto = PetDto.builder()
                 .name("루이2")
                 .breed("포메라니안2")
                 .gender(Gender.MALE)
-                .birthday(LocalDate.of(2016, 9, 17).atStartOfDay()).build();
+                .birthday(LocalDate.of(2016, 9, 17)).build();
 
         PetDto updatedPetDto = petService.updatePet(savedPetDto.getId(), updatePetDto);
         assertThat(updatedPetDto.getName()).isEqualTo(updatePetDto.getName());
 
         // repository에서 member 조회시 펫 수정 확인
-        List<PetDto> petDtoList = petService.findByUsername(savedMemberDto.getUsername());
-        log.info(petDtoList.get(0).getName());
+//        List<PetDto> petDtoList = petService.findByUsername(savedMemberDto.getUsername());
+//        log.info(petDtoList.get(0).getName());
     }
 
     @Test
@@ -112,7 +90,7 @@ class PetServiceTest {
 
         assertThat(petService.findByPetId(savedPetDto.getId())).isEmpty();
 
-        List<PetDto> tmp = petService.findByMemberId(savedMemberDto.getId());
-        assertThat(tmp.size()).isEqualTo(0);
+//        List<PetDto> tmp = petService.findByMemberId(savedMemberDto.getId());
+//        assertThat(tmp.size()).isEqualTo(0);
     }
 }

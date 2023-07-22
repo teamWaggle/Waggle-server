@@ -1,16 +1,14 @@
 package com.example.waggle.domain.member;
 
 
-import com.example.waggle.component.BaseEntity;
-import com.example.waggle.component.BaseTimeEntity;
-import com.example.waggle.domain.team.ScheduleMember;
-import com.example.waggle.domain.team.TeamMember;
+import com.example.waggle.component.auditing.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +38,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String phone;
 
-    private String profileImg;
+    @Embedded
+    private UploadFile profileImg;
 
     @Builder.Default
     @OneToMany(mappedBy = "member")
@@ -57,6 +56,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
     }
 
 
+
+    public void changeProfileImg(UploadFile profileImg) {
+        this.profileImg = profileImg;
+    }
 
 
     @Override

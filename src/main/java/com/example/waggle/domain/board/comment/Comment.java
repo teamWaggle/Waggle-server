@@ -1,7 +1,6 @@
 package com.example.waggle.domain.board.comment;
 
-import com.example.waggle.component.BaseEntity;
-import com.example.waggle.component.BaseTimeEntity;
+import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
@@ -10,9 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
