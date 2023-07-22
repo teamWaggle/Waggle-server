@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board;
 
-import com.example.waggle.component.BaseTimeEntity;
+import com.example.waggle.component.auditing.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

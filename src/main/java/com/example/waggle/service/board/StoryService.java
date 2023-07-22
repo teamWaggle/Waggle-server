@@ -68,7 +68,7 @@ public class StoryService {
             log.info("can't find user!");
             // error message 출력
         }
-        List<Story> storyByUsername = storyRepository.findByUsername(username);
+        List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
         List<StorySimpleDto> simpleStories = new ArrayList<>();
         for (Story story : storyByUsername) {
             simpleStories.add(StorySimpleDto.toDto(story));
@@ -92,25 +92,27 @@ public class StoryService {
 
     //2.1 story 저장(media, hashtag 포함)
     //***중요!
-    public void saveStory(StoryDto saveStoryDto) {
-        Story saveStory = saveStoryDto.toEntity();
-        storyRepository.save(saveStory);
-        Optional<Member> byUsername = memberRepository.findByUsername(saveStoryDto.getUsername());
-        if (byUsername.isEmpty()) {
+    public StoryDto saveStory(StoryDto storyDto) {
+
+        Member member = memberRepository.findByUsername(storyDto.getUsername()).get();
+        Story story = storyRepository.save(storyDto.toEntity(member));
+
+        if (member == null) {
             //error message
         }
         //hashtag 저장
-        if(!saveStoryDto.getHashtags().isEmpty()){
-            for (String hashtagContent : saveStoryDto.getHashtags()) {
-                saveHashtag(saveStory, hashtagContent);
+        if(!storyDto.getHashtags().isEmpty()){
+            for (String hashtagContent : storyDto.getHashtags()) {
+                saveHashtag(story, hashtagContent);
             }
         }
         //media 저장
-        if (!saveStoryDto.getMedias().isEmpty()) {
-            for (String mediaURL : saveStoryDto.getMedias()) {
-                Media buildMedia = Media.builder().url(mediaURL).board(saveStory).build();
+        if (!storyDto.getMedias().isEmpty()) {
+            for (String mediaURL : storyDto.getMedias()) {
+                Media buildMedia = Media.builder().url(mediaURL).board(story).build();
             }
         }
+        return StoryDto.toDto(story);
     }
 
     //2.2 story_comment 저장
@@ -160,29 +162,35 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public void changeStory(StoryDto storyDto) {
-        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
+    public StoryDto changeStory(StoryDto storyDto, Long boardId) {
+        Optional<Story> storyByBoardId = storyRepository.findById(boardId);
+
         if (storyByBoardId.isPresent()) {
-            storyByBoardId.get().changeStory(storyDto.getContent(),storyDto.getThumbnail());
+            Story story = storyByBoardId.get();
+
+            story.changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
             //delete(media)
-            storyByBoardId.get().getMedias().clear();
+            story.getMedias().clear();
 
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
-                Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
+                Media board = Media.builder().url(media).board(story).build();
             }
 
             //delete connecting relate (boardHashtag)
-            storyByBoardId.get().getBoardHashtags().clear();
+            story.getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : storyDto.getHashtags()) {
-                saveHashtag(storyByBoardId.get(), hashtag);
+                saveHashtag(story, hashtag);
             }
-        }
 
+            return StoryDto.toDto(story);
+
+        }
+        return null;
     }
 
 

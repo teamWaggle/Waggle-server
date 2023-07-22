@@ -1,7 +1,6 @@
 package com.example.waggle.domain.member;
 
-import com.example.waggle.component.BaseEntity;
-import com.example.waggle.component.BaseTimeEntity;
+import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.dto.member.PetDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,7 +11,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

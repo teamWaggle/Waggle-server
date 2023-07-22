@@ -41,9 +41,9 @@
 <div class="container">
 
     <div class="py-5 text-center">
-        <h2>스토리 수정</h2>
+        <h2>스토리 작성</h2>
     </div>
-    <form th:action="@{/story/edit/{boardId}(boardId=${storyDto.getId()})}" th:object="${storyDto}" method="post">
+    <form th:action="@{/story/write}" th:object="${storyDto}" method="post">
         <div class="row">
             <div class="col-md-4 left-column">
                 <div class="profile-section">
