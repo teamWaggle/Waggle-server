@@ -1,6 +1,5 @@
-package com.example.waggle.domain.board.qna;
+package com.example.waggle.domain.board.boardType;
 
-import com.example.waggle.domain.Like;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.comment.Comment;
@@ -10,7 +9,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +26,9 @@ public class Question extends Board {
     private List<Answer> answers = new ArrayList<>();
 
     public Question(Long id, Member member,
-                    String content, List<Like> likes, String title, List<BoardHashtag> boardHashtags,
+                    String content, String title, List<BoardHashtag> boardHashtags,
                     List<Media> medias, List<Comment> comments, List<Answer> answers) {
-        super(id, member, content, likes, boardHashtags,medias, comments);
+        super(id, member, content, boardHashtags,medias, comments);
         this.title = title;
         if (answers != null) {
             for (Answer answer : answers) {

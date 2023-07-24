@@ -1,6 +1,6 @@
 package com.example.waggle.dto.board;
 
-import com.example.waggle.domain.board.Story;
+import com.example.waggle.domain.board.boardType.Story;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,17 +21,19 @@ public class StorySimpleDto {
     private String username;
     private String thumbnail;
     private LocalDateTime createDate;
-    private int likeCount;
+    private int recommendCount;
+    private boolean recommendIt;
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public StorySimpleDto toDto(Story story) {
+    static public StorySimpleDto toDto(Story story, int count, boolean recommendIt ) {
         return StorySimpleDto.builder()
                 .storyId(story.getId())
                 .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
-                .likeCount(story.getLikes().size())
+                .recommendCount(count)
+                .recommendIt(recommendIt)
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
