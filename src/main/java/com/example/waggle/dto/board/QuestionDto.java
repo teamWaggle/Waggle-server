@@ -60,4 +60,8 @@ public class QuestionDto {
                 .member(member)
                 .build();
     }
+
+    public QuestionDto(String username) {
+        this.username = username;
+    }
 }

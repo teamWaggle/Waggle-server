@@ -73,7 +73,13 @@ public class StoryService {
     //특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
     @Transactional(readOnly = true)
     public List<StorySimpleDto> findAllStoryByMember(String username) {
-        List<Story> storyByUsername = storyRepository.findByUsername(username);
+        Optional<Member> MemberByUsername = memberRepository.findByUsername(username);
+        if (MemberByUsername.isEmpty()) {
+            log.info("can't find user!");
+            // error message 출력
+        }
+        List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
+
         List<StorySimpleDto> simpleStories = new ArrayList<>();
         for (Story story : storyByUsername) {
             boolean cantLike = false;
@@ -106,7 +112,7 @@ public class StoryService {
 
     //2.1 story 저장(media, hashtag 포함)
     //***중요!
-    public void saveStory(String username, StoryDto saveStoryDto) {
+    public Long saveStory(String username, StoryDto saveStoryDto) {
         //member setting
         Member signInMember = getMember(username);
 
@@ -126,6 +132,7 @@ public class StoryService {
                 Media buildMedia = Media.builder().url(mediaURL).board(saveStory).build();
             }
         }
+        return saveStory.getId();
     }
 
     //2.2 story_comment 저장
@@ -175,30 +182,37 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public void changeStory(String username, StoryDto storyDto) {
-        //check same user
-        if (username.equals(storyDto.getUsername())) {
-            Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
-            if (storyByBoardId.isPresent()) {
-                storyByBoardId.get().changeStory(storyDto.getContent(),storyDto.getThumbnail());
+    public String changeStory(StoryDto storyDto, Long boardId) {
 
-                //delete(media)
-                storyByBoardId.get().getMedias().clear();
+        Optional<Story> storyByBoardId = storyRepository.findById(boardId);
 
-                //newly insert data(media)
-                for (String media : storyDto.getMedias()) {
-                    Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
-                }
+        if (storyByBoardId.isPresent()) {
+            Story story = storyByBoardId.get();
 
-                //delete connecting relate (boardHashtag)
-                storyByBoardId.get().getBoardHashtags().clear();
+            story.changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
-                //newly insert data(hashtag, boardHashtag)
-                for (String hashtag : storyDto.getHashtags()) {
-                    saveHashtag(storyByBoardId.get(), hashtag);
-                }
+            //delete(media)
+            story.getMedias().clear();
+            //newly insert data(media)
+            for (String media : storyDto.getMedias()) {
+                Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
             }
+
+            //newly insert data(media)
+            for (String media : storyDto.getMedias()) {
+                Media board = Media.builder().url(media).board(story).build();
+            }
+
+            //delete connecting relate (boardHashtag)
+            story.getBoardHashtags().clear();
+
+            //newly insert data(hashtag, boardHashtag)
+            for (String hashtag : storyDto.getHashtags()) {
+                saveHashtag(story, hashtag);
+            }
+            return story.getMember().getUsername();
         }
+        return null;
     }
 
 
@@ -232,7 +246,6 @@ public class StoryService {
     }
 
     //4. ===========삭제(취소)===========
-
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryDto storyDto) {

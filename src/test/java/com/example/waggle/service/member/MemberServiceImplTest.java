@@ -2,7 +2,6 @@ package com.example.waggle.service.member;
 
 import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.component.jwt.JwtToken;
-import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
@@ -18,10 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
-import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.*;
 

@@ -68,7 +68,8 @@ public class QuestionService {
     //1.1.2 회원 정보에 따른 전체 조회
     @Transactional(readOnly = true)
     public List<QuestionSimpleDto> findAllQuestionByMember(String username) {
-        List<Question> questionsByUsername = questionRepository.findByUsername(username);
+        List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
+
         List<QuestionSimpleDto> simpleQuestions = new ArrayList<>();
         for (Question question : questionsByUsername) {
             boolean cantRecommendIt = false;
@@ -248,8 +249,8 @@ public class QuestionService {
     //3. ===========수정===========
 
     //3.1 question 수정(media, hashtag 포함)
-    public void changeQuestion(QuestionDto questionDto) {
-        Optional<Question> questionById = questionRepository.findById(questionDto.getId());
+    public String changeQuestion(QuestionDto questionDto, Long boardId) {
+        Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isPresent()) {
             questionById.get().changeQuestion(questionDto.getContent(),questionDto.getTitle());
 
@@ -268,7 +269,9 @@ public class QuestionService {
             for (String hashtag : questionDto.getHashtags()) {
                 saveHashtagInQuestion(questionById.get(), hashtag);
             }
+            return questionById.get().getMember().getUsername();
         }
+        return null;
     }
     //3.2 answer 수정(media, hashtag 포함)
     public void changeAnswer(AnswerDto answerDto) {

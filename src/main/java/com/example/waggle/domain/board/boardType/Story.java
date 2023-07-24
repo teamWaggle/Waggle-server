@@ -29,7 +29,6 @@ import java.util.List;
 public class Story extends Board {
     private String thumbnail;
 
-
     public Story(Long id, Member member,
                  String content, List<BoardHashtag> boardHashtags,
                  List<Media> medias, List<Comment> comments, String thumbnail) {
