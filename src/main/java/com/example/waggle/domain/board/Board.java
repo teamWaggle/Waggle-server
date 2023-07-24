@@ -1,7 +1,12 @@
 package com.example.waggle.domain.board;
 
+<<<<<<< HEAD
 
 import com.example.waggle.component.BaseEntity;
+=======
+import com.example.waggle.component.auditing.BaseEntity;
+import com.example.waggle.domain.Like;
+>>>>>>> develop
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.member.Member;
@@ -12,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

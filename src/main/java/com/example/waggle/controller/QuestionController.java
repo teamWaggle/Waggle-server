@@ -3,9 +3,10 @@ package com.example.waggle.controller;
 import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.board.QuestionDto;
 import com.example.waggle.dto.board.QuestionSimpleDto;
-import com.example.waggle.dto.board.StorySimpleDto;
+import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.QuestionService;
 
+import com.example.waggle.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,8 @@ import java.util.List;
 @RequestMapping("/question")
 public class QuestionController {
 
-    public final QuestionService questionService;
+    private final QuestionService questionService;
+    private final MemberService memberService;
 
     /**
      * view
@@ -33,7 +35,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{username}")
-    public String questionPrivateMain(Model model) {
+    public String memberQuestion(Model model) {
         List<QuestionSimpleDto> allQuestionByMember = questionService
                 .findAllQuestionByMember(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleQuestions", allQuestionByMember);
@@ -41,7 +43,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{username}/{title}/{boardId}")
-    public String questionSingleForm(@PathVariable String username,
+    public String singleQuestionForm(@PathVariable String username,
                                      @PathVariable Long boardId,
                                      Model model) {
         QuestionDto questionByBoardId = questionService.findQuestionByBoardId(username, boardId);
@@ -53,13 +55,18 @@ public class QuestionController {
      * write
      */
     @GetMapping("/write")
-    public String questionSingleWriteForm(Model model) {
-        model.addAttribute("question", new QuestionDto());
-        return "question/addQuestion";
+    public String singleQuestionWriteForm(Model model) {
+        String username = SecurityUtil.getCurrentUsername();
+        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
+        QuestionDto questionDto = new QuestionDto(username);
+
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
+        model.addAttribute("question", questionDto);
+        return "question/writeQuestion";
     }
 
     @PostMapping("/write")
-    public String questionSingleWrite(@ModelAttribute QuestionDto questionDto) {
+    public String singleQuestionWrite(@ModelAttribute QuestionDto questionDto) {
         Long questionId = questionService.saveQuestion(SecurityUtil.getCurrentUsername(), questionDto);
         String username = questionDto.getUsername();
         String title = questionDto.getTitle();
@@ -71,17 +78,20 @@ public class QuestionController {
      */
     @GetMapping("/edit/{title}/{boardId}")
     public String questionSingleEditForm(Model model, @PathVariable Long boardId) {
-        QuestionDto questionDto = questionService.findQuestionByBoardId(SecurityUtil.getCurrentUsername(), boardId);
+        QuestionDto questionDto = questionService
+                .findQuestionByBoardId(SecurityUtil.getCurrentUsername(), boardId);
+        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(questionDto.getUsername());
+
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
         model.addAttribute("question", questionDto);
         return "question/editQuestion";
     }
 
     @PostMapping("/edit/{title}/{boardId}")
-    public String questionSingleEdit(@ModelAttribute QuestionDto questionDto) {
-        questionService.changeQuestion(questionDto);
-        String username = questionDto.getUsername();
+    public String singleQuestionEdit(@ModelAttribute QuestionDto questionDto,
+                                     @PathVariable Long boardId) {
+        String username = questionService.changeQuestion(questionDto, boardId);
         String title = questionDto.getTitle();
-        Long boardId = questionDto.getId();
         return "redirect:/question/" + username + "/" + title + "/" + boardId;
     }
 

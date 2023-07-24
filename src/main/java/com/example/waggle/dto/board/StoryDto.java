@@ -2,10 +2,8 @@ package com.example.waggle.dto.board;
 
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.waggle.domain.member.UploadFile;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,9 +11,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class StoryDto {
 
     private Long id;
@@ -55,9 +55,14 @@ public class StoryDto {
     //스토리 안의 다른 엔티티는 개별로 저장, 하지만 메서드를 통해 연관관계를 맺어준다.
     public Story toEntity(Member member) {
         return Story.builder()
+                .member(member)
                 .content(content)
                 .thumbnail(thumbnail)
                 .member(member)
                 .build();
+    }
+
+    public StoryDto(String username) {
+        this.username = username;
     }
 }

@@ -27,18 +27,6 @@ public class PetService {
         return findPet.map(PetDto::toDto);
     }
 
-    public List<PetDto> findByMemberId(Long memberId) {
-        List<Pet> petList = petRepository.findByMemberId(memberId);
-        return petList.stream().map(PetDto::toDto).collect(Collectors.toList());
-    }
-
-    public List<PetDto> findByUsername(String username) {
-        List<Pet> petList = petRepository.findByUsername(username);
-        return petList.stream().map(PetDto::toDto).collect(Collectors.toList());
-    }
-
-
-
     @Transactional
     public PetDto addPet(PetDto petDto) {
         Member member = memberRepository.findByUsername(petDto.getUsername()).get();

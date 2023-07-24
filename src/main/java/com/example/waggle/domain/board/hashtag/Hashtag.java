@@ -1,15 +1,10 @@
 package com.example.waggle.domain.board.hashtag;
 
-import com.example.waggle.component.BaseEntity;
-import com.example.waggle.component.BaseTimeEntity;
+import com.example.waggle.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

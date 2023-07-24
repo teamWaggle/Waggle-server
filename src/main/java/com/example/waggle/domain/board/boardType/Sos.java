@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board.boardType;
 
-import com.example.waggle.component.BaseEntity;
+import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Gender;
 import jakarta.persistence.*;
