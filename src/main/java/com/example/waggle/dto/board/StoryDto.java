@@ -1,6 +1,6 @@
 package com.example.waggle.dto.board;
 
-import com.example.waggle.domain.board.Story;
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.UploadFile;
 import lombok.*;
@@ -21,10 +21,10 @@ public class StoryDto {
     private Long id;
     private String content;
     private String username;
-    private int recommend;
     private String thumbnail;
     private LocalDateTime createDate;
-    private int likeCount;
+    private int recommendCount;
+    private boolean recommendIt;
 
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
@@ -34,14 +34,15 @@ public class StoryDto {
     private List<CommentDto> comments = new ArrayList<>();
 
     //스토리 하나를 조회할 때 사용
-    static public StoryDto toDto(Story story) {
+    static public StoryDto toDto(Story story, int count, boolean recommendIt) {
         return StoryDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
-                .likeCount(story.getLikes().size())
+                .recommendCount(count)
+                .recommendIt(recommendIt)
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()
@@ -57,6 +58,7 @@ public class StoryDto {
                 .member(member)
                 .content(content)
                 .thumbnail(thumbnail)
+                .member(member)
                 .build();
     }
 

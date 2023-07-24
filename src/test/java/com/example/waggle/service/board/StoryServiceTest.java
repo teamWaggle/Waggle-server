@@ -24,6 +24,8 @@ class StoryServiceTest {
 
     //read test
 
+<<<<<<< HEAD
+=======
     @Test
     public void findStories() {
         List<StorySimpleDto> allStory = storyService.findAllStory();
@@ -88,5 +90,6 @@ class StoryServiceTest {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
         System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
     }
+>>>>>>> develop
     
 }

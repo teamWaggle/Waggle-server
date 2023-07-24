@@ -1,4 +1,4 @@
-package com.example.waggle.domain;
+package com.example.waggle.domain.board;
 
 import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.Board;
@@ -14,7 +14,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like extends BaseEntity {
+public class Recommend extends BaseEntity {
+
 
     @Id
     @GeneratedValue
@@ -30,14 +31,10 @@ public class Like extends BaseEntity {
     private Board board;
 
     @Builder
-    Like(Long id, Member member, Board board) {
+    Recommend(Long id, Member member, Board board) {
         this.id = id;
         this.member = member;
-        setBoard(board);
+        this.board = board;
     }
 
-    protected void setBoard(Board board) {
-        this.board = board;
-        board.getLikes().add(this);
-    }
 }

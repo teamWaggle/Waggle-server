@@ -1,7 +1,7 @@
 package com.example.waggle.service.board;
 
 import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.Story;
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.comment.MemberMention;
 import com.example.waggle.domain.board.comment.Reply;
@@ -12,6 +12,7 @@ import com.example.waggle.dto.board.*;
 import com.example.waggle.dto.member.MemberDto;
 
 import com.example.waggle.repository.board.HashtagRepository;
+import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.repository.board.comment.CommentRepository;
 import com.example.waggle.repository.board.comment.ReplyRepository;
@@ -36,6 +37,7 @@ public class StoryService {
     private final HashtagRepository hashtagRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final RecommendRepository recommendRepository;
 
     /**
      * 조회는 entity -> dto과정을,
@@ -50,17 +52,25 @@ public class StoryService {
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
     @Transactional(readOnly = true)
-    public List<StorySimpleDto> findAllStory() {
+    public List<StorySimpleDto> findAllStory(String username) {
+        Member signInMember = getMember(username);
+
+        //board setting
         List<Story> allStory = storyRepository.findAll();
         List<StorySimpleDto> simpleStories = new ArrayList<>();
-        for (Story story : allStory) {
-            simpleStories.add(StorySimpleDto.toDto(story));
-        }
 
+        //entity -> dto
+        for (Story story : allStory) {
+            boolean likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
+            int count = recommendRepository.countByBoardId(story.getId());
+            simpleStories.add(StorySimpleDto.toDto(story, count, likeIt));
+        }
         return  simpleStories;
     }
 
+
     //1.1.2 회원 정보에 따른 전체 조회
+    //특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
     @Transactional(readOnly = true)
     public List<StorySimpleDto> findAllStoryByMember(String username) {
         Optional<Member> MemberByUsername = memberRepository.findByUsername(username);
@@ -69,9 +79,12 @@ public class StoryService {
             // error message 출력
         }
         List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
+
         List<StorySimpleDto> simpleStories = new ArrayList<>();
         for (Story story : storyByUsername) {
-            simpleStories.add(StorySimpleDto.toDto(story));
+            boolean cantLike = false;
+            int count = recommendRepository.countByBoardId(story.getId());
+            simpleStories.add(StorySimpleDto.toDto(story, count, cantLike));
         }
 
         return simpleStories;
@@ -79,40 +92,47 @@ public class StoryService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public StoryDto findStoryByBoardId(Long id) {
-        Optional<Story> storyById = storyRepository.findById(id);
+    public StoryDto findStoryByBoardId(String username, Long id) {
+        //member setting
+        Member signInMember = getMember(username);
 
+        //board setting
+        Optional<Story> storyById = storyRepository.findById(id);
         if (storyById.isEmpty()) {
             //error and return null
         }
-        return StoryDto.toDto(storyById.get());
+
+        //check recommend
+        boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
+        int count = recommendRepository.countByBoardId(id);
+        return StoryDto.toDto(storyById.get(), count, recommendIt);
     }
 
     //2. ===========저장===========
 
     //2.1 story 저장(media, hashtag 포함)
     //***중요!
-    public StoryDto saveStory(StoryDto storyDto) {
+    public Long saveStory(String username, StoryDto saveStoryDto) {
+        //member setting
+        Member signInMember = getMember(username);
 
-        Member member = memberRepository.findByUsername(storyDto.getUsername()).get();
-        Story story = storyRepository.save(storyDto.toEntity(member));
+        //board setting
+        Story saveStory = saveStoryDto.toEntity(signInMember);
+        storyRepository.save(saveStory);
 
-        if (member == null) {
-            //error message
-        }
         //hashtag 저장
-        if(!storyDto.getHashtags().isEmpty()){
-            for (String hashtagContent : storyDto.getHashtags()) {
-                saveHashtag(story, hashtagContent);
+        if(!saveStoryDto.getHashtags().isEmpty()){
+            for (String hashtagContent : saveStoryDto.getHashtags()) {
+                saveHashtag(saveStory, hashtagContent);
             }
         }
         //media 저장
-        if (!storyDto.getMedias().isEmpty()) {
-            for (String mediaURL : storyDto.getMedias()) {
-                Media buildMedia = Media.builder().url(mediaURL).board(story).build();
+        if (!saveStoryDto.getMedias().isEmpty()) {
+            for (String mediaURL : saveStoryDto.getMedias()) {
+                Media buildMedia = Media.builder().url(mediaURL).board(saveStory).build();
             }
         }
-        return StoryDto.toDto(story);
+        return saveStory.getId();
     }
 
     //2.2 story_comment 저장
@@ -162,7 +182,8 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public StoryDto changeStory(StoryDto storyDto, Long boardId) {
+    public String changeStory(StoryDto storyDto, Long boardId) {
+
         Optional<Story> storyByBoardId = storyRepository.findById(boardId);
 
         if (storyByBoardId.isPresent()) {
@@ -172,7 +193,10 @@ public class StoryService {
 
             //delete(media)
             story.getMedias().clear();
-
+            //newly insert data(media)
+            for (String media : storyDto.getMedias()) {
+                Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
+            }
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
@@ -186,9 +210,7 @@ public class StoryService {
             for (String hashtag : storyDto.getHashtags()) {
                 saveHashtag(story, hashtag);
             }
-
-            return StoryDto.toDto(story);
-
+            return story.getMember().getUsername();
         }
         return null;
     }
@@ -224,7 +246,6 @@ public class StoryService {
     }
 
     //4. ===========삭제(취소)===========
-
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryDto storyDto) {
@@ -269,5 +290,20 @@ public class StoryService {
             BoardHashtag buildBoardHashtag = BoardHashtag.builder()
                     .hashtag(hashtagByContent.get()).board(story).build();
         }
+    }
+
+    /**
+     * use at :
+     * @param username
+     * @return member
+     */
+    private Member getMember(String username) {
+        //member setting
+        Optional<Member> byUsername = memberRepository.findByUsername(username);
+        if (byUsername.isEmpty()) {
+            //error
+        }
+        Member signInMember = byUsername.get();
+        return signInMember;
     }
 }

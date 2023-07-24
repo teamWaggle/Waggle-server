@@ -6,12 +6,13 @@ import com.example.waggle.domain.board.comment.MemberMention;
 import com.example.waggle.domain.board.comment.Reply;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.domain.board.qna.Answer;
-import com.example.waggle.domain.board.qna.Question;
+import com.example.waggle.domain.board.boardType.Answer;
+import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.*;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.repository.board.HashtagRepository;
+import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.repository.board.comment.CommentRepository;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,7 @@ public class QuestionService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final MemberRepository memberRepository;
+    private final RecommendRepository recommendRepository;
 
     /**
      * 조회는 entity -> dto과정을,
@@ -51,11 +52,15 @@ public class QuestionService {
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
     @Transactional(readOnly = true)
-    public List<QuestionSimpleDto> findAllQuestion() {
+    public List<QuestionSimpleDto> findAllQuestion(String username) {
+        Member member = getMember(username);
+
         List<Question> allQuestion = questionRepository.findAll();
         List<QuestionSimpleDto> simpleQuestions = new ArrayList<>();
         for (Question question : allQuestion) {
-            simpleQuestions.add(QuestionSimpleDto.toDto(question));
+            boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(member.getId(), question.getId());
+            int count = recommendRepository.countByBoardId(question.getId());
+            simpleQuestions.add(QuestionSimpleDto.toDto(question, count, recommendIt));
         }
         return simpleQuestions;
     }
@@ -63,15 +68,13 @@ public class QuestionService {
     //1.1.2 회원 정보에 따른 전체 조회
     @Transactional(readOnly = true)
     public List<QuestionSimpleDto> findAllQuestionByMember(String username) {
-        Optional<Member> MemberByUsername = memberRepository.findByUsername(username);
-        if (MemberByUsername.isEmpty()) {
-            log.info("can't find user!");
-            // error message 출력
-        }
         List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
+
         List<QuestionSimpleDto> simpleQuestions = new ArrayList<>();
         for (Question question : questionsByUsername) {
-            simpleQuestions.add(QuestionSimpleDto.toDto(question));
+            boolean cantRecommendIt = false;
+            int count = recommendRepository.countByBoardId(question.getId());
+            simpleQuestions.add(QuestionSimpleDto.toDto(question, count, cantRecommendIt));
         }
 
         return simpleQuestions;
@@ -79,13 +82,16 @@ public class QuestionService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public QuestionDto findQuestionByBoardId(Long id) {
-        Optional<Question> questionById = questionRepository.findById(id);
+    public QuestionDto findQuestionByBoardId(String username, Long boardId) {
+        Member member = getMember(username);
 
+        Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isEmpty()) {
             //error and return null
         }
-        return QuestionDto.toDto(questionById.get());
+        boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(member.getId(), boardId);
+        int count = recommendRepository.countByBoardId(boardId);
+        return QuestionDto.toDto(questionById.get(), count, recommendIt);
     }
 
 //    @Transactional(readOnly = true)
@@ -112,13 +118,11 @@ public class QuestionService {
     //2. ===========저장===========
 
     //2.1 question 저장(media, hashtag 포함)
+    public Long saveQuestion(String username, QuestionDto saveQuestionDto) {
+        Member member = getMember(username);
+        Question question = saveQuestionDto.toEntity(member);
+        questionRepository.save(question);
 
-    public void saveQuestion(QuestionDto saveQuestionDto) {
-        Question question = saveQuestionDto.toEntity();
-        Optional<Member> byUsername = memberRepository.findByUsername(saveQuestionDto.getUsername());
-        if (byUsername.isEmpty()) {
-            //error message
-        }
         //hashtag 저장
         if(!saveQuestionDto.getHashtags().isEmpty()){
             for (String hashtag : saveQuestionDto.getHashtags()) {
@@ -131,6 +135,7 @@ public class QuestionService {
                 Media buildMedia = Media.builder().url(media).board(question).build();
             }
         }
+        return question.getId();
     }
 
     //2.2 question_comment 저장
@@ -175,16 +180,12 @@ public class QuestionService {
         }
     }
     //2.4 answer 저장(media, hashtag 포함)
-    public void saveAnswer(AnswerDto saveAnswerDto, QuestionDto questionDto) {
+    public void saveAnswer(String username, AnswerDto saveAnswerDto, QuestionDto questionDto) {
+        Member signInMember = getMember(username);
         Optional<Question> questionById = questionRepository.findById(questionDto.getId());
 
         if (questionById.isPresent()) {
-            Answer answer = saveAnswerDto.toEntity();
-
-            Optional<Member> byUsername = memberRepository.findByUsername(saveAnswerDto.getUsername());
-            if (byUsername.isEmpty()) {
-                //error message
-            }
+            Answer answer = saveAnswerDto.toEntity(signInMember);
             //hashtag 저장
             if(!saveAnswerDto.getHashtags().isEmpty()){
                 for (String hashtag : saveAnswerDto.getHashtags()) {
@@ -248,8 +249,8 @@ public class QuestionService {
     //3. ===========수정===========
 
     //3.1 question 수정(media, hashtag 포함)
-    public void changeQuestion(QuestionDto questionDto) {
-        Optional<Question> questionById = questionRepository.findById(questionDto.getId());
+    public String changeQuestion(QuestionDto questionDto, Long boardId) {
+        Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isPresent()) {
             questionById.get().changeQuestion(questionDto.getContent(),questionDto.getTitle());
 
@@ -268,7 +269,9 @@ public class QuestionService {
             for (String hashtag : questionDto.getHashtags()) {
                 saveHashtagInQuestion(questionById.get(), hashtag);
             }
+            return questionById.get().getMember().getUsername();
         }
+        return null;
     }
     //3.2 answer 수정(media, hashtag 포함)
     public void changeAnswer(AnswerDto answerDto) {
@@ -378,11 +381,20 @@ public class QuestionService {
             hashtagRepository.save(buildHashtag);
             BoardHashtag buildBoardHashtag = BoardHashtag.builder()
                     .hashtag(buildHashtag).board(answer).build();
-        }//아래 else가 좀 반복되는 것 같다...
+        }
         else{
             BoardHashtag buildBoardHashtag = BoardHashtag.builder()
                     .hashtag(hashtagByContent.get()).board(answer).build();
         }
+    }
+    private Member getMember(String username) {
+        //member setting
+        Optional<Member> byUsername = memberRepository.findByUsername(username);
+        if (byUsername.isEmpty()) {
+            //error
+        }
+        Member signInMember = byUsername.get();
+        return signInMember;
     }
 
 }

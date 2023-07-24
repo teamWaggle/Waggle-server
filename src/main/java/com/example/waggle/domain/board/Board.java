@@ -1,7 +1,12 @@
 package com.example.waggle.domain.board;
 
+<<<<<<< HEAD
+
+import com.example.waggle.component.BaseEntity;
+=======
 import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.domain.Like;
+>>>>>>> develop
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.member.Member;
@@ -39,11 +44,6 @@ public abstract class Board extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    protected List<Like> likes = new ArrayList<>();
-
-
-    @Builder.Default
-    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     protected List<BoardHashtag> boardHashtags = new ArrayList<>();
 
     @Builder.Default
@@ -55,16 +55,14 @@ public abstract class Board extends BaseEntity {
     protected List<Comment> comments = new ArrayList<>();
 
 
-    public Board(Long id, Member member, String content, List<Like> likes,
-                 List<BoardHashtag> boardHashtags, List<Media> medias, List<Comment> comments) {
+    public Board(Long id, Member member, String content, List<BoardHashtag> boardHashtags,
+                 List<Media> medias, List<Comment> comments) {
         this.id = id;
         this.member = member;
         this.content = content;
-        this.likes = likes;
         this.boardHashtags = boardHashtags;
         this.medias = medias;
         this.comments = comments;
     }
-
 
 }
