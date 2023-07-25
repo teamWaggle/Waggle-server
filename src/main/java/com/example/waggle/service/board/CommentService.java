@@ -44,7 +44,7 @@ public class CommentService {
     }
 
     //2. 저장
-    public Long saveComment(Long boardId, String username, CommentWriteDto writeDto, String boardType) {
+    public Long saveComment(String username, Long boardId, CommentWriteDto writeDto, String boardType) {
         Member member = getMember(username);
         Board board = getBoard(boardId, boardType);
 
@@ -60,8 +60,7 @@ public class CommentService {
 
     //3. 수정
     // question
-    public Long editCommentV1(String username, CommentViewDto viewDto, CommentWriteDto writeDto) {
-        Member member = getMember(username);
+    public Long editCommentV1(CommentViewDto viewDto, CommentWriteDto writeDto) {
         //check exist comment
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
@@ -70,11 +69,6 @@ public class CommentService {
             return null;
         }
         Comment comment = commentById.get();
-
-        //check user
-        if (!comment.getMember().equals(member)) {
-            log.info("only same user can edit comment");
-        }
 
         //edit
         comment.changeContent(writeDto.getContent());
@@ -93,16 +87,23 @@ public class CommentService {
         }
         Comment comment = commentById.get();
 
-        //check user
-        if (!comment.getMember().equals(member)) {
-            log.info("only same user can edit comment");
-            //return null;
-        }
-
         //edit
         comment.changeContent(writeDto.getContent());
         return comment.getId();
 
+    }
+
+    //3.1 check member
+    public boolean checkMember(String username, CommentViewDto viewDto) {
+        Member member = getMember(username);
+        Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
+        if (commentById.isEmpty()) {
+            log.info("not exist comment");
+            //error
+            return false;
+        }
+        Comment comment = commentById.get();
+        return comment.getMember().equals(member);
     }
 
     //4. 삭제

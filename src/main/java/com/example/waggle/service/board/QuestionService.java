@@ -1,5 +1,6 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
@@ -249,18 +250,10 @@ public class QuestionService {
     //3. ===========수정===========
 
     //3.1 question 수정(media, hashtag 포함)
-    public String changeQuestion(String username, QuestionWriteDto questionDto, Long boardId) {
-        Member member = getMember(username);
+    public String changeQuestion(QuestionWriteDto questionDto, Long boardId) {
         Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isPresent()) {
-            //check user
             Question question = questionById.get();
-            if (!question.getMember().equals(member)) {
-                log.info("only same user can edit board");
-                //error
-                return null;
-            }
-
             //edit
             question.changeQuestion(questionDto.getContent(),questionDto.getTitle());
 
@@ -284,7 +277,7 @@ public class QuestionService {
         return null;
     }
     //3.2 answer 수정(media, hashtag 포함)
-    public void changeAnswer(String username, AnswerWriteDto answerDto, Long boardId) {
+    public void changeAnswer(AnswerWriteDto answerDto, Long boardId) {
         Optional<Answer> answerById = answerRepository.findById(boardId);
         if (answerById.isPresent()) {
             //edit
@@ -309,7 +302,37 @@ public class QuestionService {
         }
     }
 
-//    //3.3 question(answer)_comment 수정
+    //3.3 수정을 위한 user 확인 절차
+    @Transactional(readOnly = true)
+    public boolean checkMember(String username, Long boardId, String boardType) {
+        Member member = getMember(username);
+        Boolean isSameUser;
+        switch (boardType) {
+            case "question" :
+                Optional<Question> questionById = questionRepository.findById(boardId);
+                if (questionById.isEmpty()) {
+                    log.info("not exist question");
+                    //error
+                    return false;
+                }
+                isSameUser = questionById.get().getMember().equals(member);
+                break;
+            case "answer" :
+                Optional<Answer> answerById = answerRepository.findById(boardId);
+                if (answerById.isEmpty()) {
+                    log.info("not exist answer");
+                    //error
+                    return false;
+                }
+                isSameUser = answerById.get().getMember().equals(member);
+                break;
+            default :
+                return false;
+        }
+        return isSameUser;
+    }
+
+//    //3.3 question(answeer)_comment 수정
 //    public void changeComment(CommentDto commentDto) {
 //        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
 //        if (commentById.isPresent()) {
