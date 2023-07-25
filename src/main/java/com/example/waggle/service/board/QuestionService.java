@@ -6,9 +6,11 @@ import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.*;
+import com.example.waggle.dto.board.answer.AnswerViewDto;
+import com.example.waggle.dto.board.answer.AnswerWriteDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
+import com.example.waggle.dto.board.question.QuestionWriteDto;
 import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
@@ -116,7 +118,7 @@ public class QuestionService {
     //2. ===========저장===========
 
     //2.1 question 저장(media, hashtag 포함)
-    public Long saveQuestion(String username, QuestionViewDto saveQuestionDto) {
+    public Long saveQuestion(String username, QuestionWriteDto saveQuestionDto) {
         Member member = getMember(username);
         Question question = saveQuestionDto.toEntity(member);
         questionRepository.save(question);
@@ -178,21 +180,21 @@ public class QuestionService {
 //        }
 //    }
     //2.4 answer 저장(media, hashtag 포함)
-    public void saveAnswer(String username, AnswerDto saveAnswerDto, QuestionViewDto questionDto) {
+    public void saveAnswer(String username, AnswerWriteDto writeDto, Long boardId) {
         Member signInMember = getMember(username);
-        Optional<Question> questionById = questionRepository.findById(questionDto.getId());
+        Optional<Question> questionById = questionRepository.findById(boardId);
 
         if (questionById.isPresent()) {
-            Answer answer = saveAnswerDto.toEntity(signInMember);
+            Answer answer = writeDto.toEntity(signInMember);
             //hashtag 저장
-            if(!saveAnswerDto.getHashtags().isEmpty()){
-                for (String hashtag : saveAnswerDto.getHashtags()) {
+            if(!writeDto.getHashtags().isEmpty()){
+                for (String hashtag : writeDto.getHashtags()) {
                     saveHashtagInAnswer(answer,hashtag);
                 }
             }
             //media 저장
-            if (!saveAnswerDto.getMedias().isEmpty()) {
-                for (String media : saveAnswerDto.getMedias()) {
+            if (!writeDto.getMedias().isEmpty()) {
+                for (String media : writeDto.getMedias()) {
                     Media.builder().url(media).board(answer).build();
                 }
             }
@@ -247,50 +249,62 @@ public class QuestionService {
     //3. ===========수정===========
 
     //3.1 question 수정(media, hashtag 포함)
-    public String changeQuestion(QuestionViewDto questionDto, Long boardId) {
+    public String changeQuestion(String username, QuestionWriteDto questionDto, Long boardId) {
+        Member member = getMember(username);
         Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isPresent()) {
-            questionById.get().changeQuestion(questionDto.getContent(),questionDto.getTitle());
+            //check user
+            Question question = questionById.get();
+            if (!question.getMember().equals(member)) {
+                log.info("only same user can edit board");
+                //error
+                return null;
+            }
+
+            //edit
+            question.changeQuestion(questionDto.getContent(),questionDto.getTitle());
 
             //delete(media)
-            questionById.get().getMedias().clear();
+            question.getMedias().clear();
 
             //newly insert data(media)
             for (String media : questionDto.getMedias()) {
-                Media changeMedia = Media.builder().url(media).board(questionById.get()).build();
+                Media changeMedia = Media.builder().url(media).board(question).build();
             }
 
             //delete connecting relate (boardHashtag)
-            questionById.get().getBoardHashtags().clear();
+            question.getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : questionDto.getHashtags()) {
-                saveHashtagInQuestion(questionById.get(), hashtag);
+                saveHashtagInQuestion(question, hashtag);
             }
-            return questionById.get().getMember().getUsername();
+            return question.getMember().getUsername();
         }
         return null;
     }
     //3.2 answer 수정(media, hashtag 포함)
-    public void changeAnswer(AnswerDto answerDto) {
-        Optional<Answer> answerById = answerRepository.findById(answerDto.getId());
+    public void changeAnswer(String username, AnswerWriteDto answerDto, Long boardId) {
+        Optional<Answer> answerById = answerRepository.findById(boardId);
         if (answerById.isPresent()) {
-            answerById.get().changeAnswer(answerDto.getContent());
+            //edit
+            Answer answer = answerById.get();
+            answer.changeAnswer(answerDto.getContent());
 
             //delete(media)
-            answerById.get().getMedias().clear();
+            answer.getMedias().clear();
 
             //newly insert data(media)
             for (String media : answerDto.getMedias()) {
-                Media.builder().url(media).board(answerById.get()).build();
+                Media.builder().url(media).board(answer).build();
             }
 
             //delete connecting relate (boardHashtag)
-            answerById.get().getBoardHashtags().clear();
+            answer.getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : answerDto.getHashtags()) {
-                saveHashtagInAnswer(answerById.get(), hashtag);
+                saveHashtagInAnswer(answer, hashtag);
             }
         }
     }
@@ -327,9 +341,16 @@ public class QuestionService {
     //4. ===========삭제(취소)===========
 
     //4.1 question 삭제(media, hashtag 포함)
-    public void deleteQuestion(Long id) {
+    public void deleteQuestion(String username, Long id) {
+        Member member = getMember(username);
         Optional<Question> questionById = questionRepository.findById(id);
         if (questionById.isPresent()) {
+            //check user
+            if (!questionById.get().equals(member)) {
+                log.info("only same user can delete board!");
+                //error
+                return;
+            }
             questionRepository.delete(questionById.get());
         }
     }
@@ -390,6 +411,7 @@ public class QuestionService {
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
             //error
+            return null;
         }
         Member signInMember = byUsername.get();
         return signInMember;

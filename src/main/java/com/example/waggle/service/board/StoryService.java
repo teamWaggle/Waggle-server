@@ -8,6 +8,7 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 
+import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
@@ -109,7 +110,7 @@ public class StoryService {
 
     //2.1 story 저장(media, hashtag 포함)
     //***중요!
-    public Long saveStory(String username, StoryViewDto saveStoryDto) {
+    public Long saveStory(String username, StoryWriteDto saveStoryDto) {
         //member setting
         Member signInMember = getMember(username);
 
@@ -179,21 +180,21 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public String changeStory(StoryViewDto storyDto, Long boardId) {
-
+    public String changeStory(String username, StoryWriteDto storyDto, Long boardId) {
+        Member member = getMember(username);
         Optional<Story> storyByBoardId = storyRepository.findById(boardId);
 
         if (storyByBoardId.isPresent()) {
+            //check Board user
             Story story = storyByBoardId.get();
-
+            if (!story.getMember().equals(member)) {
+                log.info("only same user can edit board!");
+                //error
+            }
             story.changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
             //delete(media)
             story.getMedias().clear();
-            //newly insert data(media)
-            for (String media : storyDto.getMedias()) {
-                Media board = Media.builder().url(media).board(storyByBoardId.get()).build();
-            }
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
@@ -245,9 +246,15 @@ public class StoryService {
     //4. ===========삭제(취소)===========
     //4.1 story 삭제
     // (media, hashtag 포함)
-    public void removeStory(StoryViewDto storyDto) {
+    public void removeStory(String username, StoryViewDto storyDto) {
+        Member member = getMember(username);
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         if (storyByBoardId.isPresent()) {
+            if (!storyByBoardId.get().equals(member)) {
+                log.info("only same user can delete board!");
+                //error
+                return;
+            }
             storyRepository.delete(storyByBoardId.get());
         }
     }
@@ -299,6 +306,8 @@ public class StoryService {
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
             //error
+            //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
+            return null;
         }
         Member signInMember = byUsername.get();
         return signInMember;

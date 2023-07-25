@@ -55,13 +55,7 @@ public class QuestionViewDto {
                 .build();
     }
 
-    public Question toEntity(Member member) {
-        return Question.builder()
-                .title(title)
-                .content(content)
-                .member(member)
-                .build();
-    }
+
 
     public QuestionViewDto(String username) {
         this.username = username;

@@ -1,4 +1,4 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.answer;
 
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.member.Member;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AnswerDto {
+public class AnswerViewDto {
 
     private Long id;
     private String content;
@@ -36,8 +36,8 @@ public class AnswerDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public AnswerDto toDto(Answer answer, int count, boolean recommendIt) {
-        return AnswerDto.builder()
+    static public AnswerViewDto toDto(Answer answer, int count, boolean recommendIt) {
+        return AnswerViewDto.builder()
                 .id(answer.getId())
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
