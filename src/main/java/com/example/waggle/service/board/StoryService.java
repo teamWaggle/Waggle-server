@@ -1,6 +1,8 @@
 package com.example.waggle.service.board;
 
 import com.example.waggle.domain.board.Media;
+import com.example.waggle.domain.board.boardType.Answer;
+import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
@@ -180,17 +182,12 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public String changeStory(String username, StoryWriteDto storyDto, Long boardId) {
-        Member member = getMember(username);
+    public String changeStory(StoryWriteDto storyDto, Long boardId) {
+
         Optional<Story> storyByBoardId = storyRepository.findById(boardId);
 
         if (storyByBoardId.isPresent()) {
-            //check Board user
             Story story = storyByBoardId.get();
-            if (!story.getMember().equals(member)) {
-                log.info("only same user can edit board!");
-                //error
-            }
             story.changeStory(storyDto.getContent(),storyDto.getThumbnail());
 
             //delete(media)
@@ -211,6 +208,19 @@ public class StoryService {
             return story.getMember().getUsername();
         }
         return null;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkMember(String username, Long boardId) {
+        Member member = getMember(username);
+        Optional<Story> storyById = storyRepository.findById(boardId);
+        if (storyById.isEmpty()) {
+            log.info("not exist story");
+            //error
+            return false;
+        }
+        boolean isSameUser = storyById.get().getMember().equals(member);
+        return isSameUser;
     }
 
 
