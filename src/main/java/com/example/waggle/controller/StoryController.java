@@ -51,7 +51,7 @@ public class StoryController {
                                   @PathVariable Long boardId,
                                   Model model) {
         StoryDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
-        model.addAttribute("story", storyByBoardId);
+        model.addAttribute("storyDto", storyByBoardId);
         return "story/story";
     }
 
@@ -64,7 +64,7 @@ public class StoryController {
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
         StoryDto storyDto = new StoryDto(memberSimpleDto.getUsername());
 
-        model.addAttribute("story", storyDto);
+        model.addAttribute("storyDto", storyDto);
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
 
         return "story/writeStory";
@@ -88,8 +88,8 @@ public class StoryController {
 //        }
         StoryDto storyDto = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(storyDto.getUsername());
+        model.addAttribute("storyDto", storyDto);
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
-        model.addAttribute("story", storyDto);
 
         return "story/editStory";
     }
