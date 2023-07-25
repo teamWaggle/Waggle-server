@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-    List<Story> findByHashtagsTag(String tag);
     List<Story> findByMemberUsername(String username);
 
 }
