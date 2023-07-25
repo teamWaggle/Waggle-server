@@ -1,20 +1,17 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.dto.board.StoryDto;
-import com.example.waggle.dto.board.StorySimpleDto;
+import com.example.waggle.dto.board.story.StoryViewDto;
+import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.StoryService;
 import com.example.waggle.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 @Controller
@@ -32,7 +29,7 @@ public class StoryController {
      */
     @GetMapping
     public String storyMain(Model model) {
-        List<StorySimpleDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
+        List<StorySimpleViewDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleStories", allStory);
         return "main";
     }
@@ -41,7 +38,7 @@ public class StoryController {
     @GetMapping("/{username}")
     public String memberStory(@PathVariable String username,
                               Model model) {
-        List<StorySimpleDto> allStoryByMember = storyService.findAllStoryByMember(username);
+        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember(username);
         model.addAttribute("simpleStories", allStoryByMember);
         return "story/memberStory";
     }
@@ -50,7 +47,7 @@ public class StoryController {
     public String singleStoryForm(@PathVariable String username,
                                   @PathVariable Long boardId,
                                   Model model) {
-        StoryDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
+        StoryViewDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
         model.addAttribute("story", storyByBoardId);
         return "story/story";
     }
@@ -62,7 +59,7 @@ public class StoryController {
     public String singleStoryWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
-        StoryDto storyDto = new StoryDto(memberSimpleDto.getUsername());
+        StoryViewDto storyDto = new StoryViewDto(memberSimpleDto.getUsername());
 
         model.addAttribute("story", storyDto);
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
@@ -71,7 +68,7 @@ public class StoryController {
     }
 
     @PostMapping("/write")
-    public String singleStoryWrite(@ModelAttribute StoryDto storyDto) {
+    public String singleStoryWrite(@ModelAttribute StoryViewDto storyDto) {
         Long boardId = storyService.saveStory(SecurityUtil.getCurrentUsername(), storyDto);
         String username = storyDto.getUsername();
         return "redirect:/story/" + username + "/" + boardId;
@@ -86,7 +83,7 @@ public class StoryController {
 //        if (storyDto.getUsername() != SecurityUtil.getCurrentUsername()) {
 //            // 작성자 외의 접근 error 처리
 //        }
-        StoryDto storyDto = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
+        StoryViewDto storyDto = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(storyDto.getUsername());
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
         model.addAttribute("story", storyDto);
@@ -95,7 +92,7 @@ public class StoryController {
     }
 
     @PostMapping("/edit/{boardId}")
-    public String singleStoryEdit(@ModelAttribute StoryDto storyDto,
+    public String singleStoryEdit(@ModelAttribute StoryViewDto storyDto,
                                   @PathVariable Long boardId) {
         String username = storyService.changeStory(storyDto, boardId);
         return "redirect:/story/" + username + "/" + boardId;

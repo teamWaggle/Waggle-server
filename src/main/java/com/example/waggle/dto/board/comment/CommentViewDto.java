@@ -1,6 +1,7 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.comment;
 
 import com.example.waggle.domain.board.comment.Comment;
+import com.example.waggle.dto.board.reply.ReplyViewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,21 +15,21 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentDto {
+public class CommentViewDto {
 
     private Long id;
     private String content;
     private int orders;
     @Builder.Default
-    private List<ReplyDto> replies = new ArrayList<>();
+    private List<ReplyViewDto> replies = new ArrayList<>();
 
-    static public CommentDto toDto(Comment comment) {
-        return CommentDto.builder()
+    static public CommentViewDto toDto(Comment comment) {
+        return CommentViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .orders(comment.getOrders())
                 .replies(comment.getReplies().stream()
-                        .map(r -> ReplyDto.toDto(r)).collect(Collectors.toList()))
+                        .map(r -> ReplyViewDto.toDto(r)).collect(Collectors.toList()))
                 .build();
     }
 }
