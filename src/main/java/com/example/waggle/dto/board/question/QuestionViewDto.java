@@ -1,7 +1,9 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.question;
 
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.dto.board.comment.CommentViewDto;
+import com.example.waggle.dto.board.reply.ReplyViewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class QuestionDto {
+public class QuestionViewDto {
 
     private Long id;
     private String content;
@@ -29,14 +31,14 @@ public class QuestionDto {
     @Builder.Default
     private List<String> medias = new ArrayList<>();
     @Builder.Default
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<CommentViewDto> comments = new ArrayList<>();
     @Builder.Default
-    private List<ReplyDto> replies = new ArrayList<>();
+    private List<ReplyViewDto> replies = new ArrayList<>();
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public QuestionDto toDto(Question question, int count, boolean recommendIt) {
-        return QuestionDto.builder()
+    static public QuestionViewDto toDto(Question question, int count, boolean recommendIt) {
+        return QuestionViewDto.builder()
                 .id(question.getId())
                 .content(question.getContent())
                 .username(question.getMember().getUsername())
@@ -49,7 +51,7 @@ public class QuestionDto {
                 .medias(question.getMedias().stream()
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
                 .comments(question.getComments().stream()
-                        .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
+                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
 
@@ -61,7 +63,7 @@ public class QuestionDto {
                 .build();
     }
 
-    public QuestionDto(String username) {
+    public QuestionViewDto(String username) {
         this.username = username;
     }
 }

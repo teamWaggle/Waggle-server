@@ -2,6 +2,8 @@ package com.example.waggle.dto.board;
 
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.dto.board.comment.CommentViewDto;
+import com.example.waggle.dto.board.reply.ReplyViewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,9 +30,9 @@ public class AnswerDto {
     @Builder.Default
     private List<String> medias = new ArrayList<>();
     @Builder.Default
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<CommentViewDto> comments = new ArrayList<>();
     @Builder.Default
-    private List<ReplyDto> replies = new ArrayList<>();
+    private List<ReplyViewDto> replies = new ArrayList<>();
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
@@ -47,7 +49,7 @@ public class AnswerDto {
                 .medias(answer.getMedias().stream()
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
                 .comments(answer.getComments().stream()
-                        .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
+                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
 
