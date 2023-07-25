@@ -1,11 +1,13 @@
 package com.example.waggle.repository.board.comment;
 
 import com.example.waggle.domain.board.comment.Comment;
+import com.example.waggle.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
@@ -14,4 +16,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 //            " WHERE c.board_id = :boardId",nativeQuery = true)
 //    int findLastOrderByBoardId(@Param("boardId") Long Id);
     List<Comment> findCommentsByBoardId(Long boardId);
+    Optional<Comment> findCommentByMemberAndBoardId(Member member, Long boardId);
 }

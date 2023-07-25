@@ -7,6 +7,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-
-    List<Answer> findByQuestionId(@Param("questionId")Long id);
+    List<Answer> findAnswersByQuestionId(Long questionId);
 }
