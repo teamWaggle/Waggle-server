@@ -37,6 +37,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     //1. 조회
+    //p1. 나중에 생성 역순으로 나열해야함
     public List<CommentViewDto> findComments(Long boardId) {
         List<Comment> commentsByBoardId = commentRepository.findCommentsByBoardId(boardId);
         return commentsByBoardId.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
@@ -58,9 +59,65 @@ public class CommentService {
     }
 
     //3. 수정
-    //public Long editComment(Long commentId, String username)
+    // question
+    public Long editCommentV1(String username, CommentViewDto viewDto, CommentWriteDto writeDto) {
+        Member member = getMember(username);
+        //check exist comment
+        Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
+        if (commentById.isEmpty()) {
+            log.info("not exist comment");
+            //error
+            return null;
+        }
+        Comment comment = commentById.get();
+
+        //check user
+        if (!comment.getMember().equals(member)) {
+            log.info("only same user can edit comment");
+        }
+
+        //edit
+        comment.changeContent(writeDto.getContent());
+
+        return comment.getId();
+    }
+    public Long editCommentV2(String username, Long boardId, CommentWriteDto writeDto) {
+        Member member = getMember(username);
+
+        //check exist comment
+        Optional<Comment> commentById = commentRepository.findCommentByMemberAndBoardId(member, boardId);
+        if (commentById.isEmpty()) {
+            log.info("not exist comment");
+            //error
+            return null;
+        }
+        Comment comment = commentById.get();
+
+        //check user
+        if (!comment.getMember().equals(member)) {
+            log.info("only same user can edit comment");
+            //return null;
+        }
+
+        //edit
+        comment.changeContent(writeDto.getContent());
+        return comment.getId();
+
+    }
 
     //4. 삭제
+    public void deleteComment(String username, CommentViewDto viewDto) {
+        Member member = getMember(username);
+        Optional<Comment> commentByMemberAndBoardId = commentRepository
+                .findCommentByMemberAndBoardId(member, viewDto.getId());
+        if (commentByMemberAndBoardId.isEmpty()) {
+            log.info("not exist comment");
+            //error
+            return;
+        }
+        Comment comment = commentByMemberAndBoardId.get();
+        commentRepository.delete(comment);
+    }
 
     //else
     /**
