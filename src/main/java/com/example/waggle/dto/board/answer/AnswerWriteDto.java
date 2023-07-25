@@ -1,6 +1,6 @@
-package com.example.waggle.dto.board.question;
+package com.example.waggle.dto.board.answer;
 
-import com.example.waggle.domain.board.boardType.Question;
+import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.dto.board.reply.ReplyViewDto;
@@ -17,19 +17,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class QuestionWriteDto {
+public class AnswerWriteDto {
 
     private String content;
-    private String title;
 
     @Builder.Default
     private List<String> medias = new ArrayList<>();
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    public Question toEntity(Member member) {
-        return Question.builder()
-                .title(title)
+    public Answer toEntity(Member member) {
+        return Answer.builder()
                 .content(content)
                 .member(member)
                 .build();

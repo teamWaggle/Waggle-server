@@ -101,6 +101,4 @@ public class RecommendService {
         return board;
     }
 
-
-
 }
