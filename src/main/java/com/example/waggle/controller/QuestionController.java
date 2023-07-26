@@ -1,8 +1,10 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
+import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
+import com.example.waggle.dto.board.question.QuestionWriteDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.QuestionService;
 
@@ -66,9 +68,9 @@ public class QuestionController {
     }
 
     @PostMapping("/write")
-    public String singleQuestionWrite(@ModelAttribute QuestionViewDto questionDto) {
+    public String singleQuestionWrite(@ModelAttribute QuestionWriteDto questionDto) {
         Long questionId = questionService.saveQuestion(SecurityUtil.getCurrentUsername(), questionDto);
-        String username = questionDto.getUsername();
+        String username = SecurityUtil.getCurrentUsername();
         String title = questionDto.getTitle();
         return "redirect:/question/" + username + "/" +title + "/"+ questionId;
     }
@@ -88,7 +90,7 @@ public class QuestionController {
     }
 
     @PostMapping("/edit/{title}/{boardId}")
-    public String singleQuestionEdit(@ModelAttribute QuestionViewDto questionDto,
+    public String singleQuestionEdit(@ModelAttribute QuestionWriteDto questionDto,
                                      @PathVariable Long boardId) {
         String username = questionService.changeQuestion(questionDto, boardId);
         String title = questionDto.getTitle();

@@ -1,4 +1,4 @@
-package com.example.waggle.repository;
+package com.example.waggle.repository.board.boardtype;
 
 import com.example.waggle.domain.board.boardType.Sos;
 import org.springframework.data.jpa.repository.JpaRepository;

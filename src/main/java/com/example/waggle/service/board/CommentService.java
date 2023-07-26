@@ -39,7 +39,7 @@ public class CommentService {
     //1. 조회
     //p1. 나중에 생성 역순으로 나열해야함
     public List<CommentViewDto> findComments(Long boardId) {
-        List<Comment> commentsByBoardId = commentRepository.findCommentsByBoardId(boardId);
+        List<Comment> commentsByBoardId = commentRepository.findByBoardId(boardId);
         return commentsByBoardId.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
     }
 
@@ -79,7 +79,7 @@ public class CommentService {
         Member member = getMember(username);
 
         //check exist comment
-        Optional<Comment> commentById = commentRepository.findCommentByMemberAndBoardId(member, boardId);
+        Optional<Comment> commentById = commentRepository.findByMemberAndBoardId(member, boardId);
         if (commentById.isEmpty()) {
             log.info("not exist comment");
             //error
@@ -110,7 +110,7 @@ public class CommentService {
     public void deleteComment(String username, CommentViewDto viewDto) {
         Member member = getMember(username);
         Optional<Comment> commentByMemberAndBoardId = commentRepository
-                .findCommentByMemberAndBoardId(member, viewDto.getId());
+                .findByMemberAndBoardId(member, viewDto.getId());
         if (commentByMemberAndBoardId.isEmpty()) {
             log.info("not exist comment");
             //error

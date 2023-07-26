@@ -3,6 +3,7 @@ package com.example.waggle.controller;
 import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
+import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.StoryService;
 import com.example.waggle.service.member.MemberService;
@@ -68,9 +69,9 @@ public class StoryController {
     }
 
     @PostMapping("/write")
-    public String singleStoryWrite(@ModelAttribute StoryViewDto storyDto) {
+    public String singleStoryWrite(@ModelAttribute StoryWriteDto storyDto) {
         Long boardId = storyService.saveStory(SecurityUtil.getCurrentUsername(), storyDto);
-        String username = storyDto.getUsername();
+        String username = SecurityUtil.getCurrentUsername();
         return "redirect:/story/" + username + "/" + boardId;
 
     }
@@ -92,7 +93,7 @@ public class StoryController {
     }
 
     @PostMapping("/edit/{boardId}")
-    public String singleStoryEdit(@ModelAttribute StoryViewDto storyDto,
+    public String singleStoryEdit(@ModelAttribute StoryWriteDto storyDto,
                                   @PathVariable Long boardId) {
         String username = storyService.changeStory(storyDto, boardId);
         return "redirect:/story/" + username + "/" + boardId;
