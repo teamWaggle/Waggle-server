@@ -15,23 +15,30 @@
 </head>
 <body>
 
-<div class="col">
-    <button class="w-100 btn btn-secondary btn-lg"
-            th:onclick="|location.href='@{/member/sign-up}'|"
-            type="button">회원가입
-    </button>
-    <button class="w-100 btn btn-secondary btn-lg"
-            th:onclick="|location.href='@{/member/sign-in}'|"
-            type="button">로그인
-    </button>
-</div>
+<div class="container">
+    <div class="row justify-content-center text-center mb-4">
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h3 style="margin-top: 30px; margin-left: 20px">Waggle 🐶</h3>
+        </a>
+    </div>
 
-<div class="col">
-    <button class="w-100 btn btn-secondary btn-lg"
-            th:onclick="|location.href='@{/story/write}'|"
-            type="button">스토리 등록
-    </button>
-</div>
+    <div class="col">
+        <button class="w-100 btn btn-secondary btn-lg mb-3"
+                th:onclick="|location.href='@{/member/sign-up}'|"
+                type="button">회원가입
+        </button>
+        <button class="w-100 btn btn-secondary btn-lg mb-3"
+                th:onclick="|location.href='@{/member/sign-in}'|"
+                type="button">로그인
+        </button>
+    </div>
 
+    <div class="col">
+        <button class="w-100 btn btn-secondary btn-lg mb-3"
+                th:onclick="|location.href='@{/story/write}'|"
+                type="button">스토리 등록
+        </button>
+    </div>
+</div>
 </body>
 </html>
