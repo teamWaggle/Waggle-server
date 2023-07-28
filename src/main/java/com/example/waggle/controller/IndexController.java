@@ -21,7 +21,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String home() {
-        return "main";
+        return "index";
     }
 
     @ResponseBody
