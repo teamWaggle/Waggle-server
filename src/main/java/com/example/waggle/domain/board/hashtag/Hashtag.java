@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @SuperBuilder
@@ -25,8 +28,8 @@ public class Hashtag extends BaseEntity {
  * hahstag를 통한 board 조회는 쿼리를 통해 하고
  * hashtag데이터 자체의 조회는 자유롭게 사용할 수 있는게 좋을 것 같다.
  */
-//    @OneToMany(mappedBy = "board")
-//    @Builder.Default
-//    private List<BoardHashtag> boardHashtags = new ArrayList<>();
+    @OneToMany(mappedBy = "board")
+    @Builder.Default
+    private List<BoardHashtag> boardHashtags = new ArrayList<>();
 
 }
