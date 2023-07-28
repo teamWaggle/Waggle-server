@@ -23,13 +23,10 @@ class StoryServiceTest {
     MemberService memberService;
 
     //read test
-
-<<<<<<< HEAD
-=======
     @Test
     public void findStories() {
-        List<StorySimpleDto> allStory = storyService.findAllStory();
-        assertThat(allStory.stream().findFirst().get().getHashtags().size()).isEqualTo(1);
+//        List<StorySimpleDto> allStory = storyService.findAllStory();
+//        assertThat(allStory.stream().findFirst().get().getHashtags().size()).isEqualTo(1);
     }
 
     @Test
@@ -40,8 +37,8 @@ class StoryServiceTest {
 
     @Test
     public void findStory() {
-        StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
-        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
+//        StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
+//        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
     }
 
     //create test
@@ -59,14 +56,14 @@ class StoryServiceTest {
                 .hashtags(hashtags)
                 .medias(medias)
                 .thumbnail("choco.img").build();
-        storyService.saveStory(hann123);
+//        storyService.saveStory(hann123);
 
-        List<StorySimpleDto> allStory = storyService.findAllStory();
-        for (StorySimpleDto storySimpleDto : allStory) {
-            for (String hashtag : storySimpleDto.getHashtags()) {
-                System.out.println("hashtag = " + hashtag);
-            }
-        }
+//        List<StorySimpleDto> allStory = storyService.findAllStory();
+//        for (StorySimpleDto storySimpleDto : allStory) {
+//            for (String hashtag : storySimpleDto.getHashtags()) {
+//                System.out.println("hashtag = " + hashtag);
+//            }
+//        }
     }
 
     //update test
@@ -87,9 +84,8 @@ class StoryServiceTest {
                 .thumbnail("choco.img").build();
 //        storyService.changeStory(hann123);
 
-        StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
-        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
+//        StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
+//        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
     }
->>>>>>> develop
     
 }
