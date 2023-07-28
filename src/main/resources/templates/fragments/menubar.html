@@ -1,0 +1,28 @@
+<div th:fragment="fragment-menubar">
+
+    <link rel="stylesheet" href="/css/header.css">
+    <div class="header">
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h1 class="logo">Waggle</h1>
+        </a>
+
+        <form action="/search" method="get" class="search">
+            <input type="text" placeholder="검색어를 입력해주세요.">
+            <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png" type="submit">
+        </form>
+
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h4>Q&A</h4>
+        </a>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h4>일정</h4>
+        </a>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h4>지도</h4>
+        </a>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h4>마이페이지</h4>
+        </a>
+    </div>
+
+</div>
