@@ -2,8 +2,11 @@ package com.example.waggle.controller;
 
 import com.example.waggle.component.file.FileStore;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
+import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.StoryService;
+import com.example.waggle.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IndexController {
 
+    private final MemberService memberService;
     private final StoryService storyService;
     private final FileStore fileStore;
 
@@ -57,6 +61,9 @@ public class IndexController {
         storySimpleViewDtos.add(storySimpleViewDto3);
         storySimpleViewDtos.add(storySimpleViewDto4);
         storySimpleViewDtos.add(storySimpleViewDto5);
+
+        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(SecurityUtil.getCurrentUsername());
+        model.addAttribute("memberSimpleDto", memberSimpleDto);
 
         model.addAttribute("storySimpleViewDtos", storySimpleViewDtos);
         return "index";
