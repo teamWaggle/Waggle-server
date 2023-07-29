@@ -27,10 +27,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         // HttpServletRequest에서 JWT 토큰 추출
         HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
         String requestURI = httpServletRequest.getRequestURI();
-        String token = Arrays.stream(httpServletRequest.getCookies())
-                .filter(cookie -> cookie.getName().equals("access_token"))
-                .findFirst().map(Cookie::getValue)
-                .orElse("dummy");
+        String token = null;
+        if (httpServletRequest.getCookies() != null) {
+            token = Arrays.stream(httpServletRequest.getCookies())
+                    .filter(cookie -> cookie.getName().equals("access_token"))
+                    .findFirst().map(Cookie::getValue)
+                    .orElse("dummy");
+        }
 
         // 2. validateToken으로 토큰 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {

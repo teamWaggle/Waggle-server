@@ -34,6 +34,7 @@ public class BoardHashtag extends BaseEntity {
         this.board = board;
         this.hashtag = hashtag;
         board.getBoardHashtags().add(this);
+        hashtag.getBoardHashtags().add(this);
     }
 
 //    //관계 취소(ex. 보드에서 해시태그 삭제)
