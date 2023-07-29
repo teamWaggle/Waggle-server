@@ -32,7 +32,7 @@ public class StoryController {
     public String storyMain(Model model) {
         List<StorySimpleViewDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleStories", allStory);
-        return "main";
+        return "index";
     }
 
 
@@ -48,8 +48,8 @@ public class StoryController {
     public String singleStoryForm(@PathVariable String username,
                                   @PathVariable Long boardId,
                                   Model model) {
-        StoryViewDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
-        model.addAttribute("story", storyByBoardId);
+        StoryViewDto storyByBoardId = storyService.findStoryViewByBoardId(username, boardId);
+        model.addAttribute("storyDto", storyByBoardId);
         return "story/story";
     }
 
@@ -60,18 +60,19 @@ public class StoryController {
     public String singleStoryWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
-        StoryViewDto storyDto = new StoryViewDto(memberSimpleDto.getUsername());
+        StoryWriteDto storyDto = new StoryWriteDto(memberSimpleDto.getUsername());
 
-        model.addAttribute("story", storyDto);
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
+        model.addAttribute("storyDto", storyDto);
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
 
         return "story/writeStory";
     }
 
     @PostMapping("/write")
     public String singleStoryWrite(@ModelAttribute StoryWriteDto storyDto) {
-        Long boardId = storyService.saveStory(SecurityUtil.getCurrentUsername(), storyDto);
+
         String username = SecurityUtil.getCurrentUsername();
+        Long boardId = storyService.saveStory(SecurityUtil.getCurrentUsername(), storyDto);
         return "redirect:/story/" + username + "/" + boardId;
 
     }
@@ -84,10 +85,10 @@ public class StoryController {
 //        if (storyDto.getUsername() != SecurityUtil.getCurrentUsername()) {
 //            // 작성자 외의 접근 error 처리
 //        }
-        StoryViewDto storyDto = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
+        StoryWriteDto storyDto = storyService.findStoryWriteByBoardId(boardId);
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(storyDto.getUsername());
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
-        model.addAttribute("story", storyDto);
+        model.addAttribute("storyDto", storyDto);
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
 
         return "story/editStory";
     }

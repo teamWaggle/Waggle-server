@@ -92,7 +92,7 @@ public class StoryService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public StoryViewDto findStoryByBoardId(String username, Long id) {
+    public StoryViewDto findStoryViewByBoardId(String username, Long id) {
         //member setting
         Member signInMember = getMember(username);
 
@@ -106,6 +106,18 @@ public class StoryService {
         boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
         int count = recommendRepository.countByBoardId(id);
         return StoryViewDto.toDto(storyById.get(), count, recommendIt);
+    }
+
+    // StoryWriteDto 조회 -> edit에서 사용. (저장된 story 정보 불러오기)
+    @Transactional(readOnly = true)
+    public StoryWriteDto findStoryWriteByBoardId(Long id) {
+        //board setting
+        Optional<Story> storyById = storyRepository.findById(id);
+        if (storyById.isEmpty()) {
+            //error and return null
+        }
+
+        return StoryWriteDto.toDto(storyById.get());
     }
 
     //2. ===========저장===========
