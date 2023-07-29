@@ -18,7 +18,7 @@ public class MemberSimpleDto {
     private UploadFile profileImg;
 
     static public MemberSimpleDto toDto(Member member) {
-
+        if (member == null) return null;
         return MemberSimpleDto.builder()
                 .username(member.getUsername())
                 .profileImg(member.getProfileImg()).build();

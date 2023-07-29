@@ -20,20 +20,63 @@
              th:include="fragments/postSummary.html :: fragment-postSummary(${storySimpleViewDto})"></div>
     </div>
 
-    <div class="col">
-        <button class="w-100 btn btn-secondary btn-lg mb-3"
-                th:onclick="|location.href='@{/member/sign-up}'|"
-                type="button">회원가입
-        </button>
-        <button class="w-100 btn btn-secondary btn-lg mb-3"
-                th:onclick="|location.href='@{/member/sign-in}'|"
-                type="button">로그인
-        </button>
-        <button class="w-100 btn btn-secondary btn-lg mb-3"
-                th:onclick="|location.href='@{/story/write}'|"
-                type="button">스토리 등록
-        </button>
+    <div class="profile">
+        <th:block th:if="${memberSimpleDto}">
+            <div class="row align-items-center">
+                <div class="col-auto" style="padding-right: 0;">
+                    <th:block th:if="${memberSimpleDto.profileImg}">
+                        <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
+                            <img th:src="|/images/${memberSimpleDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${memberSimpleDto.profileImg}">
+                        <!-- 등록된 프로필 사진이 없을 경우 기본 사진 표시 -->
+                        <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
+                            <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </th:block>
+
+                    <button class="w-100 btn btn-secondary btn-lg mb-3"
+                            th:onclick="|location.href='@{/story/write}'|"
+                            type="button">스토리 등록
+                    </button>
+
+                </div>
+                <div class="col" style="padding-right: 0; font-size: 15px" th:text="${memberSimpleDto.username}"></div>
+            </div>
+        </th:block>
+
+        <th:block th:unless="${memberSimpleDto}">
+            <div style="display: flex; align-items: start; justify-content: start; margin-left: 20px">
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+                    <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <p style="margin-top: 7px; margin-left: 10px; font-size: 17px; font-weight: bold">꼬리를 흔들어주세요 !</p>
+            </div>
+
+            <button class="w-100 btn btn-secondary btn-lg mb-3"
+                    th:onclick="|location.href='@{/member/sign-in}'|"
+                    type="button">Waggle 로그인
+            </button>
+
+            <div style="text-align: right;">
+                <a href="/" style="text-decoration: none; color: inherit; margin-right: 10px;">
+                    <p>아이디・비밀번호 찾기</p>
+                </a>
+                <a href="/member/sign-up" style="text-decoration: none; color: inherit;">
+                    <p>회원가입</p>
+                </a>
+            </div>
+
+
+        </th:block>
+
     </div>
+
+
 </div>
 
 </body>
