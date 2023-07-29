@@ -1,7 +1,8 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.file.FileStore;
-import com.example.waggle.dto.board.StorySimpleDto;
+
+import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.service.board.StoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,35 +30,35 @@ public class IndexController {
     public String home(Model model) {
 //        storyService.findAllStory();
 
-        List<StorySimpleDto> storySimpleDtoList = new ArrayList<>();
-        StorySimpleDto storySimpleDto1 = StorySimpleDto.builder()
+        List<StorySimpleViewDto> storySimpleViewDtos = new ArrayList<>();
+        StorySimpleViewDto storySimpleViewDto1 = StorySimpleViewDto.builder()
                 .username("story1")
                 .thumbnail("https://github.com/suddiyo/suddiyo/assets/88311377/9323405a-58ba-4c41-adb6-3b2c93f5558a").build();
 
-        StorySimpleDto storySimpleDto2 = StorySimpleDto.builder()
+        StorySimpleViewDto storySimpleViewDto2 = StorySimpleViewDto.builder()
                 .username("story2")
                 .thumbnail("https://github.com/suddiyo/suddiyo/assets/88311377/9323405a-58ba-4c41-adb6-3b2c93f5558a").build();
 
-        StorySimpleDto storySimpleDto3 = StorySimpleDto.builder()
+        StorySimpleViewDto storySimpleViewDto3 = StorySimpleViewDto.builder()
                 .username("story3")
                 .thumbnail("https://github.com/suddiyo/suddiyo/assets/88311377/9323405a-58ba-4c41-adb6-3b2c93f5558a").build();
 
-        StorySimpleDto storySimpleDto4 = StorySimpleDto.builder()
+        StorySimpleViewDto storySimpleViewDto4 = StorySimpleViewDto.builder()
                 .username("story4")
                 .thumbnail("https://github.com/suddiyo/suddiyo/assets/88311377/9323405a-58ba-4c41-adb6-3b2c93f5558a").build();
 
-        StorySimpleDto storySimpleDto5 = StorySimpleDto.builder()
+        StorySimpleViewDto storySimpleViewDto5 = StorySimpleViewDto.builder()
                 .username("story5")
                 .thumbnail("https://github.com/suddiyo/suddiyo/assets/88311377/9323405a-58ba-4c41-adb6-3b2c93f5558a").build();
 
 
-        storySimpleDtoList.add(storySimpleDto1);
-        storySimpleDtoList.add(storySimpleDto2);
-        storySimpleDtoList.add(storySimpleDto3);
-        storySimpleDtoList.add(storySimpleDto4);
-        storySimpleDtoList.add(storySimpleDto5);
+        storySimpleViewDtos.add(storySimpleViewDto1);
+        storySimpleViewDtos.add(storySimpleViewDto2);
+        storySimpleViewDtos.add(storySimpleViewDto3);
+        storySimpleViewDtos.add(storySimpleViewDto4);
+        storySimpleViewDtos.add(storySimpleViewDto5);
 
-        model.addAttribute("storySimpleDtoList", storySimpleDtoList);
+        model.addAttribute("storySimpleViewDtos", storySimpleViewDtos);
         return "index";
     }
 
