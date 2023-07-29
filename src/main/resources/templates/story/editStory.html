@@ -57,14 +57,24 @@
 
                     <div class="row align-items-center">
                         <div class="col-auto" style="padding-right: 0;">
-                            <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
-                                <img th:src="|/images/${profileImg}|" alt="프로필 사진"
-                                     style="width: 100%; height: 100%; object-fit: cover;">
-                            </div>
+                            <th:block th:if="${profileImg}">
+                                <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
+                                    <img th:src="|/images/${profileImg.getStoreFileName()}|" alt="프로필 사진"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </th:block>
+                            <th:block th:unless="${profileImg}">
+                                <!-- 등록된 프로필 사진이 없을 경우 기본 사진 표시 -->
+                                <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
+                                    <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </th:block>
                         </div>
                         <div class="col" style="padding-right: 0; font-size: 15px"
                              th:text="*{username}"></div>
                     </div>
+
                 </div>
                 <div class="image-section">
                     <input type="file" name="photo" class="form-control-file" style="width: 200px; height: 200px;">
