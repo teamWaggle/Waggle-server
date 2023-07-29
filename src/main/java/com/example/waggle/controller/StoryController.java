@@ -31,7 +31,7 @@ public class StoryController {
     public String storyMain(Model model) {
         List<StorySimpleViewDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleStories", allStory);
-        return "main";
+        return "index";
     }
 
 
@@ -47,8 +47,8 @@ public class StoryController {
     public String singleStoryForm(@PathVariable String username,
                                   @PathVariable Long boardId,
                                   Model model) {
-        StoryViewDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
-        model.addAttribute("story", storyByBoardId);
+        StoryDto storyByBoardId = storyService.findStoryByBoardId(username, boardId);
+        model.addAttribute("storyDto", storyByBoardId);
         return "story/story";
     }
 
@@ -61,8 +61,8 @@ public class StoryController {
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
         StoryViewDto storyDto = new StoryViewDto(memberSimpleDto.getUsername());
 
-        model.addAttribute("story", storyDto);
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
+        model.addAttribute("storyDto", storyDto);
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
 
         return "story/writeStory";
     }
@@ -85,8 +85,8 @@ public class StoryController {
 //        }
         StoryViewDto storyDto = storyService.findStoryByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(storyDto.getUsername());
+        model.addAttribute("storyDto", storyDto);
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
-        model.addAttribute("story", storyDto);
 
         return "story/editStory";
     }

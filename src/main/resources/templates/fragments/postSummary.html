@@ -1,0 +1,34 @@
+<div th:fragment="fragment-postSummary(storySimpleDto)">
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <style>
+            .post-summary {
+                width: 100%;
+                border: 2px solid #000000;
+                border-radius: 10px;
+                margin-bottom: 30px;
+                padding: 0;
+            }
+            .post-summary img {
+                width: 100%;
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+                height: auto;
+            }
+            .post-summary p {
+                height: 30px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="post-summary">
+        <p th:text="${storySimpleDto.username}"></p>
+        <img th:src="${storySimpleDto.thumbnail}">
+    </div>
+    </body>
+    </html>
+</div>
