@@ -69,8 +69,9 @@ public class QuestionController {
 
     @PostMapping("/write")
     public String singleQuestionWrite(@ModelAttribute QuestionWriteDto questionDto) {
-        Long questionId = questionService.saveQuestion(SecurityUtil.getCurrentUsername(), questionDto);
+
         String username = SecurityUtil.getCurrentUsername();
+        Long questionId = questionService.saveQuestion(SecurityUtil.getCurrentUsername(), questionDto);
         String title = questionDto.getTitle();
         return "redirect:/question/" + username + "/" +title + "/"+ questionId;
     }
@@ -80,8 +81,7 @@ public class QuestionController {
      */
     @GetMapping("/edit/{title}/{boardId}")
     public String questionSingleEditForm(Model model, @PathVariable Long boardId) {
-        QuestionViewDto questionDto = questionService
-                .findQuestionByBoardId(SecurityUtil.getCurrentUsername(), boardId);
+        QuestionViewDto questionDto = questionService.findQuestionByBoardId(SecurityUtil.getCurrentUsername(), boardId);
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(questionDto.getUsername());
 
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());

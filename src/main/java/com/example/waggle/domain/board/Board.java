@@ -1,7 +1,5 @@
 package com.example.waggle.domain.board;
 
-
-
 import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
