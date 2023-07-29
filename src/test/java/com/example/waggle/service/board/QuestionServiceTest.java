@@ -1,6 +1,6 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.dto.board.QuestionDto;
+import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +23,8 @@ class QuestionServiceTest {
 
     private SignUpDto signUpDto1;
     private SignUpDto signUpDto2;
-    private QuestionDto questionDto1;
-    private QuestionDto questionDto2;
+    private QuestionViewDto questionDto1;
+    private QuestionViewDto questionDto2;
 
 
     @BeforeEach
@@ -45,7 +45,7 @@ class QuestionServiceTest {
                 .phone("010-1234-5678")
                 .build();
         //board(new build)
-        questionDto1 = QuestionDto.builder()
+        questionDto1 = QuestionViewDto.builder()
                 .content("question1. i wanna asnwer!")
                 .title("my dog is cooool")
                 .username("member1")

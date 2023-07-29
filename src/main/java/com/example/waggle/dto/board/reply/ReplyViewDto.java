@@ -1,4 +1,4 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.reply;
 
 import com.example.waggle.domain.board.comment.Reply;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReplyDto {
+public class ReplyViewDto {
 
     private Long id;
     private String content;
@@ -22,8 +22,8 @@ public class ReplyDto {
     @Builder.Default
     private List<String> mentionMembers = new ArrayList<>();
 
-    static public ReplyDto toDto(Reply reply) {
-        return ReplyDto.builder()
+    static public ReplyViewDto toDto(Reply reply) {
+        return ReplyViewDto.builder()
                 .id(reply.getId())
                 .content(reply.getContent())
                 .orders(reply.getOrders())

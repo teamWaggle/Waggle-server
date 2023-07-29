@@ -1,22 +1,21 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.comment.Comment;
-import com.example.waggle.domain.board.comment.MemberMention;
-import com.example.waggle.domain.board.comment.Reply;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.*;
-import com.example.waggle.dto.member.MemberDto;
+import com.example.waggle.dto.board.answer.AnswerViewDto;
+import com.example.waggle.dto.board.answer.AnswerWriteDto;
+import com.example.waggle.dto.board.question.QuestionViewDto;
+import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
+import com.example.waggle.dto.board.question.QuestionWriteDto;
 import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
-import com.example.waggle.repository.board.comment.CommentRepository;
-import com.example.waggle.repository.board.comment.ReplyRepository;
 import com.example.waggle.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +35,12 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final HashtagRepository hashtagRepository;
-    private final CommentRepository commentRepository;
-    private final ReplyRepository replyRepository;
     private final MemberRepository memberRepository;
     private final RecommendRepository recommendRepository;
+
+//    private final CommentRepository commentRepository;
+//    private final ReplyRepository replyRepository;
+
 
     /**
      * 조회는 entity -> dto과정을,
@@ -52,29 +53,29 @@ public class QuestionService {
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
     @Transactional(readOnly = true)
-    public List<QuestionSimpleDto> findAllQuestion(String username) {
+    public List<QuestionSimpleViewDto> findAllQuestion(String username) {
         Member member = getMember(username);
 
         List<Question> allQuestion = questionRepository.findAll();
-        List<QuestionSimpleDto> simpleQuestions = new ArrayList<>();
+        List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
         for (Question question : allQuestion) {
             boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(member.getId(), question.getId());
             int count = recommendRepository.countByBoardId(question.getId());
-            simpleQuestions.add(QuestionSimpleDto.toDto(question, count, recommendIt));
+            simpleQuestions.add(QuestionSimpleViewDto.toDto(question, count, recommendIt));
         }
         return simpleQuestions;
     }
 
     //1.1.2 회원 정보에 따른 전체 조회
     @Transactional(readOnly = true)
-    public List<QuestionSimpleDto> findAllQuestionByMember(String username) {
+    public List<QuestionSimpleViewDto> findAllQuestionByMember(String username) {
         List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
 
-        List<QuestionSimpleDto> simpleQuestions = new ArrayList<>();
+        List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
         for (Question question : questionsByUsername) {
             boolean cantRecommendIt = false;
             int count = recommendRepository.countByBoardId(question.getId());
-            simpleQuestions.add(QuestionSimpleDto.toDto(question, count, cantRecommendIt));
+            simpleQuestions.add(QuestionSimpleViewDto.toDto(question, count, cantRecommendIt));
         }
 
         return simpleQuestions;
@@ -82,7 +83,7 @@ public class QuestionService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public QuestionDto findQuestionByBoardId(String username, Long boardId) {
+    public QuestionViewDto findQuestionByBoardId(String username, Long boardId) {
         Member member = getMember(username);
 
         Optional<Question> questionById = questionRepository.findById(boardId);
@@ -91,7 +92,7 @@ public class QuestionService {
         }
         boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(member.getId(), boardId);
         int count = recommendRepository.countByBoardId(boardId);
-        return QuestionDto.toDto(questionById.get(), count, recommendIt);
+        return QuestionViewDto.toDto(questionById.get(), count, recommendIt);
     }
 
 //    @Transactional(readOnly = true)
@@ -118,7 +119,7 @@ public class QuestionService {
     //2. ===========저장===========
 
     //2.1 question 저장(media, hashtag 포함)
-    public Long saveQuestion(String username, QuestionDto saveQuestionDto) {
+    public Long saveQuestion(String username, QuestionWriteDto saveQuestionDto) {
         Member member = getMember(username);
         Question question = saveQuestionDto.toEntity(member);
         questionRepository.save(question);
@@ -138,63 +139,63 @@ public class QuestionService {
         return question.getId();
     }
 
-    //2.2 question_comment 저장
-    public void saveCommentInQuestion(CommentDto commentDto, QuestionDto questionDto, MemberDto memberDto) {
-        Optional<Question> questionById = questionRepository.findById(questionDto.getId());
-        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-
-        int lastOrder = commentRepository.findLastOrderByBoardId(questionDto.getId());
-
-        if (questionById.isPresent() && memberByUsername.isPresent()) {
-            Comment buildComment = Comment.builder()
-                    .orders(++lastOrder)
-                    .content(commentDto.getContent())
-                    .board(questionById.get())
-                    .member(memberByUsername.get())
-                    .build();
-            commentRepository.save(buildComment);
-        }
-    }
-    //2.3 question_comment_reply 저장
-    public void saveReplyInQuestion(ReplyDto replyDto, CommentDto commentDto, MemberDto memberDto) {
-        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-        //order set
-        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
-        //mention set
-        List<MemberMention> memberMentions = new ArrayList<>();
-        for (String mentionMember : replyDto.getMentionMembers()) {
-            memberMentions.add(MemberMention.builder().username(mentionMember).build());
-        }
-
-        if (commentById.isPresent() && memberByUsername.isPresent()) {
-            Reply buildReply = Reply.builder()
-                    .orders(++lastOrder)
-                    .content(replyDto.getContent())
-                    .comment(commentById.get())
-                    .member(memberByUsername.get())
-                    .mentionedMembers(memberMentions)
-                    .build();
-
-            replyRepository.save(buildReply);
-        }
-    }
+//    //2.2 question_comment 저장
+//    public void saveCommentInQuestion(CommentDto commentDto, QuestionDto questionDto, MemberDto memberDto) {
+//        Optional<Question> questionById = questionRepository.findById(questionDto.getId());
+//        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
+//
+//        int lastOrder = commentRepository.findLastOrderByBoardId(questionDto.getId());
+//
+//        if (questionById.isPresent() && memberByUsername.isPresent()) {
+//            Comment buildComment = Comment.builder()
+//                    .orders(++lastOrder)
+//                    .content(commentDto.getContent())
+//                    .board(questionById.get())
+//                    .member(memberByUsername.get())
+//                    .build();
+//            commentRepository.save(buildComment);
+//        }
+//    }
+//    //2.3 question_comment_reply 저장
+//    public void saveReplyInQuestion(ReplyDto replyDto, CommentDto commentDto, MemberDto memberDto) {
+//        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
+//        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
+//        //order set
+//        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
+//        //mention set
+//        List<MemberMention> memberMentions = new ArrayList<>();
+//        for (String mentionMember : replyDto.getMentionMembers()) {
+//            memberMentions.add(MemberMention.builder().username(mentionMember).build());
+//        }
+//
+//        if (commentById.isPresent() && memberByUsername.isPresent()) {
+//            Reply buildReply = Reply.builder()
+//                    .orders(++lastOrder)
+//                    .content(replyDto.getContent())
+//                    .comment(commentById.get())
+//                    .member(memberByUsername.get())
+//                    .mentionedMembers(memberMentions)
+//                    .build();
+//
+//            replyRepository.save(buildReply);
+//        }
+//    }
     //2.4 answer 저장(media, hashtag 포함)
-    public void saveAnswer(String username, AnswerDto saveAnswerDto, QuestionDto questionDto) {
+    public void saveAnswer(String username, AnswerWriteDto writeDto, Long boardId) {
         Member signInMember = getMember(username);
-        Optional<Question> questionById = questionRepository.findById(questionDto.getId());
+        Optional<Question> questionById = questionRepository.findById(boardId);
 
         if (questionById.isPresent()) {
-            Answer answer = saveAnswerDto.toEntity(signInMember);
+            Answer answer = writeDto.toEntity(signInMember);
             //hashtag 저장
-            if(!saveAnswerDto.getHashtags().isEmpty()){
-                for (String hashtag : saveAnswerDto.getHashtags()) {
+            if(!writeDto.getHashtags().isEmpty()){
+                for (String hashtag : writeDto.getHashtags()) {
                     saveHashtagInAnswer(answer,hashtag);
                 }
             }
             //media 저장
-            if (!saveAnswerDto.getMedias().isEmpty()) {
-                for (String media : saveAnswerDto.getMedias()) {
+            if (!writeDto.getMedias().isEmpty()) {
+                for (String media : writeDto.getMedias()) {
                     Media.builder().url(media).board(answer).build();
                 }
             }
@@ -203,154 +204,195 @@ public class QuestionService {
         }
     }
 
-    //2.5 answer_comment 저장
-    public void saveCommentInAnswer(CommentDto commentDto, AnswerDto answerDto, MemberDto memberDto) {
-        Optional<Answer> answerById = answerRepository.findById(answerDto.getId());
-        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-
-        int lastOrder = commentRepository.findLastOrderByBoardId(answerDto.getId());
-
-        if (answerById.isPresent() && memberByUsername.isPresent()) {
-            Comment buildComment = Comment.builder()
-                    .orders(++lastOrder)
-                    .content(commentDto.getContent())
-                    .board(answerById.get())
-                    .member(memberByUsername.get())
-                    .build();
-            commentRepository.save(buildComment);
-        }
-    }
-
-    //2.6 answer_comment_reply 저장
-    public void saveReplyInAnswer(ReplyDto replyDto, CommentDto commentDto, MemberDto memberDto) {
-        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-
-        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
-        //mention set
-        List<MemberMention> memberMentions = new ArrayList<>();
-        for (String mentionMember : replyDto.getMentionMembers()) {
-            memberMentions.add(MemberMention.builder().username(mentionMember).build());
-        }
-
-        if (commentById.isPresent() && memberByUsername.isPresent()) {
-            Reply buildReply = Reply.builder()
-                    .orders(++lastOrder)
-                    .content(replyDto.getContent())
-                    .comment(commentById.get())
-                    .member(memberByUsername.get())
-                    .mentionedMembers(memberMentions)
-                    .build();
-
-            replyRepository.save(buildReply);
-        }
-    }
+//    //2.5 answer_comment 저장
+//    public void saveCommentInAnswer(CommentDto commentDto, AnswerDto answerDto, MemberDto memberDto) {
+//        Optional<Answer> answerById = answerRepository.findById(answerDto.getId());
+//        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
+//
+//        int lastOrder = commentRepository.findLastOrderByBoardId(answerDto.getId());
+//
+//        if (answerById.isPresent() && memberByUsername.isPresent()) {
+//            Comment buildComment = Comment.builder()
+//                    .orders(++lastOrder)
+//                    .content(commentDto.getContent())
+//                    .board(answerById.get())
+//                    .member(memberByUsername.get())
+//                    .build();
+//            commentRepository.save(buildComment);
+//        }
+//    }
+//
+//    //2.6 answer_comment_reply 저장
+//    public void saveReplyInAnswer(ReplyDto replyDto, CommentDto commentDto, MemberDto memberDto) {
+//        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
+//        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
+//
+//        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
+//        //mention set
+//        List<MemberMention> memberMentions = new ArrayList<>();
+//        for (String mentionMember : replyDto.getMentionMembers()) {
+//            memberMentions.add(MemberMention.builder().username(mentionMember).build());
+//        }
+//
+//        if (commentById.isPresent() && memberByUsername.isPresent()) {
+//            Reply buildReply = Reply.builder()
+//                    .orders(++lastOrder)
+//                    .content(replyDto.getContent())
+//                    .comment(commentById.get())
+//                    .member(memberByUsername.get())
+//                    .mentionedMembers(memberMentions)
+//                    .build();
+//
+//            replyRepository.save(buildReply);
+//        }
+//    }
 
     //3. ===========수정===========
 
     //3.1 question 수정(media, hashtag 포함)
-    public String changeQuestion(QuestionDto questionDto, Long boardId) {
+    public String changeQuestion(QuestionWriteDto questionDto, Long boardId) {
         Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isPresent()) {
-            questionById.get().changeQuestion(questionDto.getContent(),questionDto.getTitle());
+            Question question = questionById.get();
+            //edit
+            question.changeQuestion(questionDto.getContent(),questionDto.getTitle());
 
             //delete(media)
-            questionById.get().getMedias().clear();
+            question.getMedias().clear();
 
             //newly insert data(media)
             for (String media : questionDto.getMedias()) {
-                Media changeMedia = Media.builder().url(media).board(questionById.get()).build();
+                Media changeMedia = Media.builder().url(media).board(question).build();
             }
 
             //delete connecting relate (boardHashtag)
-            questionById.get().getBoardHashtags().clear();
+            question.getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : questionDto.getHashtags()) {
-                saveHashtagInQuestion(questionById.get(), hashtag);
+                saveHashtagInQuestion(question, hashtag);
             }
-            return questionById.get().getMember().getUsername();
+            return question.getMember().getUsername();
         }
         return null;
     }
     //3.2 answer 수정(media, hashtag 포함)
-    public void changeAnswer(AnswerDto answerDto) {
-        Optional<Answer> answerById = answerRepository.findById(answerDto.getId());
+    public void changeAnswer(AnswerWriteDto answerDto, Long boardId) {
+        Optional<Answer> answerById = answerRepository.findById(boardId);
         if (answerById.isPresent()) {
-            answerById.get().changeAnswer(answerDto.getContent());
+            //edit
+            Answer answer = answerById.get();
+            answer.changeAnswer(answerDto.getContent());
 
             //delete(media)
-            answerById.get().getMedias().clear();
+            answer.getMedias().clear();
 
             //newly insert data(media)
             for (String media : answerDto.getMedias()) {
-                Media.builder().url(media).board(answerById.get()).build();
+                Media.builder().url(media).board(answer).build();
             }
 
             //delete connecting relate (boardHashtag)
-            answerById.get().getBoardHashtags().clear();
+            answer.getBoardHashtags().clear();
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : answerDto.getHashtags()) {
-                saveHashtagInAnswer(answerById.get(), hashtag);
+                saveHashtagInAnswer(answer, hashtag);
             }
         }
     }
 
-    //3.3 question(answer)_comment 수정
-    public void changeComment(CommentDto commentDto) {
-        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-        if (commentById.isPresent()) {
-            commentById.get().changeContent(commentDto.getContent());
+    //3.3 수정을 위한 user 확인 절차
+    @Transactional(readOnly = true)
+    public boolean checkMember(String username, Long boardId, String boardType) {
+        Member member = getMember(username);
+        Boolean isSameUser;
+        switch (boardType) {
+            case "question" :
+                Optional<Question> questionById = questionRepository.findById(boardId);
+                if (questionById.isEmpty()) {
+                    log.info("not exist question");
+                    //error
+                    return false;
+                }
+                isSameUser = questionById.get().getMember().equals(member);
+                break;
+            case "answer" :
+                Optional<Answer> answerById = answerRepository.findById(boardId);
+                if (answerById.isEmpty()) {
+                    log.info("not exist answer");
+                    //error
+                    return false;
+                }
+                isSameUser = answerById.get().getMember().equals(member);
+                break;
+            default :
+                return false;
         }
+        return isSameUser;
     }
 
-    //3.4 question(answer)_comment_reply 수정
-    public void changeReply(ReplyDto replyDto) {
-        Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
-        if (replyById.isPresent()) {
-            replyById.get().changeContent(replyDto.getContent());
-            //mention member setting
-            //delete older data
-            replyById.get().getMemberMentions().clear();
-            //save mention entity
-            List<MemberMention> memberMentions = new ArrayList<>();
-            for (String mentionMember : replyDto.getMentionMembers()) {
-                memberMentions.add(MemberMention.builder().username(mentionMember).build());
-            }
-            //link relation -> entity save(cascade)
-            for (MemberMention memberMention : memberMentions) {
-                replyById.get().addMemberMention(memberMention);
-            }
-        }
-    }
+//    //3.3 question(answeer)_comment 수정
+//    public void changeComment(CommentDto commentDto) {
+//        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
+//        if (commentById.isPresent()) {
+//            commentById.get().changeContent(commentDto.getContent());
+//        }
+//    }
+//
+//    //3.4 question(answer)_comment_reply 수정
+//    public void changeReply(ReplyDto replyDto) {
+//        Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
+//        if (replyById.isPresent()) {
+//            replyById.get().changeContent(replyDto.getContent());
+//            //mention member setting
+//            //delete older data
+//            replyById.get().getMemberMentions().clear();
+//            //save mention entity
+//            List<MemberMention> memberMentions = new ArrayList<>();
+//            for (String mentionMember : replyDto.getMentionMembers()) {
+//                memberMentions.add(MemberMention.builder().username(mentionMember).build());
+//            }
+//            //link relation -> entity save(cascade)
+//            for (MemberMention memberMention : memberMentions) {
+//                replyById.get().addMemberMention(memberMention);
+//            }
+//        }
+//    }
 
 
     //4. ===========삭제(취소)===========
 
     //4.1 question 삭제(media, hashtag 포함)
-    public void deleteQuestion(Long id) {
+    public void deleteQuestion(String username, Long id) {
+        Member member = getMember(username);
         Optional<Question> questionById = questionRepository.findById(id);
         if (questionById.isPresent()) {
+            //check user
+            if (!questionById.get().equals(member)) {
+                log.info("only same user can delete board!");
+                //error
+                return;
+            }
             questionRepository.delete(questionById.get());
         }
     }
 
-    //4.2 question_comment 삭제
-    public void deleteComment(Long id) {
-        Optional<Comment> commentById = commentRepository.findById(id);
-        if (commentById.isPresent()) {
-            commentRepository.delete(commentById.get());
-        }
-    }
-
-    //4.3 question_comment_reply 삭제
-    public void deleteReply(Long id) {
-        Optional<Reply> replyById = replyRepository.findById(id);
-        if (replyById.isPresent()) {
-            replyRepository.delete(replyById.get());
-        }
-    }
+//    //4.2 question_comment 삭제
+//    public void deleteComment(Long id) {
+//        Optional<Comment> commentById = commentRepository.findById(id);
+//        if (commentById.isPresent()) {
+//            commentRepository.delete(commentById.get());
+//        }
+//    }
+//
+//    //4.3 question_comment_reply 삭제
+//    public void deleteReply(Long id) {
+//        Optional<Reply> replyById = replyRepository.findById(id);
+//        if (replyById.isPresent()) {
+//            replyRepository.delete(replyById.get());
+//        }
+//    }
 
     //4.4 answer 삭제(media, hashtag 포함)
     public void deleteAnswer(Long id) {
@@ -392,6 +434,7 @@ public class QuestionService {
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
             //error
+            return null;
         }
         Member signInMember = byUsername.get();
         return signInMember;
