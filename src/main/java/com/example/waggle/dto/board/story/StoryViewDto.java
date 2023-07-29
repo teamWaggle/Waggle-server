@@ -1,8 +1,8 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.story;
 
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.domain.member.UploadFile;
+import com.example.waggle.dto.board.comment.CommentViewDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @ToString
-public class StoryDto {
+public class StoryViewDto {
 
     private Long id;
     private String content;
@@ -31,11 +31,11 @@ public class StoryDto {
     @Builder.Default
     private List<String> medias = new ArrayList<>();
     @Builder.Default
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<CommentViewDto> comments = new ArrayList<>();
 
     //스토리 하나를 조회할 때 사용
-    static public StoryDto toDto(Story story, int count, boolean recommendIt) {
-        return StoryDto.builder()
+    static public StoryViewDto toDto(Story story, int count, boolean recommendIt) {
+        return StoryViewDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
@@ -48,21 +48,12 @@ public class StoryDto {
                 .medias(story.getMedias().stream()
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
                 .comments(story.getComments().stream()
-                        .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
-                .build();
-    }
-    //스토리 하나를 저장할 때 사용
-    //스토리 안의 다른 엔티티는 개별로 저장, 하지만 메서드를 통해 연관관계를 맺어준다.
-    public Story toEntity(Member member) {
-        return Story.builder()
-                .member(member)
-                .content(content)
-                .thumbnail(thumbnail)
-                .member(member)
+                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
 
-    public StoryDto(String username) {
+
+    public StoryViewDto(String username) {
         this.username = username;
     }
 }

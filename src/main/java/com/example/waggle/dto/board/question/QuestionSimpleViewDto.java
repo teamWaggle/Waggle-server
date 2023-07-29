@@ -1,4 +1,4 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.question;
 
 import com.example.waggle.domain.board.boardType.Question;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionSimpleDto {
+public class QuestionSimpleViewDto {
 
     private Long questionId;
     private String username;
@@ -26,8 +26,8 @@ public class QuestionSimpleDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public QuestionSimpleDto toDto(Question question, int recommendCount, boolean recommendIt) {
-        return QuestionSimpleDto.builder()
+    static public QuestionSimpleViewDto toDto(Question question, int recommendCount, boolean recommendIt) {
+        return QuestionSimpleViewDto.builder()
                 .questionId(question.getId())
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())

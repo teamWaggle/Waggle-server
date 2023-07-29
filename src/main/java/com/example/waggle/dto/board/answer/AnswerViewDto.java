@@ -1,7 +1,9 @@
-package com.example.waggle.dto.board;
+package com.example.waggle.dto.board.answer;
 
-import com.example.waggle.domain.board.boardType.Question;
+import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.dto.board.comment.CommentViewDto;
+import com.example.waggle.dto.board.reply.ReplyViewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,52 +18,45 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class QuestionDto {
+public class AnswerViewDto {
 
     private Long id;
     private String content;
     private String username;
-    private String title;
     private LocalDateTime createDate;
     private int recommendCount;
     private boolean recommendIt;
-
+    
     @Builder.Default
     private List<String> medias = new ArrayList<>();
     @Builder.Default
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<CommentViewDto> comments = new ArrayList<>();
     @Builder.Default
-    private List<ReplyDto> replies = new ArrayList<>();
+    private List<ReplyViewDto> replies = new ArrayList<>();
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public QuestionDto toDto(Question question, int count, boolean recommendIt) {
-        return QuestionDto.builder()
-                .id(question.getId())
-                .content(question.getContent())
-                .username(question.getMember().getUsername())
-                .title(question.getTitle())
-                .createDate(question.getCreatedDate())
+    static public AnswerViewDto toDto(Answer answer, int count, boolean recommendIt) {
+        return AnswerViewDto.builder()
+                .id(answer.getId())
+                .content(answer.getContent())
+                .username(answer.getMember().getUsername())
+                .createDate(answer.getCreatedDate())
                 .recommendCount(count)
                 .recommendIt(recommendIt)
-                .hashtags(question.getBoardHashtags().stream()
+                .hashtags(answer.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
-                .medias(question.getMedias().stream()
+                .medias(answer.getMedias().stream()
                         .map(m -> m.getUrl()).collect(Collectors.toList()))
-                .comments(question.getComments().stream()
-                        .map(c -> CommentDto.toDto(c)).collect(Collectors.toList()))
+                .comments(answer.getComments().stream()
+                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
 
-    public Question toEntity(Member member) {
-        return Question.builder()
-                .title(title)
+    public Answer toEntity(Member member) {
+        return Answer.builder()
                 .content(content)
                 .member(member)
                 .build();
-    }
-
-    public QuestionDto(String username) {
-        this.username = username;
     }
 }
