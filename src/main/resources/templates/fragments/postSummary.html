@@ -1,4 +1,4 @@
-<div th:fragment="fragment-postSummary(storySimpleDto)">
+<div th:fragment="fragment-postSummary(storySimpleViewDto)">
     <!DOCTYPE html>
     <html xmlns:th="http://www.thymeleaf.org">
     <head>
@@ -26,8 +26,8 @@
     </head>
     <body>
     <div class="post-summary">
-        <p th:text="${storySimpleDto.username}"></p>
-        <img th:src="${storySimpleDto.thumbnail}">
+        <p th:text="${storySimpleViewDto.username}"></p>
+        <img th:src="${storySimpleViewDto.thumbnail}">
     </div>
     </body>
     </html>
