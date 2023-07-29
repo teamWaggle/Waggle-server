@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../../../static/css/bootstrap.min.css" rel="stylesheet">
+    <title>Waggle</title>
+
+</head>
+<body>
+<link rel="stylesheet" href="/css/index.css">
+
+
+<th:block th:replace="fragments/menubar.html :: fragment-menubar"></th:block>
+
+
+<div class="container">
+    <div class="grid-container">
+        <div th:each="storySimpleDto : ${storySimpleDtoList}"
+             th:include="fragments/postSummary.html :: fragment-postSummary(${storySimpleDto})"></div>
+    </div>
+
+    <div class="col">
+        <button class="w-100 btn btn-secondary btn-lg mb-3"
+                th:onclick="|location.href='@{/member/sign-up}'|"
+                type="button">회원가입
+        </button>
+        <button class="w-100 btn btn-secondary btn-lg mb-3"
+                th:onclick="|location.href='@{/member/sign-in}'|"
+                type="button">로그인
+        </button>
+        <button class="w-100 btn btn-secondary btn-lg mb-3"
+                th:onclick="|location.href='@{/story/write}'|"
+                type="button">스토리 등록
+        </button>
+    </div>
+</div>
+
+</body>
+</html>
