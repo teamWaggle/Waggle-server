@@ -8,13 +8,10 @@ import com.example.waggle.service.board.StoryService;
 import com.example.waggle.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 @Controller
@@ -34,7 +31,7 @@ public class StoryController {
     public String storyMain(Model model) {
         List<StorySimpleDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
         model.addAttribute("simpleStories", allStory);
-        return "main";
+        return "index";
     }
 
 
@@ -65,7 +62,7 @@ public class StoryController {
         StoryDto storyDto = new StoryDto(memberSimpleDto.getUsername());
 
         model.addAttribute("storyDto", storyDto);
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
 
         return "story/writeStory";
     }

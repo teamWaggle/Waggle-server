@@ -16,6 +16,11 @@
 <body>
 
 <div class="container">
+    <div class="row justify-content-center text-center">
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h3 style="margin-top: 30px; margin-left: 20px">Waggle 🐶</h3>
+        </a>
+    </div>
 
     <div class="py-5 text-center">
         <h2>로그인</h2>
@@ -28,7 +33,8 @@
         </div>
         <div>
             <label for="password">비밀번호</label>
-            <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호를 입력해주세요.">
+            <input type="password" id="password" th:field="*{password}" class="form-control"
+                   placeholder="비밀번호를 입력해주세요.">
         </div>
 
         <hr class="my-4">
