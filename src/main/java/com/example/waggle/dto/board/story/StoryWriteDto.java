@@ -17,6 +17,7 @@ public class StoryWriteDto {
 
     private String content;
     private String thumbnail;
+    private String username;
 
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
