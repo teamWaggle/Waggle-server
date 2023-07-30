@@ -10,6 +10,8 @@ import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.StoryService;
 import com.example.waggle.service.member.MemberService;
 import com.example.waggle.utils.DateUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -35,7 +38,7 @@ public class IndexController {
     private final FileStore fileStore;
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(HttpServletRequest request, Model model) {
 
         List<StorySimpleViewDto> storySimpleViewDtos = storyService.findAllStory();
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(SecurityUtil.getCurrentUsername());
