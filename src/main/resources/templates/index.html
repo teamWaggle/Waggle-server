@@ -11,50 +11,64 @@
 <link rel="stylesheet" href="/css/index.css">
 
 
-<th:block th:replace="fragments/menubar.html :: fragment-menubar"></th:block>
+<th:block th:replace="fragments/searchHeader.html :: fragment-searchHeader"></th:block>
 
 
 <div class="container">
     <div class="grid-container">
         <div th:each="storySimpleViewDto : ${storySimpleViewDtos}"
-             th:include="fragments/postSummary.html :: fragment-postSummary(${storySimpleViewDto})"></div>
+             th:include="fragments/postSummary.html :: fragment-postSummary(${storySimpleViewDto})"
+        ></div>
     </div>
 
     <div class="profile">
         <th:block th:if="${memberSimpleDto}">
-            <div class="row align-items-center">
-                <div class="col-auto" style="padding-right: 0;">
-                    <th:block th:if="${memberSimpleDto.profileImg}">
-                        <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
-                            <img th:src="|/images/${memberSimpleDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
-                                 style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                    </th:block>
-                    <th:block th:unless="${memberSimpleDto.profileImg}">
-                        <!-- 등록된 프로필 사진이 없을 경우 기본 사진 표시 -->
-                        <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
-                            <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
-                                 style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                    </th:block>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-left: 20px; margin-bottom: 10px;">
 
-                    <button class="w-100 btn btn-secondary btn-lg mb-3"
-                            th:onclick="|location.href='@{/story/write}'|"
-                            type="button">스토리 등록
-                    </button>
+                <th:block th:if="${memberSimpleDto.profileImg}">
 
+                    <div style="max-width: 40px; max-height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px;">
+                        <img th:src="|/images/${memberSimpleDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+
+                </th:block>
+                <th:block th:unless="${memberSimpleDto.profileImg}">
+                    <div style="max-width: 40px; max-height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px;">
+                        <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </th:block>
+
+
+                <div style="display: flex; flex-direction: column;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 0;"
+                         th:text="${memberSimpleDto.nickname}"></div>
+                    <div style="font-size: 13px; margin-top: 0;" th:text="'@' + ${memberSimpleDto.username}"></div>
                 </div>
-                <div class="col" style="padding-right: 0; font-size: 15px" th:text="${memberSimpleDto.username}"></div>
+
+                <button class="btn btn-secondary"
+                        th:onclick="|location.href='@{/member/logout}'|"
+                        style="width:130px; height: 40px; margin-right: 20px; border-radius: 30px; font-size: 15px"
+                        type="button">로그아웃
+                </button>
             </div>
+
+            <button class="w-100 btn btn-secondary btn-lg mb-3"
+                    th:onclick="|location.href='@{/story/write}'|"
+                    type="button">스토리 작성하기
+            </button>
         </th:block>
 
         <th:block th:unless="${memberSimpleDto}">
-            <div style="display: flex; align-items: start; justify-content: start; margin-left: 20px">
-                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+            <div style="display: flex; align-items: center; margin-left: 20px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px;">
                     <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
                          style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <p style="margin-top: 7px; margin-left: 10px; font-size: 17px; font-weight: bold">꼬리를 흔들어주세요 !</p>
+                <div style="display: flex; flex-direction: column;">
+                    <div style="font-size: 17px; font-weight: bold; margin-bottom: 3px;">꼬리를 흔들어주세요 !</div>
+                </div>
             </div>
 
             <button class="w-100 btn btn-secondary btn-lg mb-3"
@@ -70,14 +84,8 @@
                     <p>회원가입</p>
                 </a>
             </div>
-
-
         </th:block>
-
     </div>
-
-
 </div>
-
 </body>
 </html>

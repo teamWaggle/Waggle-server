@@ -1,6 +1,8 @@
 package com.example.waggle.dto.board.story;
 
 import com.example.waggle.domain.board.boardType.Story;
+import com.example.waggle.domain.member.UploadFile;
+import com.example.waggle.utils.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +21,9 @@ public class StorySimpleViewDto {
 
     private Long storyId;
     private String username;
+    private UploadFile profileImg;
     private String thumbnail;
-    private LocalDateTime createDate;
+    private String createdDate;
     private int recommendCount;
     private boolean recommendIt;
     @Builder.Default
@@ -30,12 +33,14 @@ public class StorySimpleViewDto {
         return StorySimpleViewDto.builder()
                 .storyId(story.getId())
                 .username(story.getMember().getUsername())
+                .profileImg(story.getMember().getProfileImg())
                 .thumbnail(story.getThumbnail())
-                .createDate(story.getCreatedDate())
+                .createdDate(DateUtil.txtDate(story.getCreatedDate()))
                 .recommendCount(count)
                 .recommendIt(recommendIt)
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
+
     }
 }
