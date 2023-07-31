@@ -30,7 +30,7 @@ public class StoryController {
      */
     @GetMapping
     public String storyMain(Model model) {
-        List<StorySimpleViewDto> allStory = storyService.findAllStory(SecurityUtil.getCurrentUsername());
+        List<StorySimpleViewDto> allStory = storyService.findAllStory();
         model.addAttribute("simpleStories", allStory);
         return "index";
     }
@@ -39,7 +39,7 @@ public class StoryController {
     @GetMapping("/{username}")
     public String memberStory(@PathVariable String username,
                               Model model) {
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember(username);
+        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember();
         model.addAttribute("simpleStories", allStoryByMember);
         return "story/memberStory";
     }
@@ -48,7 +48,7 @@ public class StoryController {
     public String singleStoryForm(@PathVariable String username,
                                   @PathVariable Long boardId,
                                   Model model) {
-        StoryViewDto storyByBoardId = storyService.findStoryViewByBoardId(username, boardId);
+        StoryViewDto storyByBoardId = storyService.findStoryViewByBoardId(boardId);
         model.addAttribute("storyDto", storyByBoardId);
         return "story/story";
     }
@@ -72,7 +72,7 @@ public class StoryController {
     public String singleStoryWrite(@ModelAttribute StoryWriteDto storyDto) {
 
         String username = SecurityUtil.getCurrentUsername();
-        Long boardId = storyService.saveStory(SecurityUtil.getCurrentUsername(), storyDto);
+        Long boardId = storyService.saveStory(storyDto);
         return "redirect:/story/" + username + "/" + boardId;
 
     }
