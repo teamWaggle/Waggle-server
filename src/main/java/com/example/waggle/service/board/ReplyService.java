@@ -1,5 +1,6 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
@@ -40,6 +41,7 @@ public class ReplyService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
+
     //1. 조회
     @Transactional(readOnly = true)
     public List<ReplyViewDto> findReplies (Long commentId) {
@@ -54,8 +56,8 @@ public class ReplyService {
                 .map(ReplyViewDto::toDto).collect(Collectors.toList());
     }
     //2. 저장
-    public Long saveReply(String username, CommentViewDto commentViewDto, ReplyWriteDto replyWriteDto) {
-        Member member = getMember(username);
+    public Long saveReply(CommentViewDto commentViewDto, ReplyWriteDto replyWriteDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
 
         //check exist
         Optional<Comment> commentById = commentRepository.findById(commentViewDto.getId());
@@ -100,8 +102,8 @@ public class ReplyService {
     }
 
     //4. 삭제
-    public void deleteReply(String username, ReplyViewDto viewDto) {
-        Member member = getMember(username);
+    public void deleteReply(ReplyViewDto viewDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Optional<Reply> replyById = replyRepository.findById(viewDto.getId());
         if (replyById.isEmpty()) {
             log.info("not exist reply");

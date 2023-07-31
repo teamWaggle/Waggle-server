@@ -1,5 +1,6 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Recommend;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.boardType.Story;
@@ -30,11 +31,12 @@ public class RecommendService {
     private final AnswerRepository answerRepository;
     private final RecommendRepository recommendRepository;
 
-    public void clickRecommend(Long boardId, String username, String boardType) {
+
+    public void clickRecommend(Long boardId, String boardType) {
 
         Board board = getBoard(boardId, boardType);
         if (board == null) return;
-        Member member = getMember(username);
+        Member member = getMember(SecurityUtil.getCurrentUsername());
 
         //check recommend board
         boolean check = recommendRepository

@@ -1,5 +1,6 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
@@ -38,10 +39,6 @@ public class QuestionService {
     private final MemberRepository memberRepository;
     private final RecommendRepository recommendRepository;
 
-//    private final CommentRepository commentRepository;
-//    private final ReplyRepository replyRepository;
-
-
     /**
      * 조회는 entity -> dto과정을,
      * 저장은 dto -> entity 과정을 거치도록 한다.(기본)
@@ -53,8 +50,8 @@ public class QuestionService {
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
     @Transactional(readOnly = true)
-    public List<QuestionSimpleViewDto> findAllQuestion(String username) {
-        Member member = getMember(username);
+    public List<QuestionSimpleViewDto> findAllQuestion() {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
 
         List<Question> allQuestion = questionRepository.findAll();
         List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
@@ -68,8 +65,9 @@ public class QuestionService {
 
     //1.1.2 회원 정보에 따른 전체 조회
     @Transactional(readOnly = true)
-    public List<QuestionSimpleViewDto> findAllQuestionByMember(String username) {
-        List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
+    public List<QuestionSimpleViewDto> findAllQuestionByMember() {
+        List<Question> questionsByUsername = questionRepository
+                .findByMemberUsername(SecurityUtil.getCurrentUsername());
 
         List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
         for (Question question : questionsByUsername) {
@@ -83,8 +81,8 @@ public class QuestionService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public QuestionViewDto findQuestionByBoardId(String username, Long boardId) {
-        Member member = getMember(username);
+    public QuestionViewDto findQuestionByBoardId(Long boardId) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
 
         Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isEmpty()) {
@@ -99,8 +97,8 @@ public class QuestionService {
     //2. ===========저장===========
 
     //2.1 question 저장(media, hashtag 포함)
-    public Long saveQuestion(String username, QuestionWriteDto saveQuestionDto) {
-        Member member = getMember(username);
+    public Long saveQuestion(QuestionWriteDto saveQuestionDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Question question = saveQuestionDto.toEntity(member);
         questionRepository.save(question);
 
@@ -120,8 +118,8 @@ public class QuestionService {
     }
 
     //2.4 answer 저장(media, hashtag 포함)
-    public void saveAnswer(String username, AnswerWriteDto writeDto, Long boardId) {
-        Member signInMember = getMember(username);
+    public void saveAnswer(AnswerWriteDto writeDto, Long boardId) {
+        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
         Optional<Question> questionById = questionRepository.findById(boardId);
 
         if (questionById.isPresent()) {
@@ -199,8 +197,8 @@ public class QuestionService {
 
     //3.3 수정을 위한 user 확인 절차
     @Transactional(readOnly = true)
-    public boolean checkMember(String username, Long boardId, String boardType) {
-        Member member = getMember(username);
+    public boolean checkMember(Long boardId, String boardType) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Boolean isSameUser;
         switch (boardType) {
             case "question" :
@@ -231,8 +229,8 @@ public class QuestionService {
     //4. ===========삭제(취소)===========
 
     //4.1 question 삭제(media, hashtag 포함)
-    public void deleteQuestion(String username, Long id) {
-        Member member = getMember(username);
+    public void deleteQuestion(Long id) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Optional<Question> questionById = questionRepository.findById(id);
         if (questionById.isPresent()) {
             //check user
