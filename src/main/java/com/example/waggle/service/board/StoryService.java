@@ -197,15 +197,17 @@ public class StoryService {
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryViewDto storyDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         if (storyByBoardId.isPresent()) {
-            if (!storyByBoardId.get().equals(member)) {
+            Story story = storyByBoardId.get();
+            if (!story.getMember().getUsername()
+                    .equals(SecurityUtil.getCurrentUsername())) {
                 log.info("only same user can delete board!");
                 //error
                 return;
             }
-            storyRepository.delete(storyByBoardId.get());
+            storyRepository.delete(story);
+            log.info("remove!");
         }
     }
 

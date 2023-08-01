@@ -98,9 +98,8 @@ class StoryServiceTest {
 
 
     @Test
-    @Transactional
     @WithMockCustomUser
-    void findAll() throws Exception{
+    void findAll() throws Exception {
         //given
         setBoardAndMember();
 
@@ -114,7 +113,6 @@ class StoryServiceTest {
     }
 
     @Test
-    @Transactional
     @WithMockCustomUser
     void findAllStoryByMember() {
         //given
@@ -128,7 +126,6 @@ class StoryServiceTest {
     }
 
     @Test
-    @Transactional
     @WithMockCustomUser
     @Rollback(value = false)
     void findStoryViewByBoardId() {
@@ -145,7 +142,6 @@ class StoryServiceTest {
     }
 
     @Test
-    @Transactional
     @WithMockCustomUser
     void changeStory() {
         //given
@@ -172,4 +168,19 @@ class StoryServiceTest {
         assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media2");
     }
 
+    @Test
+    @WithMockCustomUser
+    @Rollback(value = false)
+    void deleteStory() {
+        //given
+        setBoardAndMember();
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+        //when
+        storyService.removeStory(storyViewByBoardId);
+        log.info("=========remove service ==============");
+        //then
+        List<StorySimpleViewDto> allStory = storyService.findAllStory();
+
+        assertThat(allStory.size()).isEqualTo(1);
+    }
 }
