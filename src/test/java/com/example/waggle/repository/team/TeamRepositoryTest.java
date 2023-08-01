@@ -4,20 +4,17 @@ import com.example.waggle.domain.team.Team;
 import com.example.waggle.domain.team.TeamMember;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.dto.member.TeamDto;
+import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.TeamService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class TeamRepositoryTest {
@@ -51,7 +48,7 @@ class TeamRepositoryTest {
         // Team 생성 (member 가입)
         TeamDto team = TeamDto.builder()
                 .name("team").build();
-        TeamDto savedTeam = teamService.createTeamWithMember(team, savedMemberDto);
+        TeamDto savedTeam = teamService.createTeamWithMember(team, savedMemberDto.getUsername());
 
         // when
         Team findTeam = teamRepository.findById(savedTeam.getId()).get();

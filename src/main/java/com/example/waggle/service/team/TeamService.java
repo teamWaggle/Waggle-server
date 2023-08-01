@@ -1,11 +1,10 @@
 package com.example.waggle.service.team;
 
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.domain.team.Schedule;
-import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
 import com.example.waggle.domain.team.TeamMember;
 import com.example.waggle.dto.member.*;
+import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamMemberRepository;
@@ -37,6 +36,21 @@ public class TeamService {
         return result.stream().map(TeamDto::toDto).collect(Collectors.toList());
     }
 
+    public List<TeamDto> findAllTeamByUsername(String username) {
+        Optional<Member> byUsername = memberRepository.findByUsername(username);
+        List<Team> teamList = new ArrayList<>();
+        if(byUsername.isPresent()) {
+            Member member = byUsername.get();
+            List<TeamMember> teamMembers = member.getTeamMembers();
+            for (TeamMember teamMember : teamMembers) {
+                teamList.add(teamMember.getTeam());
+            }
+        }
+
+        return teamList.stream().map(TeamDto::toDto).collect(Collectors.toList());
+    }
+
+
     // teamId로 team 조회
     public Optional<TeamDto> findByTeamId(Long teamId) {
         Optional<Team> findTeam = teamRepository.findById(teamId);
@@ -59,18 +73,10 @@ public class TeamService {
         return result;
     }
 
-    // member를 통해 team 조회
-    // **need to test
-    public List<TeamSimpleDto> findSimpleTeam(String username) {
-        List<TeamMember> teamMemberByUsername = teamMemberRepository.findTeamMemberByMemberUsername(username);
-        return teamMemberByUsername.stream().map(TeamSimpleDto::toDto).collect(Collectors.toList());
-    }
-
-
     // 새로운 team 생성 (대표 member 한 명 추가)
     @Transactional
-    public TeamDto createTeamWithMember(TeamDto teamDto, MemberDto memberDto) {
-        Optional<Member> member = memberRepository.findByUsername(memberDto.getUsername());
+    public TeamDto createTeamWithMember(TeamDto teamDto, String username) {
+        Optional<Member> member = memberRepository.findByUsername(username);
 
         if (member.isPresent()) {
             Team team = teamRepository.save(teamDto.toEntity());
@@ -89,21 +95,44 @@ public class TeamService {
     // 기존 team에 새로운 member 추가
     @Transactional
     public TeamDto addMember(Long teamId, String username) {
-        Optional<Team> team = teamRepository.findById(teamId);
-        Optional<Member> member = memberRepository.findByUsername(username);
+        Optional<Team> optionalTeam = teamRepository.findById(teamId);
+        Optional<Member> optionalMember = memberRepository.findByUsername(username);
 
-        if (team.isPresent() && member.isPresent()) {
-            TeamMember teamMember = TeamMember.builder()
-                    .team(team.get())
-                    .member(member.get()).build();
-            teamMember.addTeamMember(team.get(), member.get());  // TeamMember 연관관계 편의 메소드
-            teamMemberRepository.save(teamMember);
+        if (optionalTeam.isPresent() && optionalMember.isPresent()) {
+            Team team = optionalTeam.get();
+            Member member = optionalMember.get();
+
+            if(validateDuplicateMember(team, member)) {
+                TeamMember teamMember = TeamMember.builder()
+                        .team(team)
+                        .member(member).build();
+                teamMember.addTeamMember(team, member);  // TeamMember 연관관계 편의 메소드
+                teamMemberRepository.save(teamMember);
+                return TeamDto.toDto(team);
+            } else {
+                // TODO 에외 처리 (중복 멤버 저장 시도)
+                return null;
+            }
+        } else {
+            // TODO 예외 처리 (member / team이 null)
+            return null;
+        }
+    }
+
+    // update
+    @Transactional
+    public TeamDto updateTeam(Long teamId, TeamDto updateTeamDto) {
+        Optional<Team> team = teamRepository.findById(teamId);
+        if(team.isPresent()) {
+            team.get().updateTeamName(updateTeamDto.getName());
             return TeamDto.toDto(team.get());
         } else {
             // TODO 예외 처리
             return null;
         }
     }
+
+
 
     // team 삭제 (team, member, team_member 삭제)
     @Transactional
@@ -133,5 +162,15 @@ public class TeamService {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
+    }
+
+
+
+    Boolean validateDuplicateMember(Team team, Member member) {
+        List<TeamMember> teamMembers = team.getTeamMembers();
+        for (TeamMember teamMember : teamMembers) {
+            if(teamMember.getMember().equals(member)) return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
     }
 }

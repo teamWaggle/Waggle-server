@@ -17,5 +17,4 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     @Query("SELECT tm FROM TeamMember tm JOIN tm.member m WHERE m.username IN :usernames")
     List<TeamMember> findAllTeamMembersByUsername(@Param("usernames") List<String> usernames);
 
-
 }
