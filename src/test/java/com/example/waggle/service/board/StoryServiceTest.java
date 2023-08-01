@@ -1,6 +1,7 @@
 package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.domain.board.Media;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
@@ -38,6 +39,8 @@ class StoryServiceTest {
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
+    List<String> medias1 = new ArrayList<>();
+    List<String> medias2 = new ArrayList<>();
 
 
     @BeforeEach
@@ -45,6 +48,11 @@ class StoryServiceTest {
         tags1.add("choco");
         tags1.add("poodle");
         tags2.add("poodle");
+
+        medias1.add("media1");
+        medias1.add("mediamedia1");
+        medias2.add("media2");
+        medias2.add("mediamedia2");
 
         signUpDto1 = SignUpDto.builder()
                 .username("member1")
@@ -62,17 +70,20 @@ class StoryServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-
         storyWriteDto1 = StoryWriteDto.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
+                .medias(medias1)
                 .thumbnail("www.waggle")
                 .build();
+
         storyWriteDto2 = StoryWriteDto.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
+                .medias(medias2)
                 .thumbnail("www.waggle")
                 .build();
+
     }
 
     private void setBoardAndMember() {
@@ -130,6 +141,7 @@ class StoryServiceTest {
         //then
         assertThat(storyViewByBoardId.getUsername()).isEqualTo("member1");
         assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
+        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media1");
     }
 
     @Test
@@ -146,6 +158,7 @@ class StoryServiceTest {
                 .content("edit edit edit")
                 .thumbnail("www.choco")
                 .hashtags(tags)
+                .medias(medias2)
                 .build();
         //when
         boolean isSameUser = storyService.checkMember(1L);
@@ -156,6 +169,7 @@ class StoryServiceTest {
         assertThat(isSameUser).isTrue();
         assertThat(storyViewByBoardId.getContent()).isEqualTo("edit edit edit");
         assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
+        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media2");
     }
 
 }
