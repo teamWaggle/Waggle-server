@@ -6,7 +6,6 @@ import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.story.StoryEditDto;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 
@@ -110,14 +109,14 @@ public class StoryService {
 
     // StoryWriteDto 조회 -> edit에서 사용. (저장된 story 정보 불러오기)
     @Transactional(readOnly = true)
-    public StoryEditDto findStoryWriteByBoardId(Long id) {
+    public StoryWriteDto findStoryWriteByBoardId(Long id) {
         //board setting
         Optional<Story> storyById = storyRepository.findById(id);
         if (storyById.isEmpty()) {
             //error and return null
         }
 
-        return StoryEditDto.toDto(storyById.get());
+        return StoryWriteDto.toDto(storyById.get());
     }
 
     //2. ===========저장===========
@@ -144,6 +143,7 @@ public class StoryService {
                 Media.builder().url(mediaURL).board(saveStory).build();
             }
         }
+        log.info("tag's size is {}", saveStory.getBoardHashtags().size());
         return saveStory.getId();
     }
 
@@ -151,9 +151,9 @@ public class StoryService {
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public String changeStory(StoryWriteDto storyDto, Long boardId) {
+    public String changeStory(StoryWriteDto storyDto) {
 
-        Optional<Story> storyByBoardId = storyRepository.findById(boardId);
+        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
 
         if (storyByBoardId.isPresent()) {
             Story story = storyByBoardId.get();
@@ -220,14 +220,22 @@ public class StoryService {
     private void saveHashtag(Story story, String hashtag) {
         Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
         if (hashtagByContent.isEmpty()) {
+            log.info("not exist hashtag, so newly making");
             Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
             hashtagRepository.save(buildHashtag);
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(buildHashtag).board(story).build();
+            BoardHashtag.builder()
+                    .hashtag(buildHashtag)
+                    .board(story)
+                    .build()
+                    .link(story, buildHashtag);
         }//아래 else가 좀 반복되는 것 같다...
         else{
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(hashtagByContent.get()).board(story).build();
+            log.info("already exist hashtag");
+            BoardHashtag.builder()
+                    .hashtag(hashtagByContent.get())
+                    .board(story)
+                    .build()
+                    .link(story, hashtagByContent.get());
         }
     }
 
