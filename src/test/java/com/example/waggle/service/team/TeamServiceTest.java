@@ -3,7 +3,7 @@ package com.example.waggle.service.team;
 import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.dto.member.TeamDto;
+import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.service.member.MemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,16 +36,10 @@ class TeamServiceTest {
         SignUpDto signUpDto1 = SignUpDto.builder()
                 .username("member1")
                 .password("12345678")
-                .nickname("닉네임1")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .build();
         SignUpDto signUpDto2 = SignUpDto.builder()
                 .username("member2")
                 .password("12345678")
-                .nickname("닉네임2")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .build();
 
         savedMemberDto1 = memberService.signUp(signUpDto1);
@@ -57,6 +50,34 @@ class TeamServiceTest {
     void afterEach() {
         databaseCleanUp.truncateAllEntity();
     }
+
+
+    @Test
+    @DisplayName("username을 통해 해당 유저가 속한 모든 팀 조회")
+    public void findAllTeamByUsernameTest() {
+        TeamDto teamA = TeamDto.builder()
+                .name("teamA").build();
+        TeamDto teamB = TeamDto.builder()
+                .name("teamB").build();
+        TeamDto teamC = TeamDto.builder()
+                .name("teamC").build();
+
+        teamService.createTeamWithMember(teamA, savedMemberDto1.getUsername());
+        teamService.createTeamWithMember(teamB, savedMemberDto1.getUsername());
+
+        TeamDto teamWithMember = teamService.createTeamWithMember(teamC, savedMemberDto2.getUsername());
+        teamService.addMember(teamWithMember.getId(), savedMemberDto1.getUsername());
+
+        List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(savedMemberDto1.getUsername());
+
+        for (TeamDto teamDto : allTeamByUsername) {
+            System.out.println("teamDto = " + teamDto);
+
+        }
+        assertThat(allTeamByUsername.size()).isEqualTo(3);
+
+    }
+
 
     @Test
     @DisplayName("1명의 멤버를 통해 초기 팀 생성")
@@ -73,7 +94,7 @@ class TeamServiceTest {
         TeamDto teamA = TeamDto.builder()
                 .name("teamA").build();
 
-        teamService.createTeamWithMember(teamA, savedMemberDto);
+        teamService.createTeamWithMember(teamA, savedMemberDto.getUsername());
     }
 
     @Test
@@ -83,7 +104,7 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
+        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
 
         // member2 가입
         savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
@@ -103,7 +124,7 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
+        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
 
         // member2 가입
         savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
@@ -121,7 +142,7 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
+        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
 
         // member2 가입
         savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
@@ -140,7 +161,7 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1);
+        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
 
         // member2 가입
         savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
