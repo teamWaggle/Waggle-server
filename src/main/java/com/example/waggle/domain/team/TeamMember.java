@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode
 public class TeamMember extends BaseEntity {
     @Id @GeneratedValue

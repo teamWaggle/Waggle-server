@@ -60,10 +60,10 @@ public class StoryController {
     public String singleStoryWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
-        StoryWriteDto storyDto = new StoryWriteDto(memberSimpleDto.getUsername());
+        StoryWriteDto storyDto = new StoryWriteDto();
 
         model.addAttribute("storyDto", storyDto);
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
+        model.addAttribute("memberSimpleDto",memberSimpleDto);
 
         return "story/writeStory";
     }
@@ -74,7 +74,6 @@ public class StoryController {
         String username = SecurityUtil.getCurrentUsername();
         Long boardId = storyService.saveStory(storyDto);
         return "redirect:/story/" + username + "/" + boardId;
-
     }
 
     /**
@@ -85,8 +84,12 @@ public class StoryController {
 //        if (storyDto.getUsername() != SecurityUtil.getCurrentUsername()) {
 //            // 작성자 외의 접근 error 처리
 //        }
+        if (!storyService.checkMember(boardId)) {
+            //error
+            return "redirect:/story";
+        }
         StoryWriteDto storyDto = storyService.findStoryWriteByBoardId(boardId);
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(storyDto.getUsername());
+        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(SecurityUtil.getCurrentUsername());
         model.addAttribute("storyDto", storyDto);
         model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
 
@@ -96,7 +99,7 @@ public class StoryController {
     @PostMapping("/edit/{boardId}")
     public String singleStoryEdit(@ModelAttribute StoryWriteDto storyDto,
                                   @PathVariable Long boardId) {
-        String username = storyService.changeStory(storyDto, boardId);
+        String username = storyService.changeStory(storyDto);
         return "redirect:/story/" + username + "/" + boardId;
     }
 

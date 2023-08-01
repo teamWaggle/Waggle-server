@@ -20,7 +20,7 @@ public class Hashtag extends BaseEntity {
 
     private String tag;
 
-    @OneToMany(mappedBy = "hashtag")
+    @OneToMany(mappedBy = "hashtag",cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Builder.Default
     private List<BoardHashtag> boardHashtags = new ArrayList<>();
 
