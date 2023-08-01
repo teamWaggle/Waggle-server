@@ -7,6 +7,7 @@ import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
+@Controller
 @RequestMapping("/team")
 public class TeamController {
     private final MemberService memberService;
@@ -21,9 +23,15 @@ public class TeamController {
 
     @GetMapping
     public String teamMain(Model model) {
+        log.info("team!!@");
         String username = SecurityUtil.getCurrentUsername();
         List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
         model.addAttribute("teams", allTeamByUsername);
+
+        log.info("username = {}", username);
+        log.info("teamDto is null? = {}", allTeamByUsername.isEmpty());
+
+
         return "team/team";
     }
 
