@@ -140,7 +140,7 @@ public class StoryService {
         //media 저장
         if (!saveStoryDto.getMedias().isEmpty()) {
             for (String mediaURL : saveStoryDto.getMedias()) {
-                Media.builder().url(mediaURL).board(saveStory).build();
+                Media.builder().url(mediaURL).board(saveStory).build().linkBoard(saveStory);
             }
         }
         log.info("tag's size is {}", saveStory.getBoardHashtags().size());
@@ -164,7 +164,7 @@ public class StoryService {
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
-                Media.builder().url(media).board(story).build();
+                Media.builder().url(media).board(story).build().linkBoard(story);
             }
 
             //delete connecting relate (boardHashtag)
