@@ -103,7 +103,7 @@ public class StoryService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public StoryViewDto findStoryViewByBoardId( Long id) {
+    public StoryViewDto findStoryViewByBoardId(Long id) {
         //member setting
         Member signInMember = getMember(SecurityUtil.getCurrentUsername());
 
@@ -114,7 +114,9 @@ public class StoryService {
         }
 
         //check recommend
-        boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
+        boolean recommendIt;
+        if (signInMember != null) recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
+        else recommendIt = false;
         int count = recommendRepository.countByBoardId(id);
         return StoryViewDto.toDto(storyById.get(), count, recommendIt);
     }
