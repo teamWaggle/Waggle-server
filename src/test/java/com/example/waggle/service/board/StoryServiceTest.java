@@ -119,7 +119,7 @@ class StoryServiceTest {
         setBoardAndMember();
 
         //when
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember();
+        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember("member1");
 
         //then
         assertThat(allStoryByMember.size()).isEqualTo(2);
