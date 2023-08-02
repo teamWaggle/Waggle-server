@@ -8,33 +8,86 @@
 
 </head>
 <body>
-<link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet" href="/css/index.css?after">
 
 
-<th:block th:replace="fragments/menubar.html :: fragment-menubar"></th:block>
+<th:block th:replace="fragments/searchHeader.html :: fragment-searchHeader"></th:block>
 
 
 <div class="container">
     <div class="grid-container">
         <div th:each="storySimpleViewDto : ${storySimpleViewDtos}"
-             th:include="fragments/postSummary.html :: fragment-postSummary(${storySimpleViewDto})"></div>
+             th:include="fragments/postSummary.html :: fragment-postSummary(${storySimpleViewDto})"
+        ></div>
     </div>
 
-    <div class="col">
-        <button class="w-100 btn btn-secondary btn-lg mb-3"
-                th:onclick="|location.href='@{/member/sign-up}'|"
-                type="button">회원가입
-        </button>
-        <button class="w-100 btn btn-secondary btn-lg mb-3"
-                th:onclick="|location.href='@{/member/sign-in}'|"
-                type="button">로그인
-        </button>
-        <button class="w-100 btn btn-secondary btn-lg mb-3"
-                th:onclick="|location.href='@{/story/write}'|"
-                type="button">스토리 등록
-        </button>
+    <div class="profile">
+        <th:block th:if="${memberSimpleDto}">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-left: 20px; margin-bottom: 10px;">
+
+                <th:block th:if="${memberSimpleDto.profileImg}">
+
+                    <div style="max-width: 40px; max-height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px;">
+                        <img th:src="|/images/${memberSimpleDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+
+                </th:block>
+                <th:block th:unless="${memberSimpleDto.profileImg}">
+                    <div style="max-width: 40px; max-height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px;">
+                        <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </th:block>
+
+
+                <div style="display: flex; flex-direction: column;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 0;"
+                         th:text="${memberSimpleDto.nickname}"></div>
+                    <div style="font-size: 13px; margin-top: 0;" th:text="'@' + ${memberSimpleDto.username}"></div>
+                </div>
+
+
+                <button th:onclick="|location.href='@{/member/sign-out}'|"
+                        class="btn-logout"
+                        type="button">로그아웃
+                </button>
+            </div>
+
+            <button class="w-100 btn btn-secondary btn-lg mb-3 profile-button"
+                    th:onclick="|location.href='@{/story/write}'|"
+                    type="button">스토리 작성하기
+            </button>
+
+
+        </th:block>
+
+        <th:block th:unless="${memberSimpleDto}">
+            <div style="display: flex; align-items: center; margin-left: 20px; margin-bottom: 10px">
+                <div style="max-width: 40px; max-height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px;">
+                    <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <div style="font-size: 17px; font-weight: bold; margin-bottom: 3px;">꼬리를 흔들어주세요 !</div>
+                </div>
+            </div>
+
+            <button class="w-100 btn btn-secondary btn-lg mb-3 profile-button"
+                    th:onclick="|location.href='@{/member/sign-in}'|"
+                    type="button">Waggle 로그인
+            </button>
+
+            <div style="text-align: right;">
+                <a href="/" style="text-decoration: none; color: inherit; margin-right: 10px;">
+                    <p>아이디・비밀번호 찾기</p>
+                </a>
+                <a href="/member/sign-up" style="text-decoration: none; color: inherit;">
+                    <p>회원가입</p>
+                </a>
+            </div>
+        </th:block>
     </div>
 </div>
-
 </body>
 </html>

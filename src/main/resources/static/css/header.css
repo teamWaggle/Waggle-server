@@ -1,31 +1,16 @@
 .header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    margin: 50px 100px 30px;
+    margin: 40px 100px 30px;
     max-width: 100%;
 }
 
-.search {
-    position: relative;
-    margin-left: 35px;
-    flex: 1;
-    width: 100%;
-}
+.header .logo {
 
-.search input {
-    width: 100%;
-    border: 2.5px solid #000000;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 16px;
 }
-
-.search img {
-    position: absolute;
-    width: 20px;
-    top: 10px;
-    right: 12px;
-    margin-top: 5px;
+.header .menubar {
+    display: flex;
 }
 .header h4 {
     margin-top: 5px;

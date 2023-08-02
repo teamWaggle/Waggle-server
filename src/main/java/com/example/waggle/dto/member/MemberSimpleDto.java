@@ -15,12 +15,14 @@ import java.util.stream.Collectors;
 @Builder
 public class MemberSimpleDto {
     private String username;
+    private String nickname;
     private UploadFile profileImg;
 
     static public MemberSimpleDto toDto(Member member) {
-
+        if (member == null) return null;
         return MemberSimpleDto.builder()
                 .username(member.getUsername())
+                .nickname(member.getNickname())
                 .profileImg(member.getProfileImg()).build();
     }
 }

@@ -2,6 +2,7 @@ package com.example.waggle.domain.member;
 
 
 import com.example.waggle.component.auditing.BaseTimeEntity;
+import com.example.waggle.domain.team.TeamMember;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -48,6 +49,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<TeamMember> teamMembers = new ArrayList<>();
 
 
 

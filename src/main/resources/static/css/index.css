@@ -6,6 +6,7 @@
     margin-left: 100px;
     max-width: 80%;
 }
+
 .grid-container {
     grid-column: 1;
     margin-left: 100px;
@@ -13,12 +14,60 @@
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 30px;
 }
+
 .profile {
+    width: 100%;
+    height: fit-content;
+    border: 2px solid #000000;
     grid-column: 2;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 10px;
+    justify-content: space-between;
+    padding: 20px 20px 0 20px;
+}
+
+
+.profile a {
+    text-decoration: underline;
+    color: inherit;
+    display: block;
+    margin: 5px 10px;
+}
+
+.profile a:first-child {
+    margin-bottom: 10px;
+}
+
+.profile div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.profile-button {
+    font-weight: bold;
+    font-size: 18px;
+    background-color: #d9d9d9;
+    border: #d9d9d9;
+    color: #000000;
+    margin-top: 5px;
+    max-width: 95%;
+}
+
+.btn-logout{
+    width: 130px;
+    height: 40px;
+    margin-right: 20px;
+    border-radius: 30px;
+    font-size: 15px;
+    color: #a0a0a0;
+    background-color: #ffffff;
+    border:1px solid #dcdcdc;
+}
+
+.btn-logout:hover{
+    background-color: #f9f9f9;
+    color: #727272;
 }

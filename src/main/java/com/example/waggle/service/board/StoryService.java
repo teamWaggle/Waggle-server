@@ -67,6 +67,19 @@ public class StoryService {
         return  simpleStories;
     }
 
+    @Transactional(readOnly = true)
+    public List<StorySimpleViewDto> findAllStory() {
+        List<Story> allStory = storyRepository.findAll();
+        List<StorySimpleViewDto> storySimpleViewDtos = new ArrayList<>();
+
+        //entity -> dto
+        for (Story story : allStory) {
+            storySimpleViewDtos.add(StorySimpleViewDto.toDto(story, 0, false));
+        }
+        return storySimpleViewDtos;
+
+    }
+
 
     //1.1.2 회원 정보에 따른 전체 조회
     //특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
