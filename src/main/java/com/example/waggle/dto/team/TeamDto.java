@@ -1,8 +1,7 @@
-package com.example.waggle.dto.member;
+package com.example.waggle.dto.team;
 
-import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.Team;
-import com.example.waggle.domain.team.TeamMember;
+import com.example.waggle.dto.member.ScheduleDto;
 import lombok.*;
 
 import java.util.ArrayList;

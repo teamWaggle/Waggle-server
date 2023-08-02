@@ -30,11 +30,13 @@ public class TeamMember extends BaseEntity {
         this.team = team;
         this.member = member;
         team.getTeamMembers().add(this);
+        member.getTeamMembers().add(this);
     }
 
     public void removeTeam() {
         if (team != null) {
             team.getTeamMembers().remove(this);
+            member.getTeamMembers().remove(this);
             team = null;
             member = null;
         }

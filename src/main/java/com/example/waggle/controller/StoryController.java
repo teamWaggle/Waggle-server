@@ -30,9 +30,12 @@ public class StoryController {
      */
     @GetMapping
     public String storyMain(Model model) {
-        List<StorySimpleViewDto> allStory = storyService.findAllStory();
+        /*
+        List<StorySimpleViewDto> storySimpleViewDtos = storyService.findAll();
+        model.addAttribute("storySimpleViewDtos", storySimpleViewDtos);
         model.addAttribute("simpleStories", allStory);
-        return "index";
+        */
+        return "story/main";
     }
 
 
@@ -76,9 +79,6 @@ public class StoryController {
         return "redirect:/story/" + username + "/" + boardId;
     }
 
-    /**
-     * edit
-     */
     @GetMapping("/edit/{boardId}")
     public String singleStoryEditForm(Model model, @PathVariable Long boardId) {
 //        if (storyDto.getUsername() != SecurityUtil.getCurrentUsername()) {

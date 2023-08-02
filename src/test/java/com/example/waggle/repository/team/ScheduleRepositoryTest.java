@@ -1,28 +1,22 @@
 package com.example.waggle.repository.team;
 
-import com.example.waggle.domain.member.Member;
-import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.ScheduleDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.dto.member.TeamDto;
+import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.ScheduleService;
 import com.example.waggle.service.team.TeamService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ScheduleRepositoryTest {
@@ -54,7 +48,7 @@ class ScheduleRepositoryTest {
         // team
         TeamDto team = TeamDto.builder()
                 .name("team").build();
-        TeamDto savedTeamDto = teamService.createTeamWithMember(team, savedMemberDto);
+        TeamDto savedTeamDto = teamService.createTeamWithMember(team, savedMemberDto.getUsername());
 
         ScheduleDto scheduleDto1 = ScheduleDto.builder()
                 .title("산책")

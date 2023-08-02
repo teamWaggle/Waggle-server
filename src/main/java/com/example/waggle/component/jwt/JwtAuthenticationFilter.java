@@ -6,6 +6,8 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -26,13 +28,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // HttpServletRequest에서 JWT 토큰 추출
         HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
+
         String requestURI = httpServletRequest.getRequestURI();
         String token = null;
         if (httpServletRequest.getCookies() != null) {
             token = Arrays.stream(httpServletRequest.getCookies())
                     .filter(cookie -> cookie.getName().equals("access_token"))
                     .findFirst().map(Cookie::getValue)
-                    .orElse("dummy");
+                    .orElse(null);
         }
 
         // 2. validateToken으로 토큰 유효성 검사
@@ -58,4 +61,5 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
         return null;
     }
+
 }

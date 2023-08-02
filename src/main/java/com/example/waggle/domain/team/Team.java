@@ -1,6 +1,7 @@
 package com.example.waggle.domain.team;
 
 import com.example.waggle.component.auditing.BaseEntity;
+import com.example.waggle.dto.team.TeamDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -28,4 +29,9 @@ public class Team extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
+
+    public void updateTeamName(String name) {
+        this.name = name;
+    }
+
 }
