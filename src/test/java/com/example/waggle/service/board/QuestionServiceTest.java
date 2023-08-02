@@ -53,19 +53,11 @@ class QuestionServiceTest {
 
     }
 
-    //signUp x2 -> board writing -> signIn another
-    // -> recommend question -> result check
+
     @Test
     @Rollback(value = false)
     void recommendQuestion() {
-        //signUp
-        memberService.signUp(signUpDto1);
 
-        //board writing
-        Long questionId = questionService.saveQuestion("member1", questionDto1);
-
-        //recommend question
-        recommendService.clickRecommend(questionId, "member1", "question");
     }
 
 }

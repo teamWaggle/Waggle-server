@@ -32,6 +32,8 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//for annotation 'WithMockUser'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	// ModelMapper

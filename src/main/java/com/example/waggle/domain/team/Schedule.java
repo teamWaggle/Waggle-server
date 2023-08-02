@@ -15,7 +15,6 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class Schedule extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "schedule_id")

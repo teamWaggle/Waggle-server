@@ -1,4 +1,4 @@
-package com.example.waggle.repository;
+package com.example.waggle.repository.board.boardtype;
 
 import com.example.waggle.domain.board.boardType.Sos;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface SosRepository extends JpaRepository<Sos, Long> {
 
-    @Query(value = "select s from Sos join fetch s.member m where m.username = :username", nativeQuery = true)
-    List<Sos> findByUsername(@Param("username") String username);
+    List<Sos> findByMemberUsername(@Param("username") String username);
 }

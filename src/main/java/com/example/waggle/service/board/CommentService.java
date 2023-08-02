@@ -1,5 +1,6 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
@@ -39,13 +40,13 @@ public class CommentService {
     //1. 조회
     //p1. 나중에 생성 역순으로 나열해야함
     public List<CommentViewDto> findComments(Long boardId) {
-        List<Comment> commentsByBoardId = commentRepository.findCommentsByBoardId(boardId);
+        List<Comment> commentsByBoardId = commentRepository.findByBoardId(boardId);
         return commentsByBoardId.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
     }
 
     //2. 저장
-    public Long saveComment(String username, Long boardId, CommentWriteDto writeDto, String boardType) {
-        Member member = getMember(username);
+    public Long saveComment(Long boardId, CommentWriteDto writeDto, String boardType) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Board board = getBoard(boardId, boardType);
 
         Comment saveComment = Comment.builder()
@@ -75,11 +76,11 @@ public class CommentService {
 
         return comment.getId();
     }
-    public Long editCommentV2(String username, Long boardId, CommentWriteDto writeDto) {
-        Member member = getMember(username);
+    public Long editCommentV2(Long boardId, CommentWriteDto writeDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
 
         //check exist comment
-        Optional<Comment> commentById = commentRepository.findCommentByMemberAndBoardId(member, boardId);
+        Optional<Comment> commentById = commentRepository.findByMemberAndBoardId(member, boardId);
         if (commentById.isEmpty()) {
             log.info("not exist comment");
             //error
@@ -94,8 +95,8 @@ public class CommentService {
     }
 
     //3.1 check member
-    public boolean checkMember(String username, CommentViewDto viewDto) {
-        Member member = getMember(username);
+    public boolean checkMember(CommentViewDto viewDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
             log.info("not exist comment");
@@ -107,10 +108,10 @@ public class CommentService {
     }
 
     //4. 삭제
-    public void deleteComment(String username, CommentViewDto viewDto) {
-        Member member = getMember(username);
+    public void deleteComment(CommentViewDto viewDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Optional<Comment> commentByMemberAndBoardId = commentRepository
-                .findCommentByMemberAndBoardId(member, viewDto.getId());
+                .findByMemberAndBoardId(member, viewDto.getId());
         if (commentByMemberAndBoardId.isEmpty()) {
             log.info("not exist comment");
             //error

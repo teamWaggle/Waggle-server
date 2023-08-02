@@ -13,7 +13,6 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode(of = "id")
 public class Team extends BaseEntity {
     @Id @GeneratedValue
