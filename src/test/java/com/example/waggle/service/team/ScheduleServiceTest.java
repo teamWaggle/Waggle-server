@@ -2,8 +2,8 @@ package com.example.waggle.service.team;
 
 import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.ScheduleDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.service.member.MemberService;
