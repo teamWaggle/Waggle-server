@@ -60,6 +60,7 @@ public class StoryService {
             if (login()) {
                 likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
             }
+            log.info("like it = {}", likeIt);
             int count = recommendRepository.countByBoardId(story.getId());
             simpleStories.add(StorySimpleViewDto.toDto(story, count, likeIt));
         }
