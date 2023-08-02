@@ -21,13 +21,8 @@ public class Media extends BaseTimeEntity {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @Builder
-    Media(String url, Board board) {
-        this.url = url;
-        setBoard(board);
-    }
 
-    protected void setBoard(Board board) {
+    public void linkBoard(Board board) {
         this.board = board;
         board.getMedias().add(this);
     }
