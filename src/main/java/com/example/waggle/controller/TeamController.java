@@ -21,20 +21,6 @@ public class TeamController {
     private final MemberService memberService;
     private final TeamService teamService;
 
-    @GetMapping
-    public String teamMain(Model model) {
-        log.info("team!!@");
-        String username = SecurityUtil.getCurrentUsername();
-        List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
-        model.addAttribute("teams", allTeamByUsername);
-
-        log.info("username = {}", username);
-        log.info("teamDto is null? = {}", allTeamByUsername.isEmpty());
-
-
-        return "team/team";
-    }
-
     @GetMapping("/create")
     public String createTeamForm(Model model) {
         return "team/addTeam";

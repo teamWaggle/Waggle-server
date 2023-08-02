@@ -4,8 +4,7 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.ScheduleDto;
+import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamRepository;
@@ -43,8 +42,14 @@ public class ScheduleService {
     public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);
 
+        List<String> scheduleMembers = scheduleDto.getScheduleMembers();
+        List<ScheduleMember> scheduleMemberList = new ArrayList<>();
+        for (String scheduleMember : scheduleMembers) {
+            // TODO scheduleMember 저장
+        }
+
         if (team.isPresent()) {
-            Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get()));
+            Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get(), new ArrayList<>()));
 
             for (String username : scheduleDto.getScheduleMembers()) {
                 Optional<Member> findMember = memberRepository.findByUsername(username);

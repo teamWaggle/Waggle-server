@@ -1,7 +1,6 @@
 package com.example.waggle.dto.team;
 
 import com.example.waggle.domain.team.Team;
-import com.example.waggle.dto.member.ScheduleDto;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -32,9 +31,6 @@ public class TeamDto {
     }
 
     public Team toEntity() {
-        Team.TeamBuilder teamBuilder = Team.builder()
-                .id(id)
-                .name(name);
-        return teamBuilder.build();
+        return Team.builder().name(name).build();
     }
 }

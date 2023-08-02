@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../../../static/css/bootstrap.min.css" rel="stylesheet">
+    <title>Waggle</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css" rel="stylesheet">
+
+    <style>
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<th:block th:replace="fragments/header.html :: fragment-header"></th:block>
+
+<div id="calendar"></div>
+
+<!-- FullCalendar JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
+
+<script th:inline="javascript">
+    var schedules = /*[[${scheduleDtos}]]*/ [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // FullCalendar 설정 옵션들
+            initialView: 'dayGridMonth',
+            events: schedules.map(function(schedule) {
+                return {
+                    id: schedule.id,
+                    title: schedule.title,
+                    start: schedule.scheduleTime,
+                    description: schedule.description,
+                    scheduleMembers: schedule.scheduleMembers,
+                };
+            }),
+            eventClick: function(info) {
+                console.log('Event clicked:', info.event.id);
+
+                info.jsEvent.preventDefault(); // 기본 동작 중지
+                window.location.href = '/schedule/' + info.event.id; // 해당 이벤트의 ID로 리다이렉트
+            }
+
+        });
+
+        calendar.render();
+    });
+</script>
+
+</body>
+</html>
