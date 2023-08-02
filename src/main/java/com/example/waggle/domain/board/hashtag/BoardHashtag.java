@@ -9,11 +9,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardHashtag extends BaseEntity {
+public class BoardHashtag extends BaseEntity{
     @Id @GeneratedValue
     @Column(name = "board_hashtag_id")
     private Long id;
@@ -28,11 +30,9 @@ public class BoardHashtag extends BaseEntity {
 
 
     //builder에서 연관관계까지 맺어버리게 만들기
-    @Builder
-    BoardHashtag(Long id,Board board, Hashtag hashtag) {
-        this.id = id;
-        this.board = board;
-        this.hashtag = hashtag;
+
+
+    public void link(Board board, Hashtag hashtag) {
         board.getBoardHashtags().add(this);
         hashtag.getBoardHashtags().add(this);
     }

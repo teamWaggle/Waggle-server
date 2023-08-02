@@ -41,6 +41,7 @@ public class Reply extends BaseEntity {
 
 
     //mention targets
+    @Builder.Default
     @OneToMany(mappedBy = "reply",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MemberMention> memberMentions = new ArrayList<>();
 
