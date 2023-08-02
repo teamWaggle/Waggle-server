@@ -12,5 +12,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 //            " WHERE r.comment_id = :commentId",nativeQuery = true)
 //    int findLastOrderByCommentId(@Param("commentId") Long Id);
 
-    List<Reply> findRepliesByCommentId(Long commentId);
+    List<Reply> findByCommentId(Long commentId);
 }

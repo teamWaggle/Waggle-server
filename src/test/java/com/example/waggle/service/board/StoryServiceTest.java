@@ -1,88 +1,186 @@
-//package com.example.waggle.service.board;
-//
-//import com.example.waggle.dto.board.story.StoryViewDto;
-//import com.example.waggle.dto.board.story.StorySimpleViewDto;
-//import com.example.waggle.service.member.MemberService;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//@SpringBootTest
-//class StoryServiceTest {
-//
-//    @Autowired
-//    StoryService storyService;
-//    @Autowired
-//    MemberService memberService;
-//
-//    //read test
-//    @Test
-//    public void findStories() {
-////        List<StorySimpleDto> allStory = storyService.findAllStory();
-////        assertThat(allStory.stream().findFirst().get().getHashtags().size()).isEqualTo(1);
-//    }
-//
-//    @Test
-//    public void findMemberStories() {
-//        List<StorySimpleDto> allStoryByMember = storyService.findAllStoryByMember("hann123");
-//        assertThat(allStoryByMember.size()).isEqualTo(2);
-//    }
-//
-//    @Test
-//    public void findStory() {
-////        StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
-////        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
-//    }
-//
-//    //create test
-//    @Test
-//    public void createStory() {
-//        System.out.println("============start=============");
-//        List<String> hashtags = new ArrayList<>();
-//        hashtags.add("choco");
-//        hashtags.add("poodle");
-//        List<String> medias = new ArrayList<>();
-//        medias.add("choco.img");
-//        StoryDto hann123 = StoryDto.builder()
-//                .content("hello~")
-//                .username("hann123")
-//                .hashtags(hashtags)
-//                .medias(medias)
-//                .thumbnail("choco.img").build();
-////        storyService.saveStory(hann123);
-//
-////        List<StorySimpleDto> allStory = storyService.findAllStory();
-////        for (StorySimpleDto storySimpleDto : allStory) {
-////            for (String hashtag : storySimpleDto.getHashtags()) {
-////                System.out.println("hashtag = " + hashtag);
-////            }
-////        }
-//    }
-//
-//    //update test
-//    @Test
-//    public void changeStory() {
-//        System.out.println("============start=============");
-//        List<String> hashtags = new ArrayList<>();
-//        hashtags.add("choco");
-//        hashtags.add("poodle");
-//        List<String> medias = new ArrayList<>();
-//        medias.add("choco.img");
-//        StoryDto hann123 = StoryDto.builder()
-//                .content("hello~")
-//                .username("hann123")
-//                .id(1L)
-//                .hashtags(hashtags)
-//                .medias(medias)
-//                .thumbnail("choco.img").build();
-////        storyService.changeStory(hann123);
-//
-////        StoryDto storyByBoardId = storyService.findStoryByBoardId(1L);
-////        System.out.println("storyByBoardId.getContent() = " + storyByBoardId.getContent());
-//    }
-//}
+package com.example.waggle.service.board;
+
+import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.domain.board.Media;
+import com.example.waggle.dto.board.story.StoryViewDto;
+import com.example.waggle.dto.board.story.StorySimpleViewDto;
+import com.example.waggle.dto.board.story.StoryWriteDto;
+import com.example.waggle.dto.member.SignInDto;
+import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.service.member.MemberService;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@Slf4j
+class StoryServiceTest {
+
+    @Autowired
+    private StoryService storyService;
+    @Autowired
+    private MemberService memberService;
+
+    SignUpDto signUpDto1;
+    SignUpDto signUpDto2;
+    SignInDto signInDto;
+
+    StoryWriteDto storyWriteDto1;
+    StoryWriteDto storyWriteDto2;
+
+    List<String> tags1 = new ArrayList<>();
+    List<String> tags2 = new ArrayList<>();
+    List<String> medias1 = new ArrayList<>();
+    List<String> medias2 = new ArrayList<>();
+
+
+    @BeforeEach
+    void setDto() {
+        tags1.add("choco");
+        tags1.add("poodle");
+        tags2.add("poodle");
+
+        medias1.add("media1");
+        medias1.add("mediamedia1");
+        medias2.add("media2");
+        medias2.add("mediamedia2");
+
+        signUpDto1 = SignUpDto.builder()
+                .username("member1")
+                .password("12345678")
+                .nickname("닉네임1")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+
+        signUpDto2 = SignUpDto.builder()
+                .username("member2")
+                .password("12345678")
+                .nickname("닉네임2")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+
+        storyWriteDto1 = StoryWriteDto.builder()
+                .content("i love my choco")
+                .hashtags(tags1)
+                .medias(medias1)
+                .thumbnail("www.waggle")
+                .build();
+
+        storyWriteDto2 = StoryWriteDto.builder()
+                .content("how can i do make he is happy?")
+                .hashtags(tags2)
+                .medias(medias2)
+                .thumbnail("www.waggle")
+                .build();
+
+    }
+
+    private void setBoardAndMember() {
+        //member set
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+
+        //story set
+        storyService.saveStory(storyWriteDto1);
+        storyService.saveStory(storyWriteDto2);
+    }
+
+
+    @Test
+    @WithMockCustomUser
+    void findAll() throws Exception {
+        //given
+        setBoardAndMember();
+
+        //when
+        List<StorySimpleViewDto> allStory = storyService.findAllStory();
+
+        //then
+        assertThat(allStory.size()).isEqualTo(2);
+
+        log.info("success");
+    }
+
+    @Test
+    @WithMockCustomUser
+    void findAllStoryByMember() {
+        //given
+        setBoardAndMember();
+
+        //when
+        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember();
+
+        //then
+        assertThat(allStoryByMember.size()).isEqualTo(2);
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Rollback(value = false)
+    void findStoryViewByBoardId() {
+        //given
+        setBoardAndMember();
+
+        //when
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+
+        //then
+        assertThat(storyViewByBoardId.getUsername()).isEqualTo("member1");
+        assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
+        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media1");
+    }
+
+    @Test
+    @WithMockCustomUser
+    void changeStory() {
+        //given
+        setBoardAndMember();
+        List<String> tags = new ArrayList<>();
+        tags.add("poodle");
+        tags.add("cute");
+        StoryWriteDto editDto = StoryWriteDto.builder()
+                .id(1L)
+                .content("edit edit edit")
+                .thumbnail("www.choco")
+                .hashtags(tags)
+                .medias(medias2)
+                .build();
+        //when
+        boolean isSameUser = storyService.checkMember(1L);
+        storyService.changeStory(editDto);
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+
+        //then
+        assertThat(isSameUser).isTrue();
+        assertThat(storyViewByBoardId.getContent()).isEqualTo("edit edit edit");
+        assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
+        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media2");
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Rollback(value = false)
+    void deleteStory() {
+        //given
+        setBoardAndMember();
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+        //when
+        storyService.removeStory(storyViewByBoardId);
+        log.info("=========remove service ==============");
+        //then
+        List<StorySimpleViewDto> allStory = storyService.findAllStory();
+
+        assertThat(allStory.size()).isEqualTo(1);
+    }
+}

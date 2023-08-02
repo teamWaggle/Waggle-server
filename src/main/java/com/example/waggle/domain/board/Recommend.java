@@ -16,7 +16,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Recommend extends BaseEntity {
 
-
     @Id
     @GeneratedValue
     @Column(name = "like_id")
@@ -29,12 +28,5 @@ public class Recommend extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
-
-    @Builder
-    Recommend(Long id, Member member, Board board) {
-        this.id = id;
-        this.member = member;
-        this.board = board;
-    }
 
 }

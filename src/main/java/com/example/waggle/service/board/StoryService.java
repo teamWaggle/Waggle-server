@@ -1,8 +1,7 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.boardType.Answer;
-import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
@@ -35,8 +34,6 @@ public class StoryService {
     private final HashtagRepository hashtagRepository;
     private final RecommendRepository recommendRepository;
 
-//    private final CommentRepository commentRepository;
-//    private final ReplyRepository replyRepository;
 
 
     /**
@@ -52,8 +49,10 @@ public class StoryService {
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
     @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllStory(String username) {
-        Member signInMember = getMember(username);
+    public List<StorySimpleViewDto> findAllStory() {
+
+        log.info(SecurityUtil.getCurrentUsername());
+        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
 
         //board setting
         List<Story> allStory = storyRepository.findAll();
@@ -85,13 +84,13 @@ public class StoryService {
     //1.1.2 회원 정보에 따른 전체 조회
     //특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
     @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllStoryByMember(String username) {
-        Optional<Member> MemberByUsername = memberRepository.findByUsername(username);
+    public List<StorySimpleViewDto> findAllStoryByMember() {
+        Optional<Member> MemberByUsername = memberRepository.findByUsername(SecurityUtil.getCurrentUsername());
         if (MemberByUsername.isEmpty()) {
             log.info("can't find user!");
             // error message 출력
         }
-        List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
+        List<Story> storyByUsername = storyRepository.findByMemberUsername(SecurityUtil.getCurrentUsername());
 
         List<StorySimpleViewDto> simpleStories = new ArrayList<>();
         for (Story story : storyByUsername) {
@@ -105,9 +104,9 @@ public class StoryService {
 
     //1.2 낱개 조회
     @Transactional(readOnly = true)
-    public StoryViewDto findStoryViewByBoardId(String username, Long id) {
+    public StoryViewDto findStoryViewByBoardId( Long id) {
         //member setting
-        Member signInMember = getMember(username);
+        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
 
         //board setting
         Optional<Story> storyById = storyRepository.findById(id);
@@ -137,9 +136,9 @@ public class StoryService {
 
     //2.1 story 저장(media, hashtag 포함)
     //***중요!
-    public Long saveStory(String username, StoryWriteDto saveStoryDto) {
+    public Long saveStory(StoryWriteDto saveStoryDto) {
         //member setting
-        Member signInMember = getMember(username);
+        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
 
         //board setting
         Story saveStory = saveStoryDto.toEntity(signInMember);
@@ -154,62 +153,20 @@ public class StoryService {
         //media 저장
         if (!saveStoryDto.getMedias().isEmpty()) {
             for (String mediaURL : saveStoryDto.getMedias()) {
-                Media buildMedia = Media.builder().url(mediaURL).board(saveStory).build();
+                Media.builder().url(mediaURL).board(saveStory).build().linkBoard(saveStory);
             }
         }
+        log.info("tag's size is {}", saveStory.getBoardHashtags().size());
         return saveStory.getId();
     }
 
-//    //2.2 story_comment 저장
-//    public void saveComment(CommentDto commentDto, StoryDto storyDto, MemberDto memberDto) {
-//        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
-//        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-//
-//        int lastOrder = commentRepository.findLastOrderByBoardId(storyDto.getId());
-//
-//        if (storyByBoardId.isPresent() && memberByUsername.isPresent()) {
-//            Comment buildComment = Comment.builder()
-//                    .orders(++lastOrder)
-//                    .content(commentDto.getContent())
-//                    .board(storyByBoardId.get())
-//                    .member(memberByUsername.get())
-//                    .build();
-//            commentRepository.save(buildComment);
-//        }
-//
-//    }
-
-//    //2.3 story_comment_reply 저장
-//    public void saveReply(ReplyDto replyDto, CommentDto commentDto, MemberDto memberDto) {
-//        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-//        Optional<Member> memberByUsername = memberRepository.findByUsername(memberDto.getUsername());
-//        //reply order set
-//        int lastOrder = replyRepository.findLastOrderByCommentId(commentDto.getId());
-//        //mention member set
-//        List<MemberMention> memberMentions = new ArrayList<>();
-//        for (String mentionMember : replyDto.getMentionMembers()) {
-//            memberMentions.add(MemberMention.builder().username(mentionMember).build());
-//        }
-//
-//        if (commentById.isPresent() && memberByUsername.isPresent()) {
-//            Reply buildReply = Reply.builder()
-//                    .orders(++lastOrder)
-//                    .content(replyDto.getContent())
-//                    .comment(commentById.get())
-//                    .member(memberByUsername.get())
-//                    .mentionedMembers(memberMentions)
-//                    .build();
-//
-//            replyRepository.save(buildReply);
-//        }
-//    }
 
     //3. ===========수정===========
 
     //3.1 story 수정(media, hashtag 포함)
-    public String changeStory(StoryWriteDto storyDto, Long boardId) {
+    public String changeStory(StoryWriteDto storyDto) {
 
-        Optional<Story> storyByBoardId = storyRepository.findById(boardId);
+        Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
 
         if (storyByBoardId.isPresent()) {
             Story story = storyByBoardId.get();
@@ -220,7 +177,7 @@ public class StoryService {
 
             //newly insert data(media)
             for (String media : storyDto.getMedias()) {
-                Media board = Media.builder().url(media).board(story).build();
+                Media.builder().url(media).board(story).build().linkBoard(story);
             }
 
             //delete connecting relate (boardHashtag)
@@ -236,8 +193,8 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkMember(String username, Long boardId) {
-        Member member = getMember(username);
+    public boolean checkMember(Long boardId) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
         Optional<Story> storyById = storyRepository.findById(boardId);
         if (storyById.isEmpty()) {
             log.info("not exist story");
@@ -249,66 +206,24 @@ public class StoryService {
     }
 
 
-//    //3.2 story_comment 수정
-//    public void changeComment(CommentDto commentDto) {
-//        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-//        if (commentById.isPresent()) {
-//            commentById.get().changeContent(commentDto.getContent());
-//        }
-//    }
-//
-//    //3.3 story_comment_reply 수정
-//    public void changeReply(ReplyDto replyDto) {
-//        Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
-//        if (replyById.isPresent()) {
-//            //change content
-//            replyById.get().changeContent(replyDto.getContent());
-//            //mention member setting
-//            //delete older data
-//            replyById.get().getMemberMentions().clear();
-//            //save mention entity
-//            List<MemberMention> memberMentions = new ArrayList<>();
-//            for (String mentionMember : replyDto.getMentionMembers()) {
-//                memberMentions.add(MemberMention.builder().username(mentionMember).build());
-//            }
-//            //link relation -> entity save(cascade)
-//            for (MemberMention memberMention : memberMentions) {
-//                replyById.get().addMemberMention(memberMention);
-//            }
-//        }
-//    }
-
     //4. ===========삭제(취소)===========
     //4.1 story 삭제
     // (media, hashtag 포함)
-    public void removeStory(String username, StoryViewDto storyDto) {
-        Member member = getMember(username);
+    public void removeStory(StoryViewDto storyDto) {
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         if (storyByBoardId.isPresent()) {
-            if (!storyByBoardId.get().equals(member)) {
+            Story story = storyByBoardId.get();
+            if (!story.getMember().getUsername()
+                    .equals(SecurityUtil.getCurrentUsername())) {
                 log.info("only same user can delete board!");
                 //error
                 return;
             }
-            storyRepository.delete(storyByBoardId.get());
+            storyRepository.delete(story);
+            log.info("remove!");
         }
     }
 
-//    //4.2 story_comment 저장
-//    public void removeComment(CommentDto commentDto) {
-//        Optional<Comment> commentById = commentRepository.findById(commentDto.getId());
-//        if (commentById.isPresent()) {
-//            commentRepository.delete(commentById.get());
-//        }
-//    }
-//
-//    //4.3 story_comment_reply 저장
-//    public void removeReply(ReplyDto replyDto) {
-//        Optional<Reply> replyById = replyRepository.findById(replyDto.getId());
-//        if (replyById.isPresent()) {
-//            replyRepository.delete(replyById.get());
-//        }
-//    }
 
     //5. ===============else==============
     /**
@@ -320,14 +235,22 @@ public class StoryService {
     private void saveHashtag(Story story, String hashtag) {
         Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
         if (hashtagByContent.isEmpty()) {
+            log.info("not exist hashtag, so newly making");
             Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
             hashtagRepository.save(buildHashtag);
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(buildHashtag).board(story).build();
+            BoardHashtag.builder()
+                    .hashtag(buildHashtag)
+                    .board(story)
+                    .build()
+                    .link(story, buildHashtag);
         }//아래 else가 좀 반복되는 것 같다...
         else{
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(hashtagByContent.get()).board(story).build();
+            log.info("already exist hashtag");
+            BoardHashtag.builder()
+                    .hashtag(hashtagByContent.get())
+                    .board(story)
+                    .build()
+                    .link(story, hashtagByContent.get());
         }
     }
 
@@ -345,6 +268,7 @@ public class StoryService {
             return null;
         }
         Member signInMember = byUsername.get();
+        log.info("signInMember user name is {}", signInMember.getUsername());
         return signInMember;
     }
 }
