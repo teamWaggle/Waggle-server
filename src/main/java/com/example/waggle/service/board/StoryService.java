@@ -49,10 +49,9 @@ public class StoryService {
     //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
     //P2. paging 필수
     @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllStory() {
+    public List<StorySimpleViewDto> findAllStory(String username) {
 
-        log.info(SecurityUtil.getCurrentUsername());
-        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
+        Member signInMember = getMember(username);
 
         //board setting
         List<Story> allStory = storyRepository.findAll();
