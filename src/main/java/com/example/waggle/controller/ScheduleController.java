@@ -12,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,6 +64,15 @@ public class ScheduleController {
     @PostMapping("/create")
     public String createSchedule(Model model) {
         Long scheduleId = null;
+
+
+        return "redirect:/schedule/" + scheduleId;
+    }
+
+    @PostMapping("/update/{scheduleId}")
+    public String updateSchedule(@PathVariable Long scheduleId, @ModelAttribute ScheduleDto scheduleDto, Model model) {
+        log.info("scheduleId = {}", scheduleId);
+        log.info("scheduleDto = {}", scheduleDto);
 
 
         return "redirect:/schedule/" + scheduleId;
