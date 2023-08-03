@@ -71,13 +71,13 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleDto updateSchedule(Long scheduleId, ScheduleDto scheduleDto) {
-        Optional<Schedule> scheduleToUpdate = scheduleRepository.findById(scheduleId);
+    public ScheduleDto updateSchedule(ScheduleDto scheduleDto) {
+        Optional<Schedule> scheduleToUpdate = scheduleRepository.findById(scheduleDto.getId());
         if (scheduleToUpdate.isPresent()) {
             Schedule schedule = scheduleToUpdate.get();
             List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
             schedule.update(scheduleDto, scheduleMembers);  // dirty-checking
-            Schedule updatedSchedule = scheduleRepository.findById(scheduleId).get();
+            Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId()).get();
             return ScheduleDto.toDto(updatedSchedule);
         } else {
             // TODO 예외 처리

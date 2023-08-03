@@ -2,6 +2,7 @@ package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.team.Schedule;
+import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.service.member.MemberService;
@@ -32,6 +33,8 @@ public class ScheduleController {
     public String scheduleMain(Model model) {
         String username = SecurityUtil.getCurrentUsername();
         List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
+
+//        List<ScheduleDto> scheduleDtos = scheduleService.findByTeamId(1L);
 
         List<ScheduleDto> scheduleDtos = new ArrayList<>();
         scheduleDtos.add(ScheduleDto.builder().id(1L).title("Event 1").scheduleTime(LocalDateTime.now()).build());
@@ -69,13 +72,11 @@ public class ScheduleController {
         return "redirect:/schedule/" + scheduleId;
     }
 
-    @PostMapping("/update/{scheduleId}")
-    public String updateSchedule(@PathVariable Long scheduleId, @ModelAttribute ScheduleDto scheduleDto, Model model) {
-        log.info("scheduleId = {}", scheduleId);
+    @PostMapping("/update")
+    public String updateSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
         log.info("scheduleDto = {}", scheduleDto);
-
-
-        return "redirect:/schedule/" + scheduleId;
+        scheduleService.updateSchedule(scheduleDto);
+        return "redirect:/schedule";
     }
 
 }
