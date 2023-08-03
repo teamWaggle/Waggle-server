@@ -123,7 +123,7 @@ class ScheduleServiceTest {
         memberDtos.add(savedMemberDto2);
 
         // update
-        ScheduleDto updatedScheduleDto = scheduleService.updateSchedule(savedScheduleDto1.getId(), updateScheduleDto);
+        ScheduleDto updatedScheduleDto = scheduleService.updateSchedule(updateScheduleDto);
 
         assertThat(updatedScheduleDto.getTitle()).isEqualTo(updateScheduleDto.getTitle());
     }

@@ -5,9 +5,7 @@
 
     <title>Waggle</title>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+    <link th:href="@{/css/bootstrap.min.css}" href="../../../static/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css" rel="stylesheet">
@@ -17,10 +15,6 @@
         a {
             color: inherit;
             text-decoration: none;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
         }
 
         #calendar {
@@ -39,6 +33,7 @@
             background-color: rgba(0, 0, 0, 0.4);
             display: none;
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
@@ -47,17 +42,46 @@
             width: 700px;
             height: 500px;
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
+
+        .modal-header {
+        }
+
+        .modal-body {
+            justify-content: center;
+            padding: 0;
+        }
+
+        .form-group {
+            margin-top: 8px;
+        }
+
+        .form-group label {
+            display: inline-block;
+            width: 80px;
+            margin-right: 10px;
             font-weight: bold;
         }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+
+        .form-group input,
+        .form-group textarea {
+            width: calc(100% - 90px);
+        }
+
+        .form-group.input {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .form-group.input label {
+            width: 80px;
+            font-weight: bold;
+        }
+
+        .form-group.input input,
+        .form-group.input textarea {
+            flex: 1;
         }
 
     </style>
@@ -65,37 +89,42 @@
 <body>
 
 <th:block th:replace="fragments/header.html :: fragment-header"></th:block>
-
 <div id="calendar"></div>
-
 <div id="eventModal">
     <div class="modal-content">
-        <div class="modal-header"style="margin-bottom: 20px; margin-left: 30px; margin-top: 25px; width: 640px">
-            <input type="text" id="eventTitle" name="eventTitle" style="font-weight: bold; font-size: 30px;">
-        </div>
-        <div class="modal-body">
-            <div class="form-group" style="margin-bottom: 20px; margin-left: 30px;">
-                <label for="eventStartTime" style="margin-right: 10px;">날짜</label>
-                <input class="form-control" type="datetime-local" id="eventStartTime" name="eventStartTime">
-            </div>
-            <div class="form-group"style="margin-bottom: 20px; margin-left: 30px;">
-                <label for="eventScheduleMembers" style="margin-right: 10px;">담당자</label>
-                <input class="form-control" type="text" id="eventScheduleMembers" name="eventScheduleMembers">
-            </div>
-            <div class="form-group"style="margin-bottom: 20px; margin-left: 30px; margin-right: 30px">
-                <textarea class="form-control" type="text" id="eventDescription" name="eventDescription" style="height: 300px; width: 640px"></textarea>
-            </div>
-        </div>
+        <form id="eventForm" th:action="@{/schedule/update}" method="post">
+            <input type="hidden" id="id" name="id">
 
+            <div class="modal-body">
+                <div class="form-group input">
+                    <input class="form-control" type="text" id="title" name="title"
+                           style="font-weight: bold; font-size: 20px; text-decoration: none">
+                </div>
+                <div class="form-group input">
+                    <label for="scheduleTime">날짜</label>
+                    <input class="form-control" type="datetime-local" id="scheduleTime" name="scheduleTime">
+                </div>
+                <div class="form-group input">
+                    <label for="scheduleMembers">담당자</label>
+                    <input class="form-control" type="text" id="scheduleMembers" name="scheduleMembers">
+                </div>
+                <div class="form-group input">
+                    <textarea class="form-control" id="description" name="description"
+                              style="height: 250px; margin-top: 20px;"></textarea>
+                </div>
+            </div>
+        </form>
     </div>
+
 </div>
 
 <script th:inline="javascript">
     var schedules = /*[[${scheduleDtos}]]*/ [];
+    var editedEvent = null;
 
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
-
+        var modal = document.getElementById("eventModal");
         var calendar = new FullCalendar.Calendar(calendarEl, {
             // FullCalendar 설정 옵션들
             initialView: 'dayGridMonth',
@@ -110,47 +139,37 @@
             }),
             eventClick: function (info) {
                 var event = info.event;
-                $('#eventTitle').val(event.title);
-                $('#eventStartTime').val(moment(event.start).format('YYYY-MM-DDTHH:mm')); // 날짜 형식을 맞게 조정해야 할 수도 있습니다.
-                $('#eventDescription').val(event.description);
-                $('#eventScheduleMembers').val(event.scheduleMembers);
+                document.getElementById('id').value = event.id;
+                document.getElementById('title').value = event.title;
+                document.getElementById('scheduleTime').value = moment(event.start).format('YYYY-MM-DDTHH:mm');
+                document.getElementById('description').value = event.description;
+                document.getElementById('scheduleMembers').value = event.scheduleMembers;
+                editedEvent = event; // 클릭한 일정 정보를 editedEvent 변수에 저장
 
-                // 모달을 띄웁니다.
-                $('#eventModal').modal('show');
+                modal.style.display = "block";
             }
         });
 
         calendar.render();
     });
 
+    window.addEventListener('click', function (event) {
+        var modal = document.getElementById("eventModal");
+        if (event.target === modal) {
+            var form = document.getElementById("eventForm");
+            if (editedEvent) {
+                form.elements["id"].value = editedEvent.id;
+                form.elements["title"].value = document.getElementById('title').value;
+                form.elements["scheduleTime"].value = document.getElementById('scheduleTime').value;
+                form.elements["description"].value = document.getElementById('description').value;
+                form.elements["scheduleMembers"].value = document.getElementById('scheduleMembers').value;
 
-    $('#eventModal').on('hidden.bs.modal', function () {
-        if (editedEvent) {
-            var updatedEvent = {
-                id: editedEvent.id,
-                teamId: editedEvent.teamId,
-                title: $('#eventTitle').val(),
-                description: $('#eventDescription').val(),
-                scheduleTime: $('#eventStartTime').val(),
-                scheduleMembers: $('#eventScheduleMembers').val().split(',')
-            };
-
-            $.ajax({
-                url: '/schedule/update/' + updatedEvent.id,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(updatedEvent),
-                success: function (response) {
-                    // 서버 응답 처리 (선택)
-                },
-                error: function (xhr, status, error) {
-                    // 오류 처리 (선택)
-                }
-            });
+                form.submit();
+            }
+            editedEvent = null;
+            modal.style.display = "none";
         }
-        editedEvent = null;
     });
-
 
 
 </script>
