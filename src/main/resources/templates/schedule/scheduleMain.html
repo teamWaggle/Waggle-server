@@ -22,7 +22,7 @@
             margin: 0 auto;
         }
 
-        #eventModal {
+        #eventUpdateModal, #eventCreateModal {
             position: fixed;
             z-index: 1;
             left: 0;
@@ -90,41 +90,68 @@
 
 <th:block th:replace="fragments/header.html :: fragment-header"></th:block>
 <div id="calendar"></div>
-<div id="eventModal">
+<div id="eventUpdateModal">
     <div class="modal-content">
-        <form id="eventForm" th:action="@{/schedule/update}" method="post">
-            <input type="hidden" id="id" name="id">
+        <form id="eventUpdateForm" th:action="@{/schedule/update}" method="post">
+            <input type="hidden" id="updateId" name="id">
 
             <div class="modal-body">
                 <div class="form-group input">
-                    <input class="form-control" type="text" id="title" name="title"
+                    <input class="form-control" type="text" id="updateTitle" name="title"
                            style="font-weight: bold; font-size: 20px; text-decoration: none">
                 </div>
                 <div class="form-group input">
-                    <label for="scheduleTime">날짜</label>
-                    <input class="form-control" type="datetime-local" id="scheduleTime" name="scheduleTime">
+                    <label for="updateScheduleTime">날짜</label>
+                    <input class="form-control" type="datetime-local" id="updateScheduleTime" name="scheduleTime">
                 </div>
                 <div class="form-group input">
-                    <label for="scheduleMembers">담당자</label>
-                    <input class="form-control" type="text" id="scheduleMembers" name="scheduleMembers">
+                    <label for="updateScheduleMembers">담당자</label>
+                    <input class="form-control" type="text" id="updateScheduleMembers" name="scheduleMembers">
                 </div>
                 <div class="form-group input">
-                    <textarea class="form-control" id="description" name="description"
+                    <textarea class="form-control" id="updateDescription" name="description"
                               style="height: 250px; margin-top: 20px;"></textarea>
                 </div>
             </div>
         </form>
     </div>
+</div>
 
+<div id="eventCreateModal">
+    <div class="modal-content">
+        <form id="eventCreateForm" th:action="@{/schedule/create}" method="post">
+            <input type="hidden" id="createId" name="id">
+
+            <div class="modal-body">
+                <div class="form-group input">
+                    <input class="form-control" type="text" id="createTitle" name="title"
+                           style="font-weight: bold; font-size: 20px; text-decoration: none">
+                </div>
+                <div class="form-group input">
+                    <label for="updateScheduleTime">날짜</label>
+                    <input class="form-control" type="datetime-local" id="createScheduleTime" name="scheduleTime">
+                </div>
+                <div class="form-group input">
+                    <label for="updateScheduleMembers">담당자</label>
+                    <input class="form-control" type="text" id="createScheduleMembers" name="scheduleMembers">
+                </div>
+                <div class="form-group input">
+                    <textarea class="form-control" id="createDescription" name="description"
+                              style="height: 250px; margin-top: 20px;"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script th:inline="javascript">
     var schedules = /*[[${scheduleDtos}]]*/ [];
-    var editedEvent = null;
+    var updatedEvent = null;
 
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
-        var modal = document.getElementById("eventModal");
+        var updateModal = document.getElementById("eventUpdateModal");
+        var createModal = document.getElementById("eventCreateModal");
         var calendar = new FullCalendar.Calendar(calendarEl, {
             // FullCalendar 설정 옵션들
             initialView: 'dayGridMonth',
@@ -137,16 +164,32 @@
                     scheduleMembers: schedule.scheduleMembers,
                 };
             }),
+            dateClick: function (info) {
+
+                // var form = document.getElementById("eventCreateForm");
+                // form.elements["createId"].value = "";  // 새로운 일정의 경우 ID를 비웁니다.
+                // form.elements["createTitle"].value = "";
+                // form.elements["createScheduleTime"].value = moment(info.date).format('YYYY-MM-DDTHH:mm');
+                // form.elements["createDescription"].value = "";
+                // form.elements["createScheduleMembers"].value = "";
+                document.getElementById('createId').value = "";
+                document.getElementById('createTitle').value = "";
+                document.getElementById('createScheduleTime').value = moment(info.date).format('YYYY-MM-DDTHH:mm');
+                document.getElementById('createDescription').value = "";
+                document.getElementById('createScheduleMembers').value = "";
+
+                createModal.style.display = "block";
+            },
             eventClick: function (info) {
                 var event = info.event;
-                document.getElementById('id').value = event.id;
-                document.getElementById('title').value = event.title;
-                document.getElementById('scheduleTime').value = moment(event.start).format('YYYY-MM-DDTHH:mm');
-                document.getElementById('description').value = event.description;
-                document.getElementById('scheduleMembers').value = event.scheduleMembers;
-                editedEvent = event; // 클릭한 일정 정보를 editedEvent 변수에 저장
+                document.getElementById('updateId').value = event.id;
+                document.getElementById('updateTitle').value = event.title;
+                document.getElementById('updateScheduleTime').value = moment(event.start).format('YYYY-MM-DDTHH:mm');
+                document.getElementById('updateDescription').value = event.description;
+                document.getElementById('updateScheduleMembers').value = event.scheduleMembers;
+                updatedEvent = event;
 
-                modal.style.display = "block";
+                updateModal.style.display = "block";
             }
         });
 
@@ -154,21 +197,36 @@
     });
 
     window.addEventListener('click', function (event) {
-        var modal = document.getElementById("eventModal");
-        if (event.target === modal) {
-            var form = document.getElementById("eventForm");
-            if (editedEvent) {
-                form.elements["id"].value = editedEvent.id;
-                form.elements["title"].value = document.getElementById('title').value;
-                form.elements["scheduleTime"].value = document.getElementById('scheduleTime').value;
-                form.elements["description"].value = document.getElementById('description').value;
-                form.elements["scheduleMembers"].value = document.getElementById('scheduleMembers').value;
+        var updateModal = document.getElementById("eventUpdateModal");
+        var createModal = document.getElementById("eventCreateModal");
+
+        if (event.target === updateModal) {
+            var form = document.getElementById("eventUpdateForm");
+            if (updatedEvent) {
+                form.elements["id"].value = updatedEvent.id;
+                form.elements["title"].value = document.getElementById('updateTitle').value;
+                form.elements["scheduleTime"].value = document.getElementById('updateScheduleTime').value;
+                form.elements["description"].value = document.getElementById('updateDescription').value;
+                form.elements["scheduleMembers"].value = document.getElementById('updateScheduleMembers').value;
 
                 form.submit();
             }
-            editedEvent = null;
-            modal.style.display = "none";
+            updatedEvent = null;
+            updateModal.style.display = "none";
         }
+
+        if (event.target === createModal) {
+            var form = document.getElementById("eventCreateForm");
+            form.elements["title"].value = document.getElementById('createTitle').value;
+            form.elements["scheduleTime"].value = document.getElementById('createScheduleTime').value;
+            form.elements["description"].value = document.getElementById('createDescription').value;
+            form.elements["scheduleMembers"].value = document.getElementById('createScheduleMembers').value;
+
+            form.submit();
+
+            createModal.style.display = "none";
+        }
+
     });
 
 

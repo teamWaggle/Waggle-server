@@ -65,16 +65,17 @@ public class ScheduleController {
     }
 
     @PostMapping("/create")
-    public String createSchedule(Model model) {
-        Long scheduleId = null;
+    public String createSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
+//        Long teamId = null;
+        log.info("createdScheduleDto = {}", scheduleDto);
+//        scheduleService.addSchedule(scheduleDto, scheduleDto.getTeamId());
 
-
-        return "redirect:/schedule/" + scheduleId;
+        return "redirect:/schedule";
     }
 
     @PostMapping("/update")
     public String updateSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
-        log.info("scheduleDto = {}", scheduleDto);
+        log.info("updatedScheduleDto = {}", scheduleDto);
         scheduleService.updateSchedule(scheduleDto);
         return "redirect:/schedule";
     }
