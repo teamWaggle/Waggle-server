@@ -103,7 +103,7 @@ public class CommentService {
         }
         Comment comment = commentById.get();
         if (comment.getMember().equals(member)) {
-            log.info("delete complete!");
+            log.info("delete completely!");
             commentRepository.delete(comment);
         }
     }

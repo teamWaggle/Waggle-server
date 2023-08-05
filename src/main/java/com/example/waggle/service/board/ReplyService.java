@@ -66,25 +66,41 @@ public class ReplyService {
             //error
             return null;
         }
+        Comment comment = commentById.get();
+
         //SAVE reply and LINK member&comment
-        Reply reply = Reply.builder()
-                .content(replyWriteDto.getContent())
-                .member(member)
-                .comment(commentById.get())
-                .build();
+        Reply reply = replyWriteDto.toEntity(member);
+        comment.addReply(reply);
         replyRepository.save(reply);
 
         //auto persist
         for (String mentionMember : replyWriteDto.getMentionMembers()) {
-            MemberMention.builder().reply(reply).username(mentionMember);
+            if (memberRepository.existsByUsername(mentionMember)) {
+                reply.addMemberMention(MemberMention.builder()
+                        .username(mentionMember)
+                        .build()
+                );
+            }
+            log.info("not exist member username!");
         }
 
         return reply.getId();
     }
     //3. 수정
-    public Long changeReply(Long replyId, ReplyWriteDto replyWriteDto) {
+    public boolean checkMember(ReplyViewDto viewDto) {
+        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Optional<Reply> replyById = replyRepository.findById(viewDto.getId());
+        if (replyById.isEmpty()) {
+            log.info("not exist comment");
+            //error
+            return false;
+        }
+        Reply reply = replyById.get();
+        return reply.getMember().equals(member);
+    }
+    public Long changeReply(ReplyViewDto replyViewDto, ReplyWriteDto replyWriteDto) {
         //find
-        Optional<Reply> replyById = replyRepository.findById(replyId);
+        Optional<Reply> replyById = replyRepository.findById(replyViewDto.getId());
         if (replyById.isEmpty()) {
             log.info("not exist reply");
             //error
@@ -96,7 +112,13 @@ public class ReplyService {
         reply.changeContent(replyWriteDto.getContent());
         reply.getMemberMentions().clear();
         for (String mentionMember : replyWriteDto.getMentionMembers()) {
-            MemberMention.builder().reply(reply).username(mentionMember);
+            if (memberRepository.existsByUsername(mentionMember)) {
+                reply.addMemberMention(MemberMention.builder()
+                        .username(mentionMember)
+                        .build()
+                );
+            }
+            log.info("not exist member username!");
         }
         return reply.getId();
     }
@@ -110,7 +132,10 @@ public class ReplyService {
             //error
             return;
         }
-        replyRepository.delete(replyById.get());
+        if (replyById.get().getMember().equals(member)) {
+            log.info("delete completely!");
+            replyRepository.delete(replyById.get());
+        }
     }
 
     //else
