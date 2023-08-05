@@ -31,41 +31,24 @@ public class Comment extends BaseEntity {
     @Lob
     private String content;
 
-    private int orders;
 
     //@Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdDate;
+//    private LocalDateTime createdDate;
 
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 
     @Builder.Default
-    @OneToMany(mappedBy = "comment", orphanRemoval = true)
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
 
-    @Builder
-    Comment(Long id, Member member, String content, int orders, LocalDateTime createdDate,
-            Board board, List<Reply> replies) {
-        this.id = id;
-        this.member = member;
-        this.content = content;
-        this.orders = orders;
-        this.createdDate = createdDate;
-        //this.board = board;
-        changeBoard(board);
-        if (replies != null) {
-            for (Reply reply : replies) {
-                addReply(reply);
-            }
-        }
-    }
 
     //==연관관계 메서드==//
-    public void changeBoard(Board board) {
-        this.board = board;
-        board.getComments().add(this);
-    }
+//    public void changeBoard(Board board) {
+//        this.board = board;
+//        board.getComments().add(this);
+//    }
 
     public void addReply(Reply reply) {
         replies.add(reply);
