@@ -19,7 +19,34 @@
 
         #calendar {
             max-width: 900px;
-            margin: 0 auto;
+            margin: 30px auto 0;
+            flex: 1;
+        }
+
+        #calendar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1200px;
+            margin: 30px auto 0;
+        }
+
+        #teamMembersContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: 30px;
+            margin-top: 20px;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            width: 20%;
+            min-width: 300px;
+        }
+
+        #teamMembersList {
+            width: 100%;
+            margin-top: 10px;
         }
 
         #eventUpdateModal, #eventCreateModal {
@@ -41,9 +68,6 @@
             border: 1px solid #888;
             width: 700px;
             height: 500px;
-        }
-
-        .modal-header {
         }
 
         .modal-body {
@@ -89,15 +113,76 @@
             cursor: pointer;
         }
 
+
+        #teamTabs {
+            border-bottom: 1px solid #e0e0e0;
+            margin-left: 90px;
+            margin-right: 90px;
+        }
+
+        .nav-tabs {
+            border-bottom: none;
+        }
+
+        .nav-link {
+            background: #f6f6f6;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            border: 1px solid #e0e0e0;
+            color: #909090;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+            padding: 6px 18px;
+            margin: 0 5px -1px 0;
+
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            border-color: rgb(214, 241, 207);
+            color: #7C9EBF;
+            border-bottom-color: #7C9EBF;
+        }
+
     </style>
 </head>
 <body>
 
 <th:block th:replace="fragments/header.html :: fragment-header"></th:block>
-<div id="calendar"></div>
+
+<div id="teamTabs" class="nav nav-tabs">
+    <th:block th:each="team : ${teams}">
+        <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link"></a>
+    </th:block>
+    <a href="/team/create" id="addTeamButton" class="nav-item nav-link">➕</a>
+</div>
+
+<div id="calendar-container">
+    <div id="calendar"></div>
+    <div id="teamMembersContainer">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h5 style="margin-bottom: 10px; margin-top: 10px;font-weight: bold;">팀원 목록</h5>
+            <button id="addMemberButton" class="btn btn-secondary"
+                    style="margin-left: 10px; color: black; font-weight: bold; font-size: 15px; padding: 2px 8px 4px; background-color: #d9d9d9; border-color: #d9d9d9; border-radius: 15%">
+                +
+            </button>
+        </div>
+        <div id="teamMembersList">
+            <!-- 멤버 목록 -->
+        </div>
+
+    </div>
+</div>
+
 <div id="eventUpdateModal">
     <div class="modal-content">
         <form id="eventUpdateForm" th:action="@{/schedule/update}" method="post">
+            <input type="hidden" id="updateTeamId" name="teamId">
             <input type="hidden" id="updateId" name="id">
 
             <div class="modal-body">
@@ -125,6 +210,7 @@
 <div id="eventCreateModal">
     <div class="modal-content">
         <form id="eventCreateForm" th:action="@{/schedule/create}" method="post">
+            <input type="hidden" id="createTeamId" name="teamId">
             <input type="hidden" id="createId" name="id">
 
             <div class="modal-body">
@@ -150,89 +236,198 @@
 </div>
 
 <script th:inline="javascript">
-    var schedules = /*[[${scheduleDtos}]]*/ [];
+    var teamId = null;
     var updatedEvent = null;
 
     document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
         var updateModal = document.getElementById("eventUpdateModal");
         var createModal = document.getElementById("eventCreateModal");
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            // FullCalendar 설정 옵션들
-            initialView: 'dayGridMonth',
-            events: schedules.map(function (schedule) {
-                return {
-                    id: schedule.id,
-                    title: schedule.title,
-                    start: schedule.scheduleTime,
-                    description: schedule.description,
-                    scheduleMembers: schedule.scheduleMembers,
-                };
-            }),
-            dateClick: function (info) {
 
-                // var form = document.getElementById("eventCreateForm");
-                // form.elements["createId"].value = "";  // 새로운 일정의 경우 ID를 비웁니다.
-                // form.elements["createTitle"].value = "";
-                // form.elements["createScheduleTime"].value = moment(info.date).format('YYYY-MM-DDTHH:mm');
-                // form.elements["createDescription"].value = "";
-                // form.elements["createScheduleMembers"].value = "";
-                document.getElementById('createId').value = "";
-                document.getElementById('createTitle').value = "";
-                document.getElementById('createScheduleTime').value = moment(info.date).format('YYYY-MM-DDTHH:mm');
-                document.getElementById('createDescription').value = "";
-                document.getElementById('createScheduleMembers').value = "";
+        // 팀별 캘린더 렌더링
+        var teamTabs = document.getElementById('teamTabs');
+        var defaultTab = teamTabs.querySelector('.nav-link');
+        if (defaultTab) {
+            defaultTab.classList.add('active');
+            teamId = defaultTab.getAttribute('data-teamId');
+            renderTeamCalendar(teamId);
+        }
 
-                createModal.style.display = "block";
-            },
-            eventClick: function (info) {
-                var event = info.event;
-                document.getElementById('updateId').value = event.id;
-                document.getElementById('updateTitle').value = event.title;
-                document.getElementById('updateScheduleTime').value = moment(event.start).format('YYYY-MM-DDTHH:mm');
-                document.getElementById('updateDescription').value = event.description;
-                document.getElementById('updateScheduleMembers').value = event.scheduleMembers;
-                updatedEvent = event;
+        teamTabs.addEventListener('click', function (event) {
+            if (event.target.classList.contains('nav-link')) {
+                var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
+                activeTabs.forEach(function (tab) {
+                    tab.classList.remove('active');
+                });
+                event.target.classList.add('active');
 
-                updateModal.style.display = "block";
+                teamId = event.target.getAttribute('data-teamId');
+                renderTeamCalendar(teamId);
             }
         });
 
-        calendar.render();
-    });
+        function renderTeamCalendar(teamId) {
+            var teamCalendarEl = document.getElementById('calendar');
+            var teamCalendar = new FullCalendar.Calendar(teamCalendarEl, {
+                initialView: 'dayGridMonth',
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    fetch(`/schedule/${teamId}/schedules`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            var events = data.map(function (event) {
+                                return {
+                                    id: event.id,
+                                    title: event.title,
+                                    start: event.scheduleTime,
+                                    description: event.description,
+                                    scheduleMembers: event.scheduleMembers,
+                                };
+                            });
+                            successCallback(events);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching team schedules:', error);
+                            failureCallback(error);
+                        });
+                }
+                , dateClick: function (info) {
+                    document.getElementById('createId').value = "";
+                    document.getElementById('createTitle').value = "";
+                    document.getElementById('createScheduleTime').value = moment(info.date).format('YYYY-MM-DDTHH:mm');
+                    document.getElementById('createDescription').value = "";
+                    document.getElementById('createScheduleMembers').value = "";
 
-    window.addEventListener('click', function (event) {
-        var updateModal = document.getElementById("eventUpdateModal");
-        var createModal = document.getElementById("eventCreateModal");
+                    createModal.style.display = "block";
+                },
 
-        if (event.target === updateModal) {
-            var form = document.getElementById("eventUpdateForm");
-            if (updatedEvent) {
-                form.elements["id"].value = updatedEvent.id;
-                form.elements["title"].value = document.getElementById('updateTitle').value;
-                form.elements["scheduleTime"].value = document.getElementById('updateScheduleTime').value;
-                form.elements["description"].value = document.getElementById('updateDescription').value;
-                form.elements["scheduleMembers"].value = document.getElementById('updateScheduleMembers').value;
+                eventClick: function (info) {
+                    var event = info.event;
+                    console.log(event);
+                    document.getElementById('updateId').value = event.id;
+                    document.getElementById('updateTitle').value = event.title;
+                    document.getElementById('updateScheduleTime').value = moment(event.start).format('YYYY-MM-DDTHH:mm');
+                    document.getElementById('updateDescription').value = event.extendedProps.description;
+                    document.getElementById('updateScheduleMembers').value = event.extendedProps.scheduleMembers;
+                    updatedEvent = event;
+
+                    updateModal.style.display = "block";
+                }
+            });
+            teamCalendar.render();
+            renderTeamMembers(teamId);
+
+        }
+
+        window.addEventListener('click', function (event) {
+            var updateModal = document.getElementById("eventUpdateModal");
+            var createModal = document.getElementById("eventCreateModal");
+
+            if (event.target === updateModal) {
+                var form = document.getElementById("eventUpdateForm");
+                if (updatedEvent) {
+                    form.elements["teamId"].value = teamId;
+                    form.elements["id"].value = updatedEvent.id;
+                    form.elements["title"].value = document.getElementById('updateTitle').value;
+                    form.elements["scheduleTime"].value = document.getElementById('updateScheduleTime').value;
+                    form.elements["description"].value = document.getElementById('updateDescription').value;
+                    form.elements["scheduleMembers"].value = document.getElementById('updateScheduleMembers').value;
+
+                    form.submit();
+                }
+                updatedEvent = null;
+                updateModal.style.display = "none";
+            }
+
+            if (event.target === createModal) {
+                var form = document.getElementById("eventCreateForm");
+                form.elements["teamId"].value = teamId;
+                form.elements["title"].value = document.getElementById('createTitle').value;
+                form.elements["scheduleTime"].value = document.getElementById('createScheduleTime').value;
+                form.elements["description"].value = document.getElementById('createDescription').value;
+                form.elements["scheduleMembers"].value = document.getElementById('createScheduleMembers').value;
 
                 form.submit();
+
+                createModal.style.display = "none";
             }
-            updatedEvent = null;
-            updateModal.style.display = "none";
-        }
 
-        if (event.target === createModal) {
-            var form = document.getElementById("eventCreateForm");
-            form.elements["title"].value = document.getElementById('createTitle').value;
-            form.elements["scheduleTime"].value = document.getElementById('createScheduleTime').value;
-            form.elements["description"].value = document.getElementById('createDescription').value;
-            form.elements["scheduleMembers"].value = document.getElementById('createScheduleMembers').value;
-
-            form.submit();
-
-            createModal.style.display = "none";
-        }
-
+        });
     });
+
+    function renderTeamMembers(teamId) {
+        var teamMembersList = document.getElementById('teamMembersList');
+
+        // 기존 멤버 목록 초기화
+        while (teamMembersList.firstChild) {
+            teamMembersList.removeChild(teamMembersList.firstChild);
+        }
+
+        // 팀 멤버 정보를 가져와서 목록에 추가
+        fetch(`/team/${teamId}/members`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(function (member, index) {
+
+                    var memberItem = document.createElement('div');
+                    memberItem.style.display = 'flex';
+                    memberItem.style.alignItems = 'center';
+                    memberItem.style.marginBottom = '10px';
+
+                    var profileImgDiv = document.createElement('div');
+                    profileImgDiv.style.maxWidth = '40px';
+                    profileImgDiv.style.maxHeight = '40px';
+                    profileImgDiv.style.borderRadius = '50%';
+                    profileImgDiv.style.overflow = 'hidden';
+                    profileImgDiv.style.marginRight = '10px';
+
+                    var profileImg = document.createElement('img');
+                    profileImg.style.width = '100%';
+                    profileImg.style.height = '100%';
+                    profileImg.style.objectFit = 'cover';
+
+                    if (member.profileImg) {
+                        profileImg.src = `/images/${member.profileImg.storeFileName}`;
+                    } else {
+                        profileImg.src = '/images/defaultProfileImg.png';
+                    }
+
+                    profileImgDiv.appendChild(profileImg);
+                    memberItem.appendChild(profileImgDiv);
+
+                    var memberInfoDiv = document.createElement('div');
+                    memberInfoDiv.style.display = 'flex';
+                    memberInfoDiv.style.flexDirection = 'column';
+
+                    var nicknameDiv = document.createElement('div');
+                    nicknameDiv.style.fontSize = '16px';
+                    nicknameDiv.style.fontWeight = 'bold';
+                    nicknameDiv.style.marginBottom = '0';
+                    nicknameDiv.textContent = member.nickname;
+
+                    var usernameDiv = document.createElement('div');
+                    usernameDiv.style.fontSize = '13px';
+                    usernameDiv.style.marginTop = '0';
+                    usernameDiv.textContent = `@${member.username}`;
+
+                    memberInfoDiv.appendChild(nicknameDiv);
+                    memberInfoDiv.appendChild(usernameDiv);
+                    memberItem.appendChild(memberInfoDiv);
+
+                    teamMembersList.appendChild(memberItem);
+                    // 팀원 사이에 구분선 추가
+                    if (index < data.length - 1) {
+                        var divider = document.createElement('hr');
+                        divider.style.width = '100%';
+                        divider.style.borderTop = '2px solid #bcbcbc';
+                        divider.style.margin = '10px 0';
+                        teamMembersList.appendChild(divider);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching team members:', error);
+            });
+    }
 
 
 </script>

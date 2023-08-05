@@ -10,6 +10,7 @@ import com.example.waggle.service.team.ScheduleService;
 import com.example.waggle.service.team.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -31,51 +32,38 @@ public class ScheduleController {
 
     @GetMapping
     public String scheduleMain(Model model) {
-        String username = SecurityUtil.getCurrentUsername();
+//        String username = SecurityUtil.getCurrentUsername();
+        String username = "user1";
+
+        TeamDto team1 = teamService.createTeamWithMember(TeamDto.builder().name("team1").build(), username);
+        TeamDto team2 = teamService.createTeamWithMember(TeamDto.builder().name("team2").build(), username);
+        teamService.addMember(team1.getId(), "user2");
+        teamService.addMember(team1.getId(), "user3");
+
+        scheduleService.addSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1.getId());
+        scheduleService.addSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2.getId());
+
         List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
 
-//        List<ScheduleDto> scheduleDtos = scheduleService.findByTeamId(1L);
-
-        List<ScheduleDto> scheduleDtos = new ArrayList<>();
-        scheduleDtos.add(ScheduleDto.builder().id(1L).title("Event 1").scheduleTime(LocalDateTime.now()).build());
-
         model.addAttribute("teams", allTeamByUsername);
-        model.addAttribute("scheduleDtos", scheduleDtos);
 
         return "schedule/scheduleMain";
     }
 
-    @GetMapping("/{scheduleId}")
-    public String schedule(@PathVariable Long scheduleId, Model model) {
-        Optional<ScheduleDto> byScheduleId = scheduleService.findByScheduleId(scheduleId);
-        if(byScheduleId.isPresent()) {
-            ScheduleDto scheduleDto = byScheduleId.get();
-            model.addAttribute("scheduleDto", scheduleDto);
-            return "/schedule/schedule";
-        } else {
-            // TODO 예외처리
-            return "redirect:/schedule";
-        }
-    }
-
-    @GetMapping("/create")
-    public String createScheduleForm(Model model) {
-
-        return "schedule/scheduleForm";
+    @GetMapping("/{teamId}/schedules")
+    public ResponseEntity<List<ScheduleDto>> getTeamSchedules(@PathVariable Long teamId) {
+        List<ScheduleDto> teamSchedules = scheduleService.findByTeamId(teamId);
+        return ResponseEntity.ok(teamSchedules);
     }
 
     @PostMapping("/create")
     public String createSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
-//        Long teamId = null;
-        log.info("createdScheduleDto = {}", scheduleDto);
-//        scheduleService.addSchedule(scheduleDto, scheduleDto.getTeamId());
-
+        scheduleService.addSchedule(scheduleDto, scheduleDto.getTeamId());
         return "redirect:/schedule";
     }
 
     @PostMapping("/update")
     public String updateSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
-        log.info("updatedScheduleDto = {}", scheduleDto);
         scheduleService.updateSchedule(scheduleDto);
         return "redirect:/schedule";
     }
