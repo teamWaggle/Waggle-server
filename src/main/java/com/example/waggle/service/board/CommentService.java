@@ -46,12 +46,8 @@ public class CommentService {
 
     //2. 저장
     public Long saveComment(Long boardId, CommentWriteDto writeDto, String boardType) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Board board = getBoard(boardId, boardType);
-        if (member.getUsername().equals("anonymousUser")) {
-            log.info("not login");
-            return null;
-        }
         Comment saveComment = writeDto.toEntity(member, board);
         Comment save = commentRepository.save(saveComment);
         return save.getId();
@@ -59,7 +55,7 @@ public class CommentService {
 
     //3. 수정
     // question
-    public Long editCommentV1(CommentViewDto viewDto, CommentWriteDto writeDto) {
+    public Long editComment(CommentViewDto viewDto, CommentWriteDto writeDto) {
         //check exist comment
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
@@ -78,7 +74,7 @@ public class CommentService {
 
     //3.1 check member
     public boolean checkMember(CommentViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
             log.info("not exist comment");
@@ -93,7 +89,7 @@ public class CommentService {
     // 아래에서 따로 멤버 검증이 없는 이유는
     // 어차피 레포지토리에서 데이터를 가져올 때 멤버를 필터로 사용하기 때문이다.
     public void deleteComment(CommentViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         //check exist comment
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
@@ -118,10 +114,31 @@ public class CommentService {
         //member setting
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
+            log.info("can't find user!");
             //error
+            //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
             return null;
         }
         Member signInMember = byUsername.get();
+        log.info("signInMember user name is {}", signInMember.getUsername());
+        return signInMember;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
         return signInMember;
     }
     private Board getBoard(Long boardId, String boardType) {

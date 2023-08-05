@@ -144,7 +144,7 @@ class CommentServiceTest {
 
         //when
         if (commentService.checkMember(comments.get(0))) {
-            commentService.editCommentV1(comments.get(0), commentWriteDto2);
+            commentService.editComment(comments.get(0), commentWriteDto2);
              editComments = commentService.findComments(6L);
         }
 

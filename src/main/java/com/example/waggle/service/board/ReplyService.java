@@ -57,7 +57,7 @@ public class ReplyService {
     }
     //2. 저장
     public Long saveReply(CommentViewDto commentViewDto, ReplyWriteDto replyWriteDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
 
         //check exist
         Optional<Comment> commentById = commentRepository.findById(commentViewDto.getId());
@@ -88,7 +88,7 @@ public class ReplyService {
     }
     //3. 수정
     public boolean checkMember(ReplyViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Optional<Reply> replyById = replyRepository.findById(viewDto.getId());
         if (replyById.isEmpty()) {
             log.info("not exist comment");
@@ -125,7 +125,7 @@ public class ReplyService {
 
     //4. 삭제
     public void deleteReply(ReplyViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Optional<Reply> replyById = replyRepository.findById(viewDto.getId());
         if (replyById.isEmpty()) {
             log.info("not exist reply");
@@ -148,10 +148,31 @@ public class ReplyService {
         //member setting
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
+            log.info("can't find user!");
             //error
+            //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
             return null;
         }
         Member signInMember = byUsername.get();
+        log.info("signInMember user name is {}", signInMember.getUsername());
+        return signInMember;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
         return signInMember;
     }
     private Board getBoard(Long boardId, String boardType) {
