@@ -16,5 +16,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 //            " WHERE c.board_id = :boardId",nativeQuery = true)
 //    int findLastOrderByBoardId(@Param("boardId") Long Id);
     List<Comment> findByBoardId(Long boardId);
-    List<Comment> findByMemberAndBoardId(Member member, Long boardId);
 }

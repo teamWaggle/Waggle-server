@@ -30,8 +30,6 @@ public class Reply extends BaseEntity {
 
     private String content;
 
-    private int orders;
-
     //@Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdDate;
 

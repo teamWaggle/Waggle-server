@@ -34,13 +34,6 @@ public class MemberMention extends BaseEntity {
      */
     private String username;
 
-    @Builder
-    MemberMention(Long id, String username, Reply reply) {
-        this.id = id;
-        this.username = username;
-        setReply(reply);
-    }
-
     protected void setReply(Reply reply) {
         this.reply = reply;
     }
