@@ -34,7 +34,6 @@ class RecommendServiceTest {
 
     SignUpDto signUpDto1;
     SignUpDto signUpDto2;
-    SignInDto signInDto;
 
     StoryWriteDto storyWriteDto1;
     StoryWriteDto storyWriteDto2;

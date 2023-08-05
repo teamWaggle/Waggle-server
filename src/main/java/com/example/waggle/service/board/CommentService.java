@@ -48,13 +48,11 @@ public class CommentService {
     public Long saveComment(Long boardId, CommentWriteDto writeDto, String boardType) {
         Member member = getMember(SecurityUtil.getCurrentUsername());
         Board board = getBoard(boardId, boardType);
-
-        Comment saveComment = Comment.builder()
-                .content(writeDto.getContent())
-                .board(board)
-                .member(member)
-                .build();
-
+        if (member.getUsername().equals("anonymousUser")) {
+            log.info("not login");
+            return null;
+        }
+        Comment saveComment = writeDto.toEntity(member, board);
         Comment save = commentRepository.save(saveComment);
         return save.getId();
     }
@@ -76,23 +74,7 @@ public class CommentService {
 
         return comment.getId();
     }
-    public Long editCommentV2(Long boardId, CommentWriteDto writeDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
 
-        //check exist comment
-        Optional<Comment> commentById = commentRepository.findByMemberAndBoardId(member, boardId);
-        if (commentById.isEmpty()) {
-            log.info("not exist comment");
-            //error
-            return null;
-        }
-        Comment comment = commentById.get();
-
-        //edit
-        comment.changeContent(writeDto.getContent());
-        return comment.getId();
-
-    }
 
     //3.1 check member
     public boolean checkMember(CommentViewDto viewDto) {
@@ -107,18 +89,23 @@ public class CommentService {
         return comment.getMember().equals(member);
     }
 
-    //4. 삭제
+    // 4. 삭제
+    // 아래에서 따로 멤버 검증이 없는 이유는
+    // 어차피 레포지토리에서 데이터를 가져올 때 멤버를 필터로 사용하기 때문이다.
     public void deleteComment(CommentViewDto viewDto) {
         Member member = getMember(SecurityUtil.getCurrentUsername());
-        Optional<Comment> commentByMemberAndBoardId = commentRepository
-                .findByMemberAndBoardId(member, viewDto.getId());
-        if (commentByMemberAndBoardId.isEmpty()) {
+        //check exist comment
+        Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
+        if (commentById.isEmpty()) {
             log.info("not exist comment");
             //error
             return;
         }
-        Comment comment = commentByMemberAndBoardId.get();
-        commentRepository.delete(comment);
+        Comment comment = commentById.get();
+        if (comment.getMember().equals(member)) {
+            log.info("delete complete!");
+            commentRepository.delete(comment);
+        }
     }
 
     //else

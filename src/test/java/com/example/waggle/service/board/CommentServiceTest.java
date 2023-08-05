@@ -2,9 +2,9 @@ package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.Media;
-import com.example.waggle.dto.board.story.StoryViewDto;
-import com.example.waggle.dto.board.story.StorySimpleViewDto;
+import com.example.waggle.component.jwt.SecurityUtil;
+import com.example.waggle.dto.board.comment.CommentViewDto;
+import com.example.waggle.dto.board.comment.CommentWriteDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
@@ -15,31 +15,37 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
-class StoryServiceTest {
+class CommentServiceTest {
 
     @Autowired
     private StoryService storyService;
     @Autowired
     private MemberService memberService;
     @Autowired
+    private CommentService commentService;
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
+
 
     SignUpDto signUpDto1;
     SignUpDto signUpDto2;
 
+
     StoryWriteDto storyWriteDto1;
     StoryWriteDto storyWriteDto2;
+
+    CommentWriteDto commentWriteDto1;
+    CommentWriteDto commentWriteDto2;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -88,6 +94,15 @@ class StoryServiceTest {
                 .thumbnail("www.waggle")
                 .build();
 
+        commentWriteDto1 = CommentWriteDto.builder()
+                .content("comment1")
+                .build();
+
+        commentWriteDto2 = CommentWriteDto.builder()
+                .content("comment2")
+                .build();
+
+
     }
     @AfterEach
     void clean() {
@@ -104,96 +119,55 @@ class StoryServiceTest {
         storyService.saveStory(storyWriteDto2);
     }
 
-
     @Test
-    //@WithMockCustomUser
-    @WithMockUser(username = "user1", password = "12345678")
-    //@Rollback(value = false)
-    void findAll() throws Exception {
+    @WithMockCustomUser
+    void saveComment() {
         //given
-        //setBoardAndMember();
-
+        setBoardAndMember();
         //when
-        List<StorySimpleViewDto> allStory = storyService.findAllStory();
-
+        commentService.saveComment(6L, commentWriteDto1, "story");
+        List<CommentViewDto> comments = commentService.findComments(6L);
         //then
-        assertThat(allStory.size()).isEqualTo(5);
-
-        log.info("success");
+        assertThat(comments.size()).isEqualTo(1);
+        assertThat(comments.get(0).getContent()).isEqualTo("comment1");
+        assertThat(comments.get(0).getUsername()).isEqualTo("member1");
     }
 
     @Test
     @WithMockCustomUser
-    //Rollback(value = false)
-    void findAllStoryByMember() {
+    void editCommentV1() {
         //given
         setBoardAndMember();
+        commentService.saveComment(6L, commentWriteDto1, "story");
+        List<CommentViewDto> comments = commentService.findComments(6L);
+        List<CommentViewDto> editComments = new ArrayList<>();
 
         //when
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllMemberStories("member1");
-        List<StorySimpleViewDto> user1 = storyService.findAllMemberStories("user1");
+        if (commentService.checkMember(comments.get(0))) {
+            commentService.editCommentV1(comments.get(0), commentWriteDto2);
+             editComments = commentService.findComments(6L);
+        }
 
         //then
-        assertThat(allStoryByMember.size()).isEqualTo(2);
-        assertThat(user1.size()).isEqualTo(1);
+        log.info("comment = {}", editComments.get(0).getContent());
+        assertThat(editComments.get(0).getContent()).isEqualTo("comment2");
     }
+
 
     @Test
     @WithMockCustomUser
-    //@Rollback(value = false)
-    void findStoryViewByBoardId() {
+    @Rollback(value = false)
+    void deleteComment() {
         //given
         setBoardAndMember();
-
+        commentService.saveComment(6L, commentWriteDto1, "story");
+        List<CommentViewDto> comments = commentService.findComments(6L);
         //when
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(6L);
-
+        log.info("boardId is {}", comments.get(0).getId());
+        commentService.deleteComment(comments.get(0));
+        List<CommentViewDto> deleteComments = commentService.findComments(6L);
         //then
-        assertThat(storyViewByBoardId.getUsername()).isEqualTo("member1");
-        assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
-        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media1");
-    }
+        assertThat(deleteComments.size()).isEqualTo(0);
 
-    @Test
-    @WithMockCustomUser
-    void changeStory() {
-        //given
-        setBoardAndMember();
-        List<String> tags = new ArrayList<>();
-        tags.add("poodle");
-        tags.add("cute");
-        StoryWriteDto editDto = StoryWriteDto.builder()
-                .id(6L)
-                .content("edit edit edit")
-                .thumbnail("www.choco")
-                .hashtags(tags)
-                .medias(medias2)
-                .build();
-        //when
-        boolean isSameUser = storyService.checkMember(6L);
-        storyService.changeStory(editDto);
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(6L);
-
-        //then
-        assertThat(isSameUser).isTrue();
-        assertThat(storyViewByBoardId.getContent()).isEqualTo("edit edit edit");
-        assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
-        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media2");
-    }
-
-    @Test
-    @WithMockCustomUser
-    //@Rollback(value = false)
-    void deleteStory() {
-        //given
-        setBoardAndMember();
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(6L);
-        //when
-        storyService.removeStory(storyViewByBoardId);
-        log.info("=========remove service ==============");
-        //then
-        List<StorySimpleViewDto> allStory = storyService.findAllStory();
-
-        assertThat(allStory.size()).isEqualTo(6);
     }
 }
