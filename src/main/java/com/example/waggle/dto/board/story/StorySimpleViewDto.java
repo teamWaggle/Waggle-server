@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Builder
 public class StorySimpleViewDto {
 
-    private Long storyId;
+    private Long id;
     private String username;
     private UploadFile profileImg;
     private String thumbnail;
@@ -29,18 +29,21 @@ public class StorySimpleViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public StorySimpleViewDto toDto(Story story, int count, boolean recommendIt ) {
+    static public StorySimpleViewDto toDto(Story story) {
         return StorySimpleViewDto.builder()
-                .storyId(story.getId())
+                .id(story.getId())
                 .username(story.getMember().getUsername())
                 .profileImg(story.getMember().getProfileImg())
                 .thumbnail(story.getThumbnail())
                 .createdDate(DateUtil.txtDate(story.getCreatedDate()))
-                .recommendCount(count)
-                .recommendIt(recommendIt)
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
 
+    }
+
+    public void linkRecommend(int count, boolean recommendIt) {
+        this.recommendCount = count;
+        this.recommendIt = recommendIt;
     }
 }

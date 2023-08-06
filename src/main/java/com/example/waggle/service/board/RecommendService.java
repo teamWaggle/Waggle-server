@@ -7,6 +7,11 @@ import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.dto.board.answer.AnswerViewDto;
+import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
+import com.example.waggle.dto.board.question.QuestionViewDto;
+import com.example.waggle.dto.board.story.StorySimpleViewDto;
+import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
@@ -17,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,6 +65,81 @@ public class RecommendService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public void checkRecommend(QuestionViewDto questionViewDto) {
+        Member signInMember = getSignInMember();
+        boolean recommendIt = false;
+        if (login()) {
+            recommendIt = recommendRepository
+                    .existsByMemberIdAndBoardId(signInMember.getId(), questionViewDto.getId());
+        }
+        int count = recommendRepository.countByBoardId(questionViewDto.getId());
+        questionViewDto.linkRecommend(count, recommendIt);
+    }
+
+    @Transactional(readOnly = true)
+    public void checkRecommend(AnswerViewDto answerViewDto) {
+        Member signInMember = getSignInMember();
+        boolean recommendIt = false;
+        if (login()) {
+            recommendIt = recommendRepository
+                    .existsByMemberIdAndBoardId(signInMember.getId(), answerViewDto.getId());
+        }
+        int count = recommendRepository.countByBoardId(answerViewDto.getId());
+        answerViewDto.linkRecommend(count, recommendIt);
+    }
+
+    @Transactional(readOnly = true)
+    public void checkRecommend(StoryViewDto storyViewDto) {
+        Member signInMember = getSignInMember();
+        boolean recommendIt = false;
+        if (login()) {
+            recommendIt = recommendRepository
+                    .existsByMemberIdAndBoardId(signInMember.getId(), storyViewDto.getId());
+        }
+        int count = recommendRepository.countByBoardId(storyViewDto.getId());
+        storyViewDto.linkRecommend(count, recommendIt);
+    }
+
+
+    //========== 단체 조회 시 =========
+    // 단체 recommend 확인은 쿼리량을 줄이기 위함이다.
+    @Transactional(readOnly = true)
+    public void checkRecommendQuestions(List<QuestionSimpleViewDto> questionViewDtoList) {
+        for (QuestionSimpleViewDto questionViewDto : questionViewDtoList) {
+            Member signInMember = getSignInMember();
+            boolean recommendIt = false;
+            if (login()) {
+                recommendIt = recommendRepository
+                        .existsByMemberIdAndBoardId(signInMember.getId(), questionViewDto.getId());
+            }
+            int count = recommendRepository.countByBoardId(questionViewDto.getId());
+            questionViewDto.linkRecommend(count, recommendIt);
+        }
+    }
+    @Transactional(readOnly = true)
+    public void checkRecommendAnswers(List<AnswerViewDto> answerViewDtoList) {
+        for (AnswerViewDto answerViewDto : answerViewDtoList) {
+            checkRecommend(answerViewDto);
+        }
+    }
+    @Transactional(readOnly = true)
+    public void checkRecommendStories(List<StorySimpleViewDto> storyViewDtoList) {
+        for (StorySimpleViewDto storyViewDto : storyViewDtoList) {
+            Member signInMember = getSignInMember();
+            boolean recommendIt = false;
+            if (login()) {
+                recommendIt = recommendRepository
+                        .existsByMemberIdAndBoardId(signInMember.getId(), storyViewDto.getId());
+            }
+            int count = recommendRepository.countByBoardId(storyViewDto.getId());
+            storyViewDto.linkRecommend(count, recommendIt);
+        }
+
+    }
+
+    //====== else =====
+
     private Member getMember(String username) {
         //member get
         Optional<Member> byUsername = memberRepository.findByUsername(username);
@@ -68,6 +149,24 @@ public class RecommendService {
         }
         Member member = byUsername.get();
         return member;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
+        return signInMember;
     }
 
     private Board getBoard(Long boardId, String boardType) {

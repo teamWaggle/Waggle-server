@@ -34,15 +34,13 @@ public class StoryViewDto {
     private List<CommentViewDto> comments = new ArrayList<>();
 
     //스토리 하나를 조회할 때 사용
-    static public StoryViewDto toDto(Story story, int count, boolean recommendIt) {
+    static public StoryViewDto toDto(Story story) {
         return StoryViewDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
                 .createDate(story.getCreatedDate())
-                .recommendCount(count)
-                .recommendIt(recommendIt)
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()
@@ -50,6 +48,11 @@ public class StoryViewDto {
                 .comments(story.getComments().stream()
                         .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
+    }
+
+    public void linkRecommend(int count, boolean recommendIt) {
+        this.recommendCount = count;
+        this.recommendIt = recommendIt;
     }
 
 

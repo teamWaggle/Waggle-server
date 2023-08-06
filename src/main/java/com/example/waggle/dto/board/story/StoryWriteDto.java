@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,7 +31,6 @@ public class StoryWriteDto {
     //스토리 안의 다른 엔티티는 개별로 저장, 하지만 메서드를 통해 연관관계를 맺어준다.
     public Story toEntity(Member member) {
         return Story.builder()
-                .id(id)
                 .member(member)
                 .content(content)
                 .thumbnail(thumbnail)
