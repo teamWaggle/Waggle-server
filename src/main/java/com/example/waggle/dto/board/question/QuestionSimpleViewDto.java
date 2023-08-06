@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class QuestionSimpleViewDto {
 
-    private Long questionId;
+    private Long id;
     private String username;
     private String title;
     private LocalDateTime createTime;
@@ -26,16 +26,19 @@ public class QuestionSimpleViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public QuestionSimpleViewDto toDto(Question question, int recommendCount, boolean recommendIt) {
+    static public QuestionSimpleViewDto toDto(Question question) {
         return QuestionSimpleViewDto.builder()
-                .questionId(question.getId())
+                .id(question.getId())
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())
                 .createTime(question.getCreatedDate())
-                .recommendCount(recommendCount)
-                .recommendIt(recommendIt)
                 .hashtags(question.getBoardHashtags().stream()
                         .map(h->h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
+    }
+
+    public void linkRecommend(int count, boolean recommendIt) {
+        this.recommendCount =count;
+        this.recommendIt = recommendIt;
     }
 }

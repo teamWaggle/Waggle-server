@@ -36,14 +36,12 @@ public class AnswerViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public AnswerViewDto toDto(Answer answer, int count, boolean recommendIt) {
+    static public AnswerViewDto toDto(Answer answer) {
         return AnswerViewDto.builder()
                 .id(answer.getId())
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
                 .createDate(answer.getCreatedDate())
-                .recommendCount(count)
-                .recommendIt(recommendIt)
                 .hashtags(answer.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(answer.getMedias().stream()
@@ -58,5 +56,10 @@ public class AnswerViewDto {
                 .content(content)
                 .member(member)
                 .build();
+    }
+
+    public void linkRecommend(int count, boolean recommendIt) {
+        this.recommendCount = count;
+        this.recommendIt = recommendIt;
     }
 }

@@ -2,6 +2,7 @@ package com.example.waggle.dto.board.question;
 
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.dto.board.answer.AnswerViewDto;
 import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.dto.board.reply.ReplyViewDto;
 import lombok.AllArgsConstructor;
@@ -36,16 +37,16 @@ public class QuestionViewDto {
     private List<ReplyViewDto> replies = new ArrayList<>();
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
+    @Builder.Default
+    private List<AnswerViewDto> answers = new ArrayList<>();
 
-    static public QuestionViewDto toDto(Question question, int count, boolean recommendIt) {
+    static public QuestionViewDto toDto(Question question) {
         return QuestionViewDto.builder()
                 .id(question.getId())
                 .content(question.getContent())
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())
                 .createDate(question.getCreatedDate())
-                .recommendCount(count)
-                .recommendIt(recommendIt)
                 .hashtags(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(question.getMedias().stream()
@@ -55,7 +56,14 @@ public class QuestionViewDto {
                 .build();
     }
 
+    public void linkAnswerView(List<AnswerViewDto> linkDtoList) {
+        this.answers = linkDtoList;
+    }
 
+    public void linkRecommend(int count, boolean recommendIt) {
+        this.recommendCount = count;
+        this.recommendIt = recommendIt;
+    }
 
     public QuestionViewDto(String username) {
         this.username = username;

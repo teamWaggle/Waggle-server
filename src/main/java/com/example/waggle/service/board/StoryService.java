@@ -53,16 +53,9 @@ public class StoryService {
         //board setting
         List<Story> allStory = storyRepository.findAll();
         List<StorySimpleViewDto> simpleStories = new ArrayList<>();
-        Member signInMember = getSignInMember();
 
         for (Story story : allStory) {
-            boolean likeIt = false;
-            if (login()) {
-                likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
-            }
-            log.info("like it = {}", likeIt);
-            int count = recommendRepository.countByBoardId(story.getId());
-            simpleStories.add(StorySimpleViewDto.toDto(story, count, likeIt));
+            simpleStories.add(StorySimpleViewDto.toDto(story));
         }
         return  simpleStories;
     }
@@ -71,19 +64,12 @@ public class StoryService {
     // 1.1.2 개인 story 모두 가져오기
     // 특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
     @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllMemberStories(String username) {
+    public List<StorySimpleViewDto> findAllStoryByUsername(String username) {
         List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
         List<StorySimpleViewDto> simpleStories = new ArrayList<>();
 
-        Member signInMember = getSignInMember();
-
         for (Story story : storyByUsername) {
-            boolean likeIt = false;
-            if (login()) {
-                likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
-            }
-            int count = recommendRepository.countByBoardId(story.getId());
-            simpleStories.add(StorySimpleViewDto.toDto(story, count, likeIt));
+            simpleStories.add(StorySimpleViewDto.toDto(story));
         }
 
         return simpleStories;
@@ -92,8 +78,6 @@ public class StoryService {
     // 1.2 낱개 조회
     @Transactional(readOnly = true)
     public StoryViewDto findStoryViewByBoardId(Long id) {
-        //member setting
-        Member signInMember = getSignInMember();
 
         //board setting
         Optional<Story> storyById = storyRepository.findById(id);
@@ -101,14 +85,7 @@ public class StoryService {
             //error and return null
         }
 
-        //check recommend
-        //어차피 login의 유무는 recommend에만 상관있다.
-        boolean recommendIt = false;
-        if (login()) {
-            recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
-        }
-        int count = recommendRepository.countByBoardId(id);
-        return StoryViewDto.toDto(storyById.get(), count, recommendIt);
+        return StoryViewDto.toDto(storyById.get());
     }
 
 

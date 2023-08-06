@@ -3,6 +3,7 @@ package com.example.waggle.service.board;
 import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.board.boardType.Answer;
@@ -13,6 +14,7 @@ import com.example.waggle.dto.board.answer.AnswerWriteDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import com.example.waggle.dto.board.question.QuestionWriteDto;
+import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.RecommendRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
@@ -51,29 +53,24 @@ public class QuestionService {
     //P2. paging 필수
     @Transactional(readOnly = true)
     public List<QuestionSimpleViewDto> findAllQuestion() {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
-
+        //board setting
         List<Question> allQuestion = questionRepository.findAll();
         List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
+
         for (Question question : allQuestion) {
-            boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(member.getId(), question.getId());
-            int count = recommendRepository.countByBoardId(question.getId());
-            simpleQuestions.add(QuestionSimpleViewDto.toDto(question, count, recommendIt));
+            simpleQuestions.add(QuestionSimpleViewDto.toDto(question));
         }
         return simpleQuestions;
     }
 
     //1.1.2 회원 정보에 따른 전체 조회
     @Transactional(readOnly = true)
-    public List<QuestionSimpleViewDto> findAllQuestionByMember() {
-        List<Question> questionsByUsername = questionRepository
-                .findByMemberUsername(SecurityUtil.getCurrentUsername());
-
+    public List<QuestionSimpleViewDto> findAllQuestionByMember(String username) {
+        List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
         List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
+
         for (Question question : questionsByUsername) {
-            boolean cantRecommendIt = false;
-            int count = recommendRepository.countByBoardId(question.getId());
-            simpleQuestions.add(QuestionSimpleViewDto.toDto(question, count, cantRecommendIt));
+            simpleQuestions.add(QuestionSimpleViewDto.toDto(question));
         }
 
         return simpleQuestions;
@@ -82,23 +79,32 @@ public class QuestionService {
     //1.2 낱개 조회
     @Transactional(readOnly = true)
     public QuestionViewDto findQuestionByBoardId(Long boardId) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
 
         Optional<Question> questionById = questionRepository.findById(boardId);
         if (questionById.isEmpty()) {
             //error and return null
+            return null;
         }
-        boolean recommendIt = recommendRepository.existsByMemberIdAndBoardId(member.getId(), boardId);
-        int count = recommendRepository.countByBoardId(boardId);
-        return QuestionViewDto.toDto(questionById.get(), count, recommendIt);
+
+        //====== answer find & link ======
+        List<Answer> byQuestionId = answerRepository.findByQuestionId(boardId);
+        List<AnswerViewDto> answerViewDtoList = new ArrayList<>();
+
+
+        for (Answer answer : byQuestionId) {
+            answerViewDtoList.add(AnswerViewDto.toDto(answer));
+        }
+        QuestionViewDto viewDto = QuestionViewDto.toDto(questionById.get());
+        viewDto.linkAnswerView(answerViewDtoList);
+
+        return viewDto;
     }
 
 
     //2. ===========저장===========
-
     //2.1 question 저장(media, hashtag 포함)
     public Long saveQuestion(QuestionWriteDto saveQuestionDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Question question = saveQuestionDto.toEntity(member);
         questionRepository.save(question);
 
@@ -111,7 +117,7 @@ public class QuestionService {
         //media 저장
         if (!saveQuestionDto.getMedias().isEmpty()) {
             for (String media : saveQuestionDto.getMedias()) {
-                Media buildMedia = Media.builder().url(media).board(question).build();
+                Media.builder().url(media).board(question).build().linkBoard(question);
             }
         }
         return question.getId();
@@ -133,7 +139,7 @@ public class QuestionService {
             //media 저장
             if (!writeDto.getMedias().isEmpty()) {
                 for (String media : writeDto.getMedias()) {
-                    Media.builder().url(media).board(answer).build();
+                    Media.builder().url(media).board(answer).build().linkBoard(answer);
                 }
             }
             //link relation method
@@ -155,7 +161,7 @@ public class QuestionService {
 
             //newly insert data(media)
             for (String media : questionDto.getMedias()) {
-                Media changeMedia = Media.builder().url(media).board(question).build();
+                Media.builder().url(media).board(question).build().linkBoard(question);
             }
 
             //delete connecting relate (boardHashtag)
@@ -230,11 +236,11 @@ public class QuestionService {
 
     //4.1 question 삭제(media, hashtag 포함)
     public void deleteQuestion(Long id) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member signInMember = getSignInMember();
         Optional<Question> questionById = questionRepository.findById(id);
         if (questionById.isPresent()) {
             //check user
-            if (!questionById.get().equals(member)) {
+            if (!questionById.get().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
                 return;
@@ -245,8 +251,14 @@ public class QuestionService {
 
     //4.4 answer 삭제(media, hashtag 포함)
     public void deleteAnswer(Long id) {
+        Member signInMember = getSignInMember();
         Optional<Answer> answerById = answerRepository.findById(id);
         if (answerById.isPresent()) {
+            if (!answerById.get().equals(signInMember)) {
+                log.info("only same user can delete board!");
+                //error
+                return;
+            }
             answerRepository.delete(answerById.get());
         }
     }
@@ -286,6 +298,24 @@ public class QuestionService {
             return null;
         }
         Member signInMember = byUsername.get();
+        return signInMember;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
         return signInMember;
     }
 
