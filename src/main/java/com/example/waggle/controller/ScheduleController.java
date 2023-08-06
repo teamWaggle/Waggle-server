@@ -32,21 +32,9 @@ public class ScheduleController {
 
     @GetMapping
     public String scheduleMain(Model model) {
-//        String username = SecurityUtil.getCurrentUsername();
-        String username = "user1";
-
-        TeamDto team1 = teamService.createTeamWithMember(TeamDto.builder().name("team1").build(), username);
-        TeamDto team2 = teamService.createTeamWithMember(TeamDto.builder().name("team2").build(), username);
-        teamService.addMember(team1.getId(), "user2");
-        teamService.addMember(team1.getId(), "user3");
-
-        scheduleService.addSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1.getId());
-        scheduleService.addSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2.getId());
-
+        String username = SecurityUtil.getCurrentUsername();
         List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
-
         model.addAttribute("teams", allTeamByUsername);
-
         return "schedule/scheduleMain";
     }
 
