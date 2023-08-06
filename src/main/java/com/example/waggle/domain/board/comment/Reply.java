@@ -30,8 +30,6 @@ public class Reply extends BaseEntity {
 
     private String content;
 
-    private int orders;
-
     //@Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdDate;
 
@@ -44,22 +42,6 @@ public class Reply extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "reply",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MemberMention> memberMentions = new ArrayList<>();
-
-    @Builder
-    Reply(Long id, Member member, String content, int orders, LocalDateTime createdDate,
-            Comment comment, List<MemberMention> mentionedMembers) {
-        this.id = id;
-        this.member = member;
-        this.content = content;
-        this.orders = orders;
-        this.createdDate = createdDate;
-        setComment(comment);
-        if (mentionedMembers != null) {
-            for (MemberMention mentionedMember : mentionedMembers) {
-                addMemberMention(mentionedMember);
-            }
-        }
-    }
 
     protected void setComment(Comment comment) {
         this.comment = comment;

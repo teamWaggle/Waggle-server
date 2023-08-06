@@ -46,22 +46,16 @@ public class CommentService {
 
     //2. 저장
     public Long saveComment(Long boardId, CommentWriteDto writeDto, String boardType) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Board board = getBoard(boardId, boardType);
-
-        Comment saveComment = Comment.builder()
-                .content(writeDto.getContent())
-                .board(board)
-                .member(member)
-                .build();
-
+        Comment saveComment = writeDto.toEntity(member, board);
         Comment save = commentRepository.save(saveComment);
         return save.getId();
     }
 
     //3. 수정
     // question
-    public Long editCommentV1(CommentViewDto viewDto, CommentWriteDto writeDto) {
+    public Long editComment(CommentViewDto viewDto, CommentWriteDto writeDto) {
         //check exist comment
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
@@ -76,27 +70,11 @@ public class CommentService {
 
         return comment.getId();
     }
-    public Long editCommentV2(Long boardId, CommentWriteDto writeDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
 
-        //check exist comment
-        Optional<Comment> commentById = commentRepository.findByMemberAndBoardId(member, boardId);
-        if (commentById.isEmpty()) {
-            log.info("not exist comment");
-            //error
-            return null;
-        }
-        Comment comment = commentById.get();
-
-        //edit
-        comment.changeContent(writeDto.getContent());
-        return comment.getId();
-
-    }
 
     //3.1 check member
     public boolean checkMember(CommentViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
         if (commentById.isEmpty()) {
             log.info("not exist comment");
@@ -107,18 +85,23 @@ public class CommentService {
         return comment.getMember().equals(member);
     }
 
-    //4. 삭제
+    // 4. 삭제
+    // 아래에서 따로 멤버 검증이 없는 이유는
+    // 어차피 레포지토리에서 데이터를 가져올 때 멤버를 필터로 사용하기 때문이다.
     public void deleteComment(CommentViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
-        Optional<Comment> commentByMemberAndBoardId = commentRepository
-                .findByMemberAndBoardId(member, viewDto.getId());
-        if (commentByMemberAndBoardId.isEmpty()) {
+        Member member = getSignInMember();
+        //check exist comment
+        Optional<Comment> commentById = commentRepository.findById(viewDto.getId());
+        if (commentById.isEmpty()) {
             log.info("not exist comment");
             //error
             return;
         }
-        Comment comment = commentByMemberAndBoardId.get();
-        commentRepository.delete(comment);
+        Comment comment = commentById.get();
+        if (comment.getMember().equals(member)) {
+            log.info("delete completely!");
+            commentRepository.delete(comment);
+        }
     }
 
     //else
@@ -131,10 +114,31 @@ public class CommentService {
         //member setting
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
+            log.info("can't find user!");
             //error
+            //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
             return null;
         }
         Member signInMember = byUsername.get();
+        log.info("signInMember user name is {}", signInMember.getUsername());
+        return signInMember;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
         return signInMember;
     }
     private Board getBoard(Long boardId, String boardType) {

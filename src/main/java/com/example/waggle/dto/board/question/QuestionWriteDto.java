@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -21,6 +22,7 @@ public class QuestionWriteDto {
 
     private String content;
     private String title;
+    private Long id;
 
     @Builder.Default
     private List<String> medias = new ArrayList<>();
@@ -32,6 +34,18 @@ public class QuestionWriteDto {
                 .title(title)
                 .content(content)
                 .member(member)
+                .build();
+    }
+
+    public QuestionWriteDto toDto(Question question) {
+        return QuestionWriteDto.builder()
+                .id(question.getId())
+                .content(question.getContent())
+                .title(question.getTitle())
+                .medias(question.getMedias().stream()
+                        .map(m -> m.getUrl()).collect(Collectors.toList()))
+                .hashtags(question.getBoardHashtags().stream()
+                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
     }
 }

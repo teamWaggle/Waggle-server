@@ -19,7 +19,7 @@ public class CommentViewDto {
 
     private Long id;
     private String content;
-    private int orders;
+    private String username;
     @Builder.Default
     private List<ReplyViewDto> replies = new ArrayList<>();
 
@@ -27,7 +27,7 @@ public class CommentViewDto {
         return CommentViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .orders(comment.getOrders())
+                .username(comment.getMember().getUsername())
                 .replies(comment.getReplies().stream()
                         .map(r -> ReplyViewDto.toDto(r)).collect(Collectors.toList()))
                 .build();
