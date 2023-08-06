@@ -1,35 +1,62 @@
 package com.example.waggle.service.board;
 
+import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.component.DatabaseCleanUp;
+import com.example.waggle.dto.board.answer.AnswerWriteDto;
+import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
+import com.example.waggle.dto.board.question.QuestionWriteDto;
+import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class QuestionServiceTest {
 
     @Autowired
-    QuestionService questionService;
+    private QuestionService questionService;
     @Autowired
-    MemberService memberService;
+    private MemberService memberService;
     @Autowired
-    RecommendService recommendService;
+    DatabaseCleanUp databaseCleanUp;
 
-    private SignUpDto signUpDto1;
-    private SignUpDto signUpDto2;
-    private QuestionViewDto questionDto1;
-    private QuestionViewDto questionDto2;
+    SignUpDto signUpDto1;
+    SignUpDto signUpDto2;
+
+    QuestionWriteDto questionWriteDto1;
+    QuestionWriteDto questionWriteDto2;
+    QuestionWriteDto questionEditDto1;
+    AnswerWriteDto answerWriteDto1;
+    AnswerWriteDto answerWriteDto2;
+    AnswerWriteDto answerEditDto1;
+
+
+    List<String> tags1 = new ArrayList<>();
+    List<String> tags2 = new ArrayList<>();
+    List<String> medias1 = new ArrayList<>();
+    List<String> medias2 = new ArrayList<>();
 
 
     @BeforeEach
-    void beforeEach() {
-        //member
+    void setDto() {
+        tags1.add("choco");
+        tags1.add("poodle");
+        tags2.add("poodle");
+
+        medias1.add("media1");
+        medias1.add("mediamedia1");
+        medias2.add("media2");
+        medias2.add("mediamedia2");
+
         signUpDto1 = SignUpDto.builder()
                 .username("member1")
                 .password("12345678")
@@ -37,6 +64,7 @@ class QuestionServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
+
         signUpDto2 = SignUpDto.builder()
                 .username("member2")
                 .password("12345678")
@@ -44,20 +72,141 @@ class QuestionServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        //board(new build)
-        questionDto1 = QuestionViewDto.builder()
-                .content("question1. i wanna asnwer!")
-                .title("my dog is cooool")
-                .username("member1")
+
+        questionWriteDto1 = QuestionWriteDto.builder()
+                .title("question1")
+                .content("I have a question")
+                .medias(medias1)
+                .hashtags(tags1)
+                .build();
+
+
+        questionWriteDto2 = QuestionWriteDto.builder()
+                .title("question2")
+                .content("I have a question!")
+                .medias(medias2)
+                .hashtags(tags2)
+                .build();
+
+        questionEditDto1 = QuestionWriteDto.builder()
+                .title("EditQuestion")
+                .content("I wanna know that what it is")
+                .medias(medias2)
+                .hashtags(tags2)
+                .build();
+
+        answerWriteDto1 = AnswerWriteDto.builder()
+                .content("i don't know that")
+                .build();
+
+        answerWriteDto2 = AnswerWriteDto.builder()
+                .content("i know that!")
+                .build();
+
+        answerEditDto1 = AnswerWriteDto.builder()
+                .content("EditAnswer")
                 .build();
 
     }
 
+    private void setQAndA() {
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+
+        questionService.saveQuestion(questionWriteDto1);
+        questionService.saveQuestion(questionWriteDto2);
+
+        questionService.saveAnswer(answerWriteDto1, 6L);
+        questionService.saveAnswer(answerWriteDto2, 6L);
+    }
+
+
 
     @Test
-    @Rollback(value = false)
-    void recommendQuestion() {
+    @WithMockCustomUser
+    void findAllQuestion() {
+        //given
+        setQAndA();
+
+        //when
+        List<QuestionSimpleViewDto> allQuestion = questionService.findAllQuestion();
+
+        //then
+        assertThat(allQuestion.size()).isEqualTo(2);
+    }
+
+    @Test
+    @WithMockCustomUser
+    void findAllQuestionByUsername() {
+        //given
+        setQAndA();
+
+        //when
+        List<QuestionSimpleViewDto> allQuestionByUsername = questionService.findAllQuestionByUsername("member1");
+
+        //then
+        assertThat(allQuestionByUsername.size()).isEqualTo(2);
+    }
+
+    @Test
+    @WithMockCustomUser
+    void findQuestionByBoardId() {
+        //given
+        setQAndA();
+        //when
+        QuestionViewDto questionByBoardId = questionService.findQuestionByBoardId(6L);
+        //then
+        assertThat(questionByBoardId.getTitle()).isEqualTo("question1");
+        assertThat(questionByBoardId.getAnswers().size()).isEqualTo(2);
+        assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("i don't know that");
+    }
+
+    @Test
+    @WithMockCustomUser
+    void changeQuestion() {
+        //given
+        setQAndA();
+        //when
+        questionService.changeQuestion(questionEditDto1, 6L);
+        QuestionViewDto questionByBoardId = questionService.findQuestionByBoardId(6L);
+        //then
+        assertThat(questionByBoardId.getTitle()).isEqualTo("EditQuestion");
+    }
+
+    @Test
+    @WithMockCustomUser
+    void changeAnswer() {
+        //given
+        setQAndA();
+        //when
+        questionService.changeAnswer(answerEditDto1, 8L);
+        QuestionViewDto questionByBoardId = questionService.findQuestionByBoardId(6L);
+        //then
+        assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("EditAnswer");
 
     }
 
+    @Test
+    @WithMockCustomUser
+    void deleteQuestion() {
+        //given
+        setQAndA();
+        //when
+        questionService.removeQuestion(6L);
+        List<QuestionSimpleViewDto> allQuestion = questionService.findAllQuestion();
+        //then
+        assertThat(allQuestion.size()).isEqualTo(1);
+    }
+
+    @Test
+    @WithMockCustomUser
+    void deleteAnswer() {
+        //given
+        setQAndA();
+        //when
+        questionService.removeAnswer(8L);
+        QuestionViewDto questionByBoardId = questionService.findQuestionByBoardId(6L);
+        //then
+        assertThat(questionByBoardId.getAnswers().size()).isEqualTo(1);
+    }
 }
