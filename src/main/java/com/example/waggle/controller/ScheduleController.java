@@ -34,8 +34,14 @@ public class ScheduleController {
     public String scheduleMain(Model model) {
         String username = SecurityUtil.getCurrentUsername();
         List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
+        Boolean isTeamLeader = Boolean.FALSE;
+        if (allTeamByUsername.size() > 0) {
+            isTeamLeader = teamService.isTeamLeader(allTeamByUsername.get(0).getId(), username);
+        }
+
         model.addAttribute("currentUsername", username);
         model.addAttribute("teams", allTeamByUsername);
+        model.addAttribute("isTeamLeader", isTeamLeader);
         return "schedule/scheduleMain";
     }
 

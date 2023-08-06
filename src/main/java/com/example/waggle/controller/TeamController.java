@@ -40,11 +40,6 @@ public class TeamController {
             }
         }
 
-        for (MemberSimpleDto memberSimpleDto : memberSimpleDtos) {
-            log.info("memberSimpleDto = {}", memberSimpleDto);
-
-        }
-
         return ResponseEntity.ok(memberSimpleDtos);
     }
 
@@ -76,6 +71,18 @@ public class TeamController {
         return "redirect:/schedule";
     }
 
+    @GetMapping("/checkTeamLeader")
+    public ResponseEntity<Boolean> checkTeamLeader(@RequestParam Long teamId) {
+        String username = SecurityUtil.getCurrentUsername();
+        boolean isTeamLeader = teamService.isTeamLeader(teamId, username);
+
+        if (isTeamLeader) {
+            return ResponseEntity.ok(Boolean.TRUE);
+        } else {
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+
     @PostMapping("/addMember")
     public ResponseEntity<String> addMember(@RequestParam Long teamId, @RequestParam String username) {
         TeamDto teamDto = teamService.addMember(teamId, username);
@@ -97,4 +104,5 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove team member");
         }
     }
+
 }

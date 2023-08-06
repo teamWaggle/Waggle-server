@@ -1,6 +1,7 @@
 package com.example.waggle.domain.team;
 
 import com.example.waggle.component.auditing.BaseEntity;
+import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.team.TeamDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,8 +31,16 @@ public class Team extends BaseEntity {
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "team_leader_id")
+    private Member teamLeader;
+
     public void updateTeamName(String name) {
         this.name = name;
+    }
+
+    public void updateTeamLeader(Member teamLeader) {
+        this.teamLeader = teamLeader;
     }
 
 }

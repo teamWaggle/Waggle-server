@@ -1,5 +1,6 @@
 package com.example.waggle.dto.team;
 
+import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.Team;
 import lombok.*;
 
@@ -20,6 +21,8 @@ public class TeamDto {
     @Builder.Default
     private List<String> teamMembers = new ArrayList<>();
 
+    private String teamLeader;
+
     static public TeamDto toDto(Team team) {
         return TeamDto.builder()
                 .id(team.getId())
@@ -27,10 +30,11 @@ public class TeamDto {
                 .schedules(team.getSchedules().stream().map(ScheduleDto::toDto).collect(Collectors.toList()))
                 .teamMembers(team.getTeamMembers().stream()
                         .map(tm -> tm.getMember().getUsername()).collect(Collectors.toList()))
+                .teamLeader(team.getTeamLeader().getUsername())
                 .build();
     }
 
-    public Team toEntity() {
-        return Team.builder().name(name).build();
+    public Team toEntity(Member teamLeader) {
+        return Team.builder().name(name).teamLeader(teamLeader).build();
     }
 }
