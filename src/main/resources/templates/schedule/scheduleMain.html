@@ -158,6 +158,8 @@
 <div id="teamTabs" class="nav nav-tabs">
     <th:block th:each="team : ${teams}">
         <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link"></a>
+        <input type="hidden" id="selectedTeamLeader" th:value="${team.getTeamLeader()}">
+
     </th:block>
     <a href="/team/create" id="addTeamButton" class="nav-item nav-link">➕</a>
 </div>
@@ -256,6 +258,7 @@
 <script th:inline="javascript">
     var teamId = null;
     var updatedEvent = null;
+    var isTeamLeader = false;
 
     document.addEventListener('DOMContentLoaded', function () {
         var updateModal = document.getElementById("eventUpdateModal");
@@ -267,7 +270,9 @@
         if (defaultTab) {
             defaultTab.classList.add('active');
             teamId = defaultTab.getAttribute('data-teamId');
+            isTeamLeader = checkTeamLeader(teamId);
             renderTeamCalendar(teamId);
+            updateMemberButtonsVisibility();
         }
 
         teamTabs.addEventListener('click', function (event) {
@@ -279,7 +284,9 @@
                 event.target.classList.add('active');
 
                 teamId = event.target.getAttribute('data-teamId');
+                isTeamLeader = checkTeamLeader(teamId);
                 renderTeamCalendar(teamId);
+                updateMemberButtonsVisibility();
             }
         });
 
@@ -446,7 +453,6 @@
                         removeButton.style.padding = '0';
 
 
-
                         removeButton.addEventListener('click', function () {
                             var form = new FormData();
                             form.append("teamId", teamId);
@@ -472,10 +478,7 @@
                 }
             });
         });
-
-
-    })
-    ;
+    });
 
     function renderTeamMembers(teamId) {
         var teamMembersList = document.getElementById('teamMembersList');
@@ -522,18 +525,26 @@
                     }
 
                     profileImgDiv.appendChild(profileImg);
-                    // memberItem.appendChild(profileImgDiv);
                     profile.appendChild(profileImgDiv);
 
                     var memberInfoDiv = document.createElement('div');
                     memberInfoDiv.style.display = 'flex';
                     memberInfoDiv.style.flexDirection = 'column';
 
+
+
                     var nicknameDiv = document.createElement('div');
                     nicknameDiv.style.fontSize = '16px';
                     nicknameDiv.style.fontWeight = 'bold';
                     nicknameDiv.style.marginBottom = '0';
-                    nicknameDiv.textContent = member.nickname;
+
+                    var selectedTeamLeader = document.getElementById('selectedTeamLeader').value;
+                    if(selectedTeamLeader === member.username) {
+                        nicknameDiv.textContent = `${member.nickname} 👑`;
+                    } else {
+                        nicknameDiv.textContent = member.nickname;
+                    }
+
 
                     var usernameDiv = document.createElement('div');
                     usernameDiv.style.fontSize = '13px';
@@ -563,6 +574,42 @@
             });
     }
 
+    function checkTeamLeader(teamId) {
+        return fetch(`/team/checkTeamLeader?teamId=${teamId}`)
+            .then(response => response.json())
+            .then(isLeader => {
+                if (isLeader === true) {
+                    console.log('switch true');
+                    return true;
+                } else {
+                    console.log('switch false');
+                    return false;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching team leader status:', error);
+                return false; // 오류 발생 시 false 반환
+            });
+    }
+
+    // 멤버 추가/제거 버튼 표시 여부 업데이트
+    async function updateMemberButtonsVisibility() {
+        var addMemberButton = document.getElementById('addMemberModalButton');
+        var removeMemberButton = document.getElementById('removeMemberButton');
+        try {
+            isTeamLeader = await checkTeamLeader(teamId);
+
+            if (isTeamLeader) {
+                addMemberButton.style.display = 'block';
+                removeMemberButton.style.display = 'block';
+            } else {
+                addMemberButton.style.display = 'none';
+                removeMemberButton.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error updating member button visibility:', error);
+        }
+    }
 
 </script>
 </body>
