@@ -179,11 +179,11 @@ public class StoryService {
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryViewDto storyDto) {
+        Member signInMember = getSignInMember();
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         if (storyByBoardId.isPresent()) {
             Story story = storyByBoardId.get();
-            if (!story.getMember().getUsername()
-                    .equals(SecurityUtil.getCurrentUsername())) {
+            if (!story.getMember().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
                 return;

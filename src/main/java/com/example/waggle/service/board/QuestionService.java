@@ -65,7 +65,7 @@ public class QuestionService {
 
     //1.1.2 회원 정보에 따른 전체 조회
     @Transactional(readOnly = true)
-    public List<QuestionSimpleViewDto> findAllQuestionByMember(String username) {
+    public List<QuestionSimpleViewDto> findAllQuestionByUsername(String username) {
         List<Question> questionsByUsername = questionRepository.findByMemberUsername(username);
         List<QuestionSimpleViewDto> simpleQuestions = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class QuestionService {
 
     //2.4 answer 저장(media, hashtag 포함)
     public void saveAnswer(AnswerWriteDto writeDto, Long boardId) {
-        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
+        Member signInMember = getSignInMember();
         Optional<Question> questionById = questionRepository.findById(boardId);
 
         if (questionById.isPresent()) {
@@ -235,32 +235,38 @@ public class QuestionService {
     //4. ===========삭제(취소)===========
 
     //4.1 question 삭제(media, hashtag 포함)
-    public void deleteQuestion(Long id) {
+    public void removeQuestion(Long id) {
         Member signInMember = getSignInMember();
         Optional<Question> questionById = questionRepository.findById(id);
         if (questionById.isPresent()) {
             //check user
-            if (!questionById.get().equals(signInMember)) {
+            Question question = questionById.get();
+            if (!question.getMember().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
                 return;
             }
-            questionRepository.delete(questionById.get());
+            questionRepository.delete(question);
+            log.info("remove completely");
         }
+        log.info("not exist");
     }
 
     //4.4 answer 삭제(media, hashtag 포함)
-    public void deleteAnswer(Long id) {
+    public void removeAnswer(Long id) {
         Member signInMember = getSignInMember();
         Optional<Answer> answerById = answerRepository.findById(id);
         if (answerById.isPresent()) {
-            if (!answerById.get().equals(signInMember)) {
+            Answer answer = answerById.get();
+            if (!answer.getMember().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
                 return;
             }
             answerRepository.delete(answerById.get());
+            log.info("remove completely");
         }
+        log.info("not exist");
     }
 
     //5. ============= else ============

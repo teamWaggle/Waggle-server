@@ -39,7 +39,7 @@ public class QuestionController {
     @GetMapping("/{username}")
     public String memberQuestion(Model model, @PathVariable String username) {
         List<QuestionSimpleViewDto> allQuestionByMember = questionService
-                .findAllQuestionByMember(username);
+                .findAllQuestionByUsername(username);
         model.addAttribute("simpleQuestions", allQuestionByMember);
         return "question/memberQuestion";
     }
