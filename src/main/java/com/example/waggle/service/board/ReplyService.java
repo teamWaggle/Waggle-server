@@ -57,7 +57,7 @@ public class ReplyService {
     }
     //2. 저장
     public Long saveReply(CommentViewDto commentViewDto, ReplyWriteDto replyWriteDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
 
         //check exist
         Optional<Comment> commentById = commentRepository.findById(commentViewDto.getId());
@@ -66,25 +66,41 @@ public class ReplyService {
             //error
             return null;
         }
+        Comment comment = commentById.get();
+
         //SAVE reply and LINK member&comment
-        Reply reply = Reply.builder()
-                .content(replyWriteDto.getContent())
-                .member(member)
-                .comment(commentById.get())
-                .build();
+        Reply reply = replyWriteDto.toEntity(member);
+        comment.addReply(reply);
         replyRepository.save(reply);
 
         //auto persist
         for (String mentionMember : replyWriteDto.getMentionMembers()) {
-            MemberMention.builder().reply(reply).username(mentionMember);
+            if (memberRepository.existsByUsername(mentionMember)) {
+                reply.addMemberMention(MemberMention.builder()
+                        .username(mentionMember)
+                        .build()
+                );
+            }
+            log.info("not exist member username!");
         }
 
         return reply.getId();
     }
     //3. 수정
-    public Long changeReply(Long replyId, ReplyWriteDto replyWriteDto) {
+    public boolean checkMember(ReplyViewDto viewDto) {
+        Member member = getSignInMember();
+        Optional<Reply> replyById = replyRepository.findById(viewDto.getId());
+        if (replyById.isEmpty()) {
+            log.info("not exist comment");
+            //error
+            return false;
+        }
+        Reply reply = replyById.get();
+        return reply.getMember().equals(member);
+    }
+    public Long changeReply(ReplyViewDto replyViewDto, ReplyWriteDto replyWriteDto) {
         //find
-        Optional<Reply> replyById = replyRepository.findById(replyId);
+        Optional<Reply> replyById = replyRepository.findById(replyViewDto.getId());
         if (replyById.isEmpty()) {
             log.info("not exist reply");
             //error
@@ -96,21 +112,30 @@ public class ReplyService {
         reply.changeContent(replyWriteDto.getContent());
         reply.getMemberMentions().clear();
         for (String mentionMember : replyWriteDto.getMentionMembers()) {
-            MemberMention.builder().reply(reply).username(mentionMember);
+            if (memberRepository.existsByUsername(mentionMember)) {
+                reply.addMemberMention(MemberMention.builder()
+                        .username(mentionMember)
+                        .build()
+                );
+            }
+            log.info("not exist member username!");
         }
         return reply.getId();
     }
 
     //4. 삭제
     public void deleteReply(ReplyViewDto viewDto) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
         Optional<Reply> replyById = replyRepository.findById(viewDto.getId());
         if (replyById.isEmpty()) {
             log.info("not exist reply");
             //error
             return;
         }
-        replyRepository.delete(replyById.get());
+        if (replyById.get().getMember().equals(member)) {
+            log.info("delete completely!");
+            replyRepository.delete(replyById.get());
+        }
     }
 
     //else
@@ -123,10 +148,31 @@ public class ReplyService {
         //member setting
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
+            log.info("can't find user!");
             //error
+            //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
             return null;
         }
         Member signInMember = byUsername.get();
+        log.info("signInMember user name is {}", signInMember.getUsername());
+        return signInMember;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
         return signInMember;
     }
     private Board getBoard(Long boardId, String boardType) {

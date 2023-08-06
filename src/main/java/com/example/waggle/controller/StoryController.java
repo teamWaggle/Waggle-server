@@ -42,7 +42,7 @@ public class StoryController {
     @GetMapping("/{username}")
     public String memberStory(@PathVariable String username,
                               Model model) {
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByMember();
+        List<StorySimpleViewDto> allStoryByMember = storyService.findAllMemberStories(username);
         model.addAttribute("simpleStories", allStoryByMember);
         return "story/memberStory";
     }

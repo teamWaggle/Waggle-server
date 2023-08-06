@@ -45,67 +45,55 @@ public class StoryService {
 
     //1.1 그룹 조회
 
-    //1.1.1 전체 조회 -> 후에 시간 순으로 조회
-    //P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
-    //P2. paging 필수
+    // 1.1.1 전체 조회 -> 후에 시간 순으로 조회
+    // P1. 지금은 story -> storySimpleDto로 변경하지만 조회를 dto로 변경하면 query양이 적어질 것이다.
+    // P2. paging 필수
     @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllStory(String username) {
-
-        Member signInMember = getMember(username);
-
+    public List<StorySimpleViewDto> findAllStory() {
         //board setting
         List<Story> allStory = storyRepository.findAll();
         List<StorySimpleViewDto> simpleStories = new ArrayList<>();
+        Member signInMember = getSignInMember();
 
-        //entity -> dto
         for (Story story : allStory) {
-            boolean likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
+            boolean likeIt = false;
+            if (login()) {
+                likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
+            }
+            log.info("like it = {}", likeIt);
             int count = recommendRepository.countByBoardId(story.getId());
             simpleStories.add(StorySimpleViewDto.toDto(story, count, likeIt));
         }
         return  simpleStories;
     }
 
+
+    // 1.1.2 개인 story 모두 가져오기
+    // 특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
     @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllStory() {
-        List<Story> allStory = storyRepository.findAll();
-        List<StorySimpleViewDto> storySimpleViewDtos = new ArrayList<>();
-
-        //entity -> dto
-        for (Story story : allStory) {
-            storySimpleViewDtos.add(StorySimpleViewDto.toDto(story, 0, false));
-        }
-        return storySimpleViewDtos;
-
-    }
-
-
-    //1.1.2 회원 정보에 따른 전체 조회
-    //특징 : 개인 story를 가져오는 것이기 때문에 recommend는 누를 수 없다.
-    @Transactional(readOnly = true)
-    public List<StorySimpleViewDto> findAllStoryByMember() {
-        Optional<Member> MemberByUsername = memberRepository.findByUsername(SecurityUtil.getCurrentUsername());
-        if (MemberByUsername.isEmpty()) {
-            log.info("can't find user!");
-            // error message 출력
-        }
-        List<Story> storyByUsername = storyRepository.findByMemberUsername(SecurityUtil.getCurrentUsername());
-
+    public List<StorySimpleViewDto> findAllMemberStories(String username) {
+        List<Story> storyByUsername = storyRepository.findByMemberUsername(username);
         List<StorySimpleViewDto> simpleStories = new ArrayList<>();
+
+        Member signInMember = getSignInMember();
+
         for (Story story : storyByUsername) {
-            boolean cantLike = false;
+            boolean likeIt = false;
+            if (login()) {
+                likeIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), story.getId());
+            }
             int count = recommendRepository.countByBoardId(story.getId());
-            simpleStories.add(StorySimpleViewDto.toDto(story, count, cantLike));
+            simpleStories.add(StorySimpleViewDto.toDto(story, count, likeIt));
         }
 
         return simpleStories;
     }
 
-    //1.2 낱개 조회
+    // 1.2 낱개 조회
     @Transactional(readOnly = true)
     public StoryViewDto findStoryViewByBoardId(Long id) {
         //member setting
-        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
+        Member signInMember = getSignInMember();
 
         //board setting
         Optional<Story> storyById = storyRepository.findById(id);
@@ -114,24 +102,15 @@ public class StoryService {
         }
 
         //check recommend
-        boolean recommendIt;
-        if (signInMember != null) recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
-        else recommendIt = false;
+        //어차피 login의 유무는 recommend에만 상관있다.
+        boolean recommendIt = false;
+        if (login()) {
+            recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), id);
+        }
         int count = recommendRepository.countByBoardId(id);
         return StoryViewDto.toDto(storyById.get(), count, recommendIt);
     }
 
-    // StoryWriteDto 조회 -> edit에서 사용. (저장된 story 정보 불러오기)
-    @Transactional(readOnly = true)
-    public StoryWriteDto findStoryWriteByBoardId(Long id) {
-        //board setting
-        Optional<Story> storyById = storyRepository.findById(id);
-        if (storyById.isEmpty()) {
-            //error and return null
-        }
-
-        return StoryWriteDto.toDto(storyById.get());
-    }
 
     //2. ===========저장===========
 
@@ -139,7 +118,7 @@ public class StoryService {
     //***중요!
     public Long saveStory(StoryWriteDto saveStoryDto) {
         //member setting
-        Member signInMember = getMember(SecurityUtil.getCurrentUsername());
+        Member signInMember = getSignInMember();
 
         //board setting
         Story saveStory = saveStoryDto.toEntity(signInMember);
@@ -193,16 +172,28 @@ public class StoryService {
         return null;
     }
 
+    // StoryWriteDto 조회 -> edit에서 사용. (저장된 story 정보 불러오기)
+    @Transactional(readOnly = true)
+    public StoryWriteDto findStoryWriteByBoardId(Long id) {
+        //board setting
+        Optional<Story> storyById = storyRepository.findById(id);
+        if (storyById.isEmpty()) {
+            //error and return null
+        }
+
+        return StoryWriteDto.toDto(storyById.get());
+    }
+
     @Transactional(readOnly = true)
     public boolean checkMember(Long boardId) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member signInMember = getSignInMember();
         Optional<Story> storyById = storyRepository.findById(boardId);
         if (storyById.isEmpty()) {
             log.info("not exist story");
             //error
             return false;
         }
-        boolean isSameUser = storyById.get().getMember().equals(member);
+        boolean isSameUser = storyById.get().getMember().equals(signInMember);
         return isSameUser;
     }
 
@@ -260,16 +251,37 @@ public class StoryService {
      * @param username
      * @return member
      */
+    // 이 메서드는 레포지토리에서 멤버가 "있냐 없느냐"를 따지기 때문에
+    // 존재하지 않는 username이라면 이 메서드를 사용하는 모든 서비스 로직은 실행되면 안된다.
     private Member getMember(String username) {
         //member setting
         Optional<Member> byUsername = memberRepository.findByUsername(username);
         if (byUsername.isEmpty()) {
+            log.info("can't find user!");
             //error
             //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
             return null;
         }
         Member signInMember = byUsername.get();
         log.info("signInMember user name is {}", signInMember.getUsername());
+        return signInMember;
+    }
+
+    private boolean login() {
+        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Member getSignInMember() {
+        Member signInMember = null;
+
+        //check login
+        if (login()) {
+            //check exist user
+            signInMember = getMember(SecurityUtil.getCurrentUsername());
+        }
         return signInMember;
     }
 }
