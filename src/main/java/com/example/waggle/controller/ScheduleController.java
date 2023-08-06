@@ -34,6 +34,7 @@ public class ScheduleController {
     public String scheduleMain(Model model) {
         String username = SecurityUtil.getCurrentUsername();
         List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
+        model.addAttribute("currentUsername", username);
         model.addAttribute("teams", allTeamByUsername);
         return "schedule/scheduleMain";
     }

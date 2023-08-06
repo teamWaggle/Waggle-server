@@ -9,6 +9,7 @@ import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,12 +35,16 @@ public class TeamController {
         if(byTeamId.isPresent()) {
             TeamDto teamDto = byTeamId.get();
             List<String> teamMembers = teamDto.getTeamMembers();
-
             for (String teamMember : teamMembers) {
                 memberSimpleDtos.add(memberService.findMemberSimpleDto(teamMember));
             }
+        }
+
+        for (MemberSimpleDto memberSimpleDto : memberSimpleDtos) {
+            log.info("memberSimpleDto = {}", memberSimpleDto);
 
         }
+
         return ResponseEntity.ok(memberSimpleDtos);
     }
 
@@ -54,11 +59,9 @@ public class TeamController {
         return "redirect:/team/" + createdTeamDto.getId();
     }
 
-    // update
     @GetMapping("/update")
     public String updateTeamForm(Model model) {
-
-        return "team/updateTeam";
+        return "schedule/team/updateTeam";
     }
 
     @PostMapping("/{teamId}/update")
@@ -67,11 +70,31 @@ public class TeamController {
         return "redirect:/team/" + updatedTeamDto.getId();
     }
 
-    // delete
     @PostMapping("/delete")
     public String deleteTeam(@ModelAttribute TeamDto teamDto) {
         teamService.removeTeam(teamDto.getId());
-        return "redirect:/team";
+        return "redirect:/schedule";
     }
 
+    @PostMapping("/addMember")
+    public ResponseEntity<String> addMember(@RequestParam Long teamId, @RequestParam String username) {
+        TeamDto teamDto = teamService.addMember(teamId, username);
+        if (teamDto != null) {
+            return ResponseEntity.ok("Team member added successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add team member");
+        }
+    }
+
+    @PostMapping("/removeMember")
+    public ResponseEntity<String> removeMember(@RequestParam Long teamId, @RequestParam String username) {
+        log.info("removeMember teamId = {}, username = {}", teamId, username);
+
+        Boolean isSuccess = teamService.removeMember(teamId, username);
+        if (isSuccess) {
+            return ResponseEntity.ok("Team member removed successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove team member");
+        }
+    }
 }

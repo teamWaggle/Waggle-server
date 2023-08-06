@@ -49,7 +49,7 @@
             margin-top: 10px;
         }
 
-        #eventUpdateModal, #eventCreateModal {
+        #eventUpdateModal, #eventCreateModal, #addMemberModal {
             position: fixed;
             z-index: 1;
             left: 0;
@@ -167,9 +167,13 @@
     <div id="teamMembersContainer">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h5 style="margin-bottom: 10px; margin-top: 10px;font-weight: bold;">팀원 목록</h5>
-            <button id="addMemberButton" class="btn btn-secondary"
-                    style="margin-left: 10px; color: black; font-weight: bold; font-size: 15px; padding: 2px 8px 4px; background-color: #d9d9d9; border-color: #d9d9d9; border-radius: 15%">
+            <button id="addMemberModalButton" class="btn btn-secondary"
+                    style="margin-left: 10px; color: black; font-weight: bold; font-size: 15px; padding: 0; width: 28px; height: 28px; background-color: #d9d9d9; border-color: #d9d9d9; border-radius: 15%">
                 +
+            </button>
+            <button id="removeMemberButton" class="btn btn-secondary"
+                    style="margin-left: 10px; color: black; font-weight: bold; font-size: 15px; padding: 0; width: 28px; height: 28px; background-color: #d9d9d9; border-color: #d9d9d9; border-radius: 15%">
+                -
             </button>
         </div>
         <div id="teamMembersList">
@@ -181,7 +185,7 @@
 
 <div id="eventUpdateModal">
     <div class="modal-content">
-        <form id="eventUpdateForm" th:action="@{/schedule/update}" method="post">
+        <form id="eventUpdateForm" th:action="@{/schedule/update/schedule/update}" method="post">
             <input type="hidden" id="updateTeamId" name="teamId">
             <input type="hidden" id="updateId" name="id">
 
@@ -235,6 +239,20 @@
     </div>
 </div>
 
+<div id="addMemberModal">
+    <div class="modal-content">
+        <form id="addMemberForm" th:action="@{/team/addMember}" method="post">
+            <input type="hidden" id="addMemberTeamId" name="teamId">
+            <div class="modal-body">
+                <div class="form-group input">
+                    <input class="form-control" type="text" id="addMemberUsername" name="username">
+                    <button id="addMemberSubmitButton" class="btn btn-secondary">추가</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script th:inline="javascript">
     var teamId = null;
     var updatedEvent = null;
@@ -264,6 +282,7 @@
                 renderTeamCalendar(teamId);
             }
         });
+
 
         function renderTeamCalendar(teamId) {
             var teamCalendarEl = document.getElementById('calendar');
@@ -302,7 +321,6 @@
 
                 eventClick: function (info) {
                     var event = info.event;
-                    console.log(event);
                     document.getElementById('updateId').value = event.id;
                     document.getElementById('updateTitle').value = event.title;
                     document.getElementById('updateScheduleTime').value = moment(event.start).format('YYYY-MM-DDTHH:mm');
@@ -323,36 +341,141 @@
             var createModal = document.getElementById("eventCreateModal");
 
             if (event.target === updateModal) {
-                var form = document.getElementById("eventUpdateForm");
-                if (updatedEvent) {
-                    form.elements["teamId"].value = teamId;
-                    form.elements["id"].value = updatedEvent.id;
-                    form.elements["title"].value = document.getElementById('updateTitle').value;
-                    form.elements["scheduleTime"].value = document.getElementById('updateScheduleTime').value;
-                    form.elements["description"].value = document.getElementById('updateDescription').value;
-                    form.elements["scheduleMembers"].value = document.getElementById('updateScheduleMembers').value;
+                var form = new FormData();
+                form.append("teamId", teamId);
+                form.append("id", updatedEvent.id);
+                form.append("title", document.getElementById('updateTitle').value);
+                form.append("scheduleTime", document.getElementById('updateScheduleTime').value);
+                form.append("description", document.getElementById('updateDescription').value);
+                form.append("scheduleMembers", document.getElementById('updateScheduleMembers').value);
 
-                    form.submit();
-                }
+                fetch('/schedule/update', {
+                    method: 'POST',
+                    body: form
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log(data);
+                        addMemberModal.style.display = 'none';
+                        renderTeamCalendar(teamId);
+                    })
+                    .catch(error => {
+                        console.error('Schedule Update Error:', error);
+                    });
+
                 updatedEvent = null;
                 updateModal.style.display = "none";
             }
 
             if (event.target === createModal) {
-                var form = document.getElementById("eventCreateForm");
-                form.elements["teamId"].value = teamId;
-                form.elements["title"].value = document.getElementById('createTitle').value;
-                form.elements["scheduleTime"].value = document.getElementById('createScheduleTime').value;
-                form.elements["description"].value = document.getElementById('createDescription').value;
-                form.elements["scheduleMembers"].value = document.getElementById('createScheduleMembers').value;
+                var form = new FormData();
+                form.append("teamId", teamId);
+                form.append("title", document.getElementById('createTitle').value);
+                form.append("scheduleTime", document.getElementById('createScheduleTime').value);
+                form.append("description", document.getElementById('createDescription').value);
+                form.append("scheduleMembers", document.getElementById('createScheduleMembers').value);
 
-                form.submit();
+                fetch('/schedule/create', {
+                    method: 'POST',
+                    body: form
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log(data);
+                        addMemberModal.style.display = 'none';
+                        renderTeamCalendar(teamId);
+                    })
+                    .catch(error => {
+                        console.error('Schedule Update Error:', error);
+                    });
 
                 createModal.style.display = "none";
             }
-
         });
-    });
+
+        var addMemberModal = document.getElementById("addMemberModal");
+        document.getElementById('addMemberModalButton').addEventListener('click', function () {
+            addMemberModal.style.display = "block";
+        });
+
+        var submitButton = document.getElementById('addMemberSubmitButton');
+        submitButton.addEventListener('click', function (event) {
+            event.preventDefault(); // 폼 기본 동작 막기
+
+            var username = document.getElementById('addMemberUsername').value;
+            if (username) {
+                var form = new FormData();
+                form.append("teamId", teamId);
+                form.append("username", username);
+
+                fetch('/team/addMember', {
+                    method: 'POST',
+                    body: form
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log(data);
+                        addMemberModal.style.display = 'none';
+                        renderTeamMembers(teamId);
+                    })
+                    .catch(error => {
+                        console.error('팀 멤버 추가 에러:', error);
+                    });
+            }
+        });
+
+        document.getElementById('removeMemberButton').addEventListener('click', function () {
+            var loggedInMemberId = /*[[${currentUsername}]]*/ null;
+            var teamMembersList = document.getElementById('teamMembersList');
+            var memberItems = teamMembersList.querySelectorAll('.team-member-item');
+
+            memberItems.forEach(function (memberItem) {
+                var existingButton = memberItem.querySelector('.remove-member-button');
+
+                if (!existingButton) {
+                    var username = memberItem.getAttribute('data-member-id');
+
+                    if (username !== loggedInMemberId) {
+                        var removeButton = document.createElement('button');
+                        removeButton.classList.add('remove-member-button', 'btn', 'btn-danger');
+                        removeButton.textContent = '-';
+                        removeButton.style.marginLeft = '10px';
+                        removeButton.style.borderRadius = '50%';
+                        removeButton.style.height = '30px';
+                        removeButton.style.width = '30px';
+                        removeButton.style.padding = '0';
+
+
+
+                        removeButton.addEventListener('click', function () {
+                            var form = new FormData();
+                            form.append("teamId", teamId);
+                            form.append("username", username);
+
+                            fetch('/team/removeMember', {
+                                method: 'POST',
+                                body: form
+                            })
+                                .then(response => response.text())
+                                .then(data => {
+                                    renderTeamMembers(teamId);
+                                })
+                                .catch(error => {
+                                    console.error('Error removing member:', error);
+                                });
+                        });
+
+                        memberItem.appendChild(removeButton);
+                    }
+                } else {
+                    existingButton.parentNode.removeChild(existingButton);
+                }
+            });
+        });
+
+
+    })
+    ;
 
     function renderTeamMembers(teamId) {
         var teamMembersList = document.getElementById('teamMembersList');
@@ -369,9 +492,16 @@
                 data.forEach(function (member, index) {
 
                     var memberItem = document.createElement('div');
+                    memberItem.className = 'team-member-item';
                     memberItem.style.display = 'flex';
                     memberItem.style.alignItems = 'center';
                     memberItem.style.marginBottom = '10px';
+                    memberItem.style.justifyContent = 'space-between';
+                    memberItem.setAttribute('data-member-id', member.username);
+
+                    var profile = document.createElement('div');
+                    profile.style.display = 'flex';
+                    profile.style.alignItems = 'center';
 
                     var profileImgDiv = document.createElement('div');
                     profileImgDiv.style.maxWidth = '40px';
@@ -392,7 +522,8 @@
                     }
 
                     profileImgDiv.appendChild(profileImg);
-                    memberItem.appendChild(profileImgDiv);
+                    // memberItem.appendChild(profileImgDiv);
+                    profile.appendChild(profileImgDiv);
 
                     var memberInfoDiv = document.createElement('div');
                     memberInfoDiv.style.display = 'flex';
@@ -411,9 +542,12 @@
 
                     memberInfoDiv.appendChild(nicknameDiv);
                     memberInfoDiv.appendChild(usernameDiv);
-                    memberItem.appendChild(memberInfoDiv);
+                    // memberItem.appendChild(memberInfoDiv);
+                    profile.appendChild(memberInfoDiv);
+                    memberItem.appendChild(profile);
 
                     teamMembersList.appendChild(memberItem);
+
                     // 팀원 사이에 구분선 추가
                     if (index < data.length - 1) {
                         var divider = document.createElement('hr');
