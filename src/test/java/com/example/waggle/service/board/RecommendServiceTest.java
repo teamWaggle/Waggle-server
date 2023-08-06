@@ -110,7 +110,7 @@ class RecommendServiceTest {
 
         //when
         StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
-
+        recommendService.checkRecommend(storyViewByBoardId);
         //then
         assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(1);
     }
@@ -124,6 +124,7 @@ class RecommendServiceTest {
 
         //when
         StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+        recommendService.checkRecommend(storyViewByBoardId);
 
         //then
         assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(0);
