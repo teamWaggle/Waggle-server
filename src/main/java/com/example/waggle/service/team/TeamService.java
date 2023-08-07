@@ -79,7 +79,7 @@ public class TeamService {
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (member.isPresent()) {
-            Team team = teamRepository.save(teamDto.toEntity());
+            Team team = teamRepository.save(teamDto.toEntity(member.get()));
             TeamMember teamMember = TeamMember.builder()
                     .team(team)
                     .member(member.get()).build();
@@ -172,5 +172,14 @@ public class TeamService {
             if(teamMember.getMember().equals(member)) return Boolean.FALSE;
         }
         return Boolean.TRUE;
+    }
+
+    public Boolean isTeamLeader(Long teamId, String username) {
+        Team team = teamRepository.findById(teamId).orElse(null);
+        if (team == null) {
+            return Boolean.FALSE;
+        }
+        Member currentUser = memberRepository.findByUsername(username).get();
+        return team.getTeamLeader() != null && team.getTeamLeader().equals(currentUser);
     }
 }

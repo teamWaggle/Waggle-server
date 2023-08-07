@@ -1,17 +1,23 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
+import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
+import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,36 +27,36 @@ public class TeamController {
     private final MemberService memberService;
     private final TeamService teamService;
 
-    @GetMapping
-    public String teamMain(Model model) {
-        log.info("team!!@");
-        String username = SecurityUtil.getCurrentUsername();
-        List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
-        model.addAttribute("teams", allTeamByUsername);
+    @GetMapping("/{teamId}/members")
+    public ResponseEntity<List<MemberSimpleDto>> getTeamSchedules(@PathVariable Long teamId) {
+        List<MemberSimpleDto> memberSimpleDtos = new ArrayList<>();
 
-        log.info("username = {}", username);
-        log.info("teamDto is null? = {}", allTeamByUsername.isEmpty());
+        Optional<TeamDto> byTeamId = teamService.findByTeamId(teamId);
+        if(byTeamId.isPresent()) {
+            TeamDto teamDto = byTeamId.get();
+            List<String> teamMembers = teamDto.getTeamMembers();
+            for (String teamMember : teamMembers) {
+                memberSimpleDtos.add(memberService.findMemberSimpleDto(teamMember));
+            }
+        }
 
-
-        return "team/team";
-    }
-
-    @GetMapping("/create")
-    public String createTeamForm(Model model) {
-        return "team/addTeam";
+        return ResponseEntity.ok(memberSimpleDtos);
     }
 
     @PostMapping("/create")
-    public String createTeam(@ModelAttribute TeamDto teamDto) {
+    public ResponseEntity<?> createTeam(@RequestParam String name) {
+        TeamDto teamDto = TeamDto.builder().name(name).build();
         TeamDto createdTeamDto = teamService.createTeamWithMember(teamDto, SecurityUtil.getCurrentUsername());
-        return "redirect:/team/" + createdTeamDto.getId();
+        if (createdTeamDto != null) {
+            return ResponseEntity.ok(createdTeamDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create team");
+        }
     }
 
-    // update
     @GetMapping("/update")
     public String updateTeamForm(Model model) {
-
-        return "team/updateTeam";
+        return "schedule/team/updateTeam";
     }
 
     @PostMapping("/{teamId}/update")
@@ -59,11 +65,53 @@ public class TeamController {
         return "redirect:/team/" + updatedTeamDto.getId();
     }
 
-    // delete
     @PostMapping("/delete")
     public String deleteTeam(@ModelAttribute TeamDto teamDto) {
         teamService.removeTeam(teamDto.getId());
-        return "redirect:/team";
+        return "redirect:/schedule";
+    }
+
+    @GetMapping("/teams")
+    public ResponseEntity<List<TeamDto>> getAllTeams() {
+        log.info("team/teams");
+        List<TeamDto> teams = teamService.findAllTeamByUsername(SecurityUtil.getCurrentUsername());
+        for (TeamDto team : teams) {
+            log.info("team = {}", team);
+        }
+        return ResponseEntity.ok(teams);
+    }
+
+
+    @GetMapping("/checkTeamLeader")
+    public ResponseEntity<Boolean> checkTeamLeader(@RequestParam Long teamId) {
+        String username = SecurityUtil.getCurrentUsername();
+        boolean isTeamLeader = teamService.isTeamLeader(teamId, username);
+
+        if (isTeamLeader) {
+            return ResponseEntity.ok(Boolean.TRUE);
+        } else {
+            return ResponseEntity.ok(Boolean.FALSE);
+        }
+    }
+
+    @PostMapping("/addMember")
+    public ResponseEntity<String> addMember(@RequestParam Long teamId, @RequestParam String username) {
+        TeamDto teamDto = teamService.addMember(teamId, username);
+        if (teamDto != null) {
+            return ResponseEntity.ok("Team member added successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add team member");
+        }
+    }
+
+    @PostMapping("/removeMember")
+    public ResponseEntity<String> removeMember(@RequestParam Long teamId, @RequestParam String username) {
+        Boolean isSuccess = teamService.removeMember(teamId, username);
+        if (isSuccess) {
+            return ResponseEntity.ok("Team member removed successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove team member");
+        }
     }
 
 }
