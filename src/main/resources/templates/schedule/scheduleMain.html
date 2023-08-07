@@ -49,7 +49,7 @@
             margin-top: 10px;
         }
 
-        #eventUpdateModal, #eventCreateModal, #addMemberModal {
+        #eventUpdateModal, #eventCreateModal, #addMemberModal, #createTeamModal {
             position: fixed;
             z-index: 1;
             left: 0;
@@ -73,6 +73,12 @@
         .modal-body {
             justify-content: center;
             padding: 0;
+        }
+
+        .small-modal-content {
+            max-height: 100px;
+            max-width: 300px;
+            align-items: center;
         }
 
         .form-group {
@@ -157,11 +163,11 @@
 
 <div id="teamTabs" class="nav nav-tabs">
     <th:block th:each="team : ${teams}">
-        <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link"></a>
+        <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link tabItem"></a>
         <input type="hidden" id="selectedTeamLeader" th:value="${team.getTeamLeader()}">
 
     </th:block>
-    <a href="/team/create" id="addTeamButton" class="nav-item nav-link">➕</a>
+    <button id="createTeamButton" class="nav-item nav-link">➕</button>
 </div>
 
 <div id="calendar-container">
@@ -242,13 +248,42 @@
 </div>
 
 <div id="addMemberModal">
-    <div class="modal-content">
+    <div class="modal-content small-modal-content">
         <form id="addMemberForm" th:action="@{/team/addMember}" method="post">
             <input type="hidden" id="addMemberTeamId" name="teamId">
-            <div class="modal-body">
+            <div class="modal-body" style="margin-top: 10px;">
                 <div class="form-group input">
-                    <input class="form-control" type="text" id="addMemberUsername" name="username">
+                    <input class="form-control" type="text" id="addMemberUsername" name="username"
+                           placeholder="id로 팀원을 추가해 보세요." style="max-width: 500px; margin-right: 10px;">
                     <button id="addMemberSubmitButton" class="btn btn-secondary">추가</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="createTeamModal">
+    <div class="modal-content small-modal-content">
+        <form id="createTeamForm" th:action="@{/team/create}" method="post">
+            <div class="modal-body" style="margin-top: 10px;">
+                <div class="form-group input">
+                    <input class="form-control" type="text" id="createTeamName" name="name" placeholder="팀 이름을 입력해 주세요."
+                           style="max-width: 500px; margin-right: 10px;">
+                    <button id="createTeamSubmitButton" class="btn btn-secondary">추가</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="updateTeamModal">
+    <div class="modal-content small-modal-content">
+        <form id="updateTeamForm" th:action="@{/team/update}" method="post">
+            <div class="modal-body" style="margin-top: 10px;">
+                <div class="form-group input">
+                    <input class="form-control" type="text" id="updateTeamName" name="name" placeholder="팀 이름을 입력해 주세요."
+                           style="max-width: 500px; margin-right: 10px;">
+                    <button id="updateTeamSubmitButton" class="btn btn-secondary">추가</button>
                 </div>
             </div>
         </form>
@@ -276,7 +311,7 @@
         }
 
         teamTabs.addEventListener('click', function (event) {
-            if (event.target.classList.contains('nav-link')) {
+            if (event.target.classList.contains('tabItem')) {
                 var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
                 activeTabs.forEach(function (tab) {
                     tab.classList.remove('active');
@@ -346,6 +381,8 @@
         window.addEventListener('click', function (event) {
             var updateModal = document.getElementById("eventUpdateModal");
             var createModal = document.getElementById("eventCreateModal");
+            var addMemberModal = document.getElementById("addMemberModal");
+            var createTeamModal = document.getElementById("createTeamModal");
 
             if (event.target === updateModal) {
                 var form = new FormData();
@@ -362,8 +399,6 @@
                 })
                     .then(response => response.text())
                     .then(data => {
-                        console.log(data);
-                        addMemberModal.style.display = 'none';
                         renderTeamCalendar(teamId);
                     })
                     .catch(error => {
@@ -389,21 +424,37 @@
                     .then(response => response.text())
                     .then(data => {
                         console.log(data);
-                        addMemberModal.style.display = 'none';
                         renderTeamCalendar(teamId);
+
                     })
                     .catch(error => {
                         console.error('Schedule Update Error:', error);
                     });
-
                 createModal.style.display = "none";
             }
+
+            if (event.target == addMemberModal) {
+                addMemberModal.style.display = "none";
+                document.getElementById('addMemberUsername').value = "";
+            }
+            if (event.target == createTeamModal) {
+                createTeamModal.style.display = "none";
+                document.getElementById('createTeamName').value = "";
+            }
+
+
         });
 
         var addMemberModal = document.getElementById("addMemberModal");
         document.getElementById('addMemberModalButton').addEventListener('click', function () {
             addMemberModal.style.display = "block";
         });
+
+        var createTeamModal = document.getElementById("createTeamModal");
+        document.getElementById('createTeamButton').addEventListener('click', function () {
+            createTeamModal.style.display = "block";
+        });
+
 
         var submitButton = document.getElementById('addMemberSubmitButton');
         submitButton.addEventListener('click', function (event) {
@@ -421,12 +472,59 @@
                 })
                     .then(response => response.text())
                     .then(data => {
-                        console.log(data);
                         addMemberModal.style.display = 'none';
+                        document.getElementById('addMemberUsername').value = "";
                         renderTeamMembers(teamId);
                     })
                     .catch(error => {
                         console.error('팀 멤버 추가 에러:', error);
+                    });
+            }
+        });
+
+        var createTeamSubmitButton = document.getElementById('createTeamSubmitButton');
+        createTeamSubmitButton.addEventListener('click', function (event) {
+            event.preventDefault(); // 폼 기본 동작 막기
+
+            var teamNameInput = document.getElementById('createTeamName');
+            var name = teamNameInput.value.trim(); // 입력값 앞뒤 공백 제거
+            console.log('name = ', name);
+
+            if (name) {
+                var form = new FormData();
+                form.append("name", name);
+
+                fetch('/team/create', {
+                    method: 'POST',
+                    body: form
+                })
+                    .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error('팀 생성 요청 실패');
+                            }
+                        }
+                    )
+                    .then(data => {
+                        var tabItems = document.getElementsByClassName('tabItem');
+                        var newTabItem = tabItems[tabItems.length - 2];
+
+                        if (newTabItem) {
+                            teamNameInput.value = "";
+                            createTeamModal.style.display = 'none';
+                            newTabItem.classList.add('active');
+                            teamId = newTabItem.getAttribute('data-teamId');
+                            isTeamLeader = checkTeamLeader(teamId);
+                            renderTeamTabs();
+                            renderTeamCalendar(data.id); // 서버 응답에서 가져온 팀 아이디 사용
+
+
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('팀 생성 에러:', error);
                     });
             }
         });
@@ -478,138 +576,209 @@
                 }
             });
         });
+
+        function renderTeamMembers(teamId) {
+            var teamMembersList = document.getElementById('teamMembersList');
+
+            // 기존 멤버 목록 초기화
+            while (teamMembersList.firstChild) {
+                teamMembersList.removeChild(teamMembersList.firstChild);
+            }
+
+            // 팀 멤버 정보를 가져와서 목록에 추가
+            fetch(`/team/${teamId}/members`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(function (member, index) {
+
+                        var memberItem = document.createElement('div');
+                        memberItem.className = 'team-member-item';
+                        memberItem.style.display = 'flex';
+                        memberItem.style.alignItems = 'center';
+                        memberItem.style.marginBottom = '10px';
+                        memberItem.style.justifyContent = 'space-between';
+                        memberItem.setAttribute('data-member-id', member.username);
+
+                        var profile = document.createElement('div');
+                        profile.style.display = 'flex';
+                        profile.style.alignItems = 'center';
+
+                        var profileImgDiv = document.createElement('div');
+                        profileImgDiv.style.maxWidth = '40px';
+                        profileImgDiv.style.maxHeight = '40px';
+                        profileImgDiv.style.borderRadius = '50%';
+                        profileImgDiv.style.overflow = 'hidden';
+                        profileImgDiv.style.marginRight = '10px';
+
+                        var profileImg = document.createElement('img');
+                        profileImg.style.width = '100%';
+                        profileImg.style.height = '100%';
+                        profileImg.style.objectFit = 'cover';
+
+                        if (member.profileImg) {
+                            profileImg.src = `/images/${member.profileImg.storeFileName}`;
+                        } else {
+                            profileImg.src = '/images/defaultProfileImg.png';
+                        }
+
+                        profileImgDiv.appendChild(profileImg);
+                        profile.appendChild(profileImgDiv);
+
+                        var memberInfoDiv = document.createElement('div');
+                        memberInfoDiv.style.display = 'flex';
+                        memberInfoDiv.style.flexDirection = 'column';
+
+
+                        var nicknameDiv = document.createElement('div');
+                        nicknameDiv.style.fontSize = '16px';
+                        nicknameDiv.style.fontWeight = 'bold';
+                        nicknameDiv.style.marginBottom = '0';
+
+                        var selectedTeamLeader = document.getElementById('selectedTeamLeader').value;
+                        if (selectedTeamLeader === member.username) {
+                            nicknameDiv.textContent = `${member.nickname} 👑`;
+                        } else {
+                            nicknameDiv.textContent = member.nickname;
+                        }
+
+
+                        var usernameDiv = document.createElement('div');
+                        usernameDiv.style.fontSize = '13px';
+                        usernameDiv.style.marginTop = '0';
+                        usernameDiv.textContent = `@${member.username}`;
+
+                        memberInfoDiv.appendChild(nicknameDiv);
+                        memberInfoDiv.appendChild(usernameDiv);
+                        profile.appendChild(memberInfoDiv);
+                        memberItem.appendChild(profile);
+
+                        teamMembersList.appendChild(memberItem);
+
+                        // 팀원 사이에 구분선 추가
+                        if (index < data.length - 1) {
+                            var divider = document.createElement('hr');
+                            divider.style.width = '100%';
+                            divider.style.borderTop = '2px solid #bcbcbc';
+                            divider.style.margin = '10px 0';
+                            teamMembersList.appendChild(divider);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching team members:', error);
+                });
+        }
+
+        function checkTeamLeader(teamId) {
+            return fetch(`/team/checkTeamLeader?teamId=${teamId}`)
+                .then(response => response.json())
+                .then(isLeader => {
+                    if (isLeader === true) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching team leader status:', error);
+                    return false; // 오류 발생 시 false 반환
+                });
+        }
+
+        // 멤버 추가/제거 버튼 표시 여부 업데이트
+        async function updateMemberButtonsVisibility() {
+            var addMemberButton = document.getElementById('addMemberModalButton');
+            var removeMemberButton = document.getElementById('removeMemberButton');
+            try {
+                isTeamLeader = await checkTeamLeader(teamId);
+
+                if (isTeamLeader) {
+                    addMemberButton.style.display = 'block';
+                    removeMemberButton.style.display = 'block';
+                } else {
+                    addMemberButton.style.display = 'none';
+                    removeMemberButton.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error updating member button visibility:', error);
+            }
+        }
+
+        function renderTeamTabs() {
+
+            var teamTabs = document.getElementById('teamTabs');
+
+            // 기존 탭들을 모두 제거
+            while (teamTabs.firstChild) {
+                teamTabs.removeChild(teamTabs.firstChild);
+            }
+
+            // 팀 목록을 가져와서 탭을 생성
+            fetch('/team/teams')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(function (team) {
+                        var tabItem = document.createElement('a');
+                        tabItem.textContent = team.name;
+                        tabItem.classList.add('nav-item', 'nav-link', 'tabItem');
+                        tabItem.setAttribute('data-teamId', team.id);
+
+                        var hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.id = 'selectedTeamLeader';
+                        hiddenInput.value = team.teamLeader;
+
+                        teamTabs.appendChild(tabItem);
+                        teamTabs.appendChild(hiddenInput);
+                    });
+
+                    var tabItems = document.getElementsByClassName('tabItem');
+                    var newTabItem = tabItems[tabItems.length - 1];
+
+                    var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
+                    activeTabs.forEach(function (tab) {
+                        tab.classList.remove('active');
+                    });
+                    newTabItem.classList.add('active');
+
+                    teamId = newTabItem.getAttribute('data-teamId');
+                    isTeamLeader = checkTeamLeader(teamId);
+                    updateMemberButtonsVisibility();
+
+
+                    var createTeamButton = document.createElement('button');
+                    createTeamButton.id = 'createTeamButton';
+                    createTeamButton.classList.add('nav-item', 'nav-link');
+                    createTeamButton.textContent = '➕';
+                    createTeamButton.addEventListener('click', handleCreateTeamButtonClick); // 이벤트 리스너 연결
+
+                    teamTabs.appendChild(createTeamButton);
+
+                    // 팀 탭에 이벤트 리스너 연결
+                    teamTabs.addEventListener('click', function (event) {
+                        if (event.target.classList.contains('tabItem')) {
+                            var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
+                            activeTabs.forEach(function (tab) {
+                                tab.classList.remove('active');
+                            });
+                            event.target.classList.add('active');
+
+                            teamId = event.target.getAttribute('data-teamId');
+                            isTeamLeader = checkTeamLeader(teamId);
+                            updateMemberButtonsVisibility();
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching team data:', error);
+                });
+        }
+        function handleCreateTeamButtonClick() {
+            createTeamModal.style.display = "block";
+        }
+
     });
 
-    function renderTeamMembers(teamId) {
-        var teamMembersList = document.getElementById('teamMembersList');
-
-        // 기존 멤버 목록 초기화
-        while (teamMembersList.firstChild) {
-            teamMembersList.removeChild(teamMembersList.firstChild);
-        }
-
-        // 팀 멤버 정보를 가져와서 목록에 추가
-        fetch(`/team/${teamId}/members`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(function (member, index) {
-
-                    var memberItem = document.createElement('div');
-                    memberItem.className = 'team-member-item';
-                    memberItem.style.display = 'flex';
-                    memberItem.style.alignItems = 'center';
-                    memberItem.style.marginBottom = '10px';
-                    memberItem.style.justifyContent = 'space-between';
-                    memberItem.setAttribute('data-member-id', member.username);
-
-                    var profile = document.createElement('div');
-                    profile.style.display = 'flex';
-                    profile.style.alignItems = 'center';
-
-                    var profileImgDiv = document.createElement('div');
-                    profileImgDiv.style.maxWidth = '40px';
-                    profileImgDiv.style.maxHeight = '40px';
-                    profileImgDiv.style.borderRadius = '50%';
-                    profileImgDiv.style.overflow = 'hidden';
-                    profileImgDiv.style.marginRight = '10px';
-
-                    var profileImg = document.createElement('img');
-                    profileImg.style.width = '100%';
-                    profileImg.style.height = '100%';
-                    profileImg.style.objectFit = 'cover';
-
-                    if (member.profileImg) {
-                        profileImg.src = `/images/${member.profileImg.storeFileName}`;
-                    } else {
-                        profileImg.src = '/images/defaultProfileImg.png';
-                    }
-
-                    profileImgDiv.appendChild(profileImg);
-                    profile.appendChild(profileImgDiv);
-
-                    var memberInfoDiv = document.createElement('div');
-                    memberInfoDiv.style.display = 'flex';
-                    memberInfoDiv.style.flexDirection = 'column';
-
-
-
-                    var nicknameDiv = document.createElement('div');
-                    nicknameDiv.style.fontSize = '16px';
-                    nicknameDiv.style.fontWeight = 'bold';
-                    nicknameDiv.style.marginBottom = '0';
-
-                    var selectedTeamLeader = document.getElementById('selectedTeamLeader').value;
-                    if(selectedTeamLeader === member.username) {
-                        nicknameDiv.textContent = `${member.nickname} 👑`;
-                    } else {
-                        nicknameDiv.textContent = member.nickname;
-                    }
-
-
-                    var usernameDiv = document.createElement('div');
-                    usernameDiv.style.fontSize = '13px';
-                    usernameDiv.style.marginTop = '0';
-                    usernameDiv.textContent = `@${member.username}`;
-
-                    memberInfoDiv.appendChild(nicknameDiv);
-                    memberInfoDiv.appendChild(usernameDiv);
-                    // memberItem.appendChild(memberInfoDiv);
-                    profile.appendChild(memberInfoDiv);
-                    memberItem.appendChild(profile);
-
-                    teamMembersList.appendChild(memberItem);
-
-                    // 팀원 사이에 구분선 추가
-                    if (index < data.length - 1) {
-                        var divider = document.createElement('hr');
-                        divider.style.width = '100%';
-                        divider.style.borderTop = '2px solid #bcbcbc';
-                        divider.style.margin = '10px 0';
-                        teamMembersList.appendChild(divider);
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching team members:', error);
-            });
-    }
-
-    function checkTeamLeader(teamId) {
-        return fetch(`/team/checkTeamLeader?teamId=${teamId}`)
-            .then(response => response.json())
-            .then(isLeader => {
-                if (isLeader === true) {
-                    console.log('switch true');
-                    return true;
-                } else {
-                    console.log('switch false');
-                    return false;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching team leader status:', error);
-                return false; // 오류 발생 시 false 반환
-            });
-    }
-
-    // 멤버 추가/제거 버튼 표시 여부 업데이트
-    async function updateMemberButtonsVisibility() {
-        var addMemberButton = document.getElementById('addMemberModalButton');
-        var removeMemberButton = document.getElementById('removeMemberButton');
-        try {
-            isTeamLeader = await checkTeamLeader(teamId);
-
-            if (isTeamLeader) {
-                addMemberButton.style.display = 'block';
-                removeMemberButton.style.display = 'block';
-            } else {
-                addMemberButton.style.display = 'none';
-                removeMemberButton.style.display = 'none';
-            }
-        } catch (error) {
-            console.error('Error updating member button visibility:', error);
-        }
-    }
 
 </script>
 </body>
