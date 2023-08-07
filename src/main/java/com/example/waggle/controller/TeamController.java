@@ -43,15 +43,15 @@ public class TeamController {
         return ResponseEntity.ok(memberSimpleDtos);
     }
 
-    @GetMapping("/create")
-    public String createTeamForm(Model model) {
-        return "schedule/team/addTeam";
-    }
-
     @PostMapping("/create")
-    public String createTeam(@ModelAttribute TeamDto teamDto) {
+    public ResponseEntity<?> createTeam(@RequestParam String name) {
+        TeamDto teamDto = TeamDto.builder().name(name).build();
         TeamDto createdTeamDto = teamService.createTeamWithMember(teamDto, SecurityUtil.getCurrentUsername());
-        return "redirect:/team/" + createdTeamDto.getId();
+        if (createdTeamDto != null) {
+            return ResponseEntity.ok(createdTeamDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create team");
+        }
     }
 
     @GetMapping("/update")
@@ -70,6 +70,17 @@ public class TeamController {
         teamService.removeTeam(teamDto.getId());
         return "redirect:/schedule";
     }
+
+    @GetMapping("/teams")
+    public ResponseEntity<List<TeamDto>> getAllTeams() {
+        log.info("team/teams");
+        List<TeamDto> teams = teamService.findAllTeamByUsername(SecurityUtil.getCurrentUsername());
+        for (TeamDto team : teams) {
+            log.info("team = {}", team);
+        }
+        return ResponseEntity.ok(teams);
+    }
+
 
     @GetMapping("/checkTeamLeader")
     public ResponseEntity<Boolean> checkTeamLeader(@RequestParam Long teamId) {
@@ -95,8 +106,6 @@ public class TeamController {
 
     @PostMapping("/removeMember")
     public ResponseEntity<String> removeMember(@RequestParam Long teamId, @RequestParam String username) {
-        log.info("removeMember teamId = {}, username = {}", teamId, username);
-
         Boolean isSuccess = teamService.removeMember(teamId, username);
         if (isSuccess) {
             return ResponseEntity.ok("Team member removed successfully");
