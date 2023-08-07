@@ -51,7 +51,7 @@ public class TestDataInit {
 
     List<Member> members = new ArrayList<>();
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         initMember();
         initStory();
