@@ -49,7 +49,7 @@
             margin-top: 10px;
         }
 
-        #eventUpdateModal, #eventCreateModal, #addMemberModal, #createTeamModal {
+        #eventUpdateModal, #eventCreateModal, #addMemberModal, #createTeamModal, #updateTeamModal {
             position: fixed;
             z-index: 1;
             left: 0;
@@ -163,8 +163,11 @@
 
 <div id="teamTabs" class="nav nav-tabs">
     <th:block th:each="team : ${teams}">
-        <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link tabItem"></a>
-        <input type="hidden" id="selectedTeamLeader" th:value="${team.getTeamLeader()}">
+        <div class="tab-container">
+            <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link tabItem"></a>
+            <input type="hidden" id="selectedTeamLeader" th:value="${team.getTeamLeader()}">
+            <button th:text="수정️" id="updateTeamButton"></button>
+        </div>
 
     </th:block>
     <button id="createTeamButton" class="nav-item nav-link">➕</button>
@@ -265,6 +268,7 @@
 <div id="createTeamModal">
     <div class="modal-content small-modal-content">
         <form id="createTeamForm" th:action="@{/team/create}" method="post">
+            <input type="hidden" id="createModalTeamId" name="teamId">
             <div class="modal-body" style="margin-top: 10px;">
                 <div class="form-group input">
                     <input class="form-control" type="text" id="createTeamName" name="name" placeholder="팀 이름을 입력해 주세요."
@@ -279,11 +283,12 @@
 <div id="updateTeamModal">
     <div class="modal-content small-modal-content">
         <form id="updateTeamForm" th:action="@{/team/update}" method="post">
+            <input type="hidden" id="updateModalTeamId" name="teamId">
             <div class="modal-body" style="margin-top: 10px;">
                 <div class="form-group input">
                     <input class="form-control" type="text" id="updateTeamName" name="name" placeholder="팀 이름을 입력해 주세요."
                            style="max-width: 500px; margin-right: 10px;">
-                    <button id="updateTeamSubmitButton" class="btn btn-secondary">추가</button>
+                    <button id="updateTeamSubmitButton" class="btn btn-secondary">수정</button>
                 </div>
             </div>
         </form>
@@ -310,6 +315,7 @@
             updateMemberButtonsVisibility();
         }
 
+        // 이벤트 위임을 사용하여 updateTeamButton 클릭 이벤트 처리
         teamTabs.addEventListener('click', function (event) {
             if (event.target.classList.contains('tabItem')) {
                 var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
@@ -322,6 +328,9 @@
                 isTeamLeader = checkTeamLeader(teamId);
                 renderTeamCalendar(teamId);
                 updateMemberButtonsVisibility();
+            } else if (event.target.id === 'updateTeamButton') {
+                console.log('updateTeamButton clicked. teamId = ', teamId);
+                updateTeamModal.style.display = "block";
             }
         });
 
@@ -383,6 +392,7 @@
             var createModal = document.getElementById("eventCreateModal");
             var addMemberModal = document.getElementById("addMemberModal");
             var createTeamModal = document.getElementById("createTeamModal");
+            var updateTeamModal = document.getElementById("updateTeamModal");
 
             if (event.target === updateModal) {
                 var form = new FormData();
@@ -441,6 +451,11 @@
                 createTeamModal.style.display = "none";
                 document.getElementById('createTeamName').value = "";
             }
+            if (event.target == updateTeamModal) {
+                updateTeamModal.style.display = "none";
+                document.getElementById('updateTeamName').value = "";
+                console.log('updateTeamModal closed');
+            }
 
 
         });
@@ -455,6 +470,11 @@
             createTeamModal.style.display = "block";
         });
 
+        var updateTeamModal = document.getElementById("updateTeamModal");
+        document.getElementById('updateTeamButton').addEventListener('click', function () {
+            console.log('updateTeamButton clicked. teamId = ', teamId);
+            updateTeamModal.style.display = "block";
+        });
 
         var submitButton = document.getElementById('addMemberSubmitButton');
         submitButton.addEventListener('click', function (event) {
@@ -488,8 +508,6 @@
 
             var teamNameInput = document.getElementById('createTeamName');
             var name = teamNameInput.value.trim(); // 입력값 앞뒤 공백 제거
-            console.log('name = ', name);
-
             if (name) {
                 var form = new FormData();
                 form.append("name", name);
@@ -507,24 +525,60 @@
                         }
                     )
                     .then(data => {
-                        var tabItems = document.getElementsByClassName('tabItem');
-                        var newTabItem = tabItems[tabItems.length - 2];
+                        teamId = data.id;
 
-                        if (newTabItem) {
+                        teamNameInput.value = "";
+                        createTeamModal.style.display = 'none';
+                        isTeamLeader = checkTeamLeader(teamId);
+                        renderTeamTabs();
+                    })
+                    .catch(error => {
+                        console.error('팀 생성 에러:', error);
+                    });
+            }
+        });
+
+        var updateTeamSubmitButton = document.getElementById('updateTeamSubmitButton');
+        updateTeamSubmitButton.addEventListener('click', function (event) {
+            event.preventDefault(); // 폼 기본 동작 막기
+
+            var teamNameInput = document.getElementById('updateTeamName');
+            var name = teamNameInput.value.trim(); // 입력값 앞뒤 공백 제거
+            if (name) {
+                var form = new FormData();
+                form.append("name", name);
+                form.append("teamId", teamId);
+
+                fetch('/team/update', {
+                    method: 'POST',
+                    body: form
+                })
+                    .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error('팀 수정 요청 실패');
+                            }
+                        }
+                    )
+                    .then(data => {
+                        var tabItem = document.querySelector(`.tabItem[data-teamId="${teamId}"]`);
+                        if (tabItem) {
                             teamNameInput.value = "";
-                            createTeamModal.style.display = 'none';
-                            newTabItem.classList.add('active');
-                            teamId = newTabItem.getAttribute('data-teamId');
+                            updateTeamModal.style.display = 'none';
+                            var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
+                            activeTabs.forEach(function (tab) {
+                                tab.classList.remove('active');
+                            });
+                            tabItem.classList.add('active');
                             isTeamLeader = checkTeamLeader(teamId);
                             renderTeamTabs();
-                            renderTeamCalendar(data.id); // 서버 응답에서 가져온 팀 아이디 사용
-
-
+                            renderTeamCalendar(teamId);
                         }
 
                     })
                     .catch(error => {
-                        console.error('팀 생성 에러:', error);
+                        console.error('팀 수정 에러:', error);
                     });
             }
         });
@@ -728,20 +782,35 @@
                         hiddenInput.id = 'selectedTeamLeader';
                         hiddenInput.value = team.teamLeader;
 
-                        teamTabs.appendChild(tabItem);
-                        teamTabs.appendChild(hiddenInput);
+                        var editButton = document.createElement('button');
+                        editButton.textContent = '수정';
+                        editButton.id = 'updateTeamButton';
+                        editButton.addEventListener('click', function () {
+                            updateTeamModal.style.display = "block";
+                        });
+
+                        var tabContainer = document.createElement('div');
+                        tabContainer.classList.add('tab-container');
+                        tabContainer.appendChild(tabItem);
+                        tabContainer.appendChild(hiddenInput);
+                        tabContainer.appendChild(editButton);
+
+                        teamTabs.appendChild(tabContainer);
                     });
 
-                    var tabItems = document.getElementsByClassName('tabItem');
-                    var newTabItem = tabItems[tabItems.length - 1];
+                    var tabItem = document.querySelector(`.tabItem[data-teamId="${teamId}"]`);
+                    console.log('tabItem = ', tabItem);
+                    if (tabItem) {
+                        var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
+                        activeTabs.forEach(function (tab) {
+                            tab.classList.remove('active');
+                        });
+                        tabItem.classList.add('active');
+                        isTeamLeader = checkTeamLeader(teamId);
+                        renderTeamCalendar(teamId);
+                    }
 
-                    var activeTabs = teamTabs.querySelectorAll('.nav-link.active');
-                    activeTabs.forEach(function (tab) {
-                        tab.classList.remove('active');
-                    });
-                    newTabItem.classList.add('active');
-
-                    teamId = newTabItem.getAttribute('data-teamId');
+                    teamId = tabItem.getAttribute('data-teamId');
                     isTeamLeader = checkTeamLeader(teamId);
                     updateMemberButtonsVisibility();
 
@@ -750,7 +819,9 @@
                     createTeamButton.id = 'createTeamButton';
                     createTeamButton.classList.add('nav-item', 'nav-link');
                     createTeamButton.textContent = '➕';
-                    createTeamButton.addEventListener('click', handleCreateTeamButtonClick); // 이벤트 리스너 연결
+                    createTeamButton.addEventListener('click', function () {
+                        createTeamModal.style.display = "block";
+                    });
 
                     teamTabs.appendChild(createTeamButton);
 
@@ -772,9 +843,6 @@
                 .catch(error => {
                     console.error('Error fetching team data:', error);
                 });
-        }
-        function handleCreateTeamButtonClick() {
-            createTeamModal.style.display = "block";
         }
 
     });
