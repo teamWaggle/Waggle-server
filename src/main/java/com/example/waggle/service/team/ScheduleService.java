@@ -4,8 +4,7 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.ScheduleDto;
+import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamRepository;
@@ -43,8 +42,14 @@ public class ScheduleService {
     public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);
 
+        List<String> scheduleMembers = scheduleDto.getScheduleMembers();
+        List<ScheduleMember> scheduleMemberList = new ArrayList<>();
+        for (String scheduleMember : scheduleMembers) {
+            // TODO scheduleMember 저장
+        }
+
         if (team.isPresent()) {
-            Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get()));
+            Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get(), new ArrayList<>()));
 
             for (String username : scheduleDto.getScheduleMembers()) {
                 Optional<Member> findMember = memberRepository.findByUsername(username);
@@ -66,13 +71,13 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleDto updateSchedule(Long scheduleId, ScheduleDto scheduleDto) {
-        Optional<Schedule> scheduleToUpdate = scheduleRepository.findById(scheduleId);
+    public ScheduleDto updateSchedule(ScheduleDto scheduleDto) {
+        Optional<Schedule> scheduleToUpdate = scheduleRepository.findById(scheduleDto.getId());
         if (scheduleToUpdate.isPresent()) {
             Schedule schedule = scheduleToUpdate.get();
             List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
             schedule.update(scheduleDto, scheduleMembers);  // dirty-checking
-            Schedule updatedSchedule = scheduleRepository.findById(scheduleId).get();
+            Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId()).get();
             return ScheduleDto.toDto(updatedSchedule);
         } else {
             // TODO 예외 처리

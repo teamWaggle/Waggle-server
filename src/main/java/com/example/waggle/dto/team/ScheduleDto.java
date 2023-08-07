@@ -1,4 +1,4 @@
-package com.example.waggle.dto.member;
+package com.example.waggle.dto.team;
 
 import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.ScheduleMember;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,7 +28,6 @@ public class ScheduleDto {
     static public ScheduleDto toDto(Schedule schedule) {
         return ScheduleDto.builder()
                 .id(schedule.getId())
-                .teamId(schedule.getTeam().getId())
                 .title(schedule.getTitle())
                 .description(schedule.getDescription())
                 .scheduleTime(schedule.getScheduleTime())
@@ -36,14 +36,13 @@ public class ScheduleDto {
                 .build();
     }
 
-    public Schedule toEntity(Team team) {
+    public Schedule toEntity(Team team, List<ScheduleMember> scheduleMembers) {
         return Schedule.builder()
-                .id(id)
                 .team(team)
                 .title(title)
                 .description(description)
                 .scheduleTime(scheduleTime)
-                .build();
+                .scheduleMembers(scheduleMembers).build();
     }
 
 }
