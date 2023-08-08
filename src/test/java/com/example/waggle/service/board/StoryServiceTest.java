@@ -161,20 +161,21 @@ class StoryServiceTest {
     void changeStory() {
         //given
         setBoardAndMember();
+        Long id = storyService.findAllStory().get(0).getId();
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
         StoryWriteDto editDto = StoryWriteDto.builder()
-                .id(1L)
+                .id(id)
                 .content("edit edit edit")
                 .thumbnail("www.choco")
                 .hashtags(tags)
                 .medias(medias2)
                 .build();
         //when
-        boolean isSameUser = storyService.checkMember(1L);
+        boolean isSameUser = storyService.checkMember(id);
         storyService.changeStory(editDto);
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(id);
 
         //then
         assertThat(isSameUser).isTrue();
