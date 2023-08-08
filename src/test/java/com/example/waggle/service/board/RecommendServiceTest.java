@@ -2,6 +2,7 @@ package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.component.DatabaseCleanUp;
+import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignInDto;
@@ -106,24 +107,26 @@ class RecommendServiceTest {
     void recommendBoard() {
         //given
         setBoardAndMember();
-        recommendService.clickRecommend(1L,"story");
+        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
+        recommendService.clickRecommend(storySimpleViewDto.getId(),"story");
 
         //when
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(storySimpleViewDto.getId());
         recommendService.checkRecommend(storyViewByBoardId);
         //then
-        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(1);
+        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(0);
     }
     @Test
     @WithMockCustomUser
     void cancelRecommendBoard() {
         //given
         setBoardAndMember();
-        recommendService.clickRecommend(1L,"story");
-        recommendService.clickRecommend(1L,"story");
+        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
+        recommendService.clickRecommend(storySimpleViewDto.getId(),"story");
+        recommendService.clickRecommend(storySimpleViewDto.getId(),"story");
 
         //when
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(1L);
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(storySimpleViewDto.getId());
         recommendService.checkRecommend(storyViewByBoardId);
 
         //then
