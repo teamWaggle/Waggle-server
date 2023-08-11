@@ -55,6 +55,7 @@ public class StoryService {
         List<StorySimpleViewDto> simpleStories = new ArrayList<>();
 
         for (Story story : allStory) {
+            log.info("board Id is {}", story.getId());
             simpleStories.add(StorySimpleViewDto.toDto(story));
         }
         return  simpleStories;
@@ -82,9 +83,9 @@ public class StoryService {
         //board setting
         Optional<Story> storyById = storyRepository.findById(id);
         if (storyById.isEmpty()) {
+            log.info("not exist board");
             //error and return null
         }
-
         return StoryViewDto.toDto(storyById.get());
     }
 

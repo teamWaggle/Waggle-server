@@ -23,13 +23,13 @@ class BoardRepositoryTest {
     @Autowired
     StoryRepository storyRepository;
 
+
     @Test
     @Transactional
-    @Rollback(value = false)
+    @Rollback
     void test() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
-
 
         Hashtag hashtag1 = Hashtag.builder().tag("trip").build();
         Hashtag hashtag2 = Hashtag.builder().tag("vacation").build();
@@ -39,7 +39,7 @@ class BoardRepositoryTest {
         hashtags.add(hashtag2);
 
         for (Hashtag hashtag : hashtags) {
-            BoardHashtag build = BoardHashtag.builder().board(testStory).hashtag(hashtag).build();
+            BoardHashtag.builder().board(testStory).hashtag(hashtag).build().link(testStory,hashtag);
             //build.addHashtag(testStory,hashtag);
         }
 
@@ -55,7 +55,7 @@ class BoardRepositoryTest {
     }
     @Test
     @Transactional
-    @Rollback(value = false)
+    @Rollback
     void testFindByHashtag() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();

@@ -42,11 +42,12 @@ public class RecommendService {
 
         Board board = getBoard(boardId, boardType);
         if (board == null) return;
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = getSignInMember();
 
         //check recommend board
         boolean check = recommendRepository
                 .existsByMemberIdAndBoardId(member.getId(), board.getId());
+        log.info("i recommended this board {}", check);
 
         //change state
         if (check) {
@@ -54,12 +55,18 @@ public class RecommendService {
                     .findRecommendByMemberIdAndBoardId(member.getId(), boardId);
             if (recommendBoard.isEmpty()) {
                 //error
+                log.info("not exist recommend");
+                return;
             }
             recommendRepository.delete(recommendBoard.get());
             return;
         }
         else{
             //recommend story as member
+            if (board.getMember().equals(member)) {
+                log.info("can't recommend");
+                return;
+            }
             Recommend recommendBoard = Recommend.builder().board(board).member(member).build();
             recommendRepository.save(recommendBoard);
         }
