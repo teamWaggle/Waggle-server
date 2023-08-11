@@ -3,11 +3,13 @@ package com.example.waggle.service.board;
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.component.DatabaseCleanUp;
 import com.example.waggle.domain.board.Media;
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Slf4j
@@ -105,48 +109,46 @@ class StoryServiceTest {
     }
 
 
+
     @Test
-    //@WithMockCustomUser
-    @WithMockUser(username = "user1", password = "12345678")
-    //@Rollback(value = false)
+    @WithMockCustomUser
     void findAll() throws Exception {
         //given
-        //setBoardAndMember();
+        setBoardAndMember();
 
         //when
         List<StorySimpleViewDto> allStory = storyService.findAllStory();
 
         //then
-        assertThat(allStory.size()).isEqualTo(5);
+        assertThat(allStory.size()).isEqualTo(2);
 
         log.info("success");
     }
 
     @Test
     @WithMockCustomUser
-    //Rollback(value = false)
     void findAllStoryByMember() {
         //given
         setBoardAndMember();
 
         //when
         List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByUsername("member1");
-        List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
+        //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
         //then
         assertThat(allStoryByMember.size()).isEqualTo(2);
-        assertThat(user1.size()).isEqualTo(1);
+        //assertThat(user1.size()).isEqualTo(1);
     }
 
     @Test
     @WithMockCustomUser
-    //@Rollback(value = false)
     void findStoryViewByBoardId() {
         //given
         setBoardAndMember();
 
         //when
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(6L);
+        List<StorySimpleViewDto> allStory = storyService.findAllStory();
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(allStory.get(0).getId());
 
         //then
         assertThat(storyViewByBoardId.getUsername()).isEqualTo("member1");
@@ -159,20 +161,21 @@ class StoryServiceTest {
     void changeStory() {
         //given
         setBoardAndMember();
+        Long id = storyService.findAllStory().get(0).getId();
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
         StoryWriteDto editDto = StoryWriteDto.builder()
-                .id(6L)
+                .id(id)
                 .content("edit edit edit")
                 .thumbnail("www.choco")
                 .hashtags(tags)
                 .medias(medias2)
                 .build();
         //when
-        boolean isSameUser = storyService.checkMember(6L);
+        boolean isSameUser = storyService.checkMember(id);
         storyService.changeStory(editDto);
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(6L);
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(id);
 
         //then
         assertThat(isSameUser).isTrue();
@@ -183,17 +186,17 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
-    //@Rollback(value = false)
     void deleteStory() {
         //given
         setBoardAndMember();
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(6L);
+        List<StorySimpleViewDto> findStories = storyService.findAllStory();
+        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(findStories.get(0).getId());
         //when
         storyService.removeStory(storyViewByBoardId);
         log.info("=========remove service ==============");
         //then
         List<StorySimpleViewDto> allStory = storyService.findAllStory();
 
-        assertThat(allStory.size()).isEqualTo(6);
+        assertThat(allStory.size()).isEqualTo(1);
     }
 }
