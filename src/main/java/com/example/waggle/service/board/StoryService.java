@@ -159,7 +159,6 @@ public class StoryService {
         Optional<Story> storyById = storyRepository.findById(boardId);
         if (storyById.isEmpty()) {
             log.info("not exist story");
-            //error
             return false;
         }
         boolean isSameUser = storyById.get().getMember().equals(signInMember);

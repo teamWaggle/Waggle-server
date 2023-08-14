@@ -44,7 +44,6 @@ public class RecommendService {
     public void clickRecommend(Long boardId, BoardType boardType) {
 
         Board board = utilService.getBoard(boardId, boardType);
-        if (board == null) throw new CustomException(BOARD_NOT_FOUND);
         Member member = utilService.getSignInMember();
 
         //check recommend board
@@ -54,14 +53,11 @@ public class RecommendService {
 
         //change state
         if (check) {
-            Optional<Recommend> recommendBoard = recommendRepository
-                    .findRecommendByMemberIdAndBoardId(member.getId(), boardId);
-            if (recommendBoard.isEmpty()) {
-                //error
-                log.info("not exist recommend");
-                throw new CustomException(RECOMMEND_NOT_FOUND);
-            }
-            recommendRepository.delete(recommendBoard.get());
+            //cancel recommend
+            Recommend recommend = recommendRepository
+                    .findRecommendByMemberIdAndBoardId(member.getId(), boardId)
+                    .orElseThrow(() -> new CustomException(RECOMMEND_NOT_FOUND));
+            recommendRepository.delete(recommend);
         }
         else{
             //recommend story as member
@@ -79,6 +75,7 @@ public class RecommendService {
     public void checkRecommend(QuestionViewDto questionViewDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
+        //(login user == board writer) checking
         if (!signInMember.getUsername()
                 .equals(questionViewDto.getUsername())) {
             recommendIt = recommendRepository
@@ -93,6 +90,7 @@ public class RecommendService {
     public void checkRecommend(AnswerViewDto answerViewDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
+        //(login user == board writer) checking
         if (!signInMember.getUsername()
                 .equals(answerViewDto.getUsername())) {
             recommendIt = recommendRepository
@@ -107,6 +105,7 @@ public class RecommendService {
     public void checkRecommend(StoryViewDto storyViewDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
+        //(login user == board writer) checking
         if (!signInMember.getUsername()
                 .equals(storyViewDto.getUsername())) {
             recommendIt = recommendRepository
@@ -126,6 +125,7 @@ public class RecommendService {
         for (QuestionSimpleViewDto questionViewDto : questionViewDtoList) {
             Member signInMember = utilService.getSignInMember();
             boolean recommendIt = false;
+            //(login user == board writer) checking
             if (!signInMember.getUsername()
                     .equals(questionViewDto.getUsername())) {
                 recommendIt = recommendRepository
@@ -146,6 +146,7 @@ public class RecommendService {
         for (StorySimpleViewDto storyViewDto : storyViewDtoList) {
             Member signInMember = utilService.getSignInMember();
             boolean recommendIt = false;
+            //(login user == board writer) checking
             if (!signInMember.getUsername()
                     .equals(storyViewDto.getUsername())) {
                 recommendIt = recommendRepository
