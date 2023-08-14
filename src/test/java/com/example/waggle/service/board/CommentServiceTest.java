@@ -9,6 +9,7 @@ import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.service.board.util.BoardType;
 import com.example.waggle.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -128,7 +129,7 @@ class CommentServiceTest {
         StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
 
         //when
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, "story");
+        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
         List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
@@ -142,7 +143,7 @@ class CommentServiceTest {
         //given
         setBoardAndMember();
         StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, "story");
+        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
         List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
         List<CommentViewDto> editComments = new ArrayList<>();
 
@@ -166,7 +167,7 @@ class CommentServiceTest {
         setBoardAndMember();
         StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
 
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, "story");
+        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
         List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
 
         //when
