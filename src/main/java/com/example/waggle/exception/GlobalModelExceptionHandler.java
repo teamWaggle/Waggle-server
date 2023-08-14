@@ -14,6 +14,7 @@ public class GlobalModelExceptionHandler {
     public ModelAndView handleException(CustomException e) {
         //view path
         ModelAndView mv = new ModelAndView("error");
+        log.info("path is {}", mv.getViewName());
         ErrorDto errorDto = errorToDto(e.getErrorCode());
         mv.addObject("errorMessage", errorDto);
         return mv;
