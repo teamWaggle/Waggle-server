@@ -31,7 +31,7 @@ public class Reply extends BaseEntity {
     private String content;
 
     //@Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdDate;
+    //private LocalDateTime createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")

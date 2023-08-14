@@ -2,17 +2,24 @@ package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.component.DatabaseCleanUp;
+import com.example.waggle.domain.board.boardType.Story;
+import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.repository.board.boardtype.StoryRepository;
+import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.service.board.util.BoardType;
 import com.example.waggle.service.member.MemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +36,10 @@ class RecommendServiceTest {
     private MemberService memberService;
     @Autowired
     private RecommendService recommendService;
+    @Autowired
+    private StoryRepository storyRepository;
+    @Autowired
+    private MemberRepository memberRepository;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
@@ -86,35 +97,47 @@ class RecommendServiceTest {
                 .thumbnail("www.waggle")
                 .build();
 
+
+
     }
     @AfterEach
     void clean() {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setBoardAndMember() {
+    @Transactional
+    void setBoardAndMember() {
+
         //member set
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
+        Member build = Member.builder().username("user1").password("password").build();
+        memberRepository.save(build);
+
+        Story iiii = Story.builder().member(build).content("iiii").build();
+        storyRepository.save(iiii);
+
         //story set
         storyService.saveStory(storyWriteDto1);
-        storyService.saveStory(storyWriteDto2);
+        //storyService.saveStory(storyWriteDto2);
     }
 
     @Test
     @WithMockCustomUser
+    @Rollback(value = false)
     void recommendBoard() {
         //given
         setBoardAndMember();
         StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        recommendService.clickRecommend(storySimpleViewDto.getId(),"story");
 
         //when
+        recommendService.clickRecommend(storySimpleViewDto.getId(), BoardType.STORY);
         StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(storySimpleViewDto.getId());
         recommendService.checkRecommend(storyViewByBoardId);
+
         //then
-        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(0);
+        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(1);
     }
     @Test
     @WithMockCustomUser
@@ -122,8 +145,8 @@ class RecommendServiceTest {
         //given
         setBoardAndMember();
         StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        recommendService.clickRecommend(storySimpleViewDto.getId(),"story");
-        recommendService.clickRecommend(storySimpleViewDto.getId(),"story");
+        recommendService.clickRecommend(storySimpleViewDto.getId(),BoardType.STORY);
+        recommendService.clickRecommend(storySimpleViewDto.getId(),BoardType.STORY);
 
         //when
         StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(storySimpleViewDto.getId());
