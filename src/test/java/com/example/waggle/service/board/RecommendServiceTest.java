@@ -125,7 +125,6 @@ class RecommendServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Rollback(value = false)
     void recommendBoard() {
         //given
         setBoardAndMember();
