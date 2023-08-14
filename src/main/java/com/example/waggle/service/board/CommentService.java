@@ -36,10 +36,6 @@ import static com.example.waggle.exception.ErrorCode.COMMENT_NOT_FOUND;
 @Slf4j
 public class CommentService {
 
-    private final MemberRepository memberRepository;
-    private final StoryRepository storyRepository;
-    private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
     private final CommentRepository commentRepository;
     private final UtilService utilService;
 
