@@ -5,34 +5,45 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.board.boardType.Story;
+import com.example.waggle.domain.board.hashtag.BoardHashtag;
+import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.exception.CustomException;
+import com.example.waggle.exception.ErrorCode;
+import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.example.waggle.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class CommonServiceImpl implements CommonService{
+@Transactional
+public class UtilServiceImpl implements UtilService {
 
     private final MemberRepository memberRepository;
     private final StoryRepository storyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final HashtagRepository hashtagRepository;
+
     @Override
+    @Transactional(readOnly = true)
     public Member getMember(String username) {
-        //member get
-        Optional<Member> byUsername = memberRepository.findByUsername(username);
-        if (byUsername.isEmpty()) {
-            //error
-            return null;
-        }
-        Member member = byUsername.get();
-        return member;
+        //member setting
+        Member signInMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        return signInMember;
     }
 
     @Override
@@ -45,37 +56,37 @@ public class CommonServiceImpl implements CommonService{
 
     @Override
     public Member getSignInMember() {
-        Member signInMember = null;
-
         //check login
         if (login()) {
             //check exist user
-            signInMember = getMember(SecurityUtil.getCurrentUsername());
+            Member signInMember = getMember(SecurityUtil.getCurrentUsername());
+            return signInMember;
         }
-        return signInMember;
+        throw new CustomException(REFRESH_TOKEN_NOT_FOUND);
     }
 
     @Override
-    public Board getBoard(Long boardId, String boardType) {
+    @Transactional(readOnly = true)
+    public Board getBoard(Long boardId, BoardType boardType) {
         //board get
         Board board;
 
         switch (boardType) {
-            case "story":
+            case STORY:
                 Optional<Story> storyById = storyRepository.findById(boardId);
                 if (storyById.isEmpty()) {
                     //error
                 }
                 board = storyById.get();
                 break;
-            case "question":
+            case QUESTION:
                 Optional<Question> questionById = questionRepository.findById(boardId);
                 if (questionById.isEmpty()) {
                     //error
                 }
                 board = questionById.get();
                 break;
-            case "answer":
+            case ANSWER:
                 Optional<Answer> answerById = answerRepository.findById(boardId);
                 if (answerById.isEmpty()) {
                     //error
@@ -87,5 +98,28 @@ public class CommonServiceImpl implements CommonService{
                 return null;
         }
         return board;
+    }
+
+    @Override
+    public void saveHashtag(Board board, String hashtag) {
+        Optional<Hashtag> hashtagByTag = hashtagRepository.findByTag(hashtag);
+        if (hashtagByTag.isEmpty()) {
+            log.info("not exist hashtag, so newly making");
+            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
+            hashtagRepository.save(buildHashtag);
+            BoardHashtag.builder()
+                    .hashtag(buildHashtag)
+                    .board(board)
+                    .build()
+                    .link(board, buildHashtag);
+        }//아래 else가 좀 반복되는 것 같다...
+        else{
+            log.info("already exist hashtag");
+            BoardHashtag.builder()
+                    .hashtag(hashtagByTag.get())
+                    .board(board)
+                    .build()
+                    .link(board, hashtagByTag.get());
+        }
     }
 }
