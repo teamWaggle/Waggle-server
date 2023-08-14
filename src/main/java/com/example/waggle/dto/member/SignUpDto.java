@@ -3,7 +3,10 @@ package com.example.waggle.dto.member;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
 import com.example.waggle.domain.member.UploadFile;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +23,17 @@ import java.util.stream.Collectors;
 @ToString
 public class SignUpDto {
 
+    @NotBlank
+    @Length(min = 2, max = 10)
     private String username;
+    @NotBlank
+    @Length(min = 10)
     private String password;
+    @NotNull
     private String nickname;
     private String address;
+    @NotBlank
+    //@Length(min = 11, max = 11)
     private String phone;
     private MultipartFile profileImg;
 
