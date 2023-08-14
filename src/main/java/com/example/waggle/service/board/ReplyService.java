@@ -10,7 +10,6 @@ import com.example.waggle.dto.board.reply.ReplyViewDto;
 import com.example.waggle.dto.board.reply.ReplyWriteDto;
 
 import com.example.waggle.exception.CustomException;
-import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.board.comment.CommentRepository;
 import com.example.waggle.repository.board.comment.ReplyRepository;
 import com.example.waggle.repository.member.MemberRepository;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.waggle.exception.ErrorCode.COMMENT_NOT_FOUND;

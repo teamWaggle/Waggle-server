@@ -2,8 +2,6 @@ package com.example.waggle.service.board;
 
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
@@ -11,7 +9,6 @@ import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.exception.CustomException;
 import com.example.waggle.exception.ErrorCode;
-import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.service.board.util.UtilService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,6 @@ public class StoryService {
 
     private final StoryRepository storyRepository;
     private final UtilService utilService;
-
 
 
     /**
