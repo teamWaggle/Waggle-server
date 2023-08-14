@@ -22,12 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.example.waggle.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
+import static com.example.waggle.exception.ErrorCode.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UtilServiceImpl implements UtilService {
 
     private final MemberRepository memberRepository;
@@ -55,6 +54,7 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Member getSignInMember() {
         //check login
         if (login()) {
@@ -73,53 +73,47 @@ public class UtilServiceImpl implements UtilService {
 
         switch (boardType) {
             case STORY:
-                Optional<Story> storyById = storyRepository.findById(boardId);
-                if (storyById.isEmpty()) {
-                    //error
-                }
-                board = storyById.get();
+                board = storyRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
                 break;
             case QUESTION:
-                Optional<Question> questionById = questionRepository.findById(boardId);
-                if (questionById.isEmpty()) {
-                    //error
-                }
-                board = questionById.get();
+                board = questionRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
                 break;
             case ANSWER:
-                Optional<Answer> answerById = answerRepository.findById(boardId);
-                if (answerById.isEmpty()) {
-                    //error
-                }
-                board = answerById.get();
+                board = answerRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype
-                return null;
+                throw new CustomException(INVALID_BOARD_TYPE);
         }
         return board;
     }
 
     @Override
-    public void saveHashtag(Board board, String hashtag) {
-        Optional<Hashtag> hashtagByTag = hashtagRepository.findByTag(hashtag);
-        if (hashtagByTag.isEmpty()) {
-            log.info("not exist hashtag, so newly making");
-            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
-            hashtagRepository.save(buildHashtag);
-            BoardHashtag.builder()
-                    .hashtag(buildHashtag)
-                    .board(board)
-                    .build()
-                    .link(board, buildHashtag);
-        }//아래 else가 좀 반복되는 것 같다...
-        else{
-            log.info("already exist hashtag");
-            BoardHashtag.builder()
-                    .hashtag(hashtagByTag.get())
-                    .board(board)
-                    .build()
-                    .link(board, hashtagByTag.get());
+    @Transactional
+    public void saveHashtag(Board board, String tag) {
+        Hashtag hashtag = getHashtag(tag);
+
+        BoardHashtag.builder()
+                .hashtag(hashtag)
+                .board(board)
+                .build()
+                .link(board, hashtag);
+    }
+
+    @Override
+    @Transactional
+    public Hashtag getHashtag(String tag) {
+        Optional<Hashtag> byTag = hashtagRepository.findByTag(tag);
+        if (byTag.isEmpty()) {
+            log.info("not exist hashtag!");
+            Hashtag build = Hashtag.builder().tag(tag).build();
+            hashtagRepository.save(build);
+            return build;
         }
+        log.info("already exist hashtag...");
+        return byTag.get();
     }
 }
