@@ -9,6 +9,8 @@ import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 
 import com.example.waggle.dto.board.story.StoryWriteDto;
+import com.example.waggle.exception.CustomException;
+import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.service.board.util.UtilService;
@@ -28,7 +30,6 @@ import java.util.Optional;
 public class StoryService {
 
     private final StoryRepository storyRepository;
-    private final HashtagRepository hashtagRepository;
     private final UtilService utilService;
 
 
@@ -76,14 +77,10 @@ public class StoryService {
     // 1.2 낱개 조회
     @Transactional(readOnly = true)
     public StoryViewDto findStoryViewByBoardId(Long id) {
-
         //board setting
-        Optional<Story> storyById = storyRepository.findById(id);
-        if (storyById.isEmpty()) {
-            log.info("not exist board");
-            //error and return null
-        }
-        return StoryViewDto.toDto(storyById.get());
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        return StoryViewDto.toDto(story);
     }
 
 
@@ -151,12 +148,9 @@ public class StoryService {
     @Transactional(readOnly = true)
     public StoryWriteDto findStoryWriteByBoardId(Long id) {
         //board setting
-        Optional<Story> storyById = storyRepository.findById(id);
-        if (storyById.isEmpty()) {
-            //error and return null
-        }
-
-        return StoryWriteDto.toDto(storyById.get());
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        return StoryWriteDto.toDto(story);
     }
 
     @Transactional(readOnly = true)
@@ -184,7 +178,7 @@ public class StoryService {
             if (!story.getMember().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
-                return;
+                throw new CustomException(ErrorCode.CANNOT_TOUCH_NOT_YOURS);
             }
             storyRepository.delete(story);
             log.info("remove!");
