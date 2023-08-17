@@ -1,0 +1,158 @@
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+#calendar {
+    max-width: 900px;
+    margin: 30px auto 0;
+    flex: 1;
+}
+
+#calendar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 30px auto 0;
+}
+
+#teamMembersContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 30px;
+    margin-top: 20px;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    width: 20%;
+    min-width: 300px;
+}
+
+#teamMembersList {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#eventUpdateModal, #eventCreateModal, #addMemberModal, #createTeamModal, #updateTeamModal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 700px;
+    height: 500px;
+}
+
+.modal-body {
+    justify-content: center;
+    padding: 0;
+}
+
+.small-modal-content {
+    max-height: 100px;
+    max-width: 300px;
+    align-items: center;
+}
+
+.form-group {
+    margin-top: 8px;
+}
+
+.form-group label {
+    display: inline-block;
+    width: 80px;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: calc(100% - 90px);
+}
+
+.form-group.input {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.form-group.input label {
+    width: 80px;
+    font-weight: bold;
+}
+
+.form-group.input input,
+.form-group.input textarea {
+    flex: 1;
+}
+
+.fc-day:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+#teamTabs {
+    border-bottom: 1px solid #e0e0e0;
+    margin-left: 90px;
+    margin-right: 90px;
+}
+
+.tab-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    border-bottom: 1px solid transparent;
+    padding: 6px 8px;
+    margin-right: 10px;
+    width: 130px;
+}
+
+.tab-container:hover {
+    border: #e0e0e0 solid 1px;
+    border-bottom: none;
+}
+
+.nav-link {
+    border: none !important;
+    background: #f6f6f6;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+
+    color: #909090;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+
+    width: 100px;
+    text-decoration: none;
+}
+
+
+.tab-container:hover .nav-link {
+    color: #7C9EBF;
+}
+
+.nav-link.active {
+    color: #1c1f23;
+}
+
+#updateTeamButton {
+    cursor: pointer;
+}
