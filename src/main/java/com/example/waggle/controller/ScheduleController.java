@@ -1,8 +1,6 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.domain.team.Schedule;
-import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.service.member.MemberService;
@@ -16,10 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -42,7 +37,7 @@ public class ScheduleController {
         model.addAttribute("currentUsername", username);
         model.addAttribute("teams", allTeamByUsername);
         model.addAttribute("isTeamLeader", isTeamLeader);
-        return "schedule/scheduleMain";
+        return "schedule/schedule";
     }
 
     @GetMapping("/{teamId}/schedules")

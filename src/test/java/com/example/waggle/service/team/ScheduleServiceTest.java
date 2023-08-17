@@ -114,6 +114,7 @@ class ScheduleServiceTest {
     @Test
     public void updateSchedule() {
         ScheduleDto updateScheduleDto = ScheduleDto.builder()
+                .id(savedScheduleDto1.getId())
                 .title("한강 산책")
                 .description("🐶🐶🐶")
                 .scheduleTime(LocalDateTime.of(2023, 5, 26, 19, 30))

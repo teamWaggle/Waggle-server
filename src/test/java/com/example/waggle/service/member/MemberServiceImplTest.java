@@ -112,8 +112,10 @@ class MemberServiceImplTest {
         log.info("httpHeaders = {}", httpHeaders);
 
         // API 요청 설정
-        String url = "http://localhost:" + randomServerPort + "/members/test";
+        String url = "http://localhost:" + randomServerPort + "/member/sign-in";
         ResponseEntity<String> responseEntity = testRestTemplate.postForEntity(url, new HttpEntity<>(httpHeaders), String.class);
+        log.info("responseEntity = {}", responseEntity);
+
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(signInDto.getUsername());
 
