@@ -111,36 +111,48 @@ a {
     margin-right: 90px;
 }
 
-.nav-tabs {
+.tab-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    border-bottom: 1px solid transparent;
+    padding: 6px 8px;
+    margin-right: 10px;
+    width: 130px;
+}
+
+.tab-container:hover {
+    border: #e0e0e0 solid 1px;
     border-bottom: none;
 }
 
 .nav-link {
+    border: none !important;
     background: #f6f6f6;
     font-weight: bold;
     text-align: center;
     display: block;
-    border: 1px solid #e0e0e0;
+
     color: #909090;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
-    padding: 6px 18px;
-    margin: 0 5px -1px 0;
 
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    width: 100px;
     text-decoration: none;
-    border-bottom: 1px solid transparent;
-
 }
 
-.nav-link:hover,
-.nav-link.active {
-    border-color: rgb(214, 241, 207);
+
+.tab-container:hover .nav-link {
     color: #7C9EBF;
-    border-bottom-color: #7C9EBF;
 }
 
-.edit-icon {
-    margin-left: 5px;
-    font-size: 16px;
+.nav-link.active {
+    color: #1c1f23;
+}
+
+#updateTeamButton {
+    cursor: pointer;
 }

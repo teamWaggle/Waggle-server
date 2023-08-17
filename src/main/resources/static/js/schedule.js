@@ -310,8 +310,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     hiddenInput.id = 'selectedTeamLeader';
                     hiddenInput.value = team.teamLeader;
 
-                    let editButton = document.createElement('button');
-                    editButton.textContent = '수정';
+                    let editButton = document.createElement('div');
+                    editButton.innerText = '🖋️️';
                     editButton.id = 'updateTeamButton';
                     editButton.addEventListener('click', function () {
                         updateTeamModal.style.display = "block";
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 var createTeamButton = document.createElement('button');
                 createTeamButton.id = 'createTeamButton';
-                createTeamButton.classList.add('nav-item', 'nav-link');
+                createTeamButton.classList.add('nav-item', 'nav-link', 'tab-container');
                 createTeamButton.textContent = '➕';
                 createTeamButton.addEventListener('click', function () {
                     createTeamModal.style.display = "block";
