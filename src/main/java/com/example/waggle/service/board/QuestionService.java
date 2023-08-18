@@ -10,9 +10,8 @@ import com.example.waggle.dto.board.answer.AnswerWriteDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import com.example.waggle.dto.board.question.QuestionWriteDto;
-import com.example.waggle.exception.CustomException;
+import com.example.waggle.exception.CustomPageException;
 
-import com.example.waggle.repository.board.HashtagRepository;
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.service.board.util.UtilService;
@@ -78,7 +77,7 @@ public class QuestionService {
     public QuestionViewDto findQuestionByBoardId(Long boardId) {
 
         Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         //====== answer find & link ======
         List<Answer> byQuestionId = answerRepository.findByQuestionId(boardId);
@@ -121,7 +120,7 @@ public class QuestionService {
     public void saveAnswer(AnswerWriteDto writeDto, Long boardId) {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         Answer answer = writeDto.toEntity(signInMember);
         //hashtag 저장
@@ -145,7 +144,7 @@ public class QuestionService {
     public String changeQuestion(QuestionWriteDto questionDto, Long boardId) {
         //find
         Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         //edit
         question.changeQuestion(questionDto.getContent(),questionDto.getTitle());
@@ -171,7 +170,7 @@ public class QuestionService {
     public void changeAnswer(AnswerWriteDto answerDto, Long boardId) {
         //find
         Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         //edit
         answer.changeAnswer(answerDto.getContent());
@@ -230,11 +229,11 @@ public class QuestionService {
     public void removeQuestion(Long id) {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
         //check user
         if (!question.getMember().equals(signInMember)) {
             log.info("only same user can delete board!");
-            throw new CustomException(CANNOT_TOUCH_NOT_YOURS);
+            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         questionRepository.delete(question);
         log.info("remove completely");
@@ -244,10 +243,10 @@ public class QuestionService {
     public void removeAnswer(Long id) {
         Member signInMember = utilService.getSignInMember();
         Answer answer = answerRepository.findById(id)
-                .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
         if (!answer.getMember().equals(signInMember)) {
             log.info("only same user can delete board!");
-            throw new CustomException(CANNOT_TOUCH_NOT_YOURS);
+            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         answerRepository.delete(answer);
         log.info("remove completely");

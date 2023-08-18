@@ -15,6 +15,7 @@ import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.ScheduleService;
 import com.example.waggle.service.team.TeamService;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class TestDataInit {
 
     List<Member> members = new ArrayList<>();
 
-    //@PostConstruct
+    @PostConstruct
     public void init() {
         initMember();
         initStory();

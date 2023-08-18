@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <head>
+    <th:block th:if="${#strings.length(errorMessage.message) != 0}">
+      <script>
+        top.alert("[[${errorMessage.message}]]");
+      </script>
+    </th:block>
+    <script>
+      top.location.href = '[[${redirectURL}]]';
+    </script>
+  </head>
+</head>
+<body>
+</body>
+</html>
+
+

@@ -1,24 +1,15 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Recommend;
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.boardType.Answer;
-import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.answer.AnswerViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryViewDto;
-import com.example.waggle.exception.CustomException;
-import com.example.waggle.exception.ErrorCode;
+import com.example.waggle.exception.CustomPageException;
 import com.example.waggle.repository.board.RecommendRepository;
-import com.example.waggle.repository.board.boardtype.AnswerRepository;
-import com.example.waggle.repository.board.boardtype.QuestionRepository;
-import com.example.waggle.repository.board.boardtype.StoryRepository;
-import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.service.board.util.BoardType;
 import com.example.waggle.service.board.util.UtilService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.waggle.exception.ErrorCode.*;
 
@@ -56,7 +46,7 @@ public class RecommendService {
             //cancel recommend
             Recommend recommend = recommendRepository
                     .findRecommendByMemberIdAndBoardId(member.getId(), boardId)
-                    .orElseThrow(() -> new CustomException(RECOMMEND_NOT_FOUND));
+                    .orElseThrow(() -> new CustomPageException(RECOMMEND_NOT_FOUND));
             recommendRepository.delete(recommend);
         }
         else{
@@ -64,7 +54,7 @@ public class RecommendService {
             if (board.getMember().equals(member)) {
                 log.info("can't recommend");
                 log.info("board Member {}", board.getMember().getUsername());
-                throw new CustomException(CANNOT_RECOMMEND_MYSELF);
+                throw new CustomPageException(CANNOT_RECOMMEND_MYSELF);
             }
             Recommend recommendBoard = Recommend.builder().board(board).member(member).build();
             recommendRepository.save(recommendBoard);

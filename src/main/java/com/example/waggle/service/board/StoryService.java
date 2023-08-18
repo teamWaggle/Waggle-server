@@ -7,7 +7,7 @@ import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 
 import com.example.waggle.dto.board.story.StoryWriteDto;
-import com.example.waggle.exception.CustomException;
+import com.example.waggle.exception.CustomPageException;
 import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.service.board.util.UtilService;
@@ -75,7 +75,7 @@ public class StoryService {
     public StoryViewDto findStoryViewByBoardId(Long id) {
         //board setting
         Story story = storyRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
         return StoryViewDto.toDto(story);
     }
 
@@ -145,7 +145,7 @@ public class StoryService {
     public StoryWriteDto findStoryWriteByBoardId(Long id) {
         //board setting
         Story story = storyRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
         return StoryWriteDto.toDto(story);
     }
 
@@ -173,7 +173,7 @@ public class StoryService {
             if (!story.getMember().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
-                throw new CustomException(ErrorCode.CANNOT_TOUCH_NOT_YOURS);
+                throw new CustomPageException(ErrorCode.CANNOT_TOUCH_NOT_YOURS);
             }
             storyRepository.delete(story);
             log.info("remove!");

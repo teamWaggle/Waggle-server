@@ -9,7 +9,7 @@ import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.dto.board.reply.ReplyViewDto;
 import com.example.waggle.dto.board.reply.ReplyWriteDto;
 
-import com.example.waggle.exception.CustomException;
+import com.example.waggle.exception.CustomPageException;
 import com.example.waggle.repository.board.comment.CommentRepository;
 import com.example.waggle.repository.board.comment.ReplyRepository;
 import com.example.waggle.repository.member.MemberRepository;
@@ -41,7 +41,7 @@ public class ReplyService {
     @Transactional(readOnly = true)
     public List<ReplyViewDto> findReplies (Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
         return comment.getReplies().stream()
                 .map(ReplyViewDto::toDto).collect(Collectors.toList());
     }
@@ -51,7 +51,7 @@ public class ReplyService {
 
         //check exist
         Comment comment = commentRepository.findById(commentViewDto.getId())
-                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
 
         //SAVE reply and LINK member&comment
         Reply reply = replyWriteDto.toEntity(member);
@@ -75,13 +75,13 @@ public class ReplyService {
     public boolean checkMember(ReplyViewDto viewDto) {
         Member member = utilService.getSignInMember();
         Reply reply = replyRepository.findById(viewDto.getId())
-                .orElseThrow(() -> new CustomException(REPLY_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
         return reply.getMember().equals(member);
     }
     public Long changeReply(ReplyViewDto replyViewDto, ReplyWriteDto replyWriteDto) {
         //find
         Reply reply = replyRepository.findById(replyViewDto.getId())
-                .orElseThrow(() -> new CustomException(REPLY_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
         //edit
         reply.changeContent(replyWriteDto.getContent());
         reply.getMemberMentions().clear();
@@ -101,7 +101,7 @@ public class ReplyService {
     public void deleteReply(ReplyViewDto viewDto) {
         Member member = utilService.getSignInMember();
         Reply reply = replyRepository.findById(viewDto.getId())
-                .orElseThrow(() -> new CustomException(REPLY_NOT_FOUND));
+                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
         if (reply.getMember().equals(member)) {
             log.info("delete completely!");
             replyRepository.delete(reply);
