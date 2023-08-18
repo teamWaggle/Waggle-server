@@ -8,6 +8,7 @@ import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.member.MemberService;
+import io.jsonwebtoken.Jwt;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,8 +43,9 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public String signIn(@ModelAttribute("signInDto") SignInDto signInDto, HttpServletResponse response) {
+    public JwtToken signIn(@ModelAttribute("signInDto") SignInDto signInDto, HttpServletResponse response) {
         JwtToken jwtToken = memberService.signIn(signInDto);
+        log.info("jwtToken = {}", jwtToken.getAccessToken());
 
         // 로그인 성공 시
         if (jwtToken != null) {
@@ -53,7 +55,7 @@ public class MemberController {
             response.addCookie(cookie);
         }
 
-        return "redirect:/";
+        return jwtToken;
     }
 
     @GetMapping("/sign-up")
@@ -93,6 +95,11 @@ public class MemberController {
 
 
         return "redirect:/";
+    }
+
+    @PostMapping("/test")
+    public String test() {
+        return SecurityUtil.getCurrentUsername();
     }
 
 }
