@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.waggle.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.example.waggle.exception.ErrorCode.PETINFO_NOT_FOUND;
+import static com.example.waggle.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +43,7 @@ public class PetService {
     @Transactional
     public PetDto updatePet(Long petId, PetDto petDto) {
         Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new CustomAlertException(PETINFO_NOT_FOUND));
+                .orElseThrow(() -> new CustomAlertException(PET_NOT_FOUND));
         pet.update(petDto);
         Pet updatedPet = petRepository.findById(petId).get();
         return PetDto.toDto(updatedPet);

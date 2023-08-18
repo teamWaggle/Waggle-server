@@ -29,7 +29,9 @@ public enum ErrorCode {
     RECOMMEND_NOT_FOUND(NOT_FOUND,"존재하지 않는 추천입니다"),
     COMMENT_NOT_FOUND(NOT_FOUND, "존재하지 않는 댓글입니다"),
     REPLY_NOT_FOUND(NOT_FOUND, "존재하지 않는 대댓글입니다"),
-    PETINFO_NOT_FOUND(NOT_FOUND, "펫 정보가 존재하지 않습니다"),
+    PET_NOT_FOUND(NOT_FOUND, "펫 정보가 존재하지 않습니다"),
+    TEAM_NOT_FOUND(NOT_FOUND, "팀 정보가 존재하지 않습니다"),
+    SCHEDULE_NOT_FOUND(NOT_FOUND,"스케줄 정보가 존재하지 않습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
