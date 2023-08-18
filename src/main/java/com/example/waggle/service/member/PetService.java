@@ -3,6 +3,9 @@ package com.example.waggle.service.member;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
 import com.example.waggle.dto.member.*;
+import com.example.waggle.exception.CustomAlertException;
+import com.example.waggle.exception.CustomPageException;
+import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.example.waggle.exception.ErrorCode.PETINFO_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -29,23 +35,19 @@ public class PetService {
 
     @Transactional
     public PetDto addPet(PetDto petDto) {
-        Member member = memberRepository.findByUsername(petDto.getUsername()).get();
+        Member member = memberRepository.findByUsername(petDto.getUsername())
+                .orElseThrow(() -> new CustomPageException(MEMBER_NOT_FOUND));
         Pet pet = petRepository.save(petDto.toEntity(member));
         return PetDto.toDto(pet);
     }
 
     @Transactional
     public PetDto updatePet(Long petId, PetDto petDto) {
-        Optional<Pet> petToUpdate = petRepository.findById(petId);
-        if (petToUpdate.isPresent()) {
-            Pet pet = petToUpdate.get();
-            pet.update(petDto);
-            Pet updatedPet = petRepository.findById(petId).get();
-            return PetDto.toDto(updatedPet);
-        } else {
-            // TODO 예외 처리
-            return null;
-        }
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new CustomAlertException(PETINFO_NOT_FOUND));
+        pet.update(petDto);
+        Pet updatedPet = petRepository.findById(petId).get();
+        return PetDto.toDto(updatedPet);
     }
 
     @Transactional
