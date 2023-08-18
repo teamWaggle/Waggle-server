@@ -5,6 +5,10 @@ spring:
     password: springproject
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  devtools:
+    livereload:
+      enabled: true
+
   jpa:
     hibernate:
       ddl-auto: create

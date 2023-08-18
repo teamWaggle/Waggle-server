@@ -16,6 +16,7 @@ public enum ErrorCode {
     CANNOT_RECOMMEND_MYSELF(BAD_REQUEST, "자신의 게시물에 좋아요를 누를 수 없습니다"),
     CANNOT_TOUCH_NOT_YOURS(BAD_REQUEST, "타인의 게시물 혹은 정보를 수정 및 삭제할 수 없습니다"),
     INVALID_BOARD_TYPE(BAD_REQUEST, "게시글의 타입이 맞지 않습니다"),
+    ALREADY_USING_USERNAME(BAD_REQUEST,"이미 사용중인 사용자 이름입니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

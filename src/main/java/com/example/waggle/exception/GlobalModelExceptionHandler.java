@@ -1,6 +1,7 @@
 package com.example.waggle.exception;
 
 import com.example.waggle.dto.ErrorDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,10 +11,20 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class GlobalModelExceptionHandler {
 
-    @ExceptionHandler(CustomException.class)
-    public ModelAndView handleException(CustomException e) {
+    @ExceptionHandler(CustomPageException.class)
+    public ModelAndView handleException(HttpServletRequest request, CustomPageException e) {
         //view path
-        ModelAndView mv = new ModelAndView("error");
+        ModelAndView mv = new ModelAndView("error/error_page");
+        log.info("path is {}", mv.getViewName());
+        ErrorDto errorDto = errorToDto(e.getErrorCode());
+        mv.addObject("errorMessage", errorDto);
+        mv.addObject("redirectURL", request.getRequestURI());
+        return mv;
+    }
+    @ExceptionHandler(CustomAlertException.class)
+    public ModelAndView handleException(CustomAlertException e) {
+        //view path
+        ModelAndView mv = new ModelAndView("error/error_alert");
         log.info("path is {}", mv.getViewName());
         ErrorDto errorDto = errorToDto(e.getErrorCode());
         mv.addObject("errorMessage", errorDto);
