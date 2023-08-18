@@ -43,6 +43,21 @@ document.addEventListener('DOMContentLoaded', function () {
         var defaultTab = teamTabs.querySelector('.nav-link');
         if (defaultTab) {
             defaultTab.classList.add('active');
+            // 모든 .tab-container의 스타일 초기화
+            let allTabContainers = document.querySelectorAll('.tab-container');
+            allTabContainers.forEach(function (tabContainer) {
+                tabContainer.classList.remove('selected');
+            });
+
+            // 클릭한 탭의 .tab-container 스타일 변경
+            let tabContainer = defaultTab.closest('.tab-container');
+            if (tabContainer) {
+                tabContainer.classList.add('selected');
+            }
+
+            console.log('defaultTab = ', defaultTab);
+            console.log('tabContainer = ', tabContainer);
+
             teamId = defaultTab.getAttribute('data-teamId');
             isTeamLeader = checkTeamLeader(teamId);
             renderTeamTabs();
@@ -114,9 +129,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             tab.classList.remove('active');
                         });
                         tabItem.classList.add('active');
+                        // 모든 .tab-container의 스타일 초기화
+                        let allTabContainers = document.querySelectorAll('.tab-container');
+                        allTabContainers.forEach(function (tabContainer) {
+                            tabContainer.classList.remove('selected');
+                        });
+
+                        // 클릭한 탭의 .tab-container 스타일 변경
+                        let tabContainer = event.target.closest('.tab-container');
+                        if (tabContainer) {
+                            tabContainer.classList.add('selected');
+                        }
+
                         isTeamLeader = checkTeamLeader(teamId);
                         renderTeamTabs();
-                        renderTeamCalendar(teamId);
                     }
 
                 })
@@ -248,6 +274,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const activeTabs = teamTabs.querySelectorAll('.nav-link.active');
             activeTabs.forEach(tab => tab.classList.remove('active'));
             tabItem.classList.add('active');
+            // 모든 .tab-container의 스타일 초기화
+            let allTabContainers = document.querySelectorAll('.tab-container');
+            allTabContainers.forEach(function (tabContainer) {
+                tabContainer.classList.remove('selected');
+            });
+
+            // 클릭한 탭의 .tab-container 스타일 변경
+            let tabContainer = event.target.closest('.tab-container');
+            if (tabContainer) {
+                tabContainer.classList.add('selected');
+            }
+
             teamId = newTeamId;
             isTeamLeader = checkTeamLeader(teamId);
             updateMemberButtonsVisibility();
@@ -302,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.forEach(function (team) {
                     let tabItem = document.createElement('a');
                     tabItem.textContent = team.name;
-                    tabItem.classList.add('nav-item', 'nav-link', 'tabItem');
+                    tabItem.classList.add('nav-link', 'tabItem');
                     tabItem.setAttribute('data-teamId', team.id);
 
                     let hiddenInput = document.createElement('input');
@@ -318,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
 
                     let tabContainer = document.createElement('div');
-                    tabContainer.classList.add('tab-container');
+                    tabContainer.classList.add('tab-container', 'nav-item');
                     tabContainer.appendChild(tabItem);
                     tabContainer.appendChild(hiddenInput);
                     tabContainer.appendChild(editButton);
@@ -333,6 +371,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         tab.classList.remove('active');
                     });
                     tabItem.classList.add('active');
+
+                    // 모든 .tab-container의 스타일 초기화
+                    let allTabContainers = document.querySelectorAll('.tab-container');
+                    allTabContainers.forEach(function (tabContainer) {
+                        tabContainer.classList.remove('selected');
+                    });
+
+                    // 클릭한 탭의 .tab-container 스타일 변경
+                    let tabContainer = tabItem.closest('.tab-container');
+                    if (tabContainer) {
+                        tabContainer.classList.add('selected');
+                    }
                     isTeamLeader = checkTeamLeader(teamId);
                     renderTeamCalendar(teamId);
                 }
@@ -359,6 +409,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             tab.classList.remove('active');
                         });
                         event.target.classList.add('active');
+
+                        // 모든 .tab-container의 스타일 초기화
+                        let allTabContainers = document.querySelectorAll('.tab-container');
+                        allTabContainers.forEach(function (tabContainer) {
+                            tabContainer.classList.remove('selected');
+                        });
+
+                        // 클릭한 탭의 .tab-container 스타일 변경
+                        let tabContainer = event.target.closest('.tab-container');
+                        if (tabContainer) {
+                            tabContainer.classList.add('selected');
+                        }
 
                         teamId = event.target.getAttribute('data-teamId');
                         isTeamLeader = checkTeamLeader(teamId);

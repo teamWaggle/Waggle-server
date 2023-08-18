@@ -43,7 +43,7 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public JwtToken signIn(@ModelAttribute("signInDto") SignInDto signInDto, HttpServletResponse response) {
+    public String signIn(@ModelAttribute("signInDto") SignInDto signInDto, HttpServletResponse response) {
         JwtToken jwtToken = memberService.signIn(signInDto);
         log.info("jwtToken = {}", jwtToken.getAccessToken());
 
@@ -55,7 +55,7 @@ public class MemberController {
             response.addCookie(cookie);
         }
 
-        return jwtToken;
+        return "redirect:/";
     }
 
     @GetMapping("/sign-up")

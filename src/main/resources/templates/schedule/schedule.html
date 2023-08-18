@@ -22,12 +22,11 @@
 
 <div id="teamTabs" class="nav nav-tabs">
     <th:block th:each="team : ${teams}">
-        <div class="tab-container">
-            <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-item nav-link tabItem"></a>
+        <div class="nav-item tab-container">
+            <a th:text="${team.name}" th:attr="data-teamId=${team.id}" class="nav-link tabItem"></a>
             <input type="hidden" id="selectedTeamLeader" th:value="${team.getTeamLeader()}">
             <div id="updateTeamButton">🖋️️</div>
         </div>
-
     </th:block>
     <button id="createTeamButton" class="nav-item nav-link tab-container">➕</button>
 </div>
