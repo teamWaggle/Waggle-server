@@ -1,42 +1,28 @@
 package com.example.waggle.component;
 
-
-import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.boardType.Answer;
-import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
 
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.dto.team.TeamDto;
-import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.boardtype.AnswerRepository;
-import com.example.waggle.repository.board.boardtype.QuestionRepository;
+
 import com.example.waggle.repository.board.boardtype.StoryRepository;
-import com.example.waggle.repository.board.comment.CommentRepository;
-import com.example.waggle.repository.board.comment.ReplyRepository;
 import com.example.waggle.repository.member.MemberRepository;
 
-import com.example.waggle.repository.team.TeamRepository;
 import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.ScheduleService;
 import com.example.waggle.service.team.TeamService;
-import jakarta.annotation.PostConstruct;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Component
 @RequiredArgsConstructor

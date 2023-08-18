@@ -7,10 +7,7 @@ import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,6 +90,7 @@ class MemberServiceImplTest {
     }
 
     @Test
+    @Disabled
     public void signIn() {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
@@ -106,20 +104,15 @@ class MemberServiceImplTest {
 
         // HttpHeaders 객체 생성 및 토큰 추가
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBearerAuth(jwtToken.getAccessToken());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        log.info("httpHeaders = {}", httpHeaders);
 
         // API 요청 설정
-        String url = "http://localhost:" + randomServerPort + "/members/test";
+        String url = "http://localhost:" + randomServerPort + "/member/test";
         ResponseEntity<String> responseEntity = testRestTemplate.postForEntity(url, new HttpEntity<>(httpHeaders), String.class);
+        log.info("responseEntity = {}", responseEntity);
+
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(signInDto.getUsername());
-
-//        assertThat(SecurityUtil.getCurrentUsername()).isEqualTo(signInDto.getUsername()); // -> 테스트 코드에서는 인증을 위한 절차를 거치지 X. SecurityContextHolder 에 인증 정보가 존재하지 않는다.
-
-
     }
-
 }

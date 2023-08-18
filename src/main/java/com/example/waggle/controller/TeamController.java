@@ -39,7 +39,6 @@ public class TeamController {
                 memberSimpleDtos.add(memberService.findMemberSimpleDto(teamMember));
             }
         }
-
         return ResponseEntity.ok(memberSimpleDtos);
     }
 
@@ -53,16 +52,16 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create team");
         }
     }
-
-    @GetMapping("/update")
-    public String updateTeamForm(Model model) {
-        return "schedule/team/updateTeam";
-    }
-
-    @PostMapping("/{teamId}/update")
-    public String updateTeam(@PathVariable Long teamId, @ModelAttribute TeamDto teamDto) {
+    @PostMapping("/update")
+    public ResponseEntity<?> updateTeam(@RequestParam Long teamId, @RequestParam String name) {
+        TeamDto teamDto = TeamDto.builder().name(name).build();
         TeamDto updatedTeamDto = teamService.updateTeam(teamId, teamDto);
-        return "redirect:/team/" + updatedTeamDto.getId();
+
+        if (updatedTeamDto != null) {
+            return ResponseEntity.ok(updatedTeamDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update team");
+        }
     }
 
     @PostMapping("/delete")
