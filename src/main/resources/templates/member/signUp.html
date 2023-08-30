@@ -91,7 +91,6 @@
         <div>
             <label for="nickname">닉네임</label>
             <input type="text" id="nickname" th:field="*{nickname}" class="form-control" placeholder="닉네임을 입력해주세요.">
-            <div th:if="${#fields.hasErrors('nickname')}" th:errorclass="field-error" th:errors="*{nickname}"></div>
         </div>
         <div>
             <label for="phone">전화번호</label>

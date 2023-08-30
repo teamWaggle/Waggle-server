@@ -7,6 +7,7 @@ import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.dto.validation.ValidationSequence;
 import com.example.waggle.exception.CustomAlertException;
 import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.service.member.MemberService;
@@ -51,7 +52,7 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public JwtToken signIn(@Validated @ModelAttribute("signInDto") SignInDto signInDto,
+    public JwtToken signIn(@Validated(ValidationSequence.class) @ModelAttribute("signInDto") SignInDto signInDto,
                            BindingResult bindingResult,
                            HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
@@ -79,7 +80,7 @@ public class MemberController {
     }
 
     @PostMapping("/sign-up")
-    public String signUp(@Validated @ModelAttribute("signUpDto") SignUpDto signUpDto,
+    public String signUp(@Validated(ValidationSequence.class) @ModelAttribute("signUpDto") SignUpDto signUpDto,
                          BindingResult bindingResult) throws IOException {
         log.info("sign Up!");
         if (bindingResult.hasErrors()) {
