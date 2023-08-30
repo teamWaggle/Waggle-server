@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 @Builder
 public class QuestionWriteDto {
 
-    @NotEmpty
+    @NotEmpty(message = "질문 내용을 작성해주세요.")
     @Max(1500)
     private String content;
-    @NotBlank
+    @NotBlank(message = "질문 제목을 작성해주세요.")
     @Length(min = 5, max = 30)
     private String title;
     @NotNull(groups = UpdateCheck.class)

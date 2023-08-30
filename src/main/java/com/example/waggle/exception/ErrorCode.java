@@ -17,6 +17,8 @@ public enum ErrorCode {
     CANNOT_TOUCH_NOT_YOURS(BAD_REQUEST, "타인의 게시물 혹은 정보를 수정 및 삭제할 수 없습니다"),
     INVALID_BOARD_TYPE(BAD_REQUEST, "게시글의 타입이 맞지 않습니다"),
     ALREADY_USING_USERNAME(BAD_REQUEST,"이미 사용중인 사용자 이름입니다"),
+    MUST_WRITE_INFO_SIGN_IN(BAD_REQUEST,"아이디나 비밀번호를 확인해주세요"),
+    MUST_WRITE_INFO_SIGN_UP(BAD_REQUEST,"회원 가입 시 정보를 작성해주세요"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

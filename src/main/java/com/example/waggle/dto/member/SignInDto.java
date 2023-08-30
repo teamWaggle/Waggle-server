@@ -12,9 +12,9 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @Builder
 public class SignInDto {
-    @NotBlank
+    @NotBlank(message = "아이디를 작성해주세요.")
     private String username;
-    @NotBlank
+    @NotBlank(message = "비밀번호를 작성해주세요.")
     @Length(min=10)
     private String password;
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 public class AnswerWriteDto {
 
-    @NotNull
+    @NotNull(message = "답변 내용을 작성해주세요.")
     @Max(1500)
     private String content;
 
