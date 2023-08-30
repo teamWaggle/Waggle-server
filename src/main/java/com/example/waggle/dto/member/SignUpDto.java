@@ -23,17 +23,17 @@ import java.util.stream.Collectors;
 @ToString
 public class SignUpDto {
 
-    @NotBlank
-    @Length(min = 2, max = 10)
+    @NotBlank(message = "아이디를 작성해주세요.")
+    @Length(min = 2, max = 10, message = "아이디 길이는 최소 2자에서 최대 10자입니다.")
     private String username;
-    @NotBlank
-    @Length(min = 10)
+    @NotBlank(message = "비밀번호를 작성해주세요.")
+    @Length(min = 10, message = "비밀번호는 최소 10자입니다.")
     private String password;
-    @NotNull
+    @NotNull(message = "닉네임을 작성해주세요.")
     private String nickname;
     private String address;
-    @NotBlank
-    //@Length(min = 11, max = 11)
+    @NotBlank(message = "전화번호를 입력해주세요")
+    @Length(min = 11, max = 11)
     private String phone;
     private MultipartFile profileImg;
 

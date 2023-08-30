@@ -23,7 +23,6 @@ public class StoryWriteDto {
     private Long id;
     @Max(500)
     private String content;
-    @NotNull
     private String thumbnail;
     private String username;
 
