@@ -1,19 +1,16 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 
 import com.example.waggle.dto.board.story.StoryWriteDto;
-import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.RecommendRepository;
+import com.example.waggle.exception.CustomPageException;
+import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
-import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.service.board.util.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +27,7 @@ import java.util.Optional;
 public class StoryService {
 
     private final StoryRepository storyRepository;
-    private final MemberRepository memberRepository;
-    private final HashtagRepository hashtagRepository;
-    private final RecommendRepository recommendRepository;
-
+    private final UtilService utilService;
 
 
     /**
@@ -79,14 +73,10 @@ public class StoryService {
     // 1.2 낱개 조회
     @Transactional(readOnly = true)
     public StoryViewDto findStoryViewByBoardId(Long id) {
-
         //board setting
-        Optional<Story> storyById = storyRepository.findById(id);
-        if (storyById.isEmpty()) {
-            log.info("not exist board");
-            //error and return null
-        }
-        return StoryViewDto.toDto(storyById.get());
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+        return StoryViewDto.toDto(story);
     }
 
 
@@ -96,7 +86,7 @@ public class StoryService {
     //***중요!
     public Long saveStory(StoryWriteDto saveStoryDto) {
         //member setting
-        Member signInMember = getSignInMember();
+        Member signInMember = utilService.getSignInMember();
 
         //board setting
         Story saveStory = saveStoryDto.toEntity(signInMember);
@@ -105,7 +95,7 @@ public class StoryService {
         //hashtag 저장
         if(!saveStoryDto.getHashtags().isEmpty()){
             for (String hashtagContent : saveStoryDto.getHashtags()) {
-                saveHashtag(saveStory, hashtagContent);
+                utilService.saveHashtag(saveStory, hashtagContent);
             }
         }
         //media 저장
@@ -143,7 +133,7 @@ public class StoryService {
 
             //newly insert data(hashtag, boardHashtag)
             for (String hashtag : storyDto.getHashtags()) {
-                saveHashtag(story, hashtag);
+                utilService.saveHashtag(story, hashtag);
             }
             return story.getMember().getUsername();
         }
@@ -154,21 +144,17 @@ public class StoryService {
     @Transactional(readOnly = true)
     public StoryWriteDto findStoryWriteByBoardId(Long id) {
         //board setting
-        Optional<Story> storyById = storyRepository.findById(id);
-        if (storyById.isEmpty()) {
-            //error and return null
-        }
-
-        return StoryWriteDto.toDto(storyById.get());
+        Story story = storyRepository.findById(id)
+                .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+        return StoryWriteDto.toDto(story);
     }
 
     @Transactional(readOnly = true)
     public boolean checkMember(Long boardId) {
-        Member signInMember = getSignInMember();
+        Member signInMember = utilService.getSignInMember();
         Optional<Story> storyById = storyRepository.findById(boardId);
         if (storyById.isEmpty()) {
             log.info("not exist story");
-            //error
             return false;
         }
         boolean isSameUser = storyById.get().getMember().equals(signInMember);
@@ -180,14 +166,14 @@ public class StoryService {
     //4.1 story 삭제
     // (media, hashtag 포함)
     public void removeStory(StoryViewDto storyDto) {
-        Member signInMember = getSignInMember();
+        Member signInMember = utilService.getSignInMember();
         Optional<Story> storyByBoardId = storyRepository.findById(storyDto.getId());
         if (storyByBoardId.isPresent()) {
             Story story = storyByBoardId.get();
             if (!story.getMember().equals(signInMember)) {
                 log.info("only same user can delete board!");
                 //error
-                return;
+                throw new CustomPageException(ErrorCode.CANNOT_TOUCH_NOT_YOURS);
             }
             storyRepository.delete(story);
             log.info("remove!");
@@ -195,71 +181,4 @@ public class StoryService {
     }
 
 
-    //5. ===============else==============
-    /**
-     * private method
-     * use at : 2.1, 3.1
-     * @param story
-     * @param hashtag
-     */
-    private void saveHashtag(Story story, String hashtag) {
-        Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
-        if (hashtagByContent.isEmpty()) {
-            log.info("not exist hashtag, so newly making");
-            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
-            hashtagRepository.save(buildHashtag);
-            BoardHashtag.builder()
-                    .hashtag(buildHashtag)
-                    .board(story)
-                    .build()
-                    .link(story, buildHashtag);
-        }//아래 else가 좀 반복되는 것 같다...
-        else{
-            log.info("already exist hashtag");
-            BoardHashtag.builder()
-                    .hashtag(hashtagByContent.get())
-                    .board(story)
-                    .build()
-                    .link(story, hashtagByContent.get());
-        }
-    }
-
-    /**
-     * use at :
-     * @param username
-     * @return member
-     */
-    // 이 메서드는 레포지토리에서 멤버가 "있냐 없느냐"를 따지기 때문에
-    // 존재하지 않는 username이라면 이 메서드를 사용하는 모든 서비스 로직은 실행되면 안된다.
-    private Member getMember(String username) {
-        //member setting
-        Optional<Member> byUsername = memberRepository.findByUsername(username);
-        if (byUsername.isEmpty()) {
-            log.info("can't find user!");
-            //error
-            //여기서 return null 이 아니라 위 로직이 아예 멈출 수 있도록 한다.
-            return null;
-        }
-        Member signInMember = byUsername.get();
-        log.info("signInMember user name is {}", signInMember.getUsername());
-        return signInMember;
-    }
-
-    private boolean login() {
-        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
-            return false;
-        }
-        return true;
-    }
-
-    private Member getSignInMember() {
-        Member signInMember = null;
-
-        //check login
-        if (login()) {
-            //check exist user
-            signInMember = getMember(SecurityUtil.getCurrentUsername());
-        }
-        return signInMember;
-    }
 }

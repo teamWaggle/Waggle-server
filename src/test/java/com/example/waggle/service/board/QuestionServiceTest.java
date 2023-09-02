@@ -167,6 +167,7 @@ class QuestionServiceTest {
         assertThat(questionByBoardId.getTitle()).isEqualTo("question1");
         assertThat(questionByBoardId.getAnswers().size()).isEqualTo(2);
         assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("i don't know that");
+        assertThat(questionByBoardId.getHashtags().size()).isEqualTo(2);
     }
 
     @Test
@@ -180,6 +181,7 @@ class QuestionServiceTest {
         QuestionViewDto questionByBoardId = questionService.findQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getTitle()).isEqualTo("EditQuestion");
+        assertThat(questionByBoardId.getHashtags().size()).isEqualTo(1);
     }
 
     @Test

@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -68,8 +70,13 @@ public class QuestionController {
     }
 
     @PostMapping("/write")
-    public String singleQuestionWrite(@ModelAttribute QuestionWriteDto questionDto) {
-
+    public String singleQuestionWrite(@Validated @ModelAttribute QuestionWriteDto questionDto,
+                                      BindingResult bindingResult) {
+        //validation
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            return "question/writeQuetion";
+        }
         String username = SecurityUtil.getCurrentUsername();
         Long questionId = questionService.saveQuestion(questionDto);
         String title = questionDto.getTitle();
