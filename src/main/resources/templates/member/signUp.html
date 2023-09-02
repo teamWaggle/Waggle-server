@@ -14,6 +14,10 @@
             padding: 10px;
             margin-bottom: 10px;
         }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
     </style>
 
     <title>Waggle🐾</title>
@@ -72,28 +76,27 @@
     <form th:action="@{/member/sign-up}" th:object="${signUpDto}" enctype="multipart/form-data" method="post">
         <div>
             <label for="username">아이디</label>
-            <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="아이디를 입력해주세요."
-                   required>
+            <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="아이디를 입력해주세요.">
+            <div th:if="${#fields.hasErrors('username')}" th:errorclass="field-error" th:errors="*{username}">아이디 오류</div>
         </div>
         <div>
             <label for="password">비밀번호</label>
-            <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호를 입력해주세요."
-                   required>
+            <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호를 입력해주세요.">
+            <div th:if="${#fields.hasErrors('password')}" th:errorclass="field-error" th:errors="*{password}">비밀번호 오류</div>
         </div>
         <div>
             <label for="address">주소</label>
-            <input type="text" id="address" th:field="*{address}" class="form-control" placeholder="주소를 입력해주세요."
-                   required>
+            <input type="text" id="address" th:field="*{address}" class="form-control" placeholder="주소를 입력해주세요.">
         </div>
         <div>
             <label for="nickname">닉네임</label>
-            <input type="text" id="nickname" th:field="*{nickname}" class="form-control" placeholder="닉네임을 입력해주세요."
-                   required>
+            <input type="text" id="nickname" th:field="*{nickname}" class="form-control" placeholder="닉네임을 입력해주세요.">
         </div>
         <div>
             <label for="phone">전화번호</label>
             <input type="tel" id="phone" th:field="*{phone}" class="form-control" pattern="[0-9]+"
-                   placeholder="숫자만 입력해주세요." required>
+                   placeholder="숫자만 입력해주세요.">
+            <div th:if="${#fields.hasErrors('phone')}" th:errorclass="field-error" th:errors="*{phone}"></div>
         </div>
         <div>
             <label for="profileImg">프로필 사진</label>

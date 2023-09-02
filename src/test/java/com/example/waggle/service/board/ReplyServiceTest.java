@@ -9,6 +9,7 @@ import com.example.waggle.dto.board.reply.ReplyWriteDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.service.board.util.BoardType;
 import com.example.waggle.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -150,7 +151,7 @@ class ReplyServiceTest {
         StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
 
         //comment set
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, "story");
+        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
         //reply set
         List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
         replyService.saveReply(comments.get(0), replyWriteDto1);

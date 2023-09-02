@@ -1,11 +1,7 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.domain.board.Board;
+
 import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
@@ -14,12 +10,11 @@ import com.example.waggle.dto.board.answer.AnswerWriteDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import com.example.waggle.dto.board.question.QuestionWriteDto;
-import com.example.waggle.dto.board.story.StorySimpleViewDto;
-import com.example.waggle.repository.board.HashtagRepository;
-import com.example.waggle.repository.board.RecommendRepository;
+import com.example.waggle.exception.CustomPageException;
+
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
-import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.service.board.util.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.waggle.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -37,9 +35,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
-    private final HashtagRepository hashtagRepository;
-    private final MemberRepository memberRepository;
-    private final RecommendRepository recommendRepository;
+    private final UtilService utilService;
 
     /**
      * 조회는 entity -> dto과정을,
@@ -80,21 +76,18 @@ public class QuestionService {
     @Transactional(readOnly = true)
     public QuestionViewDto findQuestionByBoardId(Long boardId) {
 
-        Optional<Question> questionById = questionRepository.findById(boardId);
-        if (questionById.isEmpty()) {
-            //error and return null
-            return null;
-        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         //====== answer find & link ======
         List<Answer> byQuestionId = answerRepository.findByQuestionId(boardId);
         List<AnswerViewDto> answerViewDtoList = new ArrayList<>();
 
-
         for (Answer answer : byQuestionId) {
             answerViewDtoList.add(AnswerViewDto.toDto(answer));
         }
-        QuestionViewDto viewDto = QuestionViewDto.toDto(questionById.get());
+
+        QuestionViewDto viewDto = QuestionViewDto.toDto(question);
         viewDto.linkAnswerView(answerViewDtoList);
 
         return viewDto;
@@ -104,14 +97,14 @@ public class QuestionService {
     //2. ===========저장===========
     //2.1 question 저장(media, hashtag 포함)
     public Long saveQuestion(QuestionWriteDto saveQuestionDto) {
-        Member member = getSignInMember();
-        Question question = saveQuestionDto.toEntity(member);
+        Member signInMember = utilService.getSignInMember();
+        Question question = saveQuestionDto.toEntity(signInMember);
         questionRepository.save(question);
 
         //hashtag 저장
         if(!saveQuestionDto.getHashtags().isEmpty()){
             for (String hashtag : saveQuestionDto.getHashtags()) {
-                saveHashtagInQuestion(question,hashtag);
+                utilService.saveHashtag(question,hashtag);
             }
         }
         //media 저장
@@ -125,86 +118,84 @@ public class QuestionService {
 
     //2.4 answer 저장(media, hashtag 포함)
     public void saveAnswer(AnswerWriteDto writeDto, Long boardId) {
-        Member signInMember = getSignInMember();
-        Optional<Question> questionById = questionRepository.findById(boardId);
+        Member signInMember = utilService.getSignInMember();
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
-        if (questionById.isPresent()) {
-            Answer answer = writeDto.toEntity(signInMember);
-            //hashtag 저장
-            if(!writeDto.getHashtags().isEmpty()){
-                for (String hashtag : writeDto.getHashtags()) {
-                    saveHashtagInAnswer(answer,hashtag);
-                }
+        Answer answer = writeDto.toEntity(signInMember);
+        //hashtag 저장
+        if(!writeDto.getHashtags().isEmpty()){
+            for (String hashtag : writeDto.getHashtags()) {
+                utilService.saveHashtag(answer,hashtag);
             }
-            //media 저장
-            if (!writeDto.getMedias().isEmpty()) {
-                for (String media : writeDto.getMedias()) {
-                    Media.builder().url(media).board(answer).build().linkBoard(answer);
-                }
-            }
-            //link relation method
-            questionById.get().addAnswer(answer);
         }
+        //media 저장
+        if (!writeDto.getMedias().isEmpty()) {
+            for (String media : writeDto.getMedias()) {
+                Media.builder().url(media).board(answer).build().linkBoard(answer);
+            }
+        }
+        //link relation method
+        question.addAnswer(answer);
     }
 
     //3. ===========수정===========
     //3.1 question 수정(media, hashtag 포함)
     public String changeQuestion(QuestionWriteDto questionDto, Long boardId) {
-        Optional<Question> questionById = questionRepository.findById(boardId);
-        if (questionById.isPresent()) {
-            Question question = questionById.get();
-            //edit
-            question.changeQuestion(questionDto.getContent(),questionDto.getTitle());
+        //find
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
-            //delete(media)
-            question.getMedias().clear();
+        //edit
+        question.changeQuestion(questionDto.getContent(),questionDto.getTitle());
 
-            //newly insert data(media)
-            for (String media : questionDto.getMedias()) {
-                Media.builder().url(media).board(question).build().linkBoard(question);
-            }
+        //delete(media)
+        question.getMedias().clear();
 
-            //delete connecting relate (boardHashtag)
-            question.getBoardHashtags().clear();
-
-            //newly insert data(hashtag, boardHashtag)
-            for (String hashtag : questionDto.getHashtags()) {
-                saveHashtagInQuestion(question, hashtag);
-            }
-            return question.getMember().getUsername();
+        //newly insert data(media)
+        for (String media : questionDto.getMedias()) {
+            Media.builder().url(media).board(question).build().linkBoard(question);
         }
-        return null;
+
+        //delete connecting relate (boardHashtag)
+        question.getBoardHashtags().clear();
+
+        //newly insert data(hashtag, boardHashtag)
+        for (String hashtag : questionDto.getHashtags()) {
+            utilService.saveHashtag(question, hashtag);
+        }
+        return question.getMember().getUsername();
     }
     //3.2 answer 수정(media, hashtag 포함)
     public void changeAnswer(AnswerWriteDto answerDto, Long boardId) {
-        Optional<Answer> answerById = answerRepository.findById(boardId);
-        if (answerById.isPresent()) {
-            //edit
-            Answer answer = answerById.get();
-            answer.changeAnswer(answerDto.getContent());
+        //find
+        Answer answer = answerRepository.findById(boardId)
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
-            //delete(media)
-            answer.getMedias().clear();
+        //edit
+        answer.changeAnswer(answerDto.getContent());
 
-            //newly insert data(media)
-            for (String media : answerDto.getMedias()) {
-                Media.builder().url(media).board(answer).build();
-            }
+        //delete(media)
+        answer.getMedias().clear();
 
-            //delete connecting relate (boardHashtag)
-            answer.getBoardHashtags().clear();
+        //newly insert data(media)
+        for (String media : answerDto.getMedias()) {
+            Media.builder().url(media).board(answer).build();
+        }
 
-            //newly insert data(hashtag, boardHashtag)
-            for (String hashtag : answerDto.getHashtags()) {
-                saveHashtagInAnswer(answer, hashtag);
-            }
+        //delete connecting relate (boardHashtag)
+        answer.getBoardHashtags().clear();
+
+        //newly insert data(hashtag, boardHashtag)
+        for (String hashtag : answerDto.getHashtags()) {
+            utilService.saveHashtag(answer, hashtag);
         }
     }
 
     //3.3 수정을 위한 user 확인 절차
     @Transactional(readOnly = true)
     public boolean checkMember(Long boardId, String boardType) {
-        Member member = getMember(SecurityUtil.getCurrentUsername());
+        Member member = utilService.getSignInMember();
         Boolean isSameUser;
         switch (boardType) {
             case "question" :
@@ -236,93 +227,29 @@ public class QuestionService {
 
     //4.1 question 삭제(media, hashtag 포함)
     public void removeQuestion(Long id) {
-        Member signInMember = getSignInMember();
-        Optional<Question> questionById = questionRepository.findById(id);
-        if (questionById.isPresent()) {
-            //check user
-            Question question = questionById.get();
-            if (!question.getMember().equals(signInMember)) {
-                log.info("only same user can delete board!");
-                //error
-                return;
-            }
-            questionRepository.delete(question);
-            log.info("remove completely");
+        Member signInMember = utilService.getSignInMember();
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+        //check user
+        if (!question.getMember().equals(signInMember)) {
+            log.info("only same user can delete board!");
+            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
-        log.info("not exist");
+        questionRepository.delete(question);
+        log.info("remove completely");
     }
 
     //4.4 answer 삭제(media, hashtag 포함)
     public void removeAnswer(Long id) {
-        Member signInMember = getSignInMember();
-        Optional<Answer> answerById = answerRepository.findById(id);
-        if (answerById.isPresent()) {
-            Answer answer = answerById.get();
-            if (!answer.getMember().equals(signInMember)) {
-                log.info("only same user can delete board!");
-                //error
-                return;
-            }
-            answerRepository.delete(answerById.get());
-            log.info("remove completely");
+        Member signInMember = utilService.getSignInMember();
+        Answer answer = answerRepository.findById(id)
+                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+        if (!answer.getMember().equals(signInMember)) {
+            log.info("only same user can delete board!");
+            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
-        log.info("not exist");
-    }
-
-    //5. ============= else ============
-    private void saveHashtagInQuestion(Question question, String hashtag) {
-        Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
-        if (hashtagByContent.isEmpty()) {
-            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
-            hashtagRepository.save(buildHashtag);
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(buildHashtag).board(question).build();
-        }//아래 else가 좀 반복되는 것 같다...
-        else{
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(hashtagByContent.get()).board(question).build();
-        }
-    }
-    private void saveHashtagInAnswer(Answer answer, String hashtag) {
-        Optional<Hashtag> hashtagByContent = hashtagRepository.findByTag(hashtag);
-        if (hashtagByContent.isEmpty()) {
-            Hashtag buildHashtag = Hashtag.builder().tag(hashtag).build();
-            hashtagRepository.save(buildHashtag);
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(buildHashtag).board(answer).build();
-        }
-        else{
-            BoardHashtag buildBoardHashtag = BoardHashtag.builder()
-                    .hashtag(hashtagByContent.get()).board(answer).build();
-        }
-    }
-    private Member getMember(String username) {
-        //member setting
-        Optional<Member> byUsername = memberRepository.findByUsername(username);
-        if (byUsername.isEmpty()) {
-            //error
-            return null;
-        }
-        Member signInMember = byUsername.get();
-        return signInMember;
-    }
-
-    private boolean login() {
-        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
-            return false;
-        }
-        return true;
-    }
-
-    private Member getSignInMember() {
-        Member signInMember = null;
-
-        //check login
-        if (login()) {
-            //check exist user
-            signInMember = getMember(SecurityUtil.getCurrentUsername());
-        }
-        return signInMember;
+        answerRepository.delete(answer);
+        log.info("remove completely");
     }
 
 }

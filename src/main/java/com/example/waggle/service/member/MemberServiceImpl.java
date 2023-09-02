@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
 import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.*;
+import com.example.waggle.exception.CustomAlertException;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.exception.ErrorCode.ALREADY_USING_USERNAME;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +58,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto signUp(SignUpDto signUpDto) {
         if (memberRepository.existsByUsername(signUpDto.getUsername())) {
-            throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
+            throw new CustomAlertException(ALREADY_USING_USERNAME);
+            //throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
         }
         // Password 암호화
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
