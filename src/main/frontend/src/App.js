@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Main from './pages/Main';
-import Story from './pages/Story';
-import WriteStory from './pages/WriteStory';
+import Main from './pages/mainPage';
+import Story from './pages/storyPage';
+import WriteStory from './pages/writeStoryPage';
 
 import ScrollToTop from './components/ScrollToTop';
+import './styles/globalStyles.css';
+
 
 function App() {
     return (

@@ -1,0 +1,44 @@
+.simpleStory {
+    width: 220px;
+    height: 260px;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    padding: 0;
+}
+
+.simpleStory img {
+    width: 100%;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    height: auto;
+}
+
+.info {
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    height: 30px;
+    margin: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    max-width: 100%;   
+}
+
+.profile {
+    display: flex; 
+    align-items: center;
+}
+
+.profileImgContainer {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.profileImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
