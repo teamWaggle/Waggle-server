@@ -4,10 +4,16 @@ import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.dto.board.reply.ReplyViewDto;
+import com.example.waggle.dto.validation.UpdateCheck;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,8 +26,13 @@ import java.util.stream.Collectors;
 @Builder
 public class QuestionWriteDto {
 
+    @NotEmpty(message = "질문 내용을 작성해주세요.")
+    @Max(1500)
     private String content;
+    @NotBlank(message = "질문 제목을 작성해주세요.")
+    @Length(min = 5, max = 30)
     private String title;
+    @NotBlank(groups = UpdateCheck.class)
     private Long id;
 
     @Builder.Default

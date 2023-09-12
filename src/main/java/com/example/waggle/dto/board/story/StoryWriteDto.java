@@ -3,6 +3,10 @@ package com.example.waggle.dto.board.story;
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.comment.CommentViewDto;
+import com.example.waggle.dto.validation.UpdateCheck;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +20,9 @@ import java.util.stream.Collectors;
 @Builder
 @ToString(of = {"id", "content", "username"})
 public class StoryWriteDto {
+    @NotBlank(groups = UpdateCheck.class)
     private Long id;
+    @Max(500)
     private String content;
     private String thumbnail;
     private String username;
