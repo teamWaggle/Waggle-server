@@ -1,0 +1,13 @@
+.storyList {
+    margin-left: 70px;
+}
+
+.storyRow {
+    display: flex;
+    justify-content: left;
+}
+
+.storyColumn {
+    margin-right: 40px;
+    max-width: calc(33.33% - 10px);
+}
