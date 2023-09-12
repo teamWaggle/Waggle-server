@@ -5,6 +5,8 @@ import com.example.waggle.domain.team.Schedule;
 import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
 import com.example.waggle.dto.team.ScheduleDto;
+import com.example.waggle.exception.CustomAlertException;
+import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamRepository;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.exception.ErrorCode.SCHEDULE_NOT_FOUND;
+import static com.example.waggle.exception.ErrorCode.TEAM_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +45,8 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDto addSchedule(ScheduleDto scheduleDto, Long teamId) {
-        Optional<Team> team = teamRepository.findById(teamId);
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
 
         List<String> scheduleMembers = scheduleDto.getScheduleMembers();
         List<ScheduleMember> scheduleMemberList = new ArrayList<>();
@@ -48,41 +54,30 @@ public class ScheduleService {
             // TODO scheduleMember 저장
         }
 
-        if (team.isPresent()) {
-            Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team.get(), new ArrayList<>()));
+        Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team, new ArrayList<>()));
 
-            for (String username : scheduleDto.getScheduleMembers()) {
-                Optional<Member> findMember = memberRepository.findByUsername(username);
-                if (findMember.isPresent()) {
-                    Member member = findMember.get();
-                    ScheduleMember scheduleMember = ScheduleMember.builder()
-                            .schedule(schedule)
-                            .member(member).build();
-                    scheduleMember.addScheduleMember(schedule, member); // 연관관계 메서드
-                }
+        for (String username : scheduleDto.getScheduleMembers()) {
+            Optional<Member> findMember = memberRepository.findByUsername(username);
+            if (findMember.isPresent()) {
+                Member member = findMember.get();
+                ScheduleMember scheduleMember = ScheduleMember.builder()
+                        .schedule(schedule)
+                        .member(member).build();
+                scheduleMember.addScheduleMember(schedule, member); // 연관관계 메서드
             }
-            scheduleRepository.save(schedule);
-            return ScheduleDto.toDto(schedule);
-
-        } else {
-            // TODO 예외 처리
-            return null;
         }
+        scheduleRepository.save(schedule);
+        return ScheduleDto.toDto(schedule);
     }
 
     @Transactional
     public ScheduleDto updateSchedule(ScheduleDto scheduleDto) {
-        Optional<Schedule> scheduleToUpdate = scheduleRepository.findById(scheduleDto.getId());
-        if (scheduleToUpdate.isPresent()) {
-            Schedule schedule = scheduleToUpdate.get();
-            List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
-            schedule.update(scheduleDto, scheduleMembers);  // dirty-checking
-            Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId()).get();
-            return ScheduleDto.toDto(updatedSchedule);
-        } else {
-            // TODO 예외 처리
-            return null;
-        }
+        Schedule schedule = scheduleRepository.findById(scheduleDto.getId())
+                .orElseThrow(() -> new CustomAlertException(SCHEDULE_NOT_FOUND));
+        List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
+        schedule.update(scheduleDto, scheduleMembers);  // dirty-checking
+        Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId()).get();
+        return ScheduleDto.toDto(updatedSchedule);
     }
 
     @Transactional

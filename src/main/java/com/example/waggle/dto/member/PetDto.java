@@ -3,6 +3,7 @@ package com.example.waggle.dto.member;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
 import com.example.waggle.domain.member.Gender;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,11 +17,13 @@ import java.time.LocalDateTime;
 @ToString
 public class PetDto {
     private Long id;
+    @NotNull
     private String name;
     private String breed;
     private Gender gender;
     private LocalDate birthday;
     private String profileImg;
+    @NotNull
     private String username;
 
     static public PetDto toDto(Pet pet) {

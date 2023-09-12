@@ -4,28 +4,27 @@ import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.JwtToken;
 import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.domain.member.UploadFile;
-import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
+import com.example.waggle.dto.validation.ValidationSequence;
+import com.example.waggle.exception.CustomAlertException;
 import com.example.waggle.service.member.MemberService;
-import io.jsonwebtoken.Jwt;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+
+import static com.example.waggle.exception.ErrorCode.MUST_WRITE_INFO_SIGN_IN;
 
 @Slf4j
 @Controller
@@ -43,7 +42,13 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public String signIn(@ModelAttribute("signInDto") SignInDto signInDto, HttpServletResponse response) {
+    public String signIn(@Validated(ValidationSequence.class) @ModelAttribute("signInDto") SignInDto signInDto,
+                           BindingResult bindingResult,
+                           HttpServletResponse response) {
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            throw new CustomAlertException(MUST_WRITE_INFO_SIGN_IN);
+        }
         JwtToken jwtToken = memberService.signIn(signInDto);
         log.info("jwtToken = {}", jwtToken.getAccessToken());
 
@@ -65,7 +70,14 @@ public class MemberController {
     }
 
     @PostMapping("/sign-up")
-    public String signUp(@ModelAttribute("signUpDto") SignUpDto signUpDto) throws IOException {
+    public String signUp(@Validated(ValidationSequence.class) @ModelAttribute("signUpDto") SignUpDto signUpDto,
+                         BindingResult bindingResult) throws IOException {
+        log.info("sign Up!");
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            return "member/signUp";
+            //throw new CustomAlertException(MUST_WRITE_INFO_SIGN_UP);
+        }
         // 회원가입
         memberService.signUp(signUpDto);
 
