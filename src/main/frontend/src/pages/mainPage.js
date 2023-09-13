@@ -3,7 +3,7 @@ import Nav from '../components/Nav';
 import StoryList from '../components/main/StoryList';
 import MemberInfo from '../components/main/MemberInfo';
 
-import styles from '../styles/mainpage.module.css'
+import styles from '../styles/mainPage.module.css'
 import '../styles/globalStyles.css';
 
 function Main() {
