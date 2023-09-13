@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8080";
+const url = ""; // 추후 domain 입력하고 proxy 설정 해제
 
 
 export const memberRegisterApi = (payload) => {
