@@ -37,6 +37,11 @@ public class IndexController {
     private final StoryService storyService;
     private final FileStore fileStore;
 
+//    @GetMapping({"/", "/error"})
+//    public String index() {
+//        return "index.html";
+//    }
+
     @GetMapping("/")
     public String home(HttpServletRequest request, Model model) {
 

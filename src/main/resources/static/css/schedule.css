@@ -106,28 +106,27 @@ a {
 }
 
 #teamTabs {
-    border-bottom: 1px solid #e0e0e0;
     margin-left: 90px;
     margin-right: 90px;
 }
 
 .tab-container {
+    border: transparent solid 1px;
+    border-bottom: #e0e0e0 solid 1px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-
-    border-bottom: 1px solid transparent;
     padding: 6px 8px;
-    margin-right: 10px;
+    margin-right: 0px;
     width: 130px;
 }
 
 .tab-container:hover {
     border: #e0e0e0 solid 1px;
-    border-bottom: none;
+    padding: 6px 8px;
 }
 
 .nav-link {
@@ -144,7 +143,6 @@ a {
     text-decoration: none;
 }
 
-
 .tab-container:hover .nav-link {
     color: #7C9EBF;
 }
@@ -155,4 +153,17 @@ a {
 
 #updateTeamButton {
     cursor: pointer;
+}
+
+.tab-container.selected {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border: #e0e0e0 solid 1px;
+    border-bottom: none !important;
+    padding: 6px 8px;
+    width: 130px;
+}
+
+.nav {
+    border-bottom: none !important;
 }
