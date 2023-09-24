@@ -75,6 +75,7 @@
   color: #a0a0a0;
   background-color: #ffffff;
   border: 1px solid #dcdcdc;
+  cursor: pointer;
 }
 
 .btnLogout:hover {
