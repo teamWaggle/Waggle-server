@@ -22,7 +22,7 @@ public class StoryViewDto {
     private String content;
     private String username;
     private String thumbnail;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     private int recommendCount;
     private boolean recommendIt;
 
@@ -40,7 +40,7 @@ public class StoryViewDto {
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
                 .thumbnail(story.getThumbnail())
-                .createDate(story.getCreatedDate())
+                .createdDate(story.getCreatedDate())
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()

@@ -29,7 +29,7 @@ function SignUpPage() {
         memberRegisterApi(payload)
             .then(response => {
                 console.log('Registration successful:', response);
-                navigate('/');
+                navigate('/member/sign-in');
             })
             .catch(error => {
                 console.log('Registration failed:', error);
