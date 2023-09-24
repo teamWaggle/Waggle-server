@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getStoryApi } from '../apis/storyApi'
 import defaultProfileImg from '../images/defaultProfileImg.png';
 
@@ -54,7 +54,7 @@ function Story() {
                             </div>
 
                             <div>{story.createdDate}</div>
-                            
+
                         </div>
 
                         <img
