@@ -1,12 +1,18 @@
 import React from 'react';
 import styles from '../../styles/SimpleStory.module.css';
+import { useNavigate } from 'react-router-dom';
 
 function SimpleStory(props) {
     const { story } = props;
+    const navigate = useNavigate();
+
+    const handleNavigation = () => {
+        navigate(`/story/${story.username}/${story.id}`);
+    };
 
     return (
         <div className={styles.simpleStory}>
-            <div className={styles.info} onClick={() => { /* 리액트 라우팅 코드 추가 */ }}>
+            <div className={styles.info}>
                 <div className={styles.profile}>
                     {story.profileImg ? (
                         <div className={styles.profileImgContainer}>
@@ -31,7 +37,7 @@ function SimpleStory(props) {
             <img
                 src={story.thumbnail}
                 alt="썸네일"
-                onClick={() => { /* 리액트 라우팅 코드 추가 */ }}
+                onClick={handleNavigation}
             />
         </div>
     );
