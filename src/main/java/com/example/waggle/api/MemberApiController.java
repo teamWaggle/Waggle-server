@@ -2,16 +2,12 @@ package com.example.waggle.api;
 
 import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.JwtToken;
-import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.domain.member.UploadFile;
-import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -22,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -79,10 +74,6 @@ public class MemberApiController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody SignUpDto signUpDto) throws IOException {
         MemberDto memberDto = memberService.signUp(signUpDto);
-        UploadFile uploadFile = fileStore.storeFile(signUpDto.getProfileImg());
-        if (uploadFile != null) {
-            memberService.changeProfileImg(memberDto.getUsername(), uploadFile);
-        }
         return ResponseEntity.ok(memberDto);
     }
 

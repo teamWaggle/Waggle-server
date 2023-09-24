@@ -72,20 +72,12 @@ public class MemberController {
     @PostMapping("/sign-up")
     public String signUp(@Validated(ValidationSequence.class) @ModelAttribute("signUpDto") SignUpDto signUpDto,
                          BindingResult bindingResult) throws IOException {
-        log.info("sign Up!");
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
             return "member/signUp";
             //throw new CustomAlertException(MUST_WRITE_INFO_SIGN_UP);
         }
-        // 회원가입
         memberService.signUp(signUpDto);
-
-        // 프로필 사진 설정
-        UploadFile uploadFile = fileStore.storeFile(signUpDto.getProfileImg());
-        if (uploadFile != null) {
-            memberService.changeProfileImg(signUpDto.getUsername(), uploadFile);
-        }
         return "redirect:sign-in";
     }
 
