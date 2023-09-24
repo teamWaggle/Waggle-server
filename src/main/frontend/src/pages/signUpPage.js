@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SignUp from '../components/member/SignUp';
 import SignUpButton from '../components/member/SignUpButton';
-import {memberRegisterApi} from '../apis/memberApi';
+import { memberRegisterApi } from '../apis/memberApi';
 
 import styles from '../styles/signUpPage.module.css';
 import '../styles/globalStyles.css';
