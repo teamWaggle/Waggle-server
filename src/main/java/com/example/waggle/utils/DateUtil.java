@@ -3,7 +3,9 @@ package com.example.waggle.utils;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateUtil {
     public static void main(String[] args) {
@@ -22,7 +24,7 @@ public class DateUtil {
      * @return 분 표시
      *
      */
-    public static String txtDate(LocalDateTime tempDate) {
+    public static String simpleStoryTimeFormat(LocalDateTime tempDate) {
         long curTime = System.currentTimeMillis();
 
         long regTime = Timestamp.valueOf(tempDate).getTime();
@@ -52,4 +54,10 @@ public class DateUtil {
         return msg;
 
     }
+
+    public static String storyTimeFormat(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd일 (E) a h:mm:ss", Locale.KOREAN);
+        return dateTime.format(formatter);
+    }
+
 }

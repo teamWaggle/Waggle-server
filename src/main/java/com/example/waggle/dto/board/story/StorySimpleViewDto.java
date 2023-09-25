@@ -35,11 +35,10 @@ public class StorySimpleViewDto {
                 .username(story.getMember().getUsername())
                 .profileImg(story.getMember().getProfileImg())
                 .thumbnail(story.getThumbnail())
-                .createdDate(DateUtil.txtDate(story.getCreatedDate()))
+                .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
-
     }
 
     public void linkRecommend(int count, boolean recommendIt) {

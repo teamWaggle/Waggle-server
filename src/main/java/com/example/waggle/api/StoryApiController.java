@@ -42,7 +42,7 @@ public class StoryApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleStoryWrite(@Validated @ModelAttribute StoryWriteDto storyDto, BindingResult bindingResult) {
+    public ResponseEntity<?> singleStoryWrite(@Validated @RequestBody StoryWriteDto storyDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
             // TODO 예외 처리
