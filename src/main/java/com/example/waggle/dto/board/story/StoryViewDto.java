@@ -2,7 +2,9 @@ package com.example.waggle.dto.board.story;
 
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.board.comment.CommentViewDto;
+import com.example.waggle.utils.DateUtil;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,8 +23,9 @@ public class StoryViewDto {
     private Long id;
     private String content;
     private String username;
+    private UploadFile profileImg;
     private String thumbnail;
-    private LocalDateTime createdDate;
+    private String createdDate;
     private int recommendCount;
     private boolean recommendIt;
 
@@ -33,14 +36,14 @@ public class StoryViewDto {
     @Builder.Default
     private List<CommentViewDto> comments = new ArrayList<>();
 
-    //스토리 하나를 조회할 때 사용
     static public StoryViewDto toDto(Story story) {
         return StoryViewDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
+                .profileImg(story.getMember().getProfileImg())
                 .thumbnail(story.getThumbnail())
-                .createdDate(story.getCreatedDate())
+                .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()
