@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import upload from '../../images/upload.png';
 
-const Preview = () => {
+const Preview = ({ setImageFile }) => {
     const [imageSrc, setImageSrc] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -17,6 +17,7 @@ const Preview = () => {
 
             reader.onload = () => {
                 setImageSrc(reader.result);
+                setImageFile(file);
             };
         }
     };

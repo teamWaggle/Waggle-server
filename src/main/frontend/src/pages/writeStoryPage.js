@@ -11,6 +11,25 @@ import { writeStoryApi } from '../apis/storyApi'
 
 function WriteStory() {
     const [loginedMember, setLoginedMember] = useState(null);
+    const [content, setContent] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+
+    const navigate = useNavigate();
+
+    
+    const handleUpload = async () => {
+        try {
+            const response = await writeStoryApi({
+                content: content,
+                // thumbnail: imageFile
+            });
+            console.log(response.data);
+            navigate('/');
+        } catch (error) {
+            console.error('스토리 업로드 중 오류 발생:', error);
+        }
+    };
+
 
     useEffect(() => {
         async function fetchMemberInfo() {
@@ -63,13 +82,18 @@ function WriteStory() {
                             </div>
                         </div>
                         <div className={styles.thumbnail}>
-                            <Preview />
+                            <Preview setImageFile={setImageFile} />
                         </div>
                     </div>
                     <div className={styles.contentContainer}>
-                        <textarea className={styles.content}></textarea>
+                        <textarea
+                            className={styles.content}
+                            placeholder="자유롭게 글을 작성해 보세요."
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                        ></textarea>
                         <div className={styles.buttonContainer}>
-                            <button className={styles.uploadButton}>스토리 업로드</button>
+                            <button className={styles.uploadButton} onClick={handleUpload}>스토리 업로드</button>
                         </div>
                     </div>
                 </div>
