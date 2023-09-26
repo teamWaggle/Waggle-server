@@ -108,6 +108,30 @@ public class StoryService {
         return saveStory.getId();
     }
 
+    public Long saveStoryWithThumbnail(StoryWriteDto saveStoryDto, String thumbnail) {
+        //member setting
+        Member signInMember = utilService.getSignInMember();
+        saveStoryDto.changeThumbnail(thumbnail);
+        //board setting
+        Story saveStory = saveStoryDto.toEntity(signInMember);
+        storyRepository.save(saveStory);
+
+        //hashtag 저장
+        if(!saveStoryDto.getHashtags().isEmpty()){
+            for (String hashtagContent : saveStoryDto.getHashtags()) {
+                utilService.saveHashtag(saveStory, hashtagContent);
+            }
+        }
+        //media 저장
+        if (!saveStoryDto.getMedias().isEmpty()) {
+            for (String mediaURL : saveStoryDto.getMedias()) {
+                Media.builder().url(mediaURL).board(saveStory).build().linkBoard(saveStory);
+            }
+        }
+        log.info("tag's size is {}", saveStory.getBoardHashtags().size());
+        return saveStory.getId();
+    }
+
 
     //3. ===========수정===========
 
