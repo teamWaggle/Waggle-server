@@ -1,6 +1,8 @@
 package com.example.waggle.api;
 
+import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.SecurityUtil;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
@@ -12,12 +14,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +33,7 @@ import java.util.List;
 public class StoryApiController {
 
     private final StoryService storyService;
+    private final FileStore fileStore;
 
     @Operation(
             summary = "스토리 작성",
@@ -42,14 +48,17 @@ public class StoryApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleStoryWrite(@Validated @RequestBody StoryWriteDto storyDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            log.info("errors = {}", bindingResult);
-            // TODO 예외 처리
+    public ResponseEntity<?> singleStoryWrite(@RequestPart StoryWriteDto storyDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail, BindingResult bindingResult) throws IOException {
+        try {
+            UploadFile uploadFile = fileStore.storeFile(thumbnail);
+            String storeFileName = uploadFile.getStoreFileName();
+            Long storyId = storyService.saveStoryWithThumbnail(storyDto, storeFileName);
+            return ResponseEntity.ok(storyId);
+        } catch (IOException e) {
+            // 파일 저장 실패 시, 에러 핸들링
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        String username = SecurityUtil.getCurrentUsername();
-        Long boardId = storyService.saveStory(storyDto);
-        return ResponseEntity.ok(boardId);  // TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
 
     @Operation(

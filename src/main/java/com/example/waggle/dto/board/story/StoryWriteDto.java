@@ -59,4 +59,7 @@ public class StoryWriteDto {
     public StoryWriteDto(String username) {
         this.username = username;
     }
+    public void changeThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }
