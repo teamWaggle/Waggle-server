@@ -2,6 +2,7 @@ package com.example.waggle.api;
 
 import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.JwtToken;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.dto.member.SignInDto;
@@ -15,10 +16,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -72,9 +75,15 @@ public class MemberApiController {
             description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패."
     )
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody SignUpDto signUpDto) throws IOException {
-        MemberDto memberDto = memberService.signUp(signUpDto);
-        return ResponseEntity.ok(memberDto);
+    public ResponseEntity<?> register(@RequestPart SignUpDto signUpDto, @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
+        try {
+            UploadFile uploadFile = fileStore.storeFile(profileImg);
+            MemberDto memberDto = memberService.signUpWithProfileImg(signUpDto, uploadFile);
+            return ResponseEntity.ok(memberDto);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(

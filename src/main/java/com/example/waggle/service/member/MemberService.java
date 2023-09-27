@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 public interface MemberService {
     JwtToken signIn(SignInDto signInDto);
     MemberDto signUp(SignUpDto signUpDto);
+    MemberDto signUpWithProfileImg(SignUpDto signUpDto, UploadFile profileImg);
     void signOut(HttpSession session);
 
     MemberSimpleDto findMemberSimpleDto(String username);

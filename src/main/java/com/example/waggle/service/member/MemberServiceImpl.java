@@ -72,9 +72,31 @@ public class MemberServiceImpl implements MemberService {
         Member savedMember = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
 
         // Pet save
-
         List<PetDto> petDtos = signUpDto.getPets();
         List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(savedMember)).collect(Collectors.toList()); // PetDto -> Pet mapping
+        for (Pet pet : pets) {
+            petRepository.save(pet);
+        }
+        savedMember.setPets(pets);
+
+
+        return MemberDto.toDto(savedMember);
+    }
+
+    @Transactional
+    @Override
+    public MemberDto signUpWithProfileImg(SignUpDto signUpDto, UploadFile profileImg) {
+        if (memberRepository.existsByUsername(signUpDto.getUsername())) {
+            throw new CustomAlertException(ALREADY_USING_USERNAME);
+            //throw new IllegalArgumentException("이미 사용 중인 사용자 이름입니다.");
+        }
+        String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        signUpDto.changeProfileImg(profileImg);
+        Member savedMember = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
+        List<PetDto> petDtos = signUpDto.getPets();
+        List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(savedMember)).collect(Collectors.toList());
         for (Pet pet : pets) {
             petRepository.save(pet);
         }
