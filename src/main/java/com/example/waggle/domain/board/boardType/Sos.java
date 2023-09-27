@@ -1,8 +1,8 @@
 package com.example.waggle.domain.board.boardType;
 
 import com.example.waggle.component.auditing.BaseEntity;
-import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Gender;
+import com.example.waggle.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

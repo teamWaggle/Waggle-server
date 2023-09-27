@@ -3,7 +3,6 @@ package com.example.waggle.controller;
 import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.JwtToken;
 import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.validation.ValidationSequence;
@@ -20,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 

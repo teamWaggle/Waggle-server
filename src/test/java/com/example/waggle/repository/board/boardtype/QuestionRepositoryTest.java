@@ -3,13 +3,9 @@ package com.example.waggle.repository.board.boardtype;
 
 import com.example.waggle.domain.board.boardType.Answer;
 import com.example.waggle.domain.board.boardType.Question;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
-
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

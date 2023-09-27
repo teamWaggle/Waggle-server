@@ -2,14 +2,10 @@ package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.Media;
-import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
+import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
-import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -17,16 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Slf4j

@@ -3,7 +3,6 @@ package com.example.waggle.repository.board;
 import com.example.waggle.domain.board.Recommend;
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.repository.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RecommendRepositoryTest {

@@ -1,13 +1,11 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.domain.board.boardType.Question;
-import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
+import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionWriteDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
 import com.example.waggle.service.board.QuestionService;
-
 import com.example.waggle.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
