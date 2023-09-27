@@ -19,13 +19,6 @@
     justify-content: center;
 }
 
-.thumbnail {
-    width: 400px;
-    height: 400px;
-    border-radius: 10px;
-    
-}
-
 .content {
     margin-top: 65px;
     margin-left: 20px;

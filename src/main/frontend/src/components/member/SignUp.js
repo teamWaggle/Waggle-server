@@ -12,9 +12,18 @@ import styles from '../../styles/SignUp.module.css';
 function SignUp({ updateFormData }) {
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, type } = e.target;
+        let value;
+        
+        if(type === 'file') {
+            value = e.target.files[0];
+        } else {
+            value = e.target.value;
+        }
+        
         updateFormData(name, value);
     };
+    
 
     return (
         <div className={styles.container}>

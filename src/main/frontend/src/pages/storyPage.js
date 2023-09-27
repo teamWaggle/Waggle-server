@@ -5,7 +5,9 @@ import { getStoryApi } from '../apis/storyApi'
 import defaultProfileImg from '../images/defaultProfileImg.png';
 
 import styles from '../styles/storyPage.module.css';
+import imageComponentStyles from '../styles/ImageComponent.module.css';
 import '../styles/globalStyles.css';
+import ImageComponent from '../components/ImageComponent';
 
 function Story() {
     const { username, boardId } = useParams();
@@ -35,33 +37,22 @@ function Story() {
                     <div className={styles.info}>
                         <div className={styles.infoHeader}>
                             <div className={styles.profile}>
-                                {story.profileImg ? (
-                                    <div className={styles.profileImgContainer}>
-                                        <img className={styles.profileImg}
-                                            src={`/images/${story.profileImg.getStoreFileName()}`}
-                                            alt="프로필 사진"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className={styles.profileImgContainer}>
-                                        <img className={styles.profileImg}
-                                            src="/images/defaultProfileImg.png"
-                                            alt="프로필 사진"
-                                        />
-                                    </div>
-                                )}
+                                <div className={styles.profileImgContainer}>
+                                    {story ? (
+                                        story.profileImg && story.profileImg.storeFileName
+                                            ? <ImageComponent filename={story.profileImg.storeFileName} className={imageComponentStyles.mainProfileImg} alt="프로필사진" />
+                                            : <img src={defaultProfileImg} className={styles.profileImg} alt="프로필 사진" />
+
+                                    ) : (
+                                        <div>로딩 중...</div>
+                                    )}
+                                </div>
                                 <div>{story.username}</div>
                             </div>
-
                             <div>{story.createdDate}</div>
-
                         </div>
 
-                        <img
-                            className={styles.thumbnail}
-                            src={story.thumbnail}
-                            alt="썸네일"
-                        />
+                        <ImageComponent filename={story.thumbnail} className={imageComponentStyles.storyPageImg} alt="썸네일" />
                     </div>
                     <p className={styles.content}>{story.content}</p>
                 </div>

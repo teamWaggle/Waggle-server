@@ -7,13 +7,6 @@
     padding: 0;
 }
 
-.simpleStory img {
-    width: 100%;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    height: auto;
-}
-
 .info {
     justify-content: space-between;
     align-items: center;
