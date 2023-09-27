@@ -2,10 +2,9 @@ package com.example.waggle.service.member;
 
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
-import com.example.waggle.dto.member.*;
+import com.example.waggle.dto.member.PetDto;
 import com.example.waggle.exception.CustomAlertException;
 import com.example.waggle.exception.CustomPageException;
-import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.member.PetRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.example.waggle.exception.ErrorCode.*;
+import static com.example.waggle.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.example.waggle.exception.ErrorCode.PET_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

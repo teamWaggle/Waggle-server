@@ -3,9 +3,8 @@ package com.example.waggle.service.board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
-
+import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.exception.CustomPageException;
 import com.example.waggle.exception.ErrorCode;

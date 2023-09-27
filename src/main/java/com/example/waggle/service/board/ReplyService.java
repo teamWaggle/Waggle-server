@@ -8,7 +8,6 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.dto.board.reply.ReplyViewDto;
 import com.example.waggle.dto.board.reply.ReplyWriteDto;
-
 import com.example.waggle.exception.CustomPageException;
 import com.example.waggle.repository.board.comment.CommentRepository;
 import com.example.waggle.repository.board.comment.ReplyRepository;

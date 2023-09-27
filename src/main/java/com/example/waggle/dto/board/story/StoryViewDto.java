@@ -1,13 +1,11 @@
 package com.example.waggle.dto.board.story;
 
 import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.utils.DateUtil;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

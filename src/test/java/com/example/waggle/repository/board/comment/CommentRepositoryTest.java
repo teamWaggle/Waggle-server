@@ -1,9 +1,9 @@
 package com.example.waggle.repository.board.comment;
 
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.comment.MemberMention;
 import com.example.waggle.domain.board.comment.Reply;
-import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

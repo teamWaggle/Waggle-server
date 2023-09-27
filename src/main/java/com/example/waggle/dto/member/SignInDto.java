@@ -1,10 +1,7 @@
 package com.example.waggle.dto.member;
 
-import com.example.waggle.dto.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter

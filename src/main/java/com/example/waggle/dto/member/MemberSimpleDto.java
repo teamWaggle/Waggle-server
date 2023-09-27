@@ -2,12 +2,10 @@ package com.example.waggle.dto.member;
 
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.UploadFile;
-import com.example.waggle.domain.team.TeamMember;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString

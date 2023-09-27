@@ -3,7 +3,6 @@ package com.example.waggle.dto.board.page;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

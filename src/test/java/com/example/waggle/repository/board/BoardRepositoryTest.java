@@ -1,8 +1,8 @@
 package com.example.waggle.repository.board;
 
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

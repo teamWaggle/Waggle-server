@@ -7,7 +7,6 @@ import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
-import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
 import com.example.waggle.repository.member.MemberRepository;
@@ -18,14 +17,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RecommendServiceTest {

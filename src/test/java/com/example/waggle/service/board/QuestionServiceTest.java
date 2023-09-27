@@ -6,7 +6,6 @@ import com.example.waggle.dto.board.answer.AnswerWriteDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
 import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionWriteDto;
-import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.member.MemberService;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class QuestionServiceTest {
 

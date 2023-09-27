@@ -3,7 +3,6 @@ package com.example.waggle.domain.board.comment;
 import com.example.waggle.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

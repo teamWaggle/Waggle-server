@@ -7,11 +7,10 @@ import com.example.waggle.domain.board.boardType.Question;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.answer.AnswerViewDto;
 import com.example.waggle.dto.board.answer.AnswerWriteDto;
-import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
+import com.example.waggle.dto.board.question.QuestionViewDto;
 import com.example.waggle.dto.board.question.QuestionWriteDto;
 import com.example.waggle.exception.CustomPageException;
-
 import com.example.waggle.repository.board.boardtype.AnswerRepository;
 import com.example.waggle.repository.board.boardtype.QuestionRepository;
 import com.example.waggle.service.board.util.UtilService;
