@@ -55,7 +55,6 @@ public class StoryApiController {
             Long storyId = storyService.saveStoryWithThumbnail(storyDto, storeFileName);
             return ResponseEntity.ok(storyId);
         } catch (IOException e) {
-            // 파일 저장 실패 시, 에러 핸들링
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -64,7 +64,7 @@ public class QuestionController {
         MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
         QuestionViewDto questionDto = new QuestionViewDto(username);
 
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
+        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
         model.addAttribute("question", questionDto);
         return "question/writeQuestion";
     }

@@ -1,10 +1,12 @@
 package com.example.waggle.dto.member;
 
 import com.example.waggle.domain.member.Member;
+import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class SignUpDto{
     private String address;
     @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
     private String phone;
+    private UploadFile profileImg;
 
     @Builder.Default
     private List<PetDto> pets = new ArrayList<>();
@@ -42,7 +45,11 @@ public class SignUpDto{
                 .nickname(nickname)
                 .address(address)
                 .phone(phone)
+                .profileImg(profileImg)
                 .roles(roles)
                 .build();
+    }
+    public void changeProfileImg(UploadFile profileImg) {
+        this.profileImg = profileImg;
     }
 }
