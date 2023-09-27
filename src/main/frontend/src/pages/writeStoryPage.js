@@ -6,6 +6,9 @@ import Cookies from 'js-cookie';
 import Preview from '../components/story/Preview';
 import styles from '../styles/writeStoryPage.module.css';
 import '../styles/globalStyles.css';
+import ImageComponent from '../components/ImageComponent';
+import imageComponentStyles from '../styles/ImageComponent.module.css';
+import defaultProfileImg from '../images/defaultProfileImg.png';
 
 import { writeStoryApi } from '../apis/storyApi'
 
@@ -16,13 +19,14 @@ function WriteStory() {
 
     const navigate = useNavigate();
 
-    
+
     const handleUpload = async () => {
         try {
-            const response = await writeStoryApi({
-                content: content,
-                // thumbnail: imageFile
-            });
+
+            const formData = new FormData();
+            formData.append('thumbnail', imageFile);
+            formData.append('storyDto', new Blob([JSON.stringify({ content })], { type: 'application/json' }));
+            const response = await writeStoryApi(formData);
             console.log(response.data);
             navigate('/');
         } catch (error) {
@@ -59,25 +63,16 @@ function WriteStory() {
                     <div className={styles.info}>
                         <div className={styles.infoHeader}>
                             <div className={styles.profile}>
-                                {loginedMember ? (
-                                    loginedMember.profileImg ? (
-                                        <div className={styles.profileImgContainer}>
-                                            <img className={styles.profileImg}
-                                                src={`/images/${loginedMember.profileImg.getStoreFileName()}`}
-                                                alt="프로필 사진"
-                                            />
-                                        </div>
+                                <div className={styles.profileImgContainer}>
+                                    {loginedMember ? (
+                                        loginedMember.profileImg && loginedMember.profileImg.storeFileName
+                                            ? <ImageComponent filename={loginedMember.profileImg.storeFileName} className={imageComponentStyles.mainProfileImg} alt="프로필사진" />
+                                            : <img src={defaultProfileImg} className={styles.profileImg} alt="프로필 사진" />
+
                                     ) : (
-                                        <div className={styles.profileImgContainer}>
-                                            <img className={styles.profileImg}
-                                                src="/images/defaultProfileImg.png"
-                                                alt="프로필 사진"
-                                            />
-                                        </div>
-                                    )
-                                ) : (
-                                    <div>로딩 중...</div>
-                                )}
+                                        <div>로딩 중...</div>
+                                    )}
+                                </div>
                                 {loginedMember && <div>{loginedMember.username}</div>}
                             </div>
                         </div>
