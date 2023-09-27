@@ -29,7 +29,7 @@ import static com.example.waggle.exception.ErrorCode.MUST_WRITE_INFO_SIGN_IN;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/v1/member")
 public class MemberController {
 
     private final MemberService memberService;

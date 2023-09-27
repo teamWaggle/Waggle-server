@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/story")
+@RequestMapping("/v1/story")
 public class StoryController {
 
 

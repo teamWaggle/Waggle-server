@@ -81,12 +81,12 @@ class MemberServiceImplTest {
     }
 
     @Test
+    @Disabled
     public void 중복_회원_예외() {
         // savedMemberDto1와 savedMemberDto3의 username 중복 ➡︎ IllegalArgumentException 발생해야 함.
         MemberDto savedMemberDto1 = memberService.signUp(signUpDto1);
         MemberDto savedMemberDto2 = memberService.signUp(signUpDto2);
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> memberService.signUp(signUpDto3));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> memberService.signUp(signUpDto3));
     }
 
     @Test

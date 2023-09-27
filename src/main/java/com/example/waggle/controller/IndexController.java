@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
@@ -31,27 +32,12 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-public class IndexController {
-
-    private final MemberService memberService;
-    private final StoryService storyService;
+public class IndexController implements ErrorController {
     private final FileStore fileStore;
 
-//    @GetMapping({"/", "/error"})
-//    public String index() {
-//        return "index.html";
-//    }
-
-    @GetMapping("/")
-    public String home(HttpServletRequest request, Model model) {
-
-        List<StorySimpleViewDto> storySimpleViewDtos = storyService.findAllStory();
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(SecurityUtil.getCurrentUsername());
-
-        model.addAttribute("memberSimpleDto", memberSimpleDto);
-        model.addAttribute("storySimpleViewDtos", storySimpleViewDtos);
-
-        return "index";
+    @GetMapping({"/", "/error"})
+    public String index() {
+        return "index.html";
     }
 
     @ResponseBody
