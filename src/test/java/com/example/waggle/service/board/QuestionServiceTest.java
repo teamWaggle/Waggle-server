@@ -3,7 +3,7 @@ package com.example.waggle.service.board;
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.board.question.service.QuestionService;
 import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.board.answer.dto.AnswerWriteDto;
+import com.example.waggle.board.question.dto.AnswerWriteDto;
 import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
 import com.example.waggle.board.question.dto.QuestionViewDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;

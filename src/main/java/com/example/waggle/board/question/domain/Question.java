@@ -1,7 +1,6 @@
 package com.example.waggle.board.question.domain;
 
 import com.example.waggle.board.Board;
-import com.example.waggle.board.answer.domain.Answer;
 import com.example.waggle.media.domain.Media;
 import com.example.waggle.comment.domain.Comment;
 import com.example.waggle.hashtag.domain.BoardHashtag;

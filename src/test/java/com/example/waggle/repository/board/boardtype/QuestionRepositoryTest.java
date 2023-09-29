@@ -1,8 +1,8 @@
 package com.example.waggle.repository.board.boardtype;
 
 
-import com.example.waggle.board.answer.domain.Answer;
-import com.example.waggle.board.answer.repository.AnswerRepository;
+import com.example.waggle.board.question.domain.Answer;
+import com.example.waggle.board.question.repository.AnswerRepository;
 import com.example.waggle.board.question.domain.Question;
 import com.example.waggle.board.question.repository.QuestionRepository;
 import com.example.waggle.member.domain.Member;

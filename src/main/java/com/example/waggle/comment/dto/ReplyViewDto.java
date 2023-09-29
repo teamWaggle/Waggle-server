@@ -1,6 +1,6 @@
-package com.example.waggle.reply.dto;
+package com.example.waggle.comment.dto;
 
-import com.example.waggle.reply.domain.Reply;
+import com.example.waggle.comment.domain.Reply;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

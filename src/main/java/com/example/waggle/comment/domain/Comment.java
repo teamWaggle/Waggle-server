@@ -2,7 +2,6 @@ package com.example.waggle.comment.domain;
 
 import com.example.waggle.commons.component.auditing.BaseEntity;
 import com.example.waggle.board.Board;
-import com.example.waggle.reply.domain.Reply;
 import com.example.waggle.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -30,10 +29,6 @@ public class Comment extends BaseEntity {
 
     @Lob
     private String content;
-
-
-    //@Temporal(TemporalType.TIMESTAMP)
-//    private LocalDateTime createdDate;
 
     @ManyToOne
     @JoinColumn(name = "board_id")

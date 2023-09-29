@@ -3,7 +3,7 @@ package com.example.waggle.recommend.service;
 import com.example.waggle.board.Board;
 import com.example.waggle.recommend.domain.Recommend;
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.board.answer.dto.AnswerViewDto;
+import com.example.waggle.board.question.dto.AnswerViewDto;
 import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
 import com.example.waggle.board.question.dto.QuestionViewDto;
 import com.example.waggle.board.story.dto.StorySimpleViewDto;

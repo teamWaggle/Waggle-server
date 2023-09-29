@@ -8,7 +8,7 @@ import com.example.waggle.member.domain.Member;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.exception.ErrorCode;
 import com.example.waggle.hashtag.repository.HashtagRepository;
-import com.example.waggle.board.answer.repository.AnswerRepository;
+import com.example.waggle.board.question.repository.AnswerRepository;
 import com.example.waggle.board.question.repository.QuestionRepository;
 import com.example.waggle.board.story.repository.StoryRepository;
 import com.example.waggle.member.repository.MemberRepository;

@@ -1,4 +1,4 @@
-package com.example.waggle.team.domain;
+package com.example.waggle.schedule.domain;
 
 import com.example.waggle.commons.component.auditing.BaseEntity;
 import com.example.waggle.schedule.domain.Schedule;

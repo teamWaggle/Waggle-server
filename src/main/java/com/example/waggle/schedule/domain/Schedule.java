@@ -3,7 +3,6 @@ package com.example.waggle.schedule.domain;
 import com.example.waggle.commons.component.auditing.BaseEntity;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.member.domain.ScheduleMember;
-import com.example.waggle.team.domain.Team;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -1,6 +1,6 @@
-package com.example.waggle.reply.repository;
+package com.example.waggle.comment.repository;
 
-import com.example.waggle.reply.domain.Reply;
+import com.example.waggle.comment.domain.Reply;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
