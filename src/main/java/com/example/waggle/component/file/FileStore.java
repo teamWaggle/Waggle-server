@@ -32,7 +32,7 @@ public class FileStore {
     }
 
     public UploadFile storeFile(MultipartFile multipartFile) throws IOException {
-        if (multipartFile.isEmpty()) return null;
+        if (multipartFile == null) return null;
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);   // 서버에 저장하는 파일명
         multipartFile.transferTo(new File(getFullPath(storeFileName)));

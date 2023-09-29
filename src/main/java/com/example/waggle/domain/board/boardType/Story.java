@@ -5,17 +5,13 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.comment.Comment;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
-
-
 import com.example.waggle.domain.member.Member;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
 
 import java.util.List;
 

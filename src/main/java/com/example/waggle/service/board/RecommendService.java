@@ -1,7 +1,7 @@
 package com.example.waggle.service.board;
 
-import com.example.waggle.domain.board.Recommend;
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.Recommend;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.dto.board.answer.AnswerViewDto;
 import com.example.waggle.dto.board.question.QuestionSimpleViewDto;
@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.waggle.exception.ErrorCode.*;
+import static com.example.waggle.exception.ErrorCode.CANNOT_RECOMMEND_MYSELF;
+import static com.example.waggle.exception.ErrorCode.RECOMMEND_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

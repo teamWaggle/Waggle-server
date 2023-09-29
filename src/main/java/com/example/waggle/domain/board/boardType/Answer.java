@@ -1,7 +1,6 @@
 package com.example.waggle.domain.board.boardType;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.boardType.Question;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

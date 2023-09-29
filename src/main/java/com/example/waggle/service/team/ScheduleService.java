@@ -6,7 +6,6 @@ import com.example.waggle.domain.team.ScheduleMember;
 import com.example.waggle.domain.team.Team;
 import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.exception.CustomAlertException;
-import com.example.waggle.exception.ErrorCode;
 import com.example.waggle.repository.member.MemberRepository;
 import com.example.waggle.repository.team.ScheduleRepository;
 import com.example.waggle.repository.team.TeamRepository;

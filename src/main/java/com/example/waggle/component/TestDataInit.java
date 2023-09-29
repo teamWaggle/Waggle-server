@@ -63,7 +63,7 @@ public class TestDataInit {
             Story story = Story.builder()
                     .member(members.get(i - 1))
                     .content("content" + i)
-                    .thumbnail("https://github.com/suddiyo/suddiyo/assets/88311377/438795ab-0623-438e-bf99-e89c92ff4b4f")
+                    .thumbnail("puppy" + i + ".png")
                     .build();
             storyRepository.save(story);
         }

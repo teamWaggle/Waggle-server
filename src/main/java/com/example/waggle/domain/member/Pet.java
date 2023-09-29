@@ -3,10 +3,6 @@ package com.example.waggle.domain.member;
 import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.dto.member.PetDto;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
