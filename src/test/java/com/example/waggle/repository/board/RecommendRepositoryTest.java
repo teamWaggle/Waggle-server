@@ -1,10 +1,11 @@
 package com.example.waggle.repository.board;
 
-import com.example.waggle.domain.board.Recommend;
-import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.member.Member;
-import com.example.waggle.repository.board.boardtype.StoryRepository;
-import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.recommend.domain.Recommend;
+import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.member.domain.Member;
+import com.example.waggle.recommend.repository.RecommendRepository;
+import com.example.waggle.board.story.repository.StoryRepository;
+import com.example.waggle.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

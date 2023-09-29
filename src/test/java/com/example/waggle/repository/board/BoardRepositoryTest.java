@@ -1,9 +1,10 @@
 package com.example.waggle.repository.board;
 
-import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.repository.board.boardtype.StoryRepository;
+import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.hashtag.domain.BoardHashtag;
+import com.example.waggle.hashtag.domain.Hashtag;
+import com.example.waggle.hashtag.repository.HashtagRepository;
+import com.example.waggle.board.story.repository.StoryRepository;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
