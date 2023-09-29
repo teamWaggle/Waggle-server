@@ -1,11 +1,13 @@
 package com.example.waggle.service.member;
 
-import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.component.jwt.JwtToken;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.SignInDto;
-import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.commons.security.JwtToken;
+import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.SignInDto;
+import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.member.repository.MemberRepository;
+import com.example.waggle.member.service.MemberService;
+import com.example.waggle.pet.service.PetService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

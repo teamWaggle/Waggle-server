@@ -1,12 +1,13 @@
 package com.example.waggle.repository.member;
 
-import com.example.waggle.domain.member.Gender;
-import com.example.waggle.domain.member.Pet;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.PetDto;
-import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.service.member.MemberService;
-import com.example.waggle.service.member.PetService;
+import com.example.waggle.member.domain.Gender;
+import com.example.waggle.pet.domain.Pet;
+import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.pet.dto.PetDto;
+import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.pet.repository.PetRepository;
+import com.example.waggle.member.service.MemberService;
+import com.example.waggle.pet.service.PetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
