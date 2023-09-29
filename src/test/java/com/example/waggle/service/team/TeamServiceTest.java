@@ -1,10 +1,11 @@
 package com.example.waggle.service.team;
 
-import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.dto.team.TeamDto;
-import com.example.waggle.service.member.MemberService;
+import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.team.dto.TeamDto;
+import com.example.waggle.member.service.MemberService;
+import com.example.waggle.team.service.TeamService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

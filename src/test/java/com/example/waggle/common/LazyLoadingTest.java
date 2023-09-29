@@ -1,9 +1,9 @@
 package com.example.waggle.common;
 
-import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.boardType.Story;
-import com.example.waggle.domain.board.hashtag.BoardHashtag;
-import com.example.waggle.domain.board.hashtag.Hashtag;
+import com.example.waggle.board.Board;
+import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.hashtag.domain.BoardHashtag;
+import com.example.waggle.hashtag.domain.Hashtag;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -54,7 +54,7 @@ public class LazyLoadingTest {
         log.info("boardHashtags = {}", boardHashtags.getClass().getName()); // boardHashtags = org.hibernate.collection.spi.PersistentBag
 
         // 실제 데이터 로딩
-        log.info("boardHashtag = {}", boardHashtags.get(0).getClass().getName());   // boardHashtag = com.example.waggle.domain.board.hashtag.BoardHashtag
+        log.info("boardHashtag = {}", boardHashtags.get(0).getClass().getName());   // boardHashtag = com.example.waggle.hashtag.domain.BoardHashtag
 
         log.info("hashtag = {}", hashtag.getTag());
 

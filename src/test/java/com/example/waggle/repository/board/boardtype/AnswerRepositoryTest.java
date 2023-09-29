@@ -1,9 +1,11 @@
 package com.example.waggle.repository.board.boardtype;
 
-import com.example.waggle.domain.board.boardType.Answer;
-import com.example.waggle.domain.board.boardType.Question;
-import com.example.waggle.domain.member.Member;
-import com.example.waggle.repository.member.MemberRepository;
+import com.example.waggle.board.answer.domain.Answer;
+import com.example.waggle.board.answer.repository.AnswerRepository;
+import com.example.waggle.board.question.domain.Question;
+import com.example.waggle.board.question.repository.QuestionRepository;
+import com.example.waggle.member.domain.Member;
+import com.example.waggle.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

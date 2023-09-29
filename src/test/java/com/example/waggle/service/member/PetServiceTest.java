@@ -1,11 +1,13 @@
 package com.example.waggle.service.member;
 
-import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.domain.member.Gender;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.PetDto;
-import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.repository.member.PetRepository;
+import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.member.domain.Gender;
+import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.service.MemberService;
+import com.example.waggle.pet.dto.PetDto;
+import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.pet.repository.PetRepository;
+import com.example.waggle.pet.service.PetService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +25,10 @@ class PetServiceTest {
     @Autowired DatabaseCleanUp databaseCleanUp;
     @Autowired PetRepository petRepository;
 
-    @Autowired MemberService memberService;
-    @Autowired PetService petService;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    PetService petService;
 
     private MemberDto savedMemberDto;
     private PetDto savedPetDto;
