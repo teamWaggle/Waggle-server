@@ -2,6 +2,7 @@ package com.example.waggle.media.domain;
 
 import com.example.waggle.commons.component.auditing.BaseTimeEntity;
 import com.example.waggle.board.Board;
+import com.example.waggle.commons.component.file.UploadFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class Media extends BaseTimeEntity {
     @Id @GeneratedValue
     @Column(name = "media_id")
     private Long id;
-    private String url;
+    private UploadFile file;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
@@ -27,9 +28,8 @@ public class Media extends BaseTimeEntity {
         board.getMedias().add(this);
     }
 
-    public void changeURL(String url) {
-        this.url = url;
+    public void changeFile(UploadFile file) {
+        this.file = file;
     }
-
 
 }

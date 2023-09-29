@@ -2,10 +2,10 @@ package com.example.waggle.schedule.controller;
 
 import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.schedule.dto.ScheduleDto;
-import com.example.waggle.team.dto.TeamDto;
+import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.service.MemberService;
 import com.example.waggle.schedule.service.ScheduleService;
-import com.example.waggle.team.service.TeamService;
+import com.example.waggle.schedule.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

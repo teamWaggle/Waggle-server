@@ -1,6 +1,6 @@
-package com.example.waggle.board.answer.repository;
+package com.example.waggle.board.question.repository;
 
-import com.example.waggle.board.answer.domain.Answer;
+import com.example.waggle.board.question.domain.Answer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

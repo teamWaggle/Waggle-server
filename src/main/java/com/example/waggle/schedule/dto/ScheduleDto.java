@@ -2,7 +2,7 @@ package com.example.waggle.schedule.dto;
 
 import com.example.waggle.schedule.domain.Schedule;
 import com.example.waggle.member.domain.ScheduleMember;
-import com.example.waggle.team.domain.Team;
+import com.example.waggle.schedule.domain.Team;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -1,14 +1,14 @@
-package com.example.waggle.team.service;
+package com.example.waggle.schedule.service;
 
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.team.domain.Team;
+import com.example.waggle.schedule.domain.Team;
 import com.example.waggle.member.domain.TeamMember;
 import com.example.waggle.member.dto.MemberDto;
-import com.example.waggle.team.dto.TeamDto;
+import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.repository.MemberRepository;
 import com.example.waggle.schedule.repository.ScheduleRepository;
 import com.example.waggle.member.repository.TeamMemberRepository;
-import com.example.waggle.team.repository.TeamRepository;
+import com.example.waggle.schedule.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

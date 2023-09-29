@@ -31,9 +31,6 @@ public abstract class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     protected Member member;
 
-    //@Temporal(TemporalType.TIMESTAMP) -> 현 jpa버전에서는 자동매핑해주기 때문에 필요없다고 함
-//    protected LocalDateTime createdDate;
-
     @Lob
     protected String content;
 

@@ -1,14 +1,14 @@
 package com.example.waggle.repository.team;
 
-import com.example.waggle.team.domain.Team;
+import com.example.waggle.schedule.domain.Team;
 import com.example.waggle.member.domain.TeamMember;
 import com.example.waggle.member.dto.MemberDto;
 import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.team.dto.TeamDto;
+import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.service.MemberService;
-import com.example.waggle.team.service.TeamService;
+import com.example.waggle.schedule.service.TeamService;
 import com.example.waggle.member.repository.TeamMemberRepository;
-import com.example.waggle.team.repository.TeamRepository;
+import com.example.waggle.schedule.repository.TeamRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

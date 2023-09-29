@@ -1,7 +1,7 @@
 package com.example.waggle.memberMention.domain;
 
 import com.example.waggle.commons.component.auditing.BaseEntity;
-import com.example.waggle.reply.domain.Reply;
+import com.example.waggle.comment.domain.Reply;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

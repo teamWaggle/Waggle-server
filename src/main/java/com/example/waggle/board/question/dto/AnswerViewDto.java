@@ -1,9 +1,9 @@
-package com.example.waggle.board.answer.dto;
+package com.example.waggle.board.question.dto;
 
-import com.example.waggle.board.answer.domain.Answer;
+import com.example.waggle.board.question.domain.Answer;
 import com.example.waggle.member.domain.Member;
 import com.example.waggle.comment.dto.CommentViewDto;
-import com.example.waggle.reply.dto.ReplyViewDto;
+import com.example.waggle.comment.dto.ReplyViewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

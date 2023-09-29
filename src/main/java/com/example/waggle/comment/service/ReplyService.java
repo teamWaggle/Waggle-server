@@ -1,16 +1,16 @@
-package com.example.waggle.reply.service;
+package com.example.waggle.comment.service;
 
 
 import com.example.waggle.comment.domain.Comment;
 import com.example.waggle.memberMention.domain.MemberMention;
-import com.example.waggle.reply.domain.Reply;
+import com.example.waggle.comment.domain.Reply;
 import com.example.waggle.member.domain.Member;
 import com.example.waggle.comment.dto.CommentViewDto;
-import com.example.waggle.reply.dto.ReplyViewDto;
-import com.example.waggle.reply.dto.ReplyWriteDto;
+import com.example.waggle.comment.dto.ReplyViewDto;
+import com.example.waggle.comment.dto.ReplyWriteDto;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.comment.repository.CommentRepository;
-import com.example.waggle.reply.repository.ReplyRepository;
+import com.example.waggle.comment.repository.ReplyRepository;
 import com.example.waggle.member.repository.MemberRepository;
 import com.example.waggle.commons.util.service.UtilService;
 import lombok.RequiredArgsConstructor;

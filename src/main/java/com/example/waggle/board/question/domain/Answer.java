@@ -1,4 +1,4 @@
-package com.example.waggle.board.answer.domain;
+package com.example.waggle.board.question.domain;
 
 import com.example.waggle.board.question.domain.Question;
 import com.example.waggle.board.Board;
@@ -18,8 +18,6 @@ public class Answer extends Board {
     @JoinColumn(name = "question_id")
     private Question question;
 
-
-    //protected -> public change
     public void setQuestion(Question question) {
         this.question = question;
     }

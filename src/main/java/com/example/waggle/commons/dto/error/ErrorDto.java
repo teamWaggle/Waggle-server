@@ -14,5 +14,4 @@ public class ErrorDto {
     private String error;
     private String code;
     private String message;
-
 }
