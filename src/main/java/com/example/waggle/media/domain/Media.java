@@ -17,7 +17,7 @@ public class Media extends BaseTimeEntity {
     @Id @GeneratedValue
     @Column(name = "media_id")
     private Long id;
-    private UploadFile file;
+    private String url;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
@@ -28,8 +28,8 @@ public class Media extends BaseTimeEntity {
         board.getMedias().add(this);
     }
 
-    public void changeFile(UploadFile file) {
-        this.file = file;
+    public void changeUrl(String url) {
+        this.url = url;
     }
 
 }

@@ -20,9 +20,6 @@ public class Sos extends BaseEntity {
     @Column(name = "sos_id")
     private Long id;
 
-    //@Temporal(TemporalType.TIMESTAMP)
-    protected LocalDateTime createdDate;
-
     @Lob
     protected String content;
 
