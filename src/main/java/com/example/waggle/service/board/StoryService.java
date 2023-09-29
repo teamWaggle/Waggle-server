@@ -3,9 +3,8 @@ package com.example.waggle.service.board;
 import com.example.waggle.domain.board.Media;
 import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
-
+import com.example.waggle.dto.board.story.StoryViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
 import com.example.waggle.exception.CustomPageException;
 import com.example.waggle.exception.ErrorCode;
@@ -88,6 +87,30 @@ public class StoryService {
         //member setting
         Member signInMember = utilService.getSignInMember();
 
+        //board setting
+        Story saveStory = saveStoryDto.toEntity(signInMember);
+        storyRepository.save(saveStory);
+
+        //hashtag 저장
+        if(!saveStoryDto.getHashtags().isEmpty()){
+            for (String hashtagContent : saveStoryDto.getHashtags()) {
+                utilService.saveHashtag(saveStory, hashtagContent);
+            }
+        }
+        //media 저장
+        if (!saveStoryDto.getMedias().isEmpty()) {
+            for (String mediaURL : saveStoryDto.getMedias()) {
+                Media.builder().url(mediaURL).board(saveStory).build().linkBoard(saveStory);
+            }
+        }
+        log.info("tag's size is {}", saveStory.getBoardHashtags().size());
+        return saveStory.getId();
+    }
+
+    public Long saveStoryWithThumbnail(StoryWriteDto saveStoryDto, String thumbnail) {
+        //member setting
+        Member signInMember = utilService.getSignInMember();
+        saveStoryDto.changeThumbnail(thumbnail);
         //board setting
         Story saveStory = saveStoryDto.toEntity(signInMember);
         storyRepository.save(saveStory);

@@ -3,7 +3,6 @@ package com.example.waggle.controller;
 import com.example.waggle.component.file.FileStore;
 import com.example.waggle.component.jwt.JwtToken;
 import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.domain.member.UploadFile;
 import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.dto.validation.ValidationSequence;
@@ -20,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
@@ -29,7 +31,7 @@ import static com.example.waggle.exception.ErrorCode.MUST_WRITE_INFO_SIGN_IN;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("/v1/member")
 public class MemberController {
 
     private final MemberService memberService;
@@ -72,20 +74,12 @@ public class MemberController {
     @PostMapping("/sign-up")
     public String signUp(@Validated(ValidationSequence.class) @ModelAttribute("signUpDto") SignUpDto signUpDto,
                          BindingResult bindingResult) throws IOException {
-        log.info("sign Up!");
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
             return "member/signUp";
             //throw new CustomAlertException(MUST_WRITE_INFO_SIGN_UP);
         }
-        // 회원가입
         memberService.signUp(signUpDto);
-
-        // 프로필 사진 설정
-        UploadFile uploadFile = fileStore.storeFile(signUpDto.getProfileImg());
-        if (uploadFile != null) {
-            memberService.changeProfileImg(signUpDto.getUsername(), uploadFile);
-        }
         return "redirect:sign-in";
     }
 

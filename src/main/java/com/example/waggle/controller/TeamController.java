@@ -1,9 +1,7 @@
 package com.example.waggle.controller;
 
 import com.example.waggle.component.jwt.SecurityUtil;
-import com.example.waggle.dto.member.MemberDto;
 import com.example.waggle.dto.member.MemberSimpleDto;
-import com.example.waggle.dto.team.ScheduleDto;
 import com.example.waggle.dto.team.TeamDto;
 import com.example.waggle.service.member.MemberService;
 import com.example.waggle.service.team.TeamService;
@@ -12,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

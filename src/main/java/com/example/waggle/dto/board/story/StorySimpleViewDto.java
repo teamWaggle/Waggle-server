@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,11 +34,10 @@ public class StorySimpleViewDto {
                 .username(story.getMember().getUsername())
                 .profileImg(story.getMember().getProfileImg())
                 .thumbnail(story.getThumbnail())
-                .createdDate(DateUtil.txtDate(story.getCreatedDate()))
+                .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();
-
     }
 
     public void linkRecommend(int count, boolean recommendIt) {

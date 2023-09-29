@@ -1,13 +1,12 @@
 package com.example.waggle.dto.member;
 
+import com.example.waggle.domain.member.Gender;
 import com.example.waggle.domain.member.Member;
 import com.example.waggle.domain.member.Pet;
-import com.example.waggle.domain.member.Gender;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

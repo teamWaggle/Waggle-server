@@ -2,7 +2,6 @@ package com.example.waggle.domain.team;
 
 import com.example.waggle.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.Member;
-import com.example.waggle.dto.team.TeamDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

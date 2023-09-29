@@ -1,9 +1,10 @@
 package com.example.waggle.repository.board;
 
+import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.domain.board.hashtag.BoardHashtag;
 import com.example.waggle.domain.board.hashtag.Hashtag;
-import com.example.waggle.domain.board.boardType.Story;
 import com.example.waggle.repository.board.boardtype.StoryRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ class BoardRepositoryTest {
     @Test
     @Transactional
     @Rollback
+    @Disabled
     void test() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();

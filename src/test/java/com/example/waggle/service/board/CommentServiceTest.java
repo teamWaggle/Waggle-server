@@ -2,12 +2,10 @@ package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.component.DatabaseCleanUp;
-import com.example.waggle.component.jwt.SecurityUtil;
 import com.example.waggle.dto.board.comment.CommentViewDto;
 import com.example.waggle.dto.board.comment.CommentWriteDto;
 import com.example.waggle.dto.board.story.StorySimpleViewDto;
 import com.example.waggle.dto.board.story.StoryWriteDto;
-import com.example.waggle.dto.member.SignInDto;
 import com.example.waggle.dto.member.SignUpDto;
 import com.example.waggle.service.board.util.BoardType;
 import com.example.waggle.service.member.MemberService;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
