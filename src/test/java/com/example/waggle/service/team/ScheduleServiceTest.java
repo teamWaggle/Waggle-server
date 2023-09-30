@@ -68,12 +68,12 @@ class ScheduleServiceTest {
         // schedule 생성
         ScheduleDto scheduleDto1 = ScheduleDto.builder()
                 .title("산책")
-                .scheduleTime(LocalDateTime.now())
+//                .scheduleTime(LocalDateTime.now())
                 .build();
 
         ScheduleDto scheduleDto2 = ScheduleDto.builder()
                 .title("목욕")
-                .scheduleTime(LocalDateTime.now())
+//                .scheduleTime(LocalDateTime.now())
                 .build();
 
         savedScheduleDto1 = scheduleService.addSchedule(scheduleDto1, savedTeamDto2.getId());
@@ -119,7 +119,7 @@ class ScheduleServiceTest {
                 .id(savedScheduleDto1.getId())
                 .title("한강 산책")
                 .description("🐶🐶🐶")
-//                .scheduleTime(LocalDateTime.of(2023, 5, 26, 19, 30))
+                .scheduleTime(LocalDateTime.of(2023, 5, 26, 19, 30))
                 .build();
         List<MemberDto> memberDtos = new ArrayList<>();
         memberDtos.add(savedMemberDto1);
