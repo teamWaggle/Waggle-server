@@ -20,8 +20,8 @@ spring:
 #    open-in-view: false
 
   profiles:
-    include:
-      - security
+    active:
+      - real
 
 
 logging.level:
