@@ -20,8 +20,13 @@ spring:
 #    open-in-view: false
 
   profiles:
-    include: security
+    include:
+      - security
+      - real
 
+#  config:
+#    import:
+#      - /home/ec2-user/app/application-security.yml
 
 logging.level:
   org.hibernate.SQL: debug
