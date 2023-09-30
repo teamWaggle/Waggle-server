@@ -119,7 +119,7 @@ class ScheduleServiceTest {
                 .id(savedScheduleDto1.getId())
                 .title("한강 산책")
                 .description("🐶🐶🐶")
-                .scheduleTime(LocalDateTime.of(2023, 5, 26, 19, 30))
+//                .scheduleTime(LocalDateTime.of(2023, 5, 26, 19, 30))
                 .build();
         List<MemberDto> memberDtos = new ArrayList<>();
         memberDtos.add(savedMemberDto1);
