@@ -38,3 +38,6 @@ out/
 
 ### Security ###
 application-security.yml
+
+### DB ###
+application-real-db.yml

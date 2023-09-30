@@ -40,9 +40,9 @@ public class TestDataInit {
 
     @PostConstruct
     public void init() {
-        initMember();
-        initStory();
-        initTeamAndSchedule();
+//        initMember();
+//        initStory();
+//        initTeamAndSchedule();
     }
 
     public void initMember() {
