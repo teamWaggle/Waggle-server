@@ -1,17 +1,17 @@
 spring:
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/waggle?useSSL=true&useUnicode=true&serverTimezone=Asia/Seoul
-#    username: root
-#    password: springproject
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://localhost:3306/waggle?useSSL=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: springproject
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   devtools:
     livereload:
       enabled: true
 
   jpa:
-#    hibernate:
-#      ddl-auto: create
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         #show_sql: true
@@ -19,14 +19,6 @@ spring:
         default_batch_fetch_size: 100
 #    open-in-view: false
 
-  profiles:
-    include:
-      - security
-      - real
-
-#  config:
-#    import:
-#      - /home/ec2-user/app/application-security.yml
 
 logging.level:
   org.hibernate.SQL: debug
