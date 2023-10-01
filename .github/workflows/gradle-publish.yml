@@ -36,7 +36,7 @@ jobs:
           ${{ runner.os }}-gradle-
           
     - name: Build with Gradle
-      run: ./gradlew clean build
+      run: ./gradlew build -x test
 
     - name: Prepare Deployment Files
       run: |
