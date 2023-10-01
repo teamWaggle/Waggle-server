@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Security ###
+application-security.yml
+
+### DB ###
+application-real-db.yml

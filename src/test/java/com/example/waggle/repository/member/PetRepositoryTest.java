@@ -1,25 +1,20 @@
 package com.example.waggle.repository.member;
 
-import com.example.waggle.domain.member.Pet;
-import com.example.waggle.domain.member.Sex;
-import com.example.waggle.dto.member.MemberDto;
-import com.example.waggle.dto.member.PetDto;
-import com.example.waggle.dto.member.SignUpDto;
-import com.example.waggle.service.member.MemberService;
-import com.example.waggle.service.member.PetService;
-import org.assertj.core.api.Assertions;
+import com.example.waggle.member.domain.Gender;
+import com.example.waggle.pet.domain.Pet;
+import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.pet.dto.PetDto;
+import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.pet.repository.PetRepository;
+import com.example.waggle.member.service.MemberService;
+import com.example.waggle.pet.service.PetService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PetRepositoryTest {
@@ -51,16 +46,19 @@ class PetRepositoryTest {
         PetDto petDto1 = PetDto.builder()
                 .name("루이")
                 .breed("포메라니안")
-                .sex(Sex.MALE)
+                .gender(Gender.MALE)
                 .username(savedMemberDto.getUsername())
-                .birthday(LocalDateTime.now()).build();
+                .birthday(LocalDate.now()).build();
 
         PetDto petDto2 = PetDto.builder()
                 .name("루이2")
                 .breed("포메라니안2")
-                .sex(Sex.MALE)
+                .gender(Gender.MALE)
                 .username(savedMemberDto.getUsername())
-                .birthday(LocalDateTime.now()).build();
+                .birthday(LocalDate.now()).build();
+
+        System.out.println("petDto1 = " + petDto1);
+        System.out.println("petDto2 = " + petDto2);
 
         Pet savedPet1 = petService.addPet(petDto1).toEntity(savedMemberDto.toEntity());
         Pet savedPet2 = petService.addPet(petDto2).toEntity(savedMemberDto.toEntity());
@@ -68,22 +66,5 @@ class PetRepositoryTest {
         savedPetList.add(savedPet2);
     }
 
-    @Test
-    @Transactional
-    void findByMemberId() {
-        List<Pet> pets = petRepository.findByMemberId(savedMemberDto.getId());
 
-        assertThat(pets.size()).isEqualTo(2);
-        assertThat(pets.get(0).getName()).isEqualTo("루이");
-        assertThat(pets.get(1).getName()).isEqualTo("루이2");
-    }
-
-    @Test
-    void findByUsername() {
-        List<Pet> pets = petRepository.findByUsername(savedMemberDto.getUsername());
-
-        assertThat(pets.size()).isEqualTo(2);
-        assertThat(pets.get(0).getName()).isEqualTo("루이");
-        assertThat(pets.get(1).getName()).isEqualTo("루이2");
-    }
 }

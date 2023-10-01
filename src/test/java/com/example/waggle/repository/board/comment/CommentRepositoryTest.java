@@ -1,18 +1,21 @@
 package com.example.waggle.repository.board.comment;
 
-import com.example.waggle.domain.board.comment.Comment;
-import com.example.waggle.domain.board.comment.MemberMention;
-import com.example.waggle.domain.board.comment.Reply;
-import com.example.waggle.domain.board.Story;
-import com.example.waggle.repository.board.boardtype.StoryRepository;
+import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.comment.domain.Comment;
+import com.example.waggle.comment.repository.CommentRepository;
+import com.example.waggle.memberMention.domain.MemberMention;
+import com.example.waggle.memberMention.repository.MemberMentionRepository;
+import com.example.waggle.comment.domain.Reply;
+import com.example.waggle.board.story.repository.StoryRepository;
+import com.example.waggle.comment.repository.ReplyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,9 +35,10 @@ class CommentRepositoryTest {
     //board-comment-reply check
     @Test
     @Transactional
+    @Rollback
     void test() {
 
-        Story testStory = Story.builder().thumbnail("@hann").recommend(1).content("Board test Repository").build();
+        Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
         storyRepository.save(testStory);
 
         Reply reply1 = Reply.builder().content("reply!").build();
@@ -66,12 +70,12 @@ class CommentRepositoryTest {
     //board-comment-reply-memberMention check
     @Test
     @Transactional
+    @Rollback
     void testMention() {
 
-        Story testStory = Story.builder().thumbnail("@hann").recommend(1).content("Board test Repository").build();
+        Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
         Story save = storyRepository.save(testStory);
 
-        assertThat(save.getId()).isEqualTo(1);
 
         //comment
         Comment hello = Comment.builder().board(testStory).content("hello").build();
@@ -107,15 +111,11 @@ class CommentRepositoryTest {
         //reply-memberMention link
         reply1.addMemberMention(hann);
 
-        //find
-//        Optional<Story> byBoardId = storyRepository.findByBoardId(save.getId());
-////        List<Comment> commentByBoardId = commentRepository.findByBoardId(save.getId());
-////        assertThat(commentByBoardId.size()).isEqualTo(2);
-//        assertThat(byBoardId.get().getComments().size()).isEqualTo(2);
-//        assertThat(byBoardId.get().getComments().get(0).getReplies().get(0).getContent()).isEqualTo("reply!");
+        List<Reply> all = replyRepository.findAll();
+        assertThat(all.size()).isEqualTo(2);
+        assertThat(all.get(0).getComment().getContent()).isEqualTo("hello");
 
 
-        //assertThat(by)
     }
 
 }
