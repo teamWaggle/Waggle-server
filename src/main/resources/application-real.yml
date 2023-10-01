@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    include:
+      - security
+      - real-db
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect

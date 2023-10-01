@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}" href="../../../static/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+
+        .profile-section {
+            margin-bottom: 20px;
+        }
+
+        .image-section {
+            margin-bottom: 10px;
+        }
+
+        .hashtag-section {
+            margin-bottom: 0;
+        }
+
+        .hashtag-section input[type="text"] {
+            height: 60px;
+            padding-top: 3px;
+        }
+
+        .content-section {
+            margin-top: 0;
+        }
+
+        .upload-button {
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+
+    <title>Waggle</title>
+</head>
+<body>
+
+<th:block th:replace="fragments/header.html :: fragment-header"></th:block>
+
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>스토리 작성</h2>
+    </div>
+    <form th:action="@{/story/write}" th:object="${storyDto}" method="post">
+        <div class="row">
+            <div class="col-md-4 left-column">
+                <div class="profile-section">
+                    <link rel="stylesheet" href="/css/writeStory.css">
+
+                    <div class="row align-items-center">
+                        <div class="col-auto" style="padding-right: 0;">
+                            <th:block th:if="${profileImg}">
+                                <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
+                                    <img th:src="|/images/${profileImg.getStoreFileName()}|" alt="프로필 사진"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </th:block>
+                            <th:block th:unless="${profileImg}">
+                                <!-- 등록된 프로필 사진이 없을 경우 기본 사진 표시 -->
+                                <div style="width: 30px; height: 30px; border-radius: 50%; overflow: hidden;">
+                                    <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="col" style="padding-right: 0; font-size: 15px"
+                             th:text="*{username}"></div>
+                    </div>
+                </div>
+                <div class="image-section">
+                    <input type="file" name="photo" class="form-control-file" style="width: 200px; height: 200px;">
+                </div>
+                <div class="hashtag-section" style="margin-bottom: 20px;">
+                    <input type="text" name="hashtag" class="form-control" placeholder="해시태그를 입력해주세요."
+                           style="width: 200px; height: 60px;">
+                </div>
+            </div>
+
+            <input type="hidden" name="username" th:value="*{username}">
+            <input type="hidden" name="profileImg" th:value="${profileImg}">
+
+            <div class="col-md-8 right-column">
+            <textarea th:field="*{content}" name="content" rows="10" class="form-control" placeholder="내용을 입력해주세요."
+                      style="width:330px; height: 330px; margin-top: -10px; margin-left: 30px"></textarea>
+                <div class="upload-button">
+                    <button type="submit" class="btn btn-primary" style="margin-right: 0">스토리 업로드</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
