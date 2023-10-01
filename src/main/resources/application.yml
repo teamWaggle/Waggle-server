@@ -17,7 +17,8 @@ spring:
         #show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
-#    open-in-view: false
+        dialect: org.hibernate.dialect.MySQLDialect
+  #    open-in-view: false
 
   profiles:
     include:
