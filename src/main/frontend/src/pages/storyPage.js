@@ -25,7 +25,7 @@ function Story() {
             }
         };
         fetchStory();
-    }, []);
+    }, [boardId, username]);
 
     return (
         <div className="page-container">
