@@ -1,6 +1,4 @@
 import React from 'react';
-import styles from '../styles/ImageComponent.module.css';
-
 
 function ImageComponent({ filename, className, onClick }) {
   return (
