@@ -2,7 +2,6 @@ import React from 'react';
 
 import userIcon from '../../images/user.png';
 import passwordIcon from '../../images/password.png';
-import birthdayIcon from '../../images/birthday.png';
 import phoneIcon from '../../images/phone.png';
 import pawIcon from '../../images/paw.png';
 
