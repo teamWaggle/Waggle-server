@@ -3,10 +3,10 @@ package com.example.waggle.service.member;
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.member.domain.Gender;
-import com.example.waggle.member.dto.MemberDetailDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
+import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.member.service.MemberService;
 import com.example.waggle.pet.dto.PetDto;
-import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.pet.repository.PetRepository;
 import com.example.waggle.pet.service.PetService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +32,8 @@ class PetServiceTest {
     @Autowired
     PetService petService;
 
-    private MemberDetailDto savedMemberDetailDto;
-    private PetDto savedPetDto;
+    private MemberSummaryDto memberSummaryDto;
+    private Long savedPetId;
 
     @BeforeEach
     void beforeEach() {
@@ -45,17 +45,17 @@ class PetServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        savedMemberDetailDto = memberService.signUp(signUpDto, null);
+        memberSummaryDto = memberService.signUp(signUpDto, null);
 
         // pet 저장
         PetDto petDto = PetDto.builder()
                 .name("루이")
                 .breed("포메라니안")
                 .gender(Gender.MALE)
-                .username(savedMemberDetailDto.getUsername())
+                .username(memberSummaryDto.getUsername())
                 .birthday(LocalDate.now()).build();
 
-        savedPetDto = petService.createPet(petDto);
+        savedPetId = petService.createPet(petDto);
     }
 
     @AfterEach
@@ -66,8 +66,8 @@ class PetServiceTest {
     @Test
     void findByPetId() {
         // petId로 조회
-        PetDto findPet = petService.getPetById(savedPetDto.getId());
-        assertThat(savedPetDto).usingRecursiveComparison().isEqualTo(findPet);  // 객체의 참조 값이 동등하지 않을 때 필드 값을 비교
+        PetDto findPet = petService.getPetById(savedPetId);
+        assertThat(savedPetId).isEqualTo(findPet.getId());
     }
 
     @Test
@@ -79,7 +79,8 @@ class PetServiceTest {
                 .gender(Gender.MALE)
                 .birthday(LocalDate.of(2016, 9, 17)).build();
 
-        PetDto updatedPetDto = petService.updatePet(savedPetDto.getId(), updatePetDto);
+        Long updatedPetId = petService.updatePet(savedPetId, updatePetDto);
+        PetDto updatedPetDto = petService.getPetById(updatedPetId);
         assertThat(updatedPetDto.getName()).isEqualTo(updatePetDto.getName());
 
         // repository에서 member 조회시 펫 수정 확인
@@ -90,9 +91,9 @@ class PetServiceTest {
     @Test
     void removePet() {
         // pet 삭제
-        petService.deletePet(savedPetDto.getId());
+        petService.deletePet(savedPetId);
 
-        Assertions.assertThrows(CustomAlertException.class, () -> petService.getPetById(savedPetDto.getId()));
+        Assertions.assertThrows(CustomAlertException.class, () -> petService.getPetById(savedPetId));
 
 //        List<PetDto> tmp = petService.findByMemberId(savedMemberDto.getId());
 //        assertThat(tmp.size()).isEqualTo(0);

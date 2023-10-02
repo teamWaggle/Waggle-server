@@ -6,9 +6,9 @@ public interface PetService {
 
     PetDto getPetById(Long petId);
 
-    PetDto createPet(PetDto petDto);
+    Long createPet(PetDto petDto);
 
-    PetDto updatePet(Long petId, PetDto petDto);
+    Long updatePet(Long petId, PetDto petDto);
 
     void deletePet(Long petId);
 }

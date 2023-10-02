@@ -5,7 +5,6 @@ import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.commons.security.JwtToken;
 import com.example.waggle.commons.security.JwtTokenProvider;
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignInDto;
 import com.example.waggle.member.dto.SignUpDto;
@@ -56,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberDetailDto signUp(SignUpDto signUpDto, UploadFile profileImg) {
+    public MemberSummaryDto signUp(SignUpDto signUpDto, UploadFile profileImg) {
         if (memberRepository.existsByUsername(signUpDto.getUsername())) {
             throw new CustomAlertException(ALREADY_USING_USERNAME);
         }
@@ -65,18 +64,18 @@ public class MemberServiceImpl implements MemberService {
         List<String> roles = new ArrayList<>();
         roles.add(DEFAULT_ROLE);
 
-        Member savedMember = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
-        updateProfileImg(savedMember.getUsername(), profileImg);
+        Member member = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
+        updateProfileImg(member.getUsername(), profileImg);
 
 
         List<PetDto> petDtos = signUpDto.getPets();
-        List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(savedMember)).collect(Collectors.toList());
+        List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(member)).collect(Collectors.toList());
         for (Pet pet : pets) {
             petRepository.save(pet);
         }
-        savedMember.setPets(pets);
+        member.setPets(pets);
 
-        return MemberDetailDto.toDto(savedMember);
+        return MemberSummaryDto.toDto(member);
     }
 
     @Override
@@ -86,17 +85,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberSummaryDto getMemberSummaryDto(String username) {
-        Member findMember = memberRepository.findByUsername(username)
+        Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
-        return MemberSummaryDto.toDto(findMember);
+        return MemberSummaryDto.toDto(member);
     }
 
     @Override
     @Transactional
-    public MemberDetailDto updateProfileImg(String username, UploadFile profileImg) {
-        Member findMember = memberRepository.findByUsername(username)
+    public Long updateProfileImg(String username, UploadFile profileImg) {
+        Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
-        findMember.changeProfileImg(profileImg);
-        return MemberDetailDto.toDto(findMember);
+        member.changeProfileImg(profileImg);
+        return member.getId();
     }
 }

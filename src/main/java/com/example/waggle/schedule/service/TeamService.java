@@ -1,7 +1,7 @@
 package com.example.waggle.schedule.service;
 
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.dto.MemberDetailDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.schedule.domain.Team;
 import com.example.waggle.schedule.dto.TeamDto;
 
@@ -14,13 +14,13 @@ public interface TeamService {
 
     TeamDto getTeamById(Long teamId);
 
-    List<MemberDetailDto> getTeamMembers(Long teamId);
+    List<MemberSummaryDto> getTeamMembers(Long teamId);
 
-    TeamDto createTeam(TeamDto teamDto, String username);
+    Long createTeam(TeamDto teamDto, String username);
 
-    TeamDto addMember(Long teamId, String username);
+    Long addMember(Long teamId, String username);
 
-    TeamDto updateTeam(Long teamId, TeamDto updateTeamDto);
+    Long updateTeam(Long teamId, TeamDto updateTeamDto);
 
     void deleteTeam(Long teamId);
 

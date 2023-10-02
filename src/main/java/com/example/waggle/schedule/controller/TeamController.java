@@ -39,24 +39,15 @@ public class TeamController {
     @PostMapping("/create")
     public ResponseEntity<?> createTeam(@RequestParam String name) {
         TeamDto teamDto = TeamDto.builder().name(name).build();
-        TeamDto createdTeamDto = teamService.createTeam(teamDto, SecurityUtil.getCurrentUsername());
-        if (createdTeamDto != null) {
-            return ResponseEntity.ok(createdTeamDto);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create team");
-        }
+        Long createdTeamDto = teamService.createTeam(teamDto, SecurityUtil.getCurrentUsername());
+        return ResponseEntity.ok(createdTeamDto);
     }
 
     @PostMapping("/update")
     public ResponseEntity<?> updateTeam(@RequestParam Long teamId, @RequestParam String name) {
         TeamDto teamDto = TeamDto.builder().name(name).build();
-        TeamDto updatedTeamDto = teamService.updateTeam(teamId, teamDto);
-
-        if (updatedTeamDto != null) {
-            return ResponseEntity.ok(updatedTeamDto);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update team");
-        }
+        Long updatedTeamDto = teamService.updateTeam(teamId, teamDto);
+        return ResponseEntity.ok(updatedTeamDto);
     }
 
     @PostMapping("/delete")
@@ -90,12 +81,8 @@ public class TeamController {
 
     @PostMapping("/addMember")
     public ResponseEntity<String> addMember(@RequestParam Long teamId, @RequestParam String username) {
-        TeamDto teamDto = teamService.addMember(teamId, username);
-        if (teamDto != null) {
-            return ResponseEntity.ok("Team member added successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add team member");
-        }
+        teamService.addMember(teamId, username);
+        return ResponseEntity.ok("Team member added successfully");
     }
 
     @PostMapping("/removeMember")

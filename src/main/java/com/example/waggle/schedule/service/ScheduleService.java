@@ -10,9 +10,9 @@ public interface ScheduleService {
 
     List<ScheduleDto> getSchedulesByTeamId(Long teamId);
 
-    ScheduleDto createSchedule(ScheduleDto scheduleDto, Long teamId);
+    Long createSchedule(ScheduleDto scheduleDto, Long teamId);
 
-    ScheduleDto updateSchedule(ScheduleDto scheduleDto);
+    Long updateSchedule(ScheduleDto scheduleDto);
 
     void deleteSchedule(Long scheduleId);
 }
