@@ -17,71 +17,59 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 import static com.example.waggle.commons.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UtilService utilService;
 
-    //1. 조회
-    //p1. 나중에 생성 역순으로 나열해야함
     @Override
-    public List<CommentViewDto> findComments(Long boardId) {
+    public List<CommentViewDto> getComments(Long boardId) {
         List<Comment> commentsByBoardId = commentRepository.findByBoardId(boardId);
         return commentsByBoardId.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
     }
 
-    //2. 저장
+    @Transactional
     @Override
-    public Long saveComment(Long boardId, CommentWriteDto writeDto, BoardType boardType) {
+    public Long createComment(Long boardId, CommentWriteDto commentWriteDto, BoardType boardType) {
         Member signInMember = utilService.getSignInMember();
         Board board = utilService.getBoard(boardId, boardType);
-        Comment saveComment = writeDto.toEntity(signInMember, board);
-        Comment save = commentRepository.save(saveComment);
-        return save.getId();
-    }
-
-    //3. 수정
-    // question
-    @Override
-    public Long editComment(CommentViewDto viewDto, CommentWriteDto writeDto) {
-        //check exist comment
-        Comment comment = commentRepository.findById(viewDto.getId())
-                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
-
-        //edit
-        comment.changeContent(writeDto.getContent());
-
+        Comment comment = commentRepository.save(commentWriteDto.toEntity(signInMember, board));
         return comment.getId();
     }
 
-
-    //3.1 check member
+    @Transactional
     @Override
-    public boolean checkMember(CommentViewDto viewDto) {
+    public Long updateComment(Long commentId, CommentWriteDto commentWriteDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
+        comment.changeContent(commentWriteDto.getContent());
+        return comment.getId();
+    }
+
+    @Override
+    public boolean validateMember(Long commentId) {
         Member signInMember = utilService.getSignInMember();
-        Comment comment = commentRepository.findById(viewDto.getId())
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
         return comment.getMember().equals(signInMember);
     }
 
-    // 4. 삭제
-    // 아래에서 따로 멤버 검증이 없는 이유는
-    // 어차피 레포지토리에서 데이터를 가져올 때 멤버를 필터로 사용하기 때문이다.
+    @Transactional
     @Override
-    public void deleteComment(CommentViewDto viewDto) {
+    public void deleteComment(Long commentId) {
         Member signInMember = utilService.getSignInMember();
-        //check exist comment
-        Comment comment = commentRepository.findById(viewDto.getId())
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
-        if (comment.getMember().equals(signInMember)) {
-            log.info("delete completely!");
-            commentRepository.delete(comment);
+        if (!validateMember(commentId)) {
+            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
+        commentRepository.delete(comment);
     }
 }

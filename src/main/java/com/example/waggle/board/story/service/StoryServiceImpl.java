@@ -103,8 +103,8 @@ public class StoryServiceImpl implements StoryService {
 
     @Transactional
     @Override
-    public Long updateStory(StoryWriteDto storyWriteDto) {
-        Story story = storyRepository.findById(storyWriteDto.getId())
+    public Long updateStory(Long boardId, StoryWriteDto storyWriteDto) {
+        Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
 

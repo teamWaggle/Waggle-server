@@ -17,7 +17,7 @@ public interface StoryService {
 
     Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail);
 
-    Long updateStory(StoryWriteDto storyWriteDto);
+    Long updateStory(Long storyId, StoryWriteDto storyWriteDto);
 
     StoryWriteDto getStoryWriteDtoByBoardId(Long boardId);
 

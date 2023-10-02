@@ -128,8 +128,8 @@ class CommentServiceTest {
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
         //when
-        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getContent()).isEqualTo("comment1");
@@ -142,14 +142,14 @@ class CommentServiceTest {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         List<CommentViewDto> editComments = new ArrayList<>();
 
         //when
-        if (commentService.checkMember(comments.get(0))) {
-            commentService.editComment(comments.get(0), commentWriteDto2);
-             editComments = commentService.findComments(storySummaryDto.getId());
+        if (commentService.validateMember(comments.get(0).getId())) {
+            commentService.updateComment(comments.get(0).getId(), commentWriteDto2);
+             editComments = commentService.getComments(storySummaryDto.getId());
         }
 
         //then
@@ -166,13 +166,13 @@ class CommentServiceTest {
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
-        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
 
         //when
         log.info("boardId is {}", comments.get(0).getId());
-        commentService.deleteComment(comments.get(0));
-        List<CommentViewDto> deleteComments = commentService.findComments(storySummaryDto.getId());
+        commentService.deleteComment(comments.get(0).getId());
+        List<CommentViewDto> deleteComments = commentService.getComments(storySummaryDto.getId());
         //then
         assertThat(deleteComments.size()).isEqualTo(0);
 

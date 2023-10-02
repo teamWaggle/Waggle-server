@@ -69,7 +69,7 @@ public class StoryApiController {
     )
     @PostMapping("/edit/{boardId}")
     public ResponseEntity<?> singleStoryEdit(@ModelAttribute StoryWriteDto storyDto, @PathVariable Long boardId) {
-        storyService.updateStory(storyDto);
+        storyService.updateStory(boardId, storyDto);
         return ResponseEntity.ok(boardId);  //TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
 

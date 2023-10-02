@@ -166,7 +166,7 @@ class StoryServiceTest {
                 .build();
         //when
         boolean isSameUser = storyService.validateMember(id);
-        storyService.updateStory(editDto);
+        storyService.updateStory(id, editDto);
         StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(id);
 
         //then
