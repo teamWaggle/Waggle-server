@@ -21,13 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.waggle.commons.exception.ErrorCode.COMMENT_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.REPLY_NOT_FOUND;
+import static com.example.waggle.commons.exception.ErrorCode.*;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
+
 @Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Service
 public class ReplyServiceImpl implements ReplyService {
 
     private final MemberRepository memberRepository;
@@ -35,32 +35,23 @@ public class ReplyServiceImpl implements ReplyService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
-
-    //1. 조회
-    @Transactional(readOnly = true)
     @Override
-    public List<ReplyViewDto> findReplies(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
-        return comment.getReplies().stream()
-                .map(ReplyViewDto::toDto).collect(Collectors.toList());
+    public List<ReplyViewDto> getReplies(Long commentId) {
+        List<Reply> replies = replyRepository.findByCommentId(commentId);
+        return replies.stream().map(ReplyViewDto::toDto).collect(Collectors.toList());
     }
-
-    //2. 저장
+    @Transactional
     @Override
-    public Long saveReply(CommentViewDto commentViewDto, ReplyWriteDto replyWriteDto) {
+    public Long createReply(Long commentId, ReplyWriteDto replyWriteDto) {
         Member member = utilService.getSignInMember();
 
-        //check exist
-        Comment comment = commentRepository.findById(commentViewDto.getId())
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
 
-        //SAVE reply and LINK member&comment
         Reply reply = replyWriteDto.toEntity(member);
         comment.addReply(reply);
         replyRepository.save(reply);
 
-        //auto persist
         for (String mentionMember : replyWriteDto.getMentionMembers()) {
             if (memberRepository.existsByUsername(mentionMember)) {
                 reply.addMemberMention(MemberMention.builder()
@@ -68,27 +59,17 @@ public class ReplyServiceImpl implements ReplyService {
                         .build()
                 );
             }
-            log.info("not exist member username!");
         }
 
         return reply.getId();
     }
 
-    //3. 수정
+    @Transactional
     @Override
-    public boolean checkMember(ReplyViewDto viewDto) {
-        Member member = utilService.getSignInMember();
-        Reply reply = replyRepository.findById(viewDto.getId())
+    public Long updateReply(Long replyId, ReplyWriteDto replyWriteDto) {
+        Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
-        return reply.getMember().equals(member);
-    }
 
-    @Override
-    public Long changeReply(ReplyViewDto replyViewDto, ReplyWriteDto replyWriteDto) {
-        //find
-        Reply reply = replyRepository.findById(replyViewDto.getId())
-                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
-        //edit
         reply.changeContent(replyWriteDto.getContent());
         reply.getMemberMentions().clear();
         for (String mentionMember : replyWriteDto.getMentionMembers()) {
@@ -98,21 +79,27 @@ public class ReplyServiceImpl implements ReplyService {
                         .build()
                 );
             }
-            log.info("not exist member username!");
         }
         return reply.getId();
     }
 
-    //4. 삭제
+    @Transactional
     @Override
-    public void deleteReply(ReplyViewDto viewDto) {
-        Member member = utilService.getSignInMember();
-        Reply reply = replyRepository.findById(viewDto.getId())
+    public void deleteReply(Long replyId) {
+        Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
-        if (reply.getMember().equals(member)) {
-            log.info("delete completely!");
-            replyRepository.delete(reply);
+        if (!validateMember(replyId)) {
+            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
+        replyRepository.delete(reply);
+    }
+
+    @Override
+    public boolean validateMember(Long replyId) {
+        Member member = utilService.getSignInMember();
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
+        return reply.getMember().equals(member);
     }
 
 }

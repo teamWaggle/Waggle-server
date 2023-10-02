@@ -156,7 +156,7 @@ class ReplyServiceTest {
         commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
         //reply set
         List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
-        replyService.saveReply(comments.get(0), replyWriteDto1);
+        replyService.createReply(comments.get(0).getId(), replyWriteDto1);
 
     }
 
@@ -169,7 +169,7 @@ class ReplyServiceTest {
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
         List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         //when
-        List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
+        List<ReplyViewDto> replies = replyService.getReplies(comments.get(0).getId());
         //then
         assertThat(replies.size()).isEqualTo(1);
         assertThat(replies.get(0).getMentionMembers().size()).isEqualTo(2);
@@ -183,11 +183,11 @@ class ReplyServiceTest {
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
         List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
-        List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
+        List<ReplyViewDto> replies = replyService.getReplies(comments.get(0).getId());
         //when
-        replyService.changeReply(replies.get(0), replyWriteDto2);
+        replyService.updateReply(replies.get(0).getId(), replyWriteDto2);
         //then
-        List<ReplyViewDto> editReplies = replyService.findReplies(comments.get(0).getId());
+        List<ReplyViewDto> editReplies = replyService.getReplies(comments.get(0).getId());
         assertThat(editReplies.get(0).getContent()).isEqualTo("reply2");
         assertThat(editReplies.get(0).getMentionMembers().get(0)).isEqualTo("user3");
 
@@ -200,13 +200,13 @@ class ReplyServiceTest {
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
         List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
-        List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
+        List<ReplyViewDto> replies = replyService.getReplies(comments.get(0).getId());
 
         //when
-        replyService.deleteReply(replies.get(0));
+        replyService.deleteReply(replies.get(0).getId());
 
         //then
-        List<ReplyViewDto> afterDeleteReplies = replyService.findReplies(comments.get(0).getId());
+        List<ReplyViewDto> afterDeleteReplies = replyService.getReplies(comments.get(0).getId());
         assertThat(afterDeleteReplies.size()).isEqualTo(0);
     }
 }

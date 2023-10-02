@@ -13,7 +13,7 @@ public interface CommentService {
 
     Long updateComment(Long commentId, CommentWriteDto commentWriteDto);
 
-    boolean validateMember(Long commentId);
-
     void deleteComment(Long commentId);
+
+    boolean validateMember(Long commentId);
 }

@@ -31,8 +31,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentViewDto> getComments(Long boardId) {
-        List<Comment> commentsByBoardId = commentRepository.findByBoardId(boardId);
-        return commentsByBoardId.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
+        List<Comment> comments = commentRepository.findByBoardId(boardId);
+        return comments.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -53,23 +53,22 @@ public class CommentServiceImpl implements CommentService {
         return comment.getId();
     }
 
-    @Override
-    public boolean validateMember(Long commentId) {
-        Member signInMember = utilService.getSignInMember();
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
-        return comment.getMember().equals(signInMember);
-    }
-
     @Transactional
     @Override
     public void deleteComment(Long commentId) {
-        Member signInMember = utilService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
         if (!validateMember(commentId)) {
             throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         commentRepository.delete(comment);
+    }
+
+    @Override
+    public boolean validateMember(Long commentId) {
+        Member signInMember = utilService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
+        return comment.getMember().equals(signInMember);
     }
 }
