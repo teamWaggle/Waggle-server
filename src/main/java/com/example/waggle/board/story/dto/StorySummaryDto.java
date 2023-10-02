@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StorySimpleViewDto {
+public class StorySummaryDto {
 
     private Long id;
     private String username;
@@ -28,8 +28,8 @@ public class StorySimpleViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public StorySimpleViewDto toDto(Story story) {
-        return StorySimpleViewDto.builder()
+    static public StorySummaryDto toDto(Story story) {
+        return StorySummaryDto.builder()
                 .id(story.getId())
                 .username(story.getMember().getUsername())
                 .profileImg(story.getMember().getProfileImg())

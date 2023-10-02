@@ -1,27 +1,27 @@
 package com.example.waggle.board.story.service;
 
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
-import com.example.waggle.board.story.dto.StoryViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 
 import java.util.List;
 
 public interface StoryService {
-    public List<StorySimpleViewDto> findAllStory();
+    List<StorySummaryDto> getStories();
 
-    public List<StorySimpleViewDto> findAllStoryByUsername(String username);
+    List<StorySummaryDto> getStoriesByUsername(String username);
 
-    public StoryViewDto findStoryViewByBoardId(Long id);
+    StoryDetailDto getStoryByBoardId(Long boardId);
 
-    public Long saveStory(StoryWriteDto saveStoryDto);
+    Long createStory(StoryWriteDto storyWriteDto);
 
-    public Long saveStoryWithThumbnail(StoryWriteDto saveStoryDto, String thumbnail);
+    Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail);
 
-    public String changeStory(StoryWriteDto storyDto);
+    Long updateStory(StoryWriteDto storyWriteDto);
 
-    public StoryWriteDto findStoryWriteByBoardId(Long id);
+    StoryWriteDto getStoryWriteDtoByBoardId(Long boardId);
 
-    public boolean checkMember(Long boardId);
+    boolean validateMember(Long boardId);
 
-    public void removeStory(StoryViewDto storyDto);
+    void deleteStory(Long boardId);
 }

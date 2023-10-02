@@ -2,8 +2,8 @@ package com.example.waggle.board.story.controller;
 
 import com.example.waggle.commons.component.file.FileStore;
 import com.example.waggle.commons.component.file.UploadFile;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
-import com.example.waggle.board.story.dto.StoryViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.board.story.service.StoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,7 +69,7 @@ public class StoryApiController {
     )
     @PostMapping("/edit/{boardId}")
     public ResponseEntity<?> singleStoryEdit(@ModelAttribute StoryWriteDto storyDto, @PathVariable Long boardId) {
-        storyService.changeStory(storyDto);
+        storyService.updateStory(storyDto);
         return ResponseEntity.ok(boardId);  //TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
 
@@ -87,7 +87,7 @@ public class StoryApiController {
     )
     @GetMapping("/all")
     public ResponseEntity<?> story() {  // TODO 인기순, 최신순에 따른 필터링 필요
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStory();
+        List<StorySummaryDto> allStoryByMember = storyService.getStories();
         log.info("allStoryByMember = {}", allStoryByMember);
 
         return ResponseEntity.ok(allStoryByMember);
@@ -107,7 +107,7 @@ public class StoryApiController {
     )
     @GetMapping("/{username}")
     public ResponseEntity<?> memberStory(@PathVariable String username) {
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByUsername(username);
+        List<StorySummaryDto> allStoryByMember = storyService.getStoriesByUsername(username);
         return ResponseEntity.ok(allStoryByMember);
     }
 
@@ -125,7 +125,7 @@ public class StoryApiController {
     )
     @GetMapping("/{username}/{boardId}")
     public ResponseEntity<?> singleStoryForm(@PathVariable String username, @PathVariable Long boardId) {
-        StoryViewDto storyByBoardId = storyService.findStoryViewByBoardId(boardId);
+        StoryDetailDto storyByBoardId = storyService.getStoryByBoardId(boardId);
         return ResponseEntity.ok(storyByBoardId);
     }
 }

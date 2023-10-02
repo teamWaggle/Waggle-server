@@ -1,6 +1,7 @@
 package com.example.waggle.service.board;
 
 import com.example.waggle.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.service.StoryService;
 import com.example.waggle.comment.service.CommentService;
 import com.example.waggle.commons.component.DatabaseCleanUp;
@@ -8,7 +9,6 @@ import com.example.waggle.comment.dto.CommentViewDto;
 import com.example.waggle.comment.dto.CommentWriteDto;
 import com.example.waggle.comment.dto.ReplyViewDto;
 import com.example.waggle.comment.dto.ReplyWriteDto;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.commons.util.service.BoardType;
@@ -147,15 +147,15 @@ class ReplyServiceTest {
         memberService.signUp(signUpDto5, null);
 
         //story set
-        storyService.saveStory(storyWriteDto1);
-        storyService.saveStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto2);
 
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
         //comment set
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
+        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
         //reply set
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
         replyService.saveReply(comments.get(0), replyWriteDto1);
 
     }
@@ -166,8 +166,8 @@ class ReplyServiceTest {
     void findReplies() {
         //given
         setAll();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
         //when
         List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
         //then
@@ -181,8 +181,8 @@ class ReplyServiceTest {
     void changeReply() {
         //given
         setAll();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
         List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
         //when
         replyService.changeReply(replies.get(0), replyWriteDto2);
@@ -198,8 +198,8 @@ class ReplyServiceTest {
     void deleteReply() {
         //given
         setAll();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
         List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
 
         //when
