@@ -1,6 +1,6 @@
 package com.example.waggle.commons.dto.page;
 
-import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,11 +24,11 @@ public class Pagination {
     private int endPage;
     //페이징할 페이지 개수
     private int pagingCount;
-    private List<QuestionSimpleViewDto> questionViewlist = new ArrayList<>();
+    private List<QuestionSummaryDto> questionViewlist = new ArrayList<>();
 
     @Builder
     public Pagination(int total, int colSize, int currentPage,
-                      int pagingCount, List<QuestionSimpleViewDto> questionViewlist) {
+                      int pagingCount, List<QuestionSummaryDto> questionViewlist) {
         this.total = total;
         this.colSize = colSize;
         this.currentPage = currentPage;

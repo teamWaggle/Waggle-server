@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionSimpleViewDto {
+public class QuestionSummaryDto {
 
     private Long id;
     private String username;
@@ -26,8 +26,8 @@ public class QuestionSimpleViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public QuestionSimpleViewDto toDto(Question question) {
-        return QuestionSimpleViewDto.builder()
+    static public QuestionSummaryDto toDto(Question question) {
+        return QuestionSummaryDto.builder()
                 .id(question.getId())
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())

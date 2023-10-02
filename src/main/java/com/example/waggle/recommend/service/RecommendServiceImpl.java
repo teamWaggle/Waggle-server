@@ -1,9 +1,9 @@
 package com.example.waggle.recommend.service;
 
 import com.example.waggle.board.Board;
-import com.example.waggle.board.question.dto.AnswerViewDto;
-import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
-import com.example.waggle.board.question.dto.QuestionViewDto;
+import com.example.waggle.board.question.dto.AnswerDetailDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
+import com.example.waggle.board.question.dto.QuestionDetailDto;
 import com.example.waggle.board.story.dto.StorySimpleViewDto;
 import com.example.waggle.board.story.dto.StoryViewDto;
 import com.example.waggle.commons.exception.CustomPageException;
@@ -64,34 +64,34 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Transactional(readOnly = true)
     @Override
-    public void checkRecommend(QuestionViewDto questionViewDto) {
+    public void checkRecommend(QuestionDetailDto questionDetailDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
         //(login user == board writer) checking
         if (!signInMember.getUsername()
-                .equals(questionViewDto.getUsername())) {
+                .equals(questionDetailDto.getUsername())) {
             recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), questionViewDto.getId());
+                    .existsByMemberIdAndBoardId(signInMember.getId(), questionDetailDto.getId());
         }
 
-        int count = recommendRepository.countByBoardId(questionViewDto.getId());
-        questionViewDto.linkRecommend(count, recommendIt);
+        int count = recommendRepository.countByBoardId(questionDetailDto.getId());
+        questionDetailDto.linkRecommend(count, recommendIt);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public void checkRecommend(AnswerViewDto answerViewDto) {
+    public void checkRecommend(AnswerDetailDto answerDetailDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
         //(login user == board writer) checking
         if (!signInMember.getUsername()
-                .equals(answerViewDto.getUsername())) {
+                .equals(answerDetailDto.getUsername())) {
             recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), answerViewDto.getId());
+                    .existsByMemberIdAndBoardId(signInMember.getId(), answerDetailDto.getId());
         }
 
-        int count = recommendRepository.countByBoardId(answerViewDto.getId());
-        answerViewDto.linkRecommend(count, recommendIt);
+        int count = recommendRepository.countByBoardId(answerDetailDto.getId());
+        answerDetailDto.linkRecommend(count, recommendIt);
     }
 
     @Transactional(readOnly = true)
@@ -116,8 +116,8 @@ public class RecommendServiceImpl implements RecommendService {
     // 단체 recommend 확인은 쿼리량을 줄이기 위함이다.
     @Transactional(readOnly = true)
     @Override
-    public void checkRecommendQuestions(List<QuestionSimpleViewDto> questionViewDtoList) {
-        for (QuestionSimpleViewDto questionViewDto : questionViewDtoList) {
+    public void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList) {
+        for (QuestionSummaryDto questionViewDto : questionViewDtoList) {
             Member signInMember = utilService.getSignInMember();
             boolean recommendIt = false;
             //(login user == board writer) checking
@@ -132,9 +132,9 @@ public class RecommendServiceImpl implements RecommendService {
     }
     @Transactional(readOnly = true)
     @Override
-    public void checkRecommendAnswers(List<AnswerViewDto> answerViewDtoList) {
-        for (AnswerViewDto answerViewDto : answerViewDtoList) {
-            checkRecommend(answerViewDto);
+    public void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList) {
+        for (AnswerDetailDto answerDetailDto : answerDetailDtoList) {
+            checkRecommend(answerDetailDto);
         }
     }
     @Transactional(readOnly = true)

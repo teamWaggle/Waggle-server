@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AnswerViewDto {
+public class AnswerDetailDto {
 
     private Long id;
     private String content;
@@ -36,8 +36,8 @@ public class AnswerViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
 
-    static public AnswerViewDto toDto(Answer answer) {
-        return AnswerViewDto.builder()
+    static public AnswerDetailDto toDto(Answer answer) {
+        return AnswerDetailDto.builder()
                 .id(answer.getId())
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
