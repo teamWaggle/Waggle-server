@@ -38,6 +38,3 @@ server:
     include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
     include-stacktrace: on_param  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
     whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
-
-jwt:
-  secret: bf7f3ac2c793abf5957323eb086d2d8150d090eff3a4a1f267d0991a53442563
