@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 import static com.example.waggle.commons.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.commons.exception.ErrorCode.TEAM_NOT_FOUND;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class TeamServiceImpl implements TeamService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
