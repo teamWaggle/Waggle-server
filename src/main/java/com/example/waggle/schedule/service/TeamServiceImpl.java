@@ -3,7 +3,7 @@ package com.example.waggle.schedule.service;
 import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.member.domain.Member;
 import com.example.waggle.member.domain.TeamMember;
-import com.example.waggle.member.dto.MemberDetailDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.repository.MemberRepository;
 import com.example.waggle.member.repository.TeamMemberRepository;
 import com.example.waggle.schedule.domain.Team;
@@ -58,19 +58,19 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<MemberDetailDto> getTeamMembers(Long teamId) {
+    public List<MemberSummaryDto> getTeamMembers(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
 
         return team.getTeamMembers().stream()
                 .map(TeamMember::getMember)
-                .map(MemberDetailDto::toDto)
+                .map(MemberSummaryDto::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public TeamDto createTeam(TeamDto teamDto, String username) {
+    public Long createTeam(TeamDto teamDto, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
 
@@ -80,12 +80,12 @@ public class TeamServiceImpl implements TeamService {
                 .member(member).build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
-        return TeamDto.toDto(team);
+        return team.getId();
     }
 
     @Override
     @Transactional
-    public TeamDto addMember(Long teamId, String username) {
+    public Long addMember(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
         Member member = memberRepository.findByUsername(username)
@@ -100,16 +100,16 @@ public class TeamServiceImpl implements TeamService {
         } else {
             // TODO 중복 회원 저장 예외
         }
-        return TeamDto.toDto(team);
+        return team.getId();
     }
 
     @Transactional
     @Override
-    public TeamDto updateTeam(Long teamId, TeamDto updateTeamDto) {
+    public Long updateTeam(Long teamId, TeamDto updateTeamDto) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
         team.updateTeamName(updateTeamDto.getName());
-        return TeamDto.toDto(team);
+        return team.getId();
     }
 
     @Transactional

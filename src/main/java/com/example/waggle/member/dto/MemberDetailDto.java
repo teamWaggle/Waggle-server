@@ -13,7 +13,7 @@ import lombok.ToString;
 @Builder
 public class MemberDetailDto {
 
-    private Long id;
+    private java.lang.Long id;
     private String username;
     private String nickname;
     private String address;

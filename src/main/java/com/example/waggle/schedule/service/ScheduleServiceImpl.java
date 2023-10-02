@@ -46,7 +46,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Transactional
     @Override
-    public ScheduleDto createSchedule(ScheduleDto scheduleDto, Long teamId) {
+    public Long createSchedule(ScheduleDto scheduleDto, Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
 
@@ -67,19 +67,19 @@ public class ScheduleServiceImpl implements ScheduleService {
             }
         }
         scheduleRepository.save(schedule);
-        return ScheduleDto.toDto(schedule);
+        return schedule.getId();
     }
 
     @Transactional
     @Override
-    public ScheduleDto updateSchedule(ScheduleDto scheduleDto) {
+    public Long updateSchedule(ScheduleDto scheduleDto) {
         Schedule schedule = scheduleRepository.findById(scheduleDto.getId())
                 .orElseThrow(() -> new CustomAlertException(SCHEDULE_NOT_FOUND));
         List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
         schedule.update(scheduleDto, scheduleMembers);
         Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId())
                 .orElseThrow(() -> new CustomAlertException(SCHEDULE_NOT_FOUND));
-        return ScheduleDto.toDto(updatedSchedule);
+        return schedule.getId();
     }
 
     @Transactional

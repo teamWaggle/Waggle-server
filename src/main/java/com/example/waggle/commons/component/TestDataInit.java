@@ -4,6 +4,7 @@ import com.example.waggle.board.story.domain.Story;
 
 import com.example.waggle.member.domain.Member;
 import com.example.waggle.member.dto.MemberDetailDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
@@ -52,8 +53,8 @@ public class TestDataInit {
                     .username("user" + i)
                     .password("12345678")
                     .build();
-            MemberDetailDto memberDetailDto = memberService.signUp(signUpDto, null);
-            Member member = memberRepository.findByUsername(memberDetailDto.getUsername()).get();
+            MemberSummaryDto memberSummaryDto = memberService.signUp(signUpDto, null);
+            Member member = memberRepository.findByUsername(memberSummaryDto.getUsername()).get();
             members.add(member);
         }
     }
@@ -72,13 +73,13 @@ public class TestDataInit {
     public void initTeamAndSchedule() {
         String username = "user1";
 
-        TeamDto team1 = teamService.createTeam(TeamDto.builder().name("team1").build(), username);
-        TeamDto team2 = teamService.createTeam(TeamDto.builder().name("team2").build(), username);
-        teamService.addMember(team1.getId(), "user2");
-        teamService.addMember(team1.getId(), "user3");
+        Long team1 = teamService.createTeam(TeamDto.builder().name("team1").build(), username);
+        Long team2 = teamService.createTeam(TeamDto.builder().name("team2").build(), username);
+        teamService.addMember(team1, "user2");
+        teamService.addMember(team1, "user3");
 
-        scheduleService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1.getId());
-        scheduleService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2.getId());
+        scheduleService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1);
+        scheduleService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2);
     }
 
 

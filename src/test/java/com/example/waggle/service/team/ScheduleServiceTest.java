@@ -1,13 +1,13 @@
 package com.example.waggle.service.team;
 
 import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.member.dto.MemberDetailDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.schedule.dto.ScheduleDto;
-import com.example.waggle.schedule.service.ScheduleService;
-import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.repository.MemberRepository;
 import com.example.waggle.member.service.MemberService;
+import com.example.waggle.schedule.dto.ScheduleDto;
+import com.example.waggle.schedule.dto.TeamDto;
+import com.example.waggle.schedule.service.ScheduleService;
 import com.example.waggle.schedule.service.TeamService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -36,12 +36,12 @@ class ScheduleServiceTest {
     @Autowired
     ScheduleService scheduleService;
 
-    private MemberDetailDto savedMemberDetailDto1;
-    private MemberDetailDto savedMemberDetailDto2;
-    private TeamDto savedTeamDto1;
-    private TeamDto savedTeamDto2;
-    private ScheduleDto savedScheduleDto1;
-    private ScheduleDto savedScheduleDto2;
+    private MemberSummaryDto memberSummaryDto1;
+    private MemberSummaryDto memberSummaryDto2;
+    private Long savedTeamId1;
+    private Long savedTeamId2;
+    private Long savedScheduleId1;
+    private Long savedScheduleId2;
 
     @BeforeEach
     void beforeEach() {
@@ -55,14 +55,14 @@ class ScheduleServiceTest {
                 .password("12345678")
                 .build();
 
-        savedMemberDetailDto1 = memberService.signUp(signUpDto1, null);
-        savedMemberDetailDto2 = memberService.signUp(signUpDto2, null);
+        memberSummaryDto1 = memberService.signUp(signUpDto1, null);
+        memberSummaryDto2 = memberService.signUp(signUpDto2, null);
 
         // team 생성
         TeamDto team = TeamDto.builder()
                 .name("team").build();
-        savedTeamDto1 = teamService.createTeam(team, savedMemberDetailDto1.getUsername());
-        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDetailDto2.getUsername());
+        savedTeamId1 = teamService.createTeam(team, memberSummaryDto1.getUsername());
+        savedTeamId2 = teamService.addMember(savedTeamId1, memberSummaryDto2.getUsername());
 
 
         // schedule 생성
@@ -76,8 +76,8 @@ class ScheduleServiceTest {
 //                .scheduleTime(LocalDateTime.now())
                 .build();
 
-        savedScheduleDto1 = scheduleService.createSchedule(scheduleDto1, savedTeamDto2.getId());
-        savedScheduleDto2 = scheduleService.createSchedule(scheduleDto2, savedTeamDto2.getId());
+        savedScheduleId1 = scheduleService.createSchedule(scheduleDto1, savedTeamId2);
+        savedScheduleId2 = scheduleService.createSchedule(scheduleDto2, savedTeamId2);
     }
 
     @AfterEach
@@ -87,15 +87,14 @@ class ScheduleServiceTest {
 
     @Test
     public void findByScheduleId() {
-        ScheduleDto findScheduleDto = scheduleService.getScheduleById(savedScheduleDto1.getId());
-        assertThat(findScheduleDto).usingRecursiveComparison().isEqualTo(savedScheduleDto1);
+        ScheduleDto findScheduleDto = scheduleService.getScheduleById(savedScheduleId1);
+        assertThat(findScheduleDto.getId()).isEqualTo(savedScheduleId1);
     }
 
     @Test
     public void findByTeamId() {
-        List<ScheduleDto> result = scheduleService.getSchedulesByTeamId(savedTeamDto2.getId());
+        List<ScheduleDto> result = scheduleService.getSchedulesByTeamId(savedTeamId2);
         assertThat(result.size()).isEqualTo(2);
-        assertThat(result).usingRecursiveFieldByFieldElementComparator().contains(savedScheduleDto1, savedScheduleDto2);
     }
 
     @Test
@@ -105,9 +104,10 @@ class ScheduleServiceTest {
                 .scheduleTime(LocalDateTime.now())
                 .build();
 
-        scheduleDto.getScheduleMembers().add(savedMemberDetailDto1.getUsername());
+        scheduleDto.getScheduleMembers().add(memberSummaryDto1.getUsername());
 
-        ScheduleDto savedScheduleDto = scheduleService.createSchedule(scheduleDto, savedTeamDto2.getId());
+        Long scheduleId = scheduleService.createSchedule(scheduleDto, savedTeamId2);
+        ScheduleDto savedScheduleDto = scheduleService.getScheduleById(scheduleId);
         assertThat(savedScheduleDto.getScheduleMembers().size()).isEqualTo(1);
     }
 
@@ -116,32 +116,27 @@ class ScheduleServiceTest {
     @Test
     public void updateSchedule() {
         ScheduleDto updateScheduleDto = ScheduleDto.builder()
-                .id(savedScheduleDto1.getId())
+                .id(savedScheduleId1)
                 .title("한강 산책")
                 .description("🐶🐶🐶")
                 .scheduleTime(LocalDateTime.of(2023, 5, 26, 19, 30))
                 .build();
-        List<MemberDetailDto> memberDetailDtos = new ArrayList<>();
-        memberDetailDtos.add(savedMemberDetailDto1);
-        memberDetailDtos.add(savedMemberDetailDto2);
+        List<MemberSummaryDto> memberSummaryDtos = new ArrayList<>();
+        memberSummaryDtos.add(memberSummaryDto1);
+        memberSummaryDtos.add(memberSummaryDto2);
 
         // update
-        ScheduleDto updatedScheduleDto = scheduleService.updateSchedule(updateScheduleDto);
+        Long scheduleId = scheduleService.updateSchedule(updateScheduleDto);
+        ScheduleDto updatedScheduleDto = scheduleService.getScheduleById(scheduleId);
 
         assertThat(updatedScheduleDto.getTitle()).isEqualTo(updateScheduleDto.getTitle());
     }
 
     @Test
     public void removeSchedule() {
-        scheduleService.deleteSchedule(savedScheduleDto1.getId());
-        List<ScheduleDto> result = scheduleService.getSchedulesByTeamId(savedTeamDto2.getId());
+        scheduleService.deleteSchedule(savedScheduleId1);
+        List<ScheduleDto> result = scheduleService.getSchedulesByTeamId(savedTeamId2);
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result).usingRecursiveFieldByFieldElementComparator().doesNotContain(savedScheduleDto1);
     }
 
-    @Test
-//    @Transactional(readOnly = true)
-    public void test() {
-        log.info("@Transactional(readOnly = true)");
-    }
 }

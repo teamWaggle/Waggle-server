@@ -32,21 +32,20 @@ public class PetServiceImpl implements PetService {
 
     @Transactional
     @Override
-    public PetDto createPet(PetDto petDto) {
+    public Long createPet(PetDto petDto) {
         Member member = memberRepository.findByUsername(petDto.getUsername())
                 .orElseThrow(() -> new CustomPageException(MEMBER_NOT_FOUND));
         Pet pet = petRepository.save(petDto.toEntity(member));
-        return PetDto.toDto(pet);
+        return pet.getId();
     }
 
     @Transactional
     @Override
-    public PetDto updatePet(Long petId, PetDto petDto) {
+    public Long updatePet(Long petId, PetDto petDto) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new CustomAlertException(PET_NOT_FOUND));
         pet.update(petDto);
-        Pet updatedPet = petRepository.findById(petId).get();
-        return PetDto.toDto(updatedPet);
+        return pet.getId();
     }
 
     @Transactional

@@ -2,8 +2,8 @@ package com.example.waggle.board.question.service;
 
 
 import com.example.waggle.board.question.dto.AnswerWriteDto;
-import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionDetailDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
 
 import java.util.List;
