@@ -24,45 +24,43 @@ import static com.example.waggle.commons.exception.ErrorCode.RECOMMEND_NOT_FOUND
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Slf4j
 public class RecommendServiceImpl implements RecommendService {
 
     private final RecommendRepository recommendRepository;
     private final UtilService utilService;
 
+    @Transactional
     @Override
-    public void clickRecommend(Long boardId, BoardType boardType) {
-
+    public void handleRecommendation(Long boardId, BoardType boardType) {
         Board board = utilService.getBoard(boardId, boardType);
         Member member = utilService.getSignInMember();
-
-        //check recommend board
-        boolean check = recommendRepository
-                .existsByMemberIdAndBoardId(member.getId(), board.getId());
-        log.info("i recommended this board {}", check);
-
-        //change state
-        if (check) {
-            //cancel recommend
-            Recommend recommend = recommendRepository
-                    .findRecommendByMemberIdAndBoardId(member.getId(), boardId)
-                    .orElseThrow(() -> new CustomPageException(RECOMMEND_NOT_FOUND));
-            recommendRepository.delete(recommend);
+        boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
+        if (isRecommended) {
+            cancelRecommendation(member.getId(), boardId);
         }
         else{
-            //recommend story as member
             if (board.getMember().equals(member)) {
-                log.info("can't recommend");
-                log.info("board Member {}", board.getMember().getUsername());
                 throw new CustomPageException(CANNOT_RECOMMEND_MYSELF);
             }
-            Recommend recommendBoard = Recommend.builder().board(board).member(member).build();
-            recommendRepository.save(recommendBoard);
+            createRecommendation(board, member);
         }
     }
 
-    @Transactional(readOnly = true)
+    private void cancelRecommendation(Long memberId, Long boardId) {
+        Recommend recommend = recommendRepository
+                .findRecommendByMemberIdAndBoardId(memberId, boardId)
+                .orElseThrow(() -> new CustomPageException(RECOMMEND_NOT_FOUND));
+        recommendRepository.delete(recommend);
+    }
+
+    private void createRecommendation(Board board, Member member) {
+        Recommend recommend = Recommend.builder().board(board).member(member).build();
+        recommendRepository.save(recommend);
+    }
+
+
     @Override
     public void checkRecommend(QuestionDetailDto questionDetailDto) {
         Member signInMember = utilService.getSignInMember();
@@ -78,7 +76,6 @@ public class RecommendServiceImpl implements RecommendService {
         questionDetailDto.linkRecommend(count, recommendIt);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public void checkRecommend(AnswerDetailDto answerDetailDto) {
         Member signInMember = utilService.getSignInMember();
@@ -94,27 +91,19 @@ public class RecommendServiceImpl implements RecommendService {
         answerDetailDto.linkRecommend(count, recommendIt);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public void checkRecommend(StoryDetailDto storyDetailDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
         //(login user == board writer) checking
-        if (!signInMember.getUsername()
-                .equals(storyDetailDto.getUsername())) {
-            recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), storyDetailDto.getId());
+        if (!signInMember.getUsername().equals(storyDetailDto.getUsername())) {
+            recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), storyDetailDto.getId());
         }
 
         int count = recommendRepository.countByBoardId(storyDetailDto.getId());
-        log.info("count {}",count);
         storyDetailDto.linkRecommend(count, recommendIt);
     }
 
-
-    //========== 단체 조회 시 =========
-    // 단체 recommend 확인은 쿼리량을 줄이기 위함이다.
-    @Transactional(readOnly = true)
     @Override
     public void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList) {
         for (QuestionSummaryDto questionViewDto : questionViewDtoList) {
@@ -130,14 +119,14 @@ public class RecommendServiceImpl implements RecommendService {
             questionViewDto.linkRecommend(count, recommendIt);
         }
     }
-    @Transactional(readOnly = true)
+
     @Override
     public void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList) {
         for (AnswerDetailDto answerDetailDto : answerDetailDtoList) {
             checkRecommend(answerDetailDto);
         }
     }
-    @Transactional(readOnly = true)
+
     @Override
     public void checkRecommendStories(List<StorySummaryDto> storyViewDtoList) {
         for (StorySummaryDto storyViewDto : storyViewDtoList) {

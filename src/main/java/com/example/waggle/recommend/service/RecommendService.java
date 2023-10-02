@@ -11,18 +11,18 @@ import java.util.List;
 
 public interface RecommendService {
 
-    public void clickRecommend(Long boardId, BoardType boardType);
+    void handleRecommendation(Long boardId, BoardType boardType);
 
-    public void checkRecommend(QuestionDetailDto questionDetailDto);
+    void checkRecommend(QuestionDetailDto questionDetailDto);
 
-    public void checkRecommend(AnswerDetailDto answerDetailDto);
+    void checkRecommend(AnswerDetailDto answerDetailDto);
 
-    public void checkRecommend(StoryDetailDto storyDetailDto);
+    void checkRecommend(StoryDetailDto storyDetailDto);
 
-    public void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList);
+    void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList);
 
-    public void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList);
+    void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList);
 
-    public void checkRecommendStories(List<StorySummaryDto> storyViewDtoList);
+    void checkRecommendStories(List<StorySummaryDto> storyViewDtoList);
 
 }
