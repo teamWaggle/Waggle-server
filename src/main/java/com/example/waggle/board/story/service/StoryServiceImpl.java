@@ -1,14 +1,11 @@
 package com.example.waggle.board.story.service;
 
-import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.story.domain.Story;
 import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.board.story.repository.StoryRepository;
-import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.commons.exception.CustomPageException;
-import com.example.waggle.commons.exception.ErrorCode;
 import com.example.waggle.commons.util.service.UtilService;
 import com.example.waggle.media.domain.Media;
 import com.example.waggle.member.domain.Member;
@@ -17,17 +14,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.waggle.commons.exception.ErrorCode.*;
+import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 
-@Service
+
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;

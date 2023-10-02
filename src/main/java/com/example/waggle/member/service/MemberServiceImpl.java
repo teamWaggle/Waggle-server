@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
 import static com.example.waggle.commons.exception.ErrorCode.ALREADY_USING_USERNAME;
 import static com.example.waggle.commons.exception.ErrorCode.MEMBER_NOT_FOUND;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class MemberServiceImpl implements MemberService {
 
     private static final String DEFAULT_ROLE = "USER";

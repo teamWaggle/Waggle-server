@@ -15,10 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.example.waggle.commons.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.commons.exception.ErrorCode.PET_NOT_FOUND;
 
-@Service
+
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class PetServiceImpl implements PetService {
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;

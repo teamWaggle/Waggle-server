@@ -22,10 +22,10 @@ import java.util.List;
 import static com.example.waggle.commons.exception.ErrorCode.CANNOT_RECOMMEND_MYSELF;
 import static com.example.waggle.commons.exception.ErrorCode.RECOMMEND_NOT_FOUND;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class RecommendServiceImpl implements RecommendService {
 
     private final RecommendRepository recommendRepository;

@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 import static com.example.waggle.commons.exception.ErrorCode.COMMENT_NOT_FOUND;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;

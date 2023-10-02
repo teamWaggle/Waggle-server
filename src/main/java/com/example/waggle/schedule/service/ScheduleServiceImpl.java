@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 import static com.example.waggle.commons.exception.ErrorCode.SCHEDULE_NOT_FOUND;
 import static com.example.waggle.commons.exception.ErrorCode.TEAM_NOT_FOUND;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
+@Service
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
