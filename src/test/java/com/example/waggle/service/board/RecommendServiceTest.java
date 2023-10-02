@@ -130,7 +130,7 @@ class RecommendServiceTest {
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
         //when
-        recommendService.clickRecommend(storySummaryDto.getId(), BoardType.STORY);
+        recommendService.handleRecommendation(storySummaryDto.getId(), BoardType.STORY);
         StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(storySummaryDto.getId());
         recommendService.checkRecommend(storyViewByBoardId);
 
@@ -143,8 +143,8 @@ class RecommendServiceTest {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        recommendService.clickRecommend(storySummaryDto.getId(),BoardType.STORY);
-        recommendService.clickRecommend(storySummaryDto.getId(),BoardType.STORY);
+        recommendService.handleRecommendation(storySummaryDto.getId(),BoardType.STORY);
+        recommendService.handleRecommendation(storySummaryDto.getId(),BoardType.STORY);
 
         //when
         StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(storySummaryDto.getId());
