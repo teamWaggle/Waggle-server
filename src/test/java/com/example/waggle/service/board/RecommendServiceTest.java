@@ -5,8 +5,8 @@ import com.example.waggle.board.story.service.StoryService;
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.board.story.domain.Story;
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
-import com.example.waggle.board.story.dto.StoryViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.board.story.repository.StoryRepository;
@@ -118,7 +118,7 @@ class RecommendServiceTest {
         storyRepository.save(iiii);
 
         //story set
-        storyService.saveStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto1);
         //storyService.saveStory(storyWriteDto2);
     }
 
@@ -127,11 +127,11 @@ class RecommendServiceTest {
     void recommendBoard() {
         //given
         setBoardAndMember();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
         //when
-        recommendService.clickRecommend(storySimpleViewDto.getId(), BoardType.STORY);
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(storySimpleViewDto.getId());
+        recommendService.clickRecommend(storySummaryDto.getId(), BoardType.STORY);
+        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(storySummaryDto.getId());
         recommendService.checkRecommend(storyViewByBoardId);
 
         //then
@@ -142,12 +142,12 @@ class RecommendServiceTest {
     void cancelRecommendBoard() {
         //given
         setBoardAndMember();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        recommendService.clickRecommend(storySimpleViewDto.getId(),BoardType.STORY);
-        recommendService.clickRecommend(storySimpleViewDto.getId(),BoardType.STORY);
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        recommendService.clickRecommend(storySummaryDto.getId(),BoardType.STORY);
+        recommendService.clickRecommend(storySummaryDto.getId(),BoardType.STORY);
 
         //when
-        StoryViewDto storyViewByBoardId = storyService.findStoryViewByBoardId(storySimpleViewDto.getId());
+        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(storySummaryDto.getId());
         recommendService.checkRecommend(storyViewByBoardId);
 
         //then

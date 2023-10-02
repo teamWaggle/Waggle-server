@@ -4,8 +4,8 @@ import com.example.waggle.board.Board;
 import com.example.waggle.board.question.dto.AnswerDetailDto;
 import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionDetailDto;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
-import com.example.waggle.board.story.dto.StoryViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.util.service.BoardType;
 import com.example.waggle.commons.util.service.UtilService;
@@ -96,19 +96,19 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Transactional(readOnly = true)
     @Override
-    public void checkRecommend(StoryViewDto storyViewDto) {
+    public void checkRecommend(StoryDetailDto storyDetailDto) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
         //(login user == board writer) checking
         if (!signInMember.getUsername()
-                .equals(storyViewDto.getUsername())) {
+                .equals(storyDetailDto.getUsername())) {
             recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), storyViewDto.getId());
+                    .existsByMemberIdAndBoardId(signInMember.getId(), storyDetailDto.getId());
         }
 
-        int count = recommendRepository.countByBoardId(storyViewDto.getId());
+        int count = recommendRepository.countByBoardId(storyDetailDto.getId());
         log.info("count {}",count);
-        storyViewDto.linkRecommend(count, recommendIt);
+        storyDetailDto.linkRecommend(count, recommendIt);
     }
 
 
@@ -139,8 +139,8 @@ public class RecommendServiceImpl implements RecommendService {
     }
     @Transactional(readOnly = true)
     @Override
-    public void checkRecommendStories(List<StorySimpleViewDto> storyViewDtoList) {
-        for (StorySimpleViewDto storyViewDto : storyViewDtoList) {
+    public void checkRecommendStories(List<StorySummaryDto> storyViewDtoList) {
+        for (StorySummaryDto storyViewDto : storyViewDtoList) {
             Member signInMember = utilService.getSignInMember();
             boolean recommendIt = false;
             //(login user == board writer) checking

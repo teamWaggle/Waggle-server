@@ -6,7 +6,7 @@ import com.example.waggle.comment.service.CommentService;
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.comment.dto.CommentViewDto;
 import com.example.waggle.comment.dto.CommentWriteDto;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.commons.util.service.BoardType;
@@ -116,8 +116,8 @@ class CommentServiceTest {
         memberService.signUp(signUpDto2, null);
 
         //story set
-        storyService.saveStory(storyWriteDto1);
-        storyService.saveStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto2);
     }
 
     @Test
@@ -125,11 +125,11 @@ class CommentServiceTest {
     void saveComment() {
         //given
         setBoardAndMember();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
         //when
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getContent()).isEqualTo("comment1");
@@ -141,15 +141,15 @@ class CommentServiceTest {
     void editCommentV1() {
         //given
         setBoardAndMember();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
         List<CommentViewDto> editComments = new ArrayList<>();
 
         //when
         if (commentService.checkMember(comments.get(0))) {
             commentService.editComment(comments.get(0), commentWriteDto2);
-             editComments = commentService.findComments(storySimpleViewDto.getId());
+             editComments = commentService.findComments(storySummaryDto.getId());
         }
 
         //then
@@ -164,15 +164,15 @@ class CommentServiceTest {
     void deleteComment() {
         //given
         setBoardAndMember();
-        StorySimpleViewDto storySimpleViewDto = storyService.findAllStory().get(0);
+        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
-        commentService.saveComment(storySimpleViewDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.findComments(storySimpleViewDto.getId());
+        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
 
         //when
         log.info("boardId is {}", comments.get(0).getId());
         commentService.deleteComment(comments.get(0));
-        List<CommentViewDto> deleteComments = commentService.findComments(storySimpleViewDto.getId());
+        List<CommentViewDto> deleteComments = commentService.findComments(storySummaryDto.getId());
         //then
         assertThat(deleteComments.size()).isEqualTo(0);
 

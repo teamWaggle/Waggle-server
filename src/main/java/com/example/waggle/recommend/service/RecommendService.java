@@ -3,8 +3,8 @@ package com.example.waggle.recommend.service;
 import com.example.waggle.board.question.dto.AnswerDetailDto;
 import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionDetailDto;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
-import com.example.waggle.board.story.dto.StoryViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.commons.util.service.BoardType;
 
 import java.util.List;
@@ -17,12 +17,12 @@ public interface RecommendService {
 
     public void checkRecommend(AnswerDetailDto answerDetailDto);
 
-    public void checkRecommend(StoryViewDto storyViewDto);
+    public void checkRecommend(StoryDetailDto storyDetailDto);
 
     public void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList);
 
     public void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList);
 
-    public void checkRecommendStories(List<StorySimpleViewDto> storyViewDtoList);
+    public void checkRecommendStories(List<StorySummaryDto> storyViewDtoList);
 
 }

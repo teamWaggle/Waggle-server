@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @ToString
-public class StoryViewDto {
+public class StoryDetailDto {
 
     private Long id;
     private String content;
@@ -34,8 +34,8 @@ public class StoryViewDto {
     @Builder.Default
     private List<CommentViewDto> comments = new ArrayList<>();
 
-    static public StoryViewDto toDto(Story story) {
-        return StoryViewDto.builder()
+    static public StoryDetailDto toDto(Story story) {
+        return StoryDetailDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
@@ -57,7 +57,7 @@ public class StoryViewDto {
     }
 
 
-    public StoryViewDto(String username) {
+    public StoryDetailDto(String username) {
         this.username = username;
     }
 }
