@@ -2,7 +2,7 @@ package com.example.waggle.service.member;
 
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.commons.security.JwtToken;
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.dto.SignInDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.member.repository.MemberRepository;
@@ -74,27 +74,27 @@ class MemberServiceImplTest {
 
     @Test
     public void signUp() {
-        MemberDto savedMemberDto1 = memberService.signUp(signUpDto1);
-        MemberDto savedMemberDto2 = memberService.signUp(signUpDto2);
+        MemberDetailDto savedMemberDetailDto1 = memberService.signUp(signUpDto1, null);
+        MemberDetailDto savedMemberDetailDto2 = memberService.signUp(signUpDto2, null);
 
-        assertThat(savedMemberDto1.getUsername()).isEqualTo(signUpDto1.getUsername());
-        assertThat(savedMemberDto2.getUsername()).isEqualTo(signUpDto2.getUsername());
+        assertThat(savedMemberDetailDto1.getUsername()).isEqualTo(signUpDto1.getUsername());
+        assertThat(savedMemberDetailDto2.getUsername()).isEqualTo(signUpDto2.getUsername());
     }
 
     @Test
     @Disabled
     public void 중복_회원_예외() {
         // savedMemberDto1와 savedMemberDto3의 username 중복 ➡︎ IllegalArgumentException 발생해야 함.
-        MemberDto savedMemberDto1 = memberService.signUp(signUpDto1);
-        MemberDto savedMemberDto2 = memberService.signUp(signUpDto2);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> memberService.signUp(signUpDto3));
+        MemberDetailDto savedMemberDetailDto1 = memberService.signUp(signUpDto1, null);
+        MemberDetailDto savedMemberDetailDto2 = memberService.signUp(signUpDto2, null);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> memberService.signUp(signUpDto3, null));
     }
 
     @Test
     @Disabled
     public void signIn() {
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
+        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto2, null);
 
         SignInDto signInDto = SignInDto.builder()
                 .username("member1")

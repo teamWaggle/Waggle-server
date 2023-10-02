@@ -1,6 +1,6 @@
 package com.example.waggle.repository.team;
 
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
@@ -43,12 +43,12 @@ class ScheduleRepositoryTest {
                 .phone("010-1234-5678")
                 .build();
 
-        MemberDto savedMemberDto = memberService.signUp(signUpDto);
+        MemberDetailDto savedMemberDetailDto = memberService.signUp(signUpDto, null);
 
         // team
         TeamDto team = TeamDto.builder()
                 .name("team").build();
-        TeamDto savedTeamDto = teamService.createTeamWithMember(team, savedMemberDto.getUsername());
+        TeamDto savedTeamDto = teamService.createTeam(team, savedMemberDetailDto.getUsername());
 
         ScheduleDto scheduleDto1 = ScheduleDto.builder()
                 .title("산책")
@@ -66,13 +66,13 @@ class ScheduleRepositoryTest {
                 .build();
 
 
-        ScheduleDto savedScheduleDto1 = scheduleService.addSchedule(scheduleDto1, savedTeamDto.getId());
-        ScheduleDto savedScheduleDto2 = scheduleService.addSchedule(scheduleDto2, savedTeamDto.getId());
-        ScheduleDto savedScheduleDto3 = scheduleService.addSchedule(scheduleDto3, savedTeamDto.getId());
+        ScheduleDto savedScheduleDto1 = scheduleService.createSchedule(scheduleDto1, savedTeamDto.getId());
+        ScheduleDto savedScheduleDto2 = scheduleService.createSchedule(scheduleDto2, savedTeamDto.getId());
+        ScheduleDto savedScheduleDto3 = scheduleService.createSchedule(scheduleDto3, savedTeamDto.getId());
 
 
         // when
-        List<ScheduleDto> result = scheduleService.findByTeamId(savedTeamDto.getId());
+        List<ScheduleDto> result = scheduleService.getSchedulesByTeamId(savedTeamDto.getId());
 
         // then
         assertThat(result.size()).isEqualTo(3);

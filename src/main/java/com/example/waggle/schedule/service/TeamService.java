@@ -1,33 +1,32 @@
 package com.example.waggle.schedule.service;
 
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.schedule.domain.Team;
 import com.example.waggle.schedule.dto.TeamDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TeamService {
-    public List<TeamDto> findAllTeam();
+    List<TeamDto> getTeams();
 
-    public List<TeamDto> findAllTeamByUsername(String username);
+    List<TeamDto> getTeamsByUsername(String username);
 
-    public Optional<TeamDto> findByTeamId(Long teamId);
+    TeamDto getTeamById(Long teamId);
 
-    public List<MemberDto> findTeamMembers(Long teamId);
+    List<MemberDetailDto> getTeamMembers(Long teamId);
 
-    public TeamDto createTeamWithMember(TeamDto teamDto, String username);
+    TeamDto createTeam(TeamDto teamDto, String username);
 
-    public TeamDto addMember(Long teamId, String username);
+    TeamDto addMember(Long teamId, String username);
 
-    public TeamDto updateTeam(Long teamId, TeamDto updateTeamDto);
+    TeamDto updateTeam(Long teamId, TeamDto updateTeamDto);
 
-    public Boolean removeTeam(Long teamId);
+    void deleteTeam(Long teamId);
 
-    public Boolean removeMember(Long teamId, String username);
+    void removeMember(Long teamId, String username);
 
-    public Boolean validateDuplicateMember(Team team, Member member);
+    boolean validateMemberDuplication(Team team, Member member);
 
-    public Boolean isTeamLeader(Long teamId, String username);
+    boolean isTeamLeader(Long teamId, String username);
 }

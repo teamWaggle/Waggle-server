@@ -140,11 +140,11 @@ class ReplyServiceTest {
 
     private void setAll() {
         //member set
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
-        memberService.signUp(signUpDto3);
-        memberService.signUp(signUpDto4);
-        memberService.signUp(signUpDto5);
+        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto3, null);
+        memberService.signUp(signUpDto4, null);
+        memberService.signUp(signUpDto5, null);
 
         //story set
         storyService.saveStory(storyWriteDto1);

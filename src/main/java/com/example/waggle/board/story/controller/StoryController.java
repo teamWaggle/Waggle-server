@@ -4,7 +4,7 @@ import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.board.story.dto.StoryViewDto;
 import com.example.waggle.board.story.dto.StorySimpleViewDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
-import com.example.waggle.member.dto.MemberSimpleDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.board.story.service.StoryService;
 import com.example.waggle.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -64,11 +64,11 @@ public class StoryController {
     @GetMapping("/write")
     public String singleStoryWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
         StoryWriteDto storyDto = new StoryWriteDto();
 
         model.addAttribute("storyDto", storyDto);
-        model.addAttribute("memberSimpleDto",memberSimpleDto);
+        model.addAttribute("memberSimpleDto", memberSummaryDto);
 
         return "story/writeStory";
     }
@@ -97,9 +97,9 @@ public class StoryController {
             return "redirect:/story";
         }
         StoryWriteDto storyDto = storyService.findStoryWriteByBoardId(boardId);
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(SecurityUtil.getCurrentUsername());
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(SecurityUtil.getCurrentUsername());
         model.addAttribute("storyDto", storyDto);
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
+        model.addAttribute("profileImg", memberSummaryDto.getProfileImg());
 
         return "story/editStory";
     }

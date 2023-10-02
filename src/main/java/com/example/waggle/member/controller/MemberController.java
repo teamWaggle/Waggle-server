@@ -79,7 +79,7 @@ public class MemberController {
             return "member/signUp";
             //throw new CustomAlertException(MUST_WRITE_INFO_SIGN_UP);
         }
-        memberService.signUp(signUpDto);
+        memberService.signUp(signUpDto, null);
         return "redirect:sign-in";
     }
 

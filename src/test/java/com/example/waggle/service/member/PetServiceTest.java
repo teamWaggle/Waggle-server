@@ -1,8 +1,9 @@
 package com.example.waggle.service.member;
 
 import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.member.domain.Gender;
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.service.MemberService;
 import com.example.waggle.pet.dto.PetDto;
 import com.example.waggle.member.dto.SignUpDto;
@@ -10,6 +11,7 @@ import com.example.waggle.pet.repository.PetRepository;
 import com.example.waggle.pet.service.PetService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,7 @@ class PetServiceTest {
     @Autowired
     PetService petService;
 
-    private MemberDto savedMemberDto;
+    private MemberDetailDto savedMemberDetailDto;
     private PetDto savedPetDto;
 
     @BeforeEach
@@ -43,17 +45,17 @@ class PetServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        savedMemberDto = memberService.signUp(signUpDto);
+        savedMemberDetailDto = memberService.signUp(signUpDto, null);
 
         // pet 저장
         PetDto petDto = PetDto.builder()
                 .name("루이")
                 .breed("포메라니안")
                 .gender(Gender.MALE)
-                .username(savedMemberDto.getUsername())
+                .username(savedMemberDetailDto.getUsername())
                 .birthday(LocalDate.now()).build();
 
-        savedPetDto = petService.addPet(petDto);
+        savedPetDto = petService.createPet(petDto);
     }
 
     @AfterEach
@@ -64,7 +66,7 @@ class PetServiceTest {
     @Test
     void findByPetId() {
         // petId로 조회
-        PetDto findPet = petService.findByPetId(savedPetDto.getId()).get();
+        PetDto findPet = petService.getPetById(savedPetDto.getId());
         assertThat(savedPetDto).usingRecursiveComparison().isEqualTo(findPet);  // 객체의 참조 값이 동등하지 않을 때 필드 값을 비교
     }
 
@@ -88,9 +90,9 @@ class PetServiceTest {
     @Test
     void removePet() {
         // pet 삭제
-        petService.removePet(savedPetDto.getId());
+        petService.deletePet(savedPetDto.getId());
 
-        assertThat(petService.findByPetId(savedPetDto.getId())).isEmpty();
+        Assertions.assertThrows(CustomAlertException.class, () -> petService.getPetById(savedPetDto.getId()));
 
 //        List<PetDto> tmp = petService.findByMemberId(savedMemberDto.getId());
 //        assertThat(tmp.size()).isEqualTo(0);

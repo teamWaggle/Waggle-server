@@ -1,7 +1,7 @@
 package com.example.waggle.service.team;
 
 import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.service.MemberService;
@@ -26,8 +26,8 @@ class TeamServiceTest {
     @Autowired
     TeamService teamService;
 
-    private MemberDto savedMemberDto1;
-    private MemberDto savedMemberDto2;
+    private MemberDetailDto savedMemberDetailDto1;
+    private MemberDetailDto savedMemberDetailDto2;
     private TeamDto savedTeamDto1;
     private TeamDto savedTeamDto2;
 
@@ -43,8 +43,8 @@ class TeamServiceTest {
                 .password("12345678")
                 .build();
 
-        savedMemberDto1 = memberService.signUp(signUpDto1);
-        savedMemberDto2 = memberService.signUp(signUpDto2);
+        savedMemberDetailDto1 = memberService.signUp(signUpDto1, null);
+        savedMemberDetailDto2 = memberService.signUp(signUpDto2, null);
     }
 
     @AfterEach
@@ -63,13 +63,13 @@ class TeamServiceTest {
         TeamDto teamC = TeamDto.builder()
                 .name("teamC").build();
 
-        teamService.createTeamWithMember(teamA, savedMemberDto1.getUsername());
-        teamService.createTeamWithMember(teamB, savedMemberDto1.getUsername());
+        teamService.createTeam(teamA, savedMemberDetailDto1.getUsername());
+        teamService.createTeam(teamB, savedMemberDetailDto1.getUsername());
 
-        TeamDto teamWithMember = teamService.createTeamWithMember(teamC, savedMemberDto2.getUsername());
-        teamService.addMember(teamWithMember.getId(), savedMemberDto1.getUsername());
+        TeamDto teamWithMember = teamService.createTeam(teamC, savedMemberDetailDto2.getUsername());
+        teamService.addMember(teamWithMember.getId(), savedMemberDetailDto1.getUsername());
 
-        List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(savedMemberDto1.getUsername());
+        List<TeamDto> allTeamByUsername = teamService.getTeamsByUsername(savedMemberDetailDto1.getUsername());
 
         for (TeamDto teamDto : allTeamByUsername) {
             System.out.println("teamDto = " + teamDto);
@@ -90,12 +90,12 @@ class TeamServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        MemberDto savedMemberDto = memberService.signUp(signUpDto);
+        MemberDetailDto savedMemberDetailDto = memberService.signUp(signUpDto, null);
 
         TeamDto teamA = TeamDto.builder()
                 .name("teamA").build();
 
-        teamService.createTeamWithMember(teamA, savedMemberDto.getUsername());
+        teamService.createTeam(teamA, savedMemberDetailDto.getUsername());
     }
 
     @Test
@@ -105,15 +105,15 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
+        savedTeamDto1 = teamService.createTeam(team, savedMemberDetailDto1.getUsername());
 
         // member2 가입
-        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
+        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDetailDto2.getUsername());
 
         // team 테이블의 전체 개수 1개
-        assertThat(teamService.findAllTeam().size()).isEqualTo(1);
+        assertThat(teamService.getTeams().size()).isEqualTo(1);
 
-        TeamDto findTeam = teamService.findByTeamId(savedTeamDto1.getId()).get();
+        TeamDto findTeam = teamService.getTeamById(savedTeamDto1.getId());
         assertThat(findTeam.getTeamMembers().size()).isEqualTo(2);
         assertThat(findTeam.getName()).isEqualTo("team");
     }
@@ -125,15 +125,15 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
+        savedTeamDto1 = teamService.createTeam(team, savedMemberDetailDto1.getUsername());
 
         // member2 가입
-        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
+        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDetailDto2.getUsername());
 
         // team 삭제
-        TeamDto findTeam = teamService.findByTeamId(savedTeamDto2.getId()).get();
-        teamService.removeTeam(findTeam.getId());
-        assertThat(teamService.findAllTeam().size()).isEqualTo(0);
+        TeamDto findTeam = teamService.getTeamById(savedTeamDto2.getId());
+        teamService.deleteTeam(findTeam.getId());
+        assertThat(teamService.getTeams().size()).isEqualTo(0);
     }
 
     @Test
@@ -143,16 +143,16 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
+        savedTeamDto1 = teamService.createTeam(team, savedMemberDetailDto1.getUsername());
 
         // member2 가입
-        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
+        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDetailDto2.getUsername());
 
         // team member 조회
-        List<MemberDto> teamMembers = teamService.findTeamMembers(savedTeamDto2.getId());
+        List<MemberDetailDto> teamMembers = teamService.getTeamMembers(savedTeamDto2.getId());
         assertThat(teamMembers.size()).isEqualTo(2);
 
-        assertThat(teamMembers).usingRecursiveFieldByFieldElementComparator().contains(savedMemberDto1, savedMemberDto2); // MemberDto에 @EqualsAndHashCode
+        assertThat(teamMembers).usingRecursiveFieldByFieldElementComparator().contains(savedMemberDetailDto1, savedMemberDetailDto2); // MemberDto에 @EqualsAndHashCode
     }
 
     @Test
@@ -162,15 +162,15 @@ class TeamServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
 
-        savedTeamDto1 = teamService.createTeamWithMember(team, savedMemberDto1.getUsername());
+        savedTeamDto1 = teamService.createTeam(team, savedMemberDetailDto1.getUsername());
 
         // member2 가입
-        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDto2.getUsername());
+        savedTeamDto2 = teamService.addMember(savedTeamDto1.getId(), savedMemberDetailDto2.getUsername());
 
         // member1 삭제 -> team에 속한 전체 member 수는 1이 되어야 함
-        teamService.removeMember(savedTeamDto2.getId(), savedMemberDto1.getUsername());
+        teamService.removeMember(savedTeamDto2.getId(), savedMemberDetailDto1.getUsername());
 
-        TeamDto teamDto = teamService.findByTeamId(savedTeamDto2.getId()).get();
+        TeamDto teamDto = teamService.getTeamById(savedTeamDto2.getId());
 
         assertThat(teamDto.getTeamMembers().size()).isEqualTo(1);
     }
