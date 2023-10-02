@@ -13,6 +13,8 @@
 
 [record](https://enchanted-list-750.notion.site/Waggle-0692c520c3f44a76be82aa300c98a75e) 
 ## 📚 STACKS
+<br>
+<br>
 <div align=center>
   <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
   <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
@@ -32,17 +34,21 @@
   <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
   <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 </div>
+<br>
+<br>
 
 | Archictecture | Spring MVC                                                |
 |:--------------|:----------------------------------------------------------|
 | Language      | Java 17                                                   |
-| Framework     | Spring Boot 3.1.2,react.js                                 |
+| Framework     | Spring Boot 3.0.6, React JS                               |
 | Database      | MySQL , AWS RDS, Spring Data JPA                          |
-| CI/CD         | AWS EC2, AWS S3, CodeDeploy, Github Actions              |
+| CI/CD         | AWS EC2, AWS S3, CodeDeploy, Github Actions               |
 | ETC           | Notion                                                    |
 
 
 ## Software Architecture
+![제목을-입력해주세요_-001](https://github.com/suddiyo/Waggle/assets/69452755/1f147f36-4c82-477e-92f2-e6ab1ada61a1)
+
 ## Package Structure
 ### domain 
 ```bash
