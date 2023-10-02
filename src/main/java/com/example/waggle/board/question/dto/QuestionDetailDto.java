@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class QuestionViewDto {
+public class QuestionDetailDto {
 
     private Long id;
     private String content;
@@ -36,10 +36,10 @@ public class QuestionViewDto {
     @Builder.Default
     private List<String> hashtags = new ArrayList<>();
     @Builder.Default
-    private List<AnswerViewDto> answers = new ArrayList<>();
+    private List<AnswerDetailDto> answers = new ArrayList<>();
 
-    static public QuestionViewDto toDto(Question question) {
-        return QuestionViewDto.builder()
+    static public QuestionDetailDto toDto(Question question) {
+        return QuestionDetailDto.builder()
                 .id(question.getId())
                 .content(question.getContent())
                 .username(question.getMember().getUsername())
@@ -54,7 +54,7 @@ public class QuestionViewDto {
                 .build();
     }
 
-    public void linkAnswerView(List<AnswerViewDto> linkDtoList) {
+    public void linkAnswerView(List<AnswerDetailDto> linkDtoList) {
         this.answers = linkDtoList;
     }
 
@@ -63,7 +63,7 @@ public class QuestionViewDto {
         this.recommendIt = recommendIt;
     }
 
-    public QuestionViewDto(String username) {
+    public QuestionDetailDto(String username) {
         this.username = username;
     }
 }

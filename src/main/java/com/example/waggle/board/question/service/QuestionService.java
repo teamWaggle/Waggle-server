@@ -2,30 +2,30 @@ package com.example.waggle.board.question.service;
 
 
 import com.example.waggle.board.question.dto.AnswerWriteDto;
-import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
-import com.example.waggle.board.question.dto.QuestionViewDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
+import com.example.waggle.board.question.dto.QuestionDetailDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
 
 import java.util.List;
 
 public interface QuestionService {
-    public List<QuestionSimpleViewDto> findAllQuestion();
+    List<QuestionSummaryDto> getQuestions();
 
-    public List<QuestionSimpleViewDto> findAllQuestionByUsername(String username);
+    List<QuestionSummaryDto> getQuestionsByUsername(String username);
 
-    public QuestionViewDto findQuestionByBoardId(Long boardId);
+    QuestionDetailDto getQuestionByBoardId(Long boardId);
 
-    public Long saveQuestion(QuestionWriteDto saveQuestionDto);
+    Long createQuestion(QuestionWriteDto questionWriteDto);
 
-    public void saveAnswer(AnswerWriteDto writeDto, Long boardId);
+    Long createAnswer(AnswerWriteDto answerWriteDto, Long boardId);
 
-    public String changeQuestion(QuestionWriteDto questionDto, Long boardId);
+    Long updateQuestion(QuestionWriteDto questionWriteDto, Long boardId);
 
-    public void changeAnswer(AnswerWriteDto answerDto, Long boardId);
+    Long updateAnswer(AnswerWriteDto answerWriteDto, Long boardId);
 
-    public boolean checkMember(Long boardId, String boardType);
+    boolean validateMember(Long boardId, String boardType);
 
-    public void removeQuestion(Long id);
+    void deleteQuestion(Long boardId);
 
-    public void removeAnswer(Long id);
+    void deleteAnswer(Long boardId);
 }
