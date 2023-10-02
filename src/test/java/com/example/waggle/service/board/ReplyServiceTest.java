@@ -153,9 +153,9 @@ class ReplyServiceTest {
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
         //comment set
-        commentService.saveComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
         //reply set
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         replyService.saveReply(comments.get(0), replyWriteDto1);
 
     }
@@ -167,7 +167,7 @@ class ReplyServiceTest {
         //given
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         //when
         List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
         //then
@@ -182,7 +182,7 @@ class ReplyServiceTest {
         //given
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
         //when
         replyService.changeReply(replies.get(0), replyWriteDto2);
@@ -199,7 +199,7 @@ class ReplyServiceTest {
         //given
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        List<CommentViewDto> comments = commentService.findComments(storySummaryDto.getId());
+        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
         List<ReplyViewDto> replies = replyService.findReplies(comments.get(0).getId());
 
         //when
