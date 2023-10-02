@@ -36,10 +36,10 @@
 | Archictecture | Spring MVC                                                |
 |:--------------|:----------------------------------------------------------|
 | Language      | Java 17                                                   |
-| Framework     | Spring Boot 3.1.2                                         |
-| Database      | MySQL , AWS RDS, Spring Data JPA, queryDSL, ElasticSearch |
-| CI/CD         | AWS EC2, AWS S3, CodeDeploy, Nginx, Github Actions        |
-| ETC           | Slack, Notion, Figma, RestDocs                            |
+| Framework     | Spring Boot 3.1.2,react.js                                 |
+| Database      | MySQL , AWS RDS, Spring Data JPA                          |
+| CI/CD         | AWS EC2, AWS S3, CodeDeploy, Github Actions              |
+| ETC           | Notion                                                    |
 
 
 ## Software Architecture
