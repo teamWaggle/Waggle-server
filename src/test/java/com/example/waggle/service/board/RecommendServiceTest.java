@@ -108,8 +108,8 @@ class RecommendServiceTest {
     void setBoardAndMember() {
 
         //member set
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
+        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto2, null);
 
         Member build = Member.builder().username("user1").password("password").build();
         memberRepository.save(build);

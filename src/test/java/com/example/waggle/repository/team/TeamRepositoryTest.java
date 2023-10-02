@@ -2,7 +2,7 @@ package com.example.waggle.repository.team;
 
 import com.example.waggle.schedule.domain.Team;
 import com.example.waggle.member.domain.TeamMember;
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.service.MemberService;
@@ -45,12 +45,12 @@ class TeamRepositoryTest {
                 .phone("010-1234-5678")
                 .build();
 
-        MemberDto savedMemberDto = memberService.signUp(signUpDto);
+        MemberDetailDto savedMemberDetailDto = memberService.signUp(signUpDto, null);
 
         // Team 생성 (member 가입)
         TeamDto team = TeamDto.builder()
                 .name("team").build();
-        TeamDto savedTeam = teamService.createTeamWithMember(team, savedMemberDto.getUsername());
+        TeamDto savedTeam = teamService.createTeam(team, savedMemberDetailDto.getUsername());
 
         // when
         Team findTeam = teamRepository.findById(savedTeam.getId()).get();
@@ -58,7 +58,7 @@ class TeamRepositoryTest {
 
         // then
         assertThat(teamMembers.size()).isEqualTo(1);
-        assertThat(teamMembers.get(0).getMember().getUsername()).isEqualTo(savedMemberDto.getUsername());
+        assertThat(teamMembers.get(0).getMember().getUsername()).isEqualTo(savedMemberDetailDto.getUsername());
 
     }
 }

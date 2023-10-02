@@ -112,8 +112,8 @@ class CommentServiceTest {
 
     private void setBoardAndMember() {
         //member set
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
+        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto2, null);
 
         //story set
         storyService.saveStory(storyWriteDto1);

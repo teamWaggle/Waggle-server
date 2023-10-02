@@ -4,7 +4,7 @@ import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
 import com.example.waggle.board.question.dto.QuestionViewDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
-import com.example.waggle.member.dto.MemberSimpleDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.board.question.service.QuestionService;
 import com.example.waggle.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -59,10 +59,10 @@ public class QuestionController {
     @GetMapping("/write")
     public String singleQuestionWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
         QuestionViewDto questionDto = new QuestionViewDto(username);
 
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
+        model.addAttribute("profileImg", memberSummaryDto.getProfileImg());
         model.addAttribute("question", questionDto);
         return "question/writeQuestion";
     }
@@ -87,9 +87,9 @@ public class QuestionController {
     @GetMapping("/edit/{title}/{boardId}")
     public String questionSingleEditForm(Model model, @PathVariable Long boardId) {
         QuestionViewDto questionDto = questionService.findQuestionByBoardId(boardId);
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(questionDto.getUsername());
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(questionDto.getUsername());
 
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg().getStoreFileName());
+        model.addAttribute("profileImg", memberSummaryDto.getProfileImg().getStoreFileName());
         model.addAttribute("question", questionDto);
         return "question/editQuestion";
     }

@@ -114,8 +114,8 @@ class QuestionServiceTest {
     }
 
     private void setQAndA() {
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
+        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto2, null);
 
         questionService.saveQuestion(questionWriteDto1);
         questionService.saveQuestion(questionWriteDto2);

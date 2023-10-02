@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static com.example.waggle.commons.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.commons.exception.ErrorCode.PET_NOT_FOUND;
 
@@ -26,14 +24,15 @@ public class PetServiceImpl implements PetService {
     private final PetRepository petRepository;
 
     @Override
-    public Optional<PetDto> findByPetId(Long petId) {
-        Optional<Pet> findPet = petRepository.findById(petId);
-        return findPet.map(PetDto::toDto);
+    public PetDto getPetById(Long petId) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new CustomAlertException(PET_NOT_FOUND));
+        return PetDto.toDto(pet);
     }
 
     @Transactional
     @Override
-    public PetDto addPet(PetDto petDto) {
+    public PetDto createPet(PetDto petDto) {
         Member member = memberRepository.findByUsername(petDto.getUsername())
                 .orElseThrow(() -> new CustomPageException(MEMBER_NOT_FOUND));
         Pet pet = petRepository.save(petDto.toEntity(member));
@@ -52,13 +51,9 @@ public class PetServiceImpl implements PetService {
 
     @Transactional
     @Override
-    public Boolean removePet(Long petId) {
-        Optional<Pet> petToRemove = petRepository.findById(petId);
-        if (petToRemove.isPresent()) {
-            Pet pet = petToRemove.get();
-            petRepository.delete(pet);
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+    public void deletePet(Long petId) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new CustomAlertException(PET_NOT_FOUND));
+        petRepository.delete(pet);
     }
 }

@@ -35,7 +35,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String nickname;
 
-    private String address; // 도로명 주소
+    private String address;
 
     private String phone;
 

@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @Builder
-public class MemberDto {
+public class MemberDetailDto {
 
     private Long id;
     private String username;
@@ -20,8 +20,8 @@ public class MemberDto {
     private String phone;
     private UploadFile profileImg;
 
-    static public MemberDto toDto(Member member) {
-        return MemberDto.builder()
+    static public MemberDetailDto toDto(Member member) {
+        return MemberDetailDto.builder()
                 .id(member.getId())
                 .username(member.getUsername())
                 .nickname(member.getNickname())

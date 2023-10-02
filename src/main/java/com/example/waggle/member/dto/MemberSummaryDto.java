@@ -11,14 +11,14 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @Builder
-public class MemberSimpleDto {
+public class MemberSummaryDto {
     private String username;
     private String nickname;
     private UploadFile profileImg;
 
-    static public MemberSimpleDto toDto(Member member) {
+    static public MemberSummaryDto toDto(Member member) {
         if (member == null) return null;
-        return MemberSimpleDto.builder()
+        return MemberSummaryDto.builder()
                 .username(member.getUsername())
                 .nickname(member.getNickname())
                 .profileImg(member.getProfileImg()).build();
