@@ -45,6 +45,24 @@ public class CommentApiController {
         return ResponseEntity.ok(commentId);
     }
     @Operation(
+            summary = "스토리 댓글 수정",
+            description = "사용자가 댓글을 수정합니다. 수정한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "스토리 댓글 수정 성공. 수정한 댓글의 고유 ID를 반환합니다."
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
+    )
+    @PostMapping("/story/{boardId}/edit")
+    public ResponseEntity<?> StoryCommentEdit(@RequestPart CommentWriteDto commentWriteDto,
+                                               @PathVariable Long boardId){
+        Long commentId = commentService.updateComment(boardId, commentWriteDto);
+        return ResponseEntity.ok(commentId);
+    }
+    @Operation(
             summary = "질문 댓글 작성",
             description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다."
     )
@@ -60,6 +78,24 @@ public class CommentApiController {
     public ResponseEntity<?> QuestionCommentWrite(@RequestPart CommentWriteDto commentWriteDto,
                                                   @PathVariable Long boardId){
         Long commentId = commentService.createComment(boardId, commentWriteDto, BoardType.QUESTION);
+        return ResponseEntity.ok(commentId);
+    }
+    @Operation(
+            summary = "질문 댓글 수정",
+            description = "사용자가 댓글을 수정합니다. 수정한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "질문 댓글 수정 성공. 수정한 댓글의 고유 ID를 반환합니다."
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
+    )
+    @PostMapping("/story/{boardId}/edit")
+    public ResponseEntity<?> QuestionCommentEdit(@RequestPart CommentWriteDto commentWriteDto,
+                                              @PathVariable Long boardId){
+        Long commentId = commentService.updateComment(boardId, commentWriteDto);
         return ResponseEntity.ok(commentId);
     }
 }
