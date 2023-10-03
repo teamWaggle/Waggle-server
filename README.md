@@ -47,7 +47,8 @@
 
 
 ## Software Architecture
-![제목을-입력해주세요_-001](https://github.com/suddiyo/Waggle/assets/69452755/1f147f36-4c82-477e-92f2-e6ab1ada61a1)
+
+![sft architecture](https://github.com/suddiyo/Waggle/assets/69452755/c3e03d65-48f4-4984-bc3e-64ffc30bc900)
 
 ## Package Structure
 ### domain 
