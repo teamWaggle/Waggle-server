@@ -33,9 +33,27 @@ public class ReplyApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/{commentId}/write")
-    public ResponseEntity<?> StoryCommentWrite(@RequestPart ReplyWriteDto replyWriteDto,
+    public ResponseEntity<?> replyWrite(@RequestPart ReplyWriteDto replyWriteDto,
                                                @PathVariable Long commentId){
         Long replyId = replyService.createReply(commentId, replyWriteDto);
+        return ResponseEntity.ok(replyId);
+    }
+    @Operation(
+            summary = "대댓글 수정",
+            description = "사용자가 대댓글을 수정합니다. 수정한 대댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "대댓글 수정 성공. 수정한 대댓글의 고유 ID를 반환합니다."
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
+    )
+    @PostMapping("/story/{commentId}/edit")
+    public ResponseEntity<?> replyEdit(@RequestPart ReplyWriteDto replyWriteDto,
+                                              @PathVariable Long commentId){
+        Long replyId = replyService.updateReply(commentId, replyWriteDto);
         return ResponseEntity.ok(replyId);
     }
 }
