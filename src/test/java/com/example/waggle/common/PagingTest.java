@@ -1,8 +1,12 @@
 package com.example.waggle.common;
 
+import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.commons.dto.page.Pagination;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,13 +14,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PagingTest {
     @Test
     void 총데이터_개수_페이징개수보다_부족() {
-        Pagination pagination = new Pagination(33, 1);
+        List<StorySummaryDto> stories = new ArrayList<>();
+        for (int i = 0; i < 33; i++) {
+            stories.add(new StorySummaryDto());
+        }
+        Pagination pagination = new Pagination(1,stories);
 
         assertThat(pagination.getStartPage()).isEqualTo(1);
         assertThat(pagination.getEndPage()).isEqualTo(4);
         assertThat(pagination.getTotalPages()).isEqualTo(4);
 
-        Pagination pagination1 = new Pagination(33, 3);
+        Pagination pagination1 = new Pagination(3, stories);
 
         assertThat(pagination1.getStartPage()).isEqualTo(1);
         assertThat(pagination1.getEndPage()).isEqualTo(4);
@@ -24,25 +32,29 @@ public class PagingTest {
     }
     @Test
     void 총데이터_개수_페이징개수보다_초과() {
-        Pagination pagination = new Pagination(123, 1);
+        List<StorySummaryDto> stories = new ArrayList<>();
+        for (int i = 0; i < 123; i++) {
+            stories.add(new StorySummaryDto());
+        }
+        Pagination pagination = new Pagination(1, stories);
 
         assertThat(pagination.getStartPage()).isEqualTo(1);
         assertThat(pagination.getEndPage()).isEqualTo(5);
         assertThat(pagination.getTotalPages()).isEqualTo(13);
 
-        Pagination pagination1 = new Pagination(123, 4);
+        Pagination pagination1 = new Pagination(4, stories);
 
         assertThat(pagination1.getStartPage()).isEqualTo(1);
         assertThat(pagination1.getEndPage()).isEqualTo(5);
         assertThat(pagination1.getTotalPages()).isEqualTo(13);
 
-        Pagination pagination2 = new Pagination(123, 7);
+        Pagination pagination2 = new Pagination(7, stories);
 
         assertThat(pagination2.getStartPage()).isEqualTo(6);
         assertThat(pagination2.getEndPage()).isEqualTo(10);
         assertThat(pagination2.getTotalPages()).isEqualTo(13);
 
-        Pagination pagination3 = new Pagination(123, 11);
+        Pagination pagination3 = new Pagination(11, stories);
 
         assertThat(pagination3.getStartPage()).isEqualTo(11);
         assertThat(pagination3.getEndPage()).isEqualTo(13);
@@ -51,7 +63,9 @@ public class PagingTest {
     }
     @Test
     void 총데이터_개수_한개() {
-        Pagination pagination = new Pagination(1, 1);
+        List<StorySummaryDto> stories = new ArrayList<>();
+        stories.add(new StorySummaryDto());
+        Pagination pagination = new Pagination(1, stories);
 
         assertThat(pagination.getStartPage()).isEqualTo(1);
         assertThat(pagination.getEndPage()).isEqualTo(1);
