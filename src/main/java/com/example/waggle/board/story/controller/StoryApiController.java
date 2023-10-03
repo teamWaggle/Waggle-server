@@ -74,9 +74,6 @@ public class StoryApiController {
         return ResponseEntity.ok(boardId);  //TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
 
-    /**
-     * remove
-     */
 
     @Operation(
             summary = "전체 스토리 목록 조회",
