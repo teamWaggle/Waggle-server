@@ -176,7 +176,7 @@ class QuestionServiceTest {
         setQAndA();
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
         //when
-        questionService.updateQuestion(questionEditDto1, allQuestion.get(0).getId());
+        questionService.updateQuestion(allQuestion.get(0).getId(), questionEditDto1);
         QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getTitle()).isEqualTo("EditQuestion");
@@ -191,7 +191,7 @@ class QuestionServiceTest {
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
         QuestionDetailDto findQuestion = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
         //when
-        questionService.updateAnswer(answerEditDto1, findQuestion.getAnswers().get(0).getId());
+        questionService.updateAnswer(findQuestion.getAnswers().get(0).getId(), answerEditDto1);
         QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("EditAnswer");
