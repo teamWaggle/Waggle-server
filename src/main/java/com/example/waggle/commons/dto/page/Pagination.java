@@ -26,13 +26,15 @@ public class Pagination {
     private int startPage;
     //이하동문
     private int endPage;
+    private List<?> boardList;
 
     @Builder
-    public Pagination(int total, int currentPage) {
+    public Pagination(int currentPage, List<?> boardList) {
         colSize = 10;
         pagingCount = 5;
 
-        this.total = total;
+        this.boardList = boardList;
+        this.total = boardList.size();
         this.currentPage = currentPage;
 
         if (total == 0) {
