@@ -19,9 +19,9 @@ public interface QuestionService {
 
     Long createAnswer(AnswerWriteDto answerWriteDto, Long boardId);
 
-    Long updateQuestion(QuestionWriteDto questionWriteDto, Long boardId);
+    Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto);
 
-    Long updateAnswer(AnswerWriteDto answerWriteDto, Long boardId);
+    Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto);
 
     boolean validateMember(Long boardId, String boardType);
 
