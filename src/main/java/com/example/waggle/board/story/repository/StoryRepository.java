@@ -10,4 +10,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     List<Story> findByMemberUsername(String username);
 
+    List<Story> findAllByOrderByCreatedDateDesc();      //최신순
+
+
 }

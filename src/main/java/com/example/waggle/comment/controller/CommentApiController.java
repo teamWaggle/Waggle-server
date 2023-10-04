@@ -92,7 +92,7 @@ public class CommentApiController {
             responseCode = "400",
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
-    @PostMapping("/story/{boardId}/edit")
+    @PostMapping("/question/{boardId}/edit")
     public ResponseEntity<?> QuestionCommentEdit(@RequestPart CommentWriteDto commentWriteDto,
                                               @PathVariable Long boardId){
         Long commentId = commentService.updateComment(boardId, commentWriteDto);
