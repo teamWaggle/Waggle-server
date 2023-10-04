@@ -11,6 +11,10 @@ public interface StoryService {
 
     List<StorySummaryDto> getStoriesByUsername(String username);
 
+    List<StorySummaryDto> getStoriesBySortingDateDesc();
+
+    List<StorySummaryDto> getStoriesBySortingRecommendDesc();
+
     StoryDetailDto getStoryByBoardId(Long boardId);
 
     Long createStory(StoryWriteDto storyWriteDto);
