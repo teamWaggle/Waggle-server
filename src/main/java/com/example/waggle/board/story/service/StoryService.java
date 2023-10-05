@@ -13,9 +13,6 @@ public interface StoryService {
 
     List<StorySummaryDto> getStoriesByUsername(String username);
 
-    Page<StorySummaryDto> getStoriesBySortingDateDesc(Pageable pageable);
-
-    Page<StorySummaryDto> getStoriesBySortingRecommendDesc(Pageable pageable);
 
     Page<StorySummaryDto> getStoriesPaging(Pageable pageable);
 
