@@ -45,15 +45,6 @@ public class StoryServiceImpl implements StoryService {
         return stories.stream().map(StorySummaryDto::toDto).collect(Collectors.toList());
     }
 
-    @Override
-    public Page<StorySummaryDto> getStoriesBySortingDateDesc(Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public Page<StorySummaryDto> getStoriesBySortingRecommendDesc(Pageable pageable) {
-        return null;
-    }
 
     @Override
     public Page<StorySummaryDto> getStoriesPaging(Pageable pageable) {
