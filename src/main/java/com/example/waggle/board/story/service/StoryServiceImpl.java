@@ -11,7 +11,7 @@ import com.example.waggle.media.domain.Media;
 import com.example.waggle.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,17 +46,19 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public List<StorySummaryDto> getStoriesBySortingDateDesc() {
-        List<Story> storiesByDateDesc = storyRepository.findAllByOrderByCreatedDateDesc();
-        return storiesByDateDesc.stream()
-                .map(StorySummaryDto::toDto)
-                .collect(Collectors.toList());
+    public Page<StorySummaryDto> getStoriesBySortingDateDesc(Pageable pageable) {
+        return null;
     }
 
     @Override
-    public List<StorySummaryDto> getStoriesBySortingRecommendDesc() {
-
+    public Page<StorySummaryDto> getStoriesBySortingRecommendDesc(Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public Page<StorySummaryDto> getStoriesPaging(Pageable pageable) {
+        Page<Story> all = storyRepository.findAll(pageable);
+        return all.map(StorySummaryDto::toDto);
     }
 
 
