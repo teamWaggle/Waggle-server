@@ -1,6 +1,7 @@
 package com.example.waggle.board.helpU.domain;
 
 import com.example.waggle.board.Board;
+import com.example.waggle.board.helpU.dto.HelpUWriteDto;
 import com.example.waggle.comment.domain.Comment;
 import com.example.waggle.commons.component.auditing.BaseEntity;
 import com.example.waggle.commons.component.file.UploadFile;
@@ -65,6 +66,20 @@ public class HelpU extends Board {
         this.RFID = RFID;
         this.contact = contact;
         this.petImage = petImage;
+    }
+
+    public void changeHelpU(HelpUWriteDto helpUWriteDto) {
+        this.title = helpUWriteDto.getTitle();
+        this.petName = helpUWriteDto.getPetName();
+        this.petKind = helpUWriteDto.getPetKind();
+        this.petAge = helpUWriteDto.getPetAge();
+        this.petGender = helpUWriteDto.getPetGender();
+        this.lostLocate = helpUWriteDto.getLostLocate();
+        this.lostDate = helpUWriteDto.getLostDate();
+        this.characteristic = helpUWriteDto.getCharacteristic();
+        this.RFID = helpUWriteDto.getRFID();
+        this.contact = helpUWriteDto.getContact();
+        this.petImage = helpUWriteDto.getPetImage();
     }
 
 }

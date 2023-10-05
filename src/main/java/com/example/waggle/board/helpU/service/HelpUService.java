@@ -16,13 +16,13 @@ public interface HelpUService {
 
     Page<HelpUSummaryDto> getHelpUsByUsername(String username, Pageable pageable);
 
-    HelpUDetailDto getHelpUById(Long helpUId);
+    HelpUDetailDto getHelpUByBoardId(Long boardId);
 
     Long createHelpU(HelpUWriteDto helpUWriteDto);
 
-    Long updateHelpU(HelpUWriteDto helpUWriteDto);
+    Long updateHelpU(Long boardId, HelpUWriteDto helpUWriteDto);
 
-    void deleteHelpU(HelpUDetailDto helpUDetailDto);
+    void deleteHelpU(Long boardId);
 
 
 

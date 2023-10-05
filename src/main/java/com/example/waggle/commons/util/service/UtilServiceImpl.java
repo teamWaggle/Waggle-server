@@ -1,5 +1,6 @@
 package com.example.waggle.commons.util.service;
 
+import com.example.waggle.board.story.domain.Story;
 import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.board.Board;
 import com.example.waggle.hashtag.domain.BoardHashtag;
@@ -40,6 +41,32 @@ public class UtilServiceImpl implements UtilService {
                 .orElseThrow(() -> new CustomPageException(ErrorCode.MEMBER_NOT_FOUND));
 
         return signInMember;
+    }
+
+    @Override
+    public boolean validateMemberUseBoard(Long boardId, BoardType boardType) {
+        Member signInMember = getSignInMember();
+        //board get
+        Board board;
+
+        switch (boardType) {
+            case STORY:
+                board = storyRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                break;
+            case QUESTION:
+                board = questionRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                break;
+            case ANSWER:
+                board = answerRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                break;
+            default:
+                // error: Invalid dtype
+                throw new CustomPageException(INVALID_BOARD_TYPE);
+        }
+        return board.getMember().equals(signInMember);
     }
 
     @Override
