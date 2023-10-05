@@ -3,6 +3,7 @@ package com.example.waggle.board.helpU.domain;
 import com.example.waggle.board.Board;
 import com.example.waggle.comment.domain.Comment;
 import com.example.waggle.commons.component.auditing.BaseEntity;
+import com.example.waggle.commons.component.file.UploadFile;
 import com.example.waggle.hashtag.domain.BoardHashtag;
 import com.example.waggle.media.domain.Media;
 import com.example.waggle.member.domain.Gender;
@@ -42,7 +43,8 @@ public class HelpU extends Board {
     private String characteristic;
     private String RFID;
     private String contact;
-    private String petImage;
+    @Embedded
+    private UploadFile petImage;
 
     public HelpU(Long id, Member member,
                  String content, List<BoardHashtag> boardHashtags,
@@ -50,7 +52,7 @@ public class HelpU extends Board {
                  String title, String petName, String petKind,
                  int petAge, Gender petGender, String lostLocate,
                  LocalDateTime lostDate, String characteristic,
-                 String RFID, String contact, String petImage) {
+                 String RFID, String contact, UploadFile petImage) {
         super(id, member, content, boardHashtags, medias, comments);
         this.title = title;
         this.petName = petName;
