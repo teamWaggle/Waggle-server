@@ -1,6 +1,8 @@
 package com.example.waggle.commons.util.service;
 
+import com.example.waggle.board.helpU.repository.HelpURepository;
 import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.commons.exception.CustomApiException;
 import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.board.Board;
 import com.example.waggle.hashtag.domain.BoardHashtag;
@@ -31,6 +33,7 @@ public class UtilServiceImpl implements UtilService {
     private final StoryRepository storyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final HelpURepository helpURepository;
     private final HashtagRepository hashtagRepository;
 
     @Override
@@ -44,6 +47,7 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean validateMemberUseBoard(Long boardId, BoardType boardType) {
         Member signInMember = getSignInMember();
         //board get
@@ -62,9 +66,13 @@ public class UtilServiceImpl implements UtilService {
                 board = answerRepository.findById(boardId)
                         .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
                 break;
+            case HELPU:
+                board = helpURepository.findById(boardId)
+                        .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                break;
             default:
                 // error: Invalid dtype
-                throw new CustomPageException(INVALID_BOARD_TYPE);
+                throw new CustomApiException(INVALID_BOARD_TYPE);
         }
         return board.getMember().equals(signInMember);
     }
@@ -107,6 +115,10 @@ public class UtilServiceImpl implements UtilService {
             case ANSWER:
                 board = answerRepository.findById(boardId)
                         .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                break;
+            case HELPU:
+                board = helpURepository.findById(boardId)
+                        .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype

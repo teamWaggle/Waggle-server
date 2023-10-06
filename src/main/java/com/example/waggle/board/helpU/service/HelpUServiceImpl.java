@@ -36,6 +36,7 @@ public class HelpUServiceImpl implements HelpUService{
     @Override
     public List<HelpUSummaryDto> getAllHelpU() {
         List<HelpU> all = helpURepository.findAll();
+        log.info("all size is ={}",all.size());
         return all.stream().map(HelpUSummaryDto::toDto).collect(Collectors.toList());
     }
 
@@ -59,12 +60,12 @@ public class HelpUServiceImpl implements HelpUService{
         return HelpUDetailDto.toDto(helpU);
     }
 
+    @Transactional
     @Override
     public Long createHelpU(HelpUWriteDto helpUWriteDto) {
         Member signInMember = utilService.getSignInMember();
         HelpU helpU = helpUWriteDto.toEntity(signInMember);
         helpURepository.save(helpU);
-
         if (!helpUWriteDto.getMedias().isEmpty()) {
             for (String mediaUrl : helpUWriteDto.getMedias()) {
                 Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
@@ -73,6 +74,7 @@ public class HelpUServiceImpl implements HelpUService{
         return helpU.getId();
     }
 
+    @Transactional
     @Override
     public Long updateHelpU(Long boardId, HelpUWriteDto helpUWriteDto) {
         HelpU helpU = helpURepository.findById(boardId)
@@ -88,6 +90,7 @@ public class HelpUServiceImpl implements HelpUService{
         return helpU.getId();
     }
 
+    @Transactional
     @Override
     public void deleteHelpU(Long boardId) {
         HelpU helpU = helpURepository.findById(boardId)
@@ -95,6 +98,8 @@ public class HelpUServiceImpl implements HelpUService{
         if (!utilService.validateMemberUseBoard(boardId, BoardType.HELPU)) {
             throw new CustomApiException(CANNOT_TOUCH_NOT_YOURS);
         }
+        log.info("1");
         helpURepository.delete(helpU);
+        log.info("2");
     }
 }
