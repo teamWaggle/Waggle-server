@@ -18,17 +18,13 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
 @Getter
+@Entity
+@Table(name = "help_u")
 @SuperBuilder
 @DiscriminatorValue("type_helpU")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HelpU extends Board {
-
-    @Id
-    @GeneratedValue
-    @Column(name = "sos_id")
-    private Long id;
 
     private String title;
 
