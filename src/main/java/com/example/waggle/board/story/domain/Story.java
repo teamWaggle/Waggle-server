@@ -37,4 +37,8 @@ public class Story extends Board {
         this.thumbnail = thumbnail;
     }
 
+    public void changeThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
 }
