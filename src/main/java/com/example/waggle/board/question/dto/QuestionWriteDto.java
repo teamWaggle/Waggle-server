@@ -50,7 +50,7 @@ public class QuestionWriteDto {
                 .content(question.getContent())
                 .title(question.getTitle())
                 .medias(question.getMedias().stream()
-                        .map(m -> m.getUrl()).collect(Collectors.toList()))
+                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .hashtags(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .build();

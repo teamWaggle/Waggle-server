@@ -8,12 +8,15 @@ import com.example.waggle.board.story.repository.StoryRepository;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.util.service.UtilService;
 import com.example.waggle.media.domain.Media;
+import com.example.waggle.media.service.MediaService;
 import com.example.waggle.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;
     private final UtilService utilService;
+    private final MediaService mediaService;
 
 
     @Override
@@ -54,67 +58,32 @@ public class StoryServiceImpl implements StoryService {
 
     @Transactional
     @Override
-    public Long createStory(StoryWriteDto storyWriteDto) {
+    public Long createStory(StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException {
         Member signInMember = utilService.getSignInMember();
         Story saveStory = storyWriteDto.toEntity(signInMember);
-        storyRepository.save(saveStory);
+        Story story = storyRepository.save(saveStory);
 
         if (!storyWriteDto.getHashtags().isEmpty()) {
             for (String hashtagContent : storyWriteDto.getHashtags()) {
                 utilService.saveHashtag(saveStory, hashtagContent);
             }
         }
-
-        if (!storyWriteDto.getMedias().isEmpty()) {
-            for (String mediaURL : storyWriteDto.getMedias()) {
-                Media.builder().url(mediaURL).board(saveStory).build().linkBoard(saveStory);
-            }
-        }
+        mediaService.createMedias(story.getId(), multipartFiles, "story");
         return saveStory.getId();
     }
 
     @Transactional
     @Override
-    public Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail) {
-        Member signInMember = utilService.getSignInMember();
-        storyWriteDto.changeThumbnail(thumbnail);
-
-        Story saveStory = storyWriteDto.toEntity(signInMember);
-        storyRepository.save(saveStory);
-
-        if (!storyWriteDto.getHashtags().isEmpty()) {
-            for (String hashtagContent : storyWriteDto.getHashtags()) {
-                utilService.saveHashtag(saveStory, hashtagContent);
-            }
-        }
-
-        if (!storyWriteDto.getMedias().isEmpty()) {
-            for (String mediaURL : storyWriteDto.getMedias()) {
-                Media.builder().url(mediaURL).board(saveStory).build().linkBoard(saveStory);
-            }
-        }
-
-        return saveStory.getId();
-    }
-
-
-    @Transactional
-    @Override
-    public Long updateStory(Long boardId, StoryWriteDto storyWriteDto) {
+    public Long updateStory(Long boardId, StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
-
 
         story.changeStory(storyWriteDto.getContent(), storyWriteDto.getThumbnail());
 
         story.getMedias().clear();
-
-        for (String media : storyWriteDto.getMedias()) {
-            Media.builder().url(media).board(story).build().linkBoard(story);
-        }
+        mediaService.createMedias(story.getId(), multipartFiles, "story");
 
         story.getBoardHashtags().clear();
-
         for (String hashtag : storyWriteDto.getHashtags()) {
             utilService.saveHashtag(story, hashtag);
         }

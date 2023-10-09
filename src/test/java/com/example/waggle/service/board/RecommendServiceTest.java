@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +106,7 @@ class RecommendServiceTest {
     }
 
     @Transactional
-    void setBoardAndMember() {
+    void setBoardAndMember() throws IOException {
 
         //member set
         memberService.signUp(signUpDto1, null);
@@ -118,13 +119,13 @@ class RecommendServiceTest {
         storyRepository.save(iiii);
 
         //story set
-        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
         //storyService.saveStory(storyWriteDto2);
     }
 
     @Test
     @WithMockCustomUser
-    void recommendBoard() {
+    void recommendBoard() throws IOException {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
@@ -139,7 +140,7 @@ class RecommendServiceTest {
     }
     @Test
     @WithMockCustomUser
-    void cancelRecommendBoard() {
+    void cancelRecommendBoard() throws IOException {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);

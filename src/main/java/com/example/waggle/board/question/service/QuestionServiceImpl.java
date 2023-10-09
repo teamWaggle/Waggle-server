@@ -10,12 +10,15 @@ import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.util.service.UtilService;
 import com.example.waggle.media.domain.Media;
+import com.example.waggle.media.service.MediaService;
 import com.example.waggle.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final UtilService utilService;
+    private final MediaService mediaService;
 
 
     @Override
@@ -61,10 +65,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public Long createQuestion(QuestionWriteDto questionWriteDto) {
+    public Long createQuestion(QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException {
         Member signInMember = utilService.getSignInMember();
-        Question question = questionWriteDto.toEntity(signInMember);
-        questionRepository.save(question);
+        Question saveQuestion = questionWriteDto.toEntity(signInMember);
+        Question question = questionRepository.save(saveQuestion);
 
         if (!questionWriteDto.getHashtags().isEmpty()) {
             for (String hashtag : questionWriteDto.getHashtags()) {
@@ -72,22 +76,19 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        if (!questionWriteDto.getMedias().isEmpty()) {
-            for (String media : questionWriteDto.getMedias()) {
-                Media.builder().url(media).board(question).build().linkBoard(question);
-            }
-        }
+        mediaService.createMedias(question.getId(), multipartFiles, "question");
+
         return question.getId();
     }
 
     @Transactional
     @Override
-    public Long createAnswer(AnswerWriteDto answerWriteDto, Long boardId) {
+    public Long createAnswer(AnswerWriteDto answerWriteDto, Long boardId, List<MultipartFile> multipartFiles) throws IOException {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
-
-        Answer answer = answerWriteDto.toEntity(signInMember);
+        Answer saveAnswer = answerWriteDto.toEntity(signInMember);
+        Answer answer = answerRepository.save(saveAnswer);
 
         if (!answerWriteDto.getHashtags().isEmpty()) {
             for (String hashtag : answerWriteDto.getHashtags()) {
@@ -95,11 +96,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        if (!answerWriteDto.getMedias().isEmpty()) {
-            for (String media : answerWriteDto.getMedias()) {
-                Media.builder().url(media).board(answer).build().linkBoard(answer);
-            }
-        }
+        mediaService.createMedias(answer.getId(), multipartFiles, "answer");
         question.addAnswer(answer);
 
         return answer.getId();
@@ -107,20 +104,16 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public Long updateQuestion(QuestionWriteDto questionWriteDto, Long boardId) {
+    public Long updateQuestion(QuestionWriteDto questionWriteDto, Long boardId, List<MultipartFile> multipartFiles) throws IOException {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         question.changeQuestion(questionWriteDto.getContent(), questionWriteDto.getTitle());
 
         question.getMedias().clear();
-
-        for (String media : questionWriteDto.getMedias()) {
-            Media.builder().url(media).board(question).build().linkBoard(question);
-        }
+        mediaService.createMedias(question.getId(), multipartFiles, "question");
 
         question.getBoardHashtags().clear();
-
         for (String hashtag : questionWriteDto.getHashtags()) {
             utilService.saveHashtag(question, hashtag);
         }
@@ -129,20 +122,16 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public Long updateAnswer(AnswerWriteDto answerWriteDto, Long boardId) {
+    public Long updateAnswer(AnswerWriteDto answerWriteDto, Long boardId, List<MultipartFile> multipartFiles) throws IOException {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
         answer.changeAnswer(answerWriteDto.getContent());
 
         answer.getMedias().clear();
-
-        for (String media : answerWriteDto.getMedias()) {
-            Media.builder().url(media).board(answer).build();
-        }
+        mediaService.createMedias(answer.getId(), multipartFiles, "answer");
 
         answer.getBoardHashtags().clear();
-
         for (String hashtag : answerWriteDto.getHashtags()) {
             utilService.saveHashtag(answer, hashtag);
         }

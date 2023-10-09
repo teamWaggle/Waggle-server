@@ -48,7 +48,7 @@ public class QuestionDetailDto {
                 .hashtags(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(question.getMedias().stream()
-                        .map(m -> m.getUrl()).collect(Collectors.toList()))
+                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .comments(question.getComments().stream()
                         .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();

@@ -45,7 +45,7 @@ public class StoryDetailDto {
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
                 .medias(story.getMedias().stream()
-                        .map(m -> m.getUrl()).collect(Collectors.toList()))
+                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .comments(story.getComments().stream()
                         .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
