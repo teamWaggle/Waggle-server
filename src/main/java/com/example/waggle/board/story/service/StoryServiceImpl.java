@@ -5,6 +5,8 @@ import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.board.story.repository.StoryRepository;
+import com.example.waggle.commons.component.file.FileStore;
+import com.example.waggle.commons.component.file.UploadFile;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.util.service.UtilService;
 import com.example.waggle.media.domain.Media;
@@ -33,6 +35,7 @@ public class StoryServiceImpl implements StoryService {
     private final StoryRepository storyRepository;
     private final UtilService utilService;
     private final MediaService mediaService;
+    private final FileStore fileStore;
 
 
     @Override
@@ -62,6 +65,7 @@ public class StoryServiceImpl implements StoryService {
         Member signInMember = utilService.getSignInMember();
         Story saveStory = storyWriteDto.toEntity(signInMember);
         Story story = storyRepository.save(saveStory);
+        changeThumbnail(story, thumbnail);
 
         if (!storyWriteDto.getHashtags().isEmpty()) {
             for (String hashtagContent : storyWriteDto.getHashtags()) {
@@ -69,6 +73,7 @@ public class StoryServiceImpl implements StoryService {
             }
         }
         mediaService.createMedias(story.getId(), multipartFiles, "story");
+
         return saveStory.getId();
     }
 
@@ -115,5 +120,10 @@ public class StoryServiceImpl implements StoryService {
             throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         storyRepository.delete(story);
+    }
+
+    public void changeThumbnail(Story story, MultipartFile thumbnail) throws IOException {
+        UploadFile uploadFile = fileStore.storeFile(thumbnail);
+        story.changeThumbnail(uploadFile.getStoreFileName());
     }
 }
