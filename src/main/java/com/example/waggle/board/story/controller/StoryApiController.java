@@ -43,16 +43,9 @@ public class StoryApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleStoryWrite(@RequestPart StoryWriteDto storyDto, @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail, BindingResult bindingResult) throws IOException {
-        try {
-            UploadFile uploadFile = fileStore.storeFile(thumbnail);
-            String storeFileName = uploadFile.getStoreFileName();
-            Long storyId = storyService.saveStoryWithThumbnail(storyDto, storeFileName);
-            return ResponseEntity.ok(storyId);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> singleStoryWrite(@RequestPart StoryWriteDto storyWriteDto, @RequestPart List<MultipartFile> multipartFiles,@RequestPart MultipartFile thumbnail, BindingResult bindingResult) throws IOException {
+        Long boardId = storyService.createStory(storyWriteDto, multipartFiles, thumbnail);
+        return ResponseEntity.ok(boardId);
     }
 
     @Operation(
@@ -68,8 +61,8 @@ public class StoryApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다."
     )
     @PostMapping("/edit/{boardId}")
-    public ResponseEntity<?> singleStoryEdit(@ModelAttribute StoryWriteDto storyDto, @PathVariable Long boardId) {
-        storyService.updateStory(boardId, storyDto);
+    public ResponseEntity<?> singleStoryEdit(@ModelAttribute StoryWriteDto storyDto, @RequestPart List<MultipartFile> multipartFiles, @RequestPart MultipartFile thumbnail, @PathVariable Long boardId) throws IOException {
+        storyService.updateStory(boardId, storyDto, multipartFiles, thumbnail);
         return ResponseEntity.ok(boardId);  //TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
 

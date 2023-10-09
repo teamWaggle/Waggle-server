@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,14 +91,14 @@ class StoryServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setBoardAndMember() {
+    private void setBoardAndMember() throws IOException {
         //member set
         memberService.signUp(signUpDto1, null);
         memberService.signUp(signUpDto2, null);
 
         //story set
-        storyService.createStory(storyWriteDto1);
-        storyService.createStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
     }
 
 
@@ -119,7 +120,7 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
-    void findAllStoryByMember() {
+    void findAllStoryByMember() throws IOException {
         //given
         setBoardAndMember();
 
@@ -134,7 +135,7 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
-    void findStoryViewByBoardId() {
+    void findStoryViewByBoardId() throws IOException {
         //given
         setBoardAndMember();
 
@@ -145,12 +146,11 @@ class StoryServiceTest {
         //then
         assertThat(storyViewByBoardId.getUsername()).isEqualTo("member1");
         assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
-        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media1");
     }
 
     @Test
     @WithMockCustomUser
-    void changeStory() {
+    void changeStory() throws IOException {
         //given
         setBoardAndMember();
         Long id = storyService.getStories().get(0).getId();
@@ -166,19 +166,18 @@ class StoryServiceTest {
                 .build();
         //when
         boolean isSameUser = storyService.validateMember(id);
-        storyService.updateStory(id, editDto);
+        storyService.updateStory(id, editDto, new ArrayList<>(), null);
         StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(id);
 
         //then
         assertThat(isSameUser).isTrue();
         assertThat(storyViewByBoardId.getContent()).isEqualTo("edit edit edit");
         assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
-        assertThat(storyViewByBoardId.getMedias().get(0)).isEqualTo("media2");
     }
 
     @Test
     @WithMockCustomUser
-    void deleteStory() {
+    void deleteStory() throws IOException {
         //given
         setBoardAndMember();
         List<StorySummaryDto> findStories = storyService.getStories();
