@@ -6,6 +6,7 @@ import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.board.story.service.StoryService;
+import com.example.waggle.commons.dto.page.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -73,9 +74,6 @@ public class StoryApiController {
         return ResponseEntity.ok(boardId);  //TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
 
-    /**
-     * remove
-     */
 
     @Operation(
             summary = "전체 스토리 목록 조회",
@@ -86,11 +84,12 @@ public class StoryApiController {
             description = "스토리 조회 성공. 전체 스토리 목록을 반환합니다."
     )
     @GetMapping("/all")
-    public ResponseEntity<?> story() {  // TODO 인기순, 최신순에 따른 필터링 필요
+    public ResponseEntity<?> story(@RequestParam(defaultValue = "1")int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
         List<StorySummaryDto> allStoryByMember = storyService.getStories();
         log.info("allStoryByMember = {}", allStoryByMember);
+        Pagination pagination = new Pagination(currentPage, allStoryByMember);
 
-        return ResponseEntity.ok(allStoryByMember);
+        return ResponseEntity.ok(pagination);
     }
 
     @Operation(

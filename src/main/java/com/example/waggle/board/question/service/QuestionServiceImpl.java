@@ -51,7 +51,8 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
 
-        List<AnswerDetailDto> answerDetailDtos = question.getAnswers().stream().map(AnswerDetailDto::toDto).collect(Collectors.toList());
+        List<AnswerDetailDto> answerDetailDtos = question.getAnswers().stream()
+                .map(AnswerDetailDto::toDto).collect(Collectors.toList());
 
         QuestionDetailDto questionDetailDto = QuestionDetailDto.toDto(question);
         questionDetailDto.linkAnswerView(answerDetailDtos);
@@ -107,7 +108,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public Long updateQuestion(QuestionWriteDto questionWriteDto, Long boardId) {
+    public Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto) {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
@@ -129,7 +130,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public Long updateAnswer(AnswerWriteDto answerWriteDto, Long boardId) {
+    public Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto) {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
