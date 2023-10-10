@@ -46,7 +46,7 @@ public class QuestionApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleQuestionWrite(@RequestPart QuestionWriteDto questionDto) throws IOException {
+    public ResponseEntity<?> singleQuestionWrite(@RequestBody QuestionWriteDto questionDto) throws IOException {
         Long questionId = questionService.createQuestion(questionDto);
         return ResponseEntity.ok(questionId);
     }
