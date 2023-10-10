@@ -5,6 +5,8 @@ import com.example.waggle.board.helpU.repository.HelpURepository;
 import com.example.waggle.board.helpU.dto.HelpUDetailDto;
 import com.example.waggle.board.helpU.dto.HelpUSummaryDto;
 import com.example.waggle.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.commons.exception.CustomApiException;
 import com.example.waggle.commons.exception.ErrorCode;
 import com.example.waggle.commons.util.service.BoardType;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.waggle.commons.exception.ErrorCode.*;
@@ -76,6 +79,43 @@ public class HelpUServiceImpl implements HelpUService{
 
     @Transactional
     @Override
+    public Long createHelpUTest(HelpUWriteDto helpUWriteDto, String username) {
+        Member signInMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
+        log.info("nickname = {}",signInMember.getNickname());
+
+        HelpU helpU = helpUWriteDto.toEntity(signInMember);
+        log.info("save HelpU");
+        helpURepository.save(helpU);
+        log.info("save HelpU completely");
+        if (!helpUWriteDto.getMedias().isEmpty()) {
+            for (String mediaUrl : helpUWriteDto.getMedias()) {
+                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
+            }
+        }
+        return helpU.getId();
+    }
+
+    @Transactional
+    @Override
+    public Long createHelpUWithThumbnail(HelpUWriteDto helpUDto, String thumbnail) {
+        Member signInMember = utilService.getSignInMember();
+        helpUDto.changeThumbnail(thumbnail);
+
+        HelpU saveHelpU = helpUDto.toEntity(signInMember);
+        helpURepository.save(saveHelpU);
+
+        if (!helpUDto.getMedias().isEmpty()) {
+            for (String mediaURL : helpUDto.getMedias()) {
+                Media.builder().url(mediaURL).board(saveHelpU).build().linkBoard(saveHelpU);
+            }
+        }
+
+        return saveHelpU.getId();
+    }
+
+    @Transactional
+    @Override
     public Long updateHelpU(Long boardId, HelpUWriteDto helpUWriteDto) {
         HelpU helpU = helpURepository.findById(boardId)
                 .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
@@ -98,8 +138,6 @@ public class HelpUServiceImpl implements HelpUService{
         if (!utilService.validateMemberUseBoard(boardId, BoardType.HELPU)) {
             throw new CustomApiException(CANNOT_TOUCH_NOT_YOURS);
         }
-        log.info("1");
         helpURepository.delete(helpU);
-        log.info("2");
     }
 }

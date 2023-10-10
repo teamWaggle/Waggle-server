@@ -22,7 +22,7 @@ public class HelpUSummaryDto {
     private String petKind;
     private int petAge;
     private Gender petGender;
-    private UploadFile petImage;
+    private String thumbnail;
     private String lostLocate;
     private LocalDateTime lostDate;
     private String username;
@@ -35,7 +35,7 @@ public class HelpUSummaryDto {
                 .petKind(helpU.getPetKind())
                 .petAge(helpU.getPetAge())
                 .petGender(helpU.getPetGender())
-                .petImage(helpU.getPetImage())
+                .thumbnail(helpU.getThumbnail())
                 .lostLocate(helpU.getLostLocate())
                 .lostDate(helpU.getLostDate())
                 .username(helpU.getMember().getUsername())

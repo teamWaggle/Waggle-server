@@ -19,7 +19,7 @@ public interface StoryService {
 
     Long createStory(StoryWriteDto storyWriteDto);
 
-    Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail);
+    Long createStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail);
 
     Long updateStory(Long storyId, StoryWriteDto storyWriteDto);
 

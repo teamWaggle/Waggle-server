@@ -20,6 +20,10 @@ public interface HelpUService {
 
     Long createHelpU(HelpUWriteDto helpUWriteDto);
 
+    Long createHelpUTest(HelpUWriteDto helpUWriteDto, String username);
+
+    Long createHelpUWithThumbnail(HelpUWriteDto helpUWriteDto, String thumbnail);
+
     Long updateHelpU(Long boardId, HelpUWriteDto helpUWriteDto);
 
     void deleteHelpU(Long boardId);

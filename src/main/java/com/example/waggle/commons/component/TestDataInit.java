@@ -1,5 +1,7 @@
 package com.example.waggle.commons.component;
 
+import com.example.waggle.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.board.helpU.service.HelpUService;
 import com.example.waggle.board.story.domain.Story;
 
 import com.example.waggle.member.domain.Member;
@@ -33,6 +35,7 @@ public class TestDataInit {
     private final MemberService memberService;
     private final TeamService teamService;
     private final ScheduleService scheduleService;
+    private final HelpUService helpUService;
 
     private final StoryRepository storyRepository;
     private final MemberRepository memberRepository;
@@ -42,6 +45,7 @@ public class TestDataInit {
     @PostConstruct
     public void init() {
 //        initMember();
+//        initHelpU();
 //        initStory();
 //        initTeamAndSchedule();
     }
@@ -52,10 +56,11 @@ public class TestDataInit {
                     .nickname("nickname" + i)
                     .username("user" + i)
                     .password("12345678")
+                    .phone("01011112222")
                     .build();
             MemberSummaryDto memberSummaryDto = memberService.signUp(signUpDto, null);
-            Member member = memberRepository.findByUsername(memberSummaryDto.getUsername()).get();
-            members.add(member);
+            //Member member = memberRepository.findByUsername(memberSummaryDto.getUsername()).get();
+            //members.add(member);
         }
     }
 
@@ -80,6 +85,20 @@ public class TestDataInit {
 
         scheduleService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1);
         scheduleService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2);
+    }
+
+    public void initHelpU() {
+        List<HelpUWriteDto> helps = new ArrayList<>();
+        helps.add(HelpUWriteDto.builder().username("user1").content("1").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("2").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("3").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("4").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("5").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("6").title("2").petName("3").build());
+
+        for (HelpUWriteDto help : helps) {
+            Long helpU = helpUService.createHelpUTest(help,"user1");
+        }
     }
 
 
