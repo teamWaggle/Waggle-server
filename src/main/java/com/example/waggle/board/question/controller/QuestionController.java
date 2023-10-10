@@ -9,6 +9,10 @@ import com.example.waggle.board.question.service.QuestionService;
 import com.example.waggle.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +30,9 @@ public class QuestionController {
     private final QuestionService questionService;
     private final MemberService memberService;
 
+    private Sort latestSorting = Sort.by("createdDate").descending();
+
+
     /**
      * view
      */
@@ -38,9 +45,10 @@ public class QuestionController {
 
     @GetMapping("/{username}")
     public String memberQuestion(Model model, @PathVariable String username) {
-        List<QuestionSummaryDto> allQuestionByMember = questionService
-                .getQuestionsByUsername(username);
-        model.addAttribute("simpleQuestions", allQuestionByMember);
+        Pageable pageable = PageRequest.of(0, 10, latestSorting);
+        Page<QuestionSummaryDto> questionsByUsername = questionService
+                .getQuestionsByUsername(username, pageable);
+        model.addAttribute("simpleQuestions", questionsByUsername);
         return "question/memberQuestion";
     }
 
