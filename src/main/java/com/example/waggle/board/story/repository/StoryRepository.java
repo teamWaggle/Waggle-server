@@ -10,11 +10,13 @@ import java.util.List;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-    List<Story> findByMemberUsername(String username);
+    //List<Story> findByMemberUsername(String username);
 
     List<Story> findAllByOrderByCreatedDateDesc();      //최신순
 
     Page<Story> findAll(Pageable pageable);
+
+    Page<Story> findByMemberUsername(String username);
 
 
 }

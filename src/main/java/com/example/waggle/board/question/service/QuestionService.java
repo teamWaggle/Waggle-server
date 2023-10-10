@@ -14,7 +14,7 @@ import java.util.List;
 public interface QuestionService {
     List<QuestionSummaryDto> getQuestions();
 
-    List<QuestionSummaryDto> getQuestionsByUsername(String username);
+    Page<QuestionSummaryDto> getQuestionsByUsername(String username,Pageable pageable);
 
     QuestionDetailDto getQuestionByBoardId(Long boardId);
 

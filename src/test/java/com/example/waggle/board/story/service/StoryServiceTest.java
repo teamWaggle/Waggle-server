@@ -146,11 +146,12 @@ class StoryServiceTest {
         setBoardAndMember();
 
         //when
-        List<StorySummaryDto> allStoryByMember = storyService.getStoriesByUsername("member1");
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<StorySummaryDto> storiesByUsername = storyService.getStoriesByUsername("member1", pageable);
         //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
         //then
-        assertThat(allStoryByMember.size()).isEqualTo(2);
+        assertThat(storiesByUsername.getContent().size()).isEqualTo(2);
         //assertThat(user1.size()).isEqualTo(1);
     }
 

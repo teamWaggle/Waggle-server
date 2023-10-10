@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,7 @@ public class HelpUApiController {
 
     private final HelpUService helpUService;
     private final FileStore fileStore;
+    private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(
             summary = "헬퓨 작성",
@@ -91,7 +93,7 @@ public class HelpUApiController {
     )
     @GetMapping("/all")
     public ResponseEntity<?> helpU(@RequestParam(defaultValue = "0") int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
-        Pageable pageable = PageRequest.of(currentPage, 10);
+        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<HelpUSummaryDto> allHelpU = helpUService.getAllHelpUByPaging(pageable);
 
         return ResponseEntity.ok(allHelpU);
@@ -111,7 +113,7 @@ public class HelpUApiController {
     )
     @GetMapping("/{username}")
     public ResponseEntity<?> memberHelpU(@RequestParam(defaultValue = "1")int currentPage, @PathVariable String username) {
-        Pageable pageable = PageRequest.of(currentPage, 10);
+        Pageable pageable = PageRequest.of(currentPage, 10,latestSorting);
         Page<HelpUSummaryDto> helpUsByUsername = helpUService.getHelpUsByUsername(username, pageable);
         return ResponseEntity.ok(helpUsByUsername);
     }
