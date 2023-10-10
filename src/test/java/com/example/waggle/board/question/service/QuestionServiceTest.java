@@ -14,6 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,10 +151,12 @@ class QuestionServiceTest {
         setQAndA();
 
         //when
-        List<QuestionSummaryDto> allQuestionByUsername = questionService.getQuestionsByUsername("member1");
+        Pageable pageable = PageRequest.of(0, 2);
+        Page<QuestionSummaryDto> questionsByUsername = questionService
+                .getQuestionsByUsername("member1", pageable);
 
         //then
-        assertThat(allQuestionByUsername.size()).isEqualTo(2);
+        assertThat(questionsByUsername.getContent().size()).isEqualTo(2);
     }
 
     @Test

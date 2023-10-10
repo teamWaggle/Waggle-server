@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,10 +105,12 @@ class QuestionRepositoryTest {
         savedQuestion2.addAnswer(answer3);
 
         // then
-        List<Question> questionList = questionRepository.findByMemberUsername(savedMember.getUsername());
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<Question> questionByUsername = questionRepository
+                .findByMemberUsername(savedMember.getUsername(), pageable);
 
-        assertThat(questionList.size()).isEqualTo(2);
-        for (Question questionCheck : questionList) {
+        assertThat(questionByUsername.getContent().size()).isEqualTo(2);
+        for (Question questionCheck : questionByUsername.getContent()) {
             log.info("question = {}", questionCheck.getContent());
         }
     }

@@ -40,9 +40,9 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public List<StorySummaryDto> getStoriesByUsername(String username) {
-        List<Story> stories = storyRepository.findByMemberUsername(username);
-        return stories.stream().map(StorySummaryDto::toDto).collect(Collectors.toList());
+    public Page<StorySummaryDto> getStoriesByUsername(String username, Pageable pageable) {
+        Page<Story> stories = storyRepository.findByMemberUsername(username);
+        return stories.map(StorySummaryDto::toDto);
     }
 
 

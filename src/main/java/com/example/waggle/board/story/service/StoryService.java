@@ -11,7 +11,7 @@ import java.util.List;
 public interface StoryService {
     List<StorySummaryDto> getStories();
 
-    List<StorySummaryDto> getStoriesByUsername(String username);
+    Page<StorySummaryDto> getStoriesByUsername(String username,Pageable pageable);
 
 
     Page<StorySummaryDto> getStoriesPaging(Pageable pageable);

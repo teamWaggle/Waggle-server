@@ -42,9 +42,9 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionSummaryDto> getQuestionsByUsername(String username) {
-        List<Question> questions = questionRepository.findByMemberUsername(username);
-        return questions.stream().map(QuestionSummaryDto::toDto).collect(Collectors.toList());
+    public Page<QuestionSummaryDto> getQuestionsByUsername(String username, Pageable pageable) {
+        Page<Question> questionByUsername = questionRepository.findByMemberUsername(username, pageable);
+        return questionByUsername.map(QuestionSummaryDto::toDto);
     }
 
     @Override
