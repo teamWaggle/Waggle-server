@@ -14,6 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,8 @@ class StoryServiceTest {
 
     StoryWriteDto storyWriteDto1;
     StoryWriteDto storyWriteDto2;
+    StoryWriteDto storyWriteDto3;
+    StoryWriteDto storyWriteDto4;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -84,6 +90,20 @@ class StoryServiceTest {
                 .thumbnail("www.waggle")
                 .build();
 
+        storyWriteDto3 = StoryWriteDto.builder()
+                .content("how can i do make he is happy?")
+                .hashtags(tags2)
+                .medias(medias2)
+                .thumbnail("www.waggle")
+                .build();
+        storyWriteDto4 = StoryWriteDto.builder()
+                .content("how can i do make he is happy?")
+                .hashtags(tags2)
+                .medias(medias2)
+                .thumbnail("www.waggle")
+                .build();
+
+
     }
     @AfterEach
     void clean() {
@@ -98,6 +118,8 @@ class StoryServiceTest {
         //story set
         storyService.createStory(storyWriteDto1);
         storyService.createStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto3);
+        storyService.createStory(storyWriteDto4);
     }
 
 
@@ -190,5 +212,22 @@ class StoryServiceTest {
         List<StorySummaryDto> allStory = storyService.getStories();
 
         assertThat(allStory.size()).isEqualTo(1);
+    }
+
+    @Test
+    @WithMockCustomUser
+    void getStoriesByPaging() {
+
+        setBoardAndMember();
+
+        Sort sort = Sort.by("createdDate").descending();
+        Pageable pageable = PageRequest.of(0, 2,sort);
+
+        Page<StorySummaryDto> storiesPaging = storyService.getStoriesPaging(pageable);
+        List<StorySummaryDto> content = storiesPaging.getContent();
+
+        for (StorySummaryDto storySummaryDto : content) {
+            log.info("storySummaryDto.getId() = {}" ,storySummaryDto.getId());
+        }
     }
 }
