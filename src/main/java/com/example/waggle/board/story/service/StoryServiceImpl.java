@@ -90,7 +90,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Transactional
     @Override
-    public Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail) {
+    public Long createStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail) {
         Member signInMember = utilService.getSignInMember();
         storyWriteDto.changeThumbnail(thumbnail);
 

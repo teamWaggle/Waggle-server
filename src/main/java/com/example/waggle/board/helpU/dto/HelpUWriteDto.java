@@ -25,7 +25,7 @@ public class HelpUWriteDto {
     private int petAge;
     private Gender petGender;
     private String contact;
-    private UploadFile petImage;
+    private String thumbnail;
     private String lostLocate;
     private LocalDateTime lostDate;
     private String content;
@@ -44,7 +44,7 @@ public class HelpUWriteDto {
                 .petAge(petAge)
                 .petGender(petGender)
                 .contact(contact)
-                .petImage(petImage)
+                .thumbnail(thumbnail)
                 .lostLocate(lostLocate)
                 .lostDate(lostDate)
                 .content(content)
@@ -63,7 +63,7 @@ public class HelpUWriteDto {
                 .petAge(helpU.getPetAge())
                 .petGender(helpU.getPetGender())
                 .contact(helpU.getContact())
-                .petImage(helpU.getPetImage())
+                .thumbnail(helpU.getThumbnail())
                 .lostLocate(helpU.getLostLocate())
                 .lostDate(helpU.getLostDate())
                 .content(helpU.getContent())
@@ -73,5 +73,9 @@ public class HelpUWriteDto {
                         .map(h -> h.getUrl()).collect(Collectors.toList()))
                 .username(helpU.getMember().getUsername())
                 .build();
+    }
+
+    public void changeThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

@@ -24,7 +24,7 @@ public class HelpUDetailDto {
     private int petAge;
     private Gender petGender;
     private String contact;
-    private UploadFile petImage;
+    private String thumbnail;
     private String lostLocate;
     private LocalDateTime lostDate;
     private String content;
@@ -44,7 +44,7 @@ public class HelpUDetailDto {
                 .petAge(helpU.getPetAge())
                 .petGender(helpU.getPetGender())
                 .contact(helpU.getContact())
-                .petImage(helpU.getPetImage())
+                .thumbnail(helpU.getThumbnail())
                 .lostDate(helpU.getLostDate())
                 .lostLocate(helpU.getLostLocate())
                 .content(helpU.getContent())

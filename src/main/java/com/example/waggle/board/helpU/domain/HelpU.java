@@ -40,8 +40,7 @@ public class HelpU extends Board {
     private String characteristic;
     private String RFID;
     private String contact;
-    @Embedded
-    private UploadFile petImage;
+    private String thumbnail;
 
     public HelpU(Long id, Member member,
                  String content, List<BoardHashtag> boardHashtags,
@@ -49,7 +48,7 @@ public class HelpU extends Board {
                  String title, String petName, String petKind,
                  int petAge, Gender petGender, String lostLocate,
                  LocalDateTime lostDate, String characteristic,
-                 String RFID, String contact, UploadFile petImage) {
+                 String RFID, String contact, String thumbnail) {
         super(id, member, content, boardHashtags, medias, comments);
         this.title = title;
         this.petName = petName;
@@ -61,7 +60,7 @@ public class HelpU extends Board {
         this.characteristic = characteristic;
         this.RFID = RFID;
         this.contact = contact;
-        this.petImage = petImage;
+        this.thumbnail = thumbnail;
     }
 
     public void changeHelpU(HelpUWriteDto helpUWriteDto) {
@@ -75,7 +74,7 @@ public class HelpU extends Board {
         this.characteristic = helpUWriteDto.getCharacteristic();
         this.RFID = helpUWriteDto.getRFID();
         this.contact = helpUWriteDto.getContact();
-        this.petImage = helpUWriteDto.getPetImage();
+        this.thumbnail = helpUWriteDto.getThumbnail();
     }
 
 }

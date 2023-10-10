@@ -48,7 +48,7 @@ public class StoryApiController {
         try {
             UploadFile uploadFile = fileStore.storeFile(thumbnail);
             String storeFileName = uploadFile.getStoreFileName();
-            Long storyId = storyService.saveStoryWithThumbnail(storyDto, storeFileName);
+            Long storyId = storyService.createStoryWithThumbnail(storyDto, storeFileName);
             return ResponseEntity.ok(storyId);
         } catch (IOException e) {
             e.printStackTrace();
