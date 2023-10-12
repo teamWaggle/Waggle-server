@@ -153,7 +153,7 @@ class QuestionServiceTest {
         //when
         Pageable pageable = PageRequest.of(0, 2);
         Page<QuestionSummaryDto> questionsByUsername = questionService
-                .getQuestionsByUsername("member1", pageable);
+                .getPagedQuestionsByUsername("member1", pageable);
 
         //then
         assertThat(questionsByUsername.getContent().size()).isEqualTo(2);
