@@ -9,7 +9,6 @@ import com.example.waggle.board.question.repository.QuestionRepository;
 import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.util.service.UtilService;
-import com.example.waggle.media.domain.Media;
 import com.example.waggle.media.service.MediaService;
 import com.example.waggle.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.waggle.commons.exception.ErrorCode.*;
+import static com.example.waggle.commons.util.service.BoardType.ANSWER;
+import static com.example.waggle.commons.util.service.BoardType.QUESTION;
 
 
 @Slf4j
@@ -76,7 +77,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        mediaService.createMedias(question.getId(), multipartFiles, "question");
+        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
 
         return question.getId();
     }
@@ -96,7 +97,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        mediaService.createMedias(answer.getId(), multipartFiles, "answer");
+        mediaService.createMedias(answer.getId(), multipartFiles, ANSWER);
         question.addAnswer(answer);
 
         return answer.getId();
@@ -111,7 +112,7 @@ public class QuestionServiceImpl implements QuestionService {
         question.changeQuestion(questionWriteDto.getContent(), questionWriteDto.getTitle());
 
         question.getMedias().clear();
-        mediaService.createMedias(question.getId(), multipartFiles, "question");
+        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
 
         question.getBoardHashtags().clear();
         for (String hashtag : questionWriteDto.getHashtags()) {
@@ -129,7 +130,7 @@ public class QuestionServiceImpl implements QuestionService {
         answer.changeAnswer(answerWriteDto.getContent());
 
         answer.getMedias().clear();
-        mediaService.createMedias(answer.getId(), multipartFiles, "answer");
+        mediaService.createMedias(answer.getId(), multipartFiles, ANSWER);
 
         answer.getBoardHashtags().clear();
         for (String hashtag : answerWriteDto.getHashtags()) {
