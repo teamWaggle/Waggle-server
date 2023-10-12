@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import upload from '../../images/upload.png';
 
-const Preview = ({ setImageFile }) => {
-    const [imageSrc, setImageSrc] = useState(null);
+const Preview = ({ setImageFiles }) => {
+    const [imageSrcs, setImageSrcs] = useState([]);
     const fileInputRef = useRef(null);
 
     const handleImageClick = () => {
@@ -10,16 +10,24 @@ const Preview = ({ setImageFile }) => {
     };
 
     const onUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+        const files = Array.from(e.target.files);
+        const updatedImageSrcs = [...imageSrcs];
+        const promises = files.map(file => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    updatedImageSrcs.push(reader.result);
+                    resolve();
+                };
+                reader.onerror = () => reject();
+            });
+        });
 
-            reader.onload = () => {
-                setImageSrc(reader.result);
-                setImageFile(file);
-            };
-        }
+        Promise.all(promises).then(() => {
+            setImageSrcs(updatedImageSrcs);
+            setImageFiles(files);
+        });
     };
 
     return (
@@ -27,6 +35,7 @@ const Preview = ({ setImageFile }) => {
             <input
                 accept="image/*"
                 type="file"
+                multiple
                 onChange={(e) => onUpload(e)}
                 style={{ display: "none" }}
                 ref={fileInputRef}
@@ -37,18 +46,22 @@ const Preview = ({ setImageFile }) => {
                     cursor: "pointer",
                     height: "400px",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center"
                 }}
             >
-                {imageSrc ? (
-                    <img
-                        width={'400px'}
-                        height={'400px'}
-                        src={imageSrc}
-                        alt="Preview"
-                        style={{borderRadius: "8px"}}
-                    />
+                {imageSrcs.length > 0 ? (
+                    imageSrcs.map((src, index) => (
+                        <img
+                            key={index}
+                            width={'400px'}
+                            height={'400px'}
+                            src={src}
+                            alt={`Preview ${index + 1}`}
+                            style={{borderRadius: "8px", marginBottom: "10px"}}
+                        />
+                    ))
                 ) : (
                     <img
                         width={'250px'}

@@ -4,12 +4,6 @@ import com.example.waggle.board.question.dto.QuestionDetailDto;
 import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
 import com.example.waggle.board.question.service.QuestionService;
-import com.example.waggle.board.story.dto.StoryDetailDto;
-import com.example.waggle.board.story.dto.StorySummaryDto;
-import com.example.waggle.board.story.dto.StoryWriteDto;
-import com.example.waggle.commons.component.file.FileStore;
-import com.example.waggle.commons.component.file.UploadFile;
-import com.example.waggle.commons.dto.page.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,9 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,9 +27,8 @@ import java.util.List;
 @Tag(name = "Question API", description = "질문 API")
 public class QuestionApiController {
     private final QuestionService questionService;
-    private final FileStore fileStore;
 
-    private Sort latestSorting = Sort.by("createdDate").descending();
+    private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(
             summary = "질문 작성",
@@ -52,8 +43,8 @@ public class QuestionApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleQuestionWrite(@RequestBody QuestionWriteDto questionDto) throws IOException {
-        Long questionId = questionService.createQuestion(questionDto);
+    public ResponseEntity<?> singleQuestionWrite(@RequestPart QuestionWriteDto questionDto, @RequestPart List<MultipartFile> multipartFiles) throws IOException {
+        Long questionId = questionService.createQuestion(questionDto, multipartFiles);
         return ResponseEntity.ok(questionId);
     }
 
@@ -70,8 +61,8 @@ public class QuestionApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다."
     )
     @PostMapping("/edit/{boardId}")
-    public ResponseEntity<?> singleQuestionEdit(@ModelAttribute QuestionWriteDto questionDto, @PathVariable Long boardId) {
-        questionService.updateQuestion(boardId, questionDto);
+    public ResponseEntity<?> singleQuestionEdit(@ModelAttribute QuestionWriteDto questionDto, @RequestPart List<MultipartFile> multipartFiles, @PathVariable Long boardId) throws IOException {
+        questionService.updateQuestion(boardId, questionDto, multipartFiles);
         return ResponseEntity.ok(boardId);
     }
 

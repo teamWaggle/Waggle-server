@@ -15,7 +15,7 @@ import { writeStoryApi } from '../apis/storyApi'
 function WriteStory() {
     const [loginedMember, setLoginedMember] = useState(null);
     const [content, setContent] = useState('');
-    const [imageFile, setImageFile] = useState(null);
+    const [imageFiles, setImageFiles] = useState(null);
 
     const navigate = useNavigate();
 
@@ -24,8 +24,11 @@ function WriteStory() {
         try {
 
             const formData = new FormData();
-            formData.append('thumbnail', imageFile);
-            formData.append('storyDto', new Blob([JSON.stringify({ content })], { type: 'application/json' }));
+            formData.append('thumbnail', imageFiles[0]);
+            imageFiles.forEach((file, index) => {
+                formData.append('multipartFiles', file);
+            });
+            formData.append('storyWriteDto', new Blob([JSON.stringify({ content })], { type: 'application/json' }));
             const response = await writeStoryApi(formData);
             console.log(response.data);
             navigate('/');
@@ -77,7 +80,7 @@ function WriteStory() {
                             </div>
                         </div>
                         <div className={styles.thumbnail}>
-                            <Preview setImageFile={setImageFile} />
+                            <Preview setImageFiles={setImageFiles} />
                         </div>
                     </div>
                     <div className={styles.contentContainer}>

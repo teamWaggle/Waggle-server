@@ -5,10 +5,11 @@ import com.example.waggle.board.question.dto.AnswerWriteDto;
 import com.example.waggle.board.question.dto.QuestionDetailDto;
 import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
-import com.example.waggle.board.story.dto.StorySummaryDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface QuestionService {
@@ -20,13 +21,13 @@ public interface QuestionService {
 
     Page<QuestionSummaryDto> getPagedQuestions(Pageable pageable);
 
-    Long createQuestion(QuestionWriteDto questionWriteDto);
+    Long createQuestion(QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    Long createAnswer(AnswerWriteDto answerWriteDto, Long boardId);
+    Long createAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto);
+    Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto);
+    Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
     boolean validateMember(Long boardId, String boardType);
 
