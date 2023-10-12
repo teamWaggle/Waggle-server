@@ -8,6 +8,7 @@ import com.example.waggle.board.story.repository.StoryRepository;
 import com.example.waggle.commons.component.file.FileStore;
 import com.example.waggle.commons.component.file.UploadFile;
 import com.example.waggle.commons.exception.CustomPageException;
+import com.example.waggle.commons.util.service.BoardType;
 import com.example.waggle.commons.util.service.UtilService;
 import com.example.waggle.media.domain.Media;
 import com.example.waggle.media.service.MediaService;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.commons.util.service.BoardType.*;
 
 
 @Slf4j
@@ -72,7 +74,7 @@ public class StoryServiceImpl implements StoryService {
                 utilService.saveHashtag(saveStory, hashtagContent);
             }
         }
-        mediaService.createMedias(story.getId(), multipartFiles, "story");
+        mediaService.createMedias(story.getId(), multipartFiles, STORY);
 
         return saveStory.getId();
     }
@@ -86,7 +88,7 @@ public class StoryServiceImpl implements StoryService {
         story.changeStory(storyWriteDto.getContent(), storyWriteDto.getThumbnail());
 
         story.getMedias().clear();
-        mediaService.createMedias(story.getId(), multipartFiles, "story");
+        mediaService.createMedias(story.getId(), multipartFiles, STORY);
 
         story.getBoardHashtags().clear();
         for (String hashtag : storyWriteDto.getHashtags()) {
