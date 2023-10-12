@@ -147,7 +147,7 @@ class StoryServiceTest {
 
         //when
         Pageable pageable = PageRequest.of(0, 3);
-        Page<StorySummaryDto> storiesByUsername = storyService.getStoriesByUsername("member1", pageable);
+        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername("member1", pageable);
         //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
         //then
@@ -224,7 +224,7 @@ class StoryServiceTest {
         Sort sort = Sort.by("createdDate").descending();
         Pageable pageable = PageRequest.of(0, 2,sort);
 
-        Page<StorySummaryDto> storiesPaging = storyService.getStoriesPaging(pageable);
+        Page<StorySummaryDto> storiesPaging = storyService.getPagedStories(pageable);
         List<StorySummaryDto> content = storiesPaging.getContent();
 
         for (StorySummaryDto storySummaryDto : content) {

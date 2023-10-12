@@ -112,7 +112,7 @@ class HelpUServiceTest {
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 3);
-        Page<HelpUSummaryDto> allHelpUByPaging = helpUService.getAllHelpUByPaging(pageable);
+        Page<HelpUSummaryDto> allHelpUByPaging = helpUService.getPagedHelpUs(pageable);
         assertThat(allHelpUByPaging.getContent().size()).isEqualTo(3);
         assertThat(allHelpUByPaging.getContent().get(0).getPetName()).isEqualTo("i");
     }
@@ -129,7 +129,7 @@ class HelpUServiceTest {
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 2);
-        Page<HelpUSummaryDto> allHelpUByPaging = helpUService.getHelpUsByUsername("member1",pageable);
+        Page<HelpUSummaryDto> allHelpUByPaging = helpUService.getPagedHelpUsByUsername("member1",pageable);
         assertThat(allHelpUByPaging.getContent().size()).isEqualTo(2);
         assertThat(allHelpUByPaging.getContent().get(1).getPetName()).isEqualTo("ii");
     }

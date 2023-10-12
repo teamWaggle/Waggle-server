@@ -72,7 +72,7 @@ public class HelpU extends Board {
         this.lostLocate = helpUWriteDto.getLostLocate();
         this.lostDate = helpUWriteDto.getLostDate();
         this.characteristic = helpUWriteDto.getCharacteristic();
-        this.rfid = helpUWriteDto.getRFID();
+        this.rfid = helpUWriteDto.getRfid();
         this.contact = helpUWriteDto.getContact();
         this.thumbnail = helpUWriteDto.getThumbnail();
     }

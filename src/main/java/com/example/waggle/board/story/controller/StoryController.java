@@ -48,7 +48,7 @@ public class StoryController {
     public String memberStory(@PathVariable String username,
                               Model model) {
         Pageable pageable = PageRequest.of(0, 3);
-        Page<StorySummaryDto> storiesByUsername = storyService.getStoriesByUsername(username, pageable);
+        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername(username, pageable);
         model.addAttribute("simpleStories", storiesByUsername);
         return "story/memberStory";
     }

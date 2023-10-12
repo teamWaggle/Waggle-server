@@ -47,7 +47,7 @@ public class QuestionController {
     public String memberQuestion(Model model, @PathVariable String username) {
         Pageable pageable = PageRequest.of(0, 10, latestSorting);
         Page<QuestionSummaryDto> questionsByUsername = questionService
-                .getQuestionsByUsername(username, pageable);
+                .getPagedQuestionsByUsername(username, pageable);
         model.addAttribute("simpleQuestions", questionsByUsername);
         return "question/memberQuestion";
     }
