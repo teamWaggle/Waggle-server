@@ -13,4 +13,6 @@ public interface UtilService {
     void saveHashtag(Board board, String tag);
     Hashtag getHashtag(String tag);
 
+    boolean validateMemberUseBoard(Long boardId, BoardType boardType);
+
 }

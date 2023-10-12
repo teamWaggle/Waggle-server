@@ -9,6 +9,9 @@ import com.example.waggle.board.story.service.StoryService;
 import com.example.waggle.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,8 +47,9 @@ public class StoryController {
     @GetMapping("/{username}")
     public String memberStory(@PathVariable String username,
                               Model model) {
-        List<StorySummaryDto> allStoryByMember = storyService.getStoriesByUsername(username);
-        model.addAttribute("simpleStories", allStoryByMember);
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername(username, pageable);
+        model.addAttribute("simpleStories", storiesByUsername);
         return "story/memberStory";
     }
 

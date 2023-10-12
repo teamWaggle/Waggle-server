@@ -2,6 +2,7 @@ package com.example.waggle.member.service;
 
 import com.example.waggle.commons.component.file.UploadFile;
 import com.example.waggle.commons.exception.CustomAlertException;
+import com.example.waggle.commons.exception.CustomApiException;
 import com.example.waggle.commons.security.JwtToken;
 import com.example.waggle.commons.security.JwtTokenProvider;
 import com.example.waggle.member.domain.Member;
@@ -57,7 +58,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberSummaryDto signUp(SignUpDto signUpDto, UploadFile profileImg) {
         if (memberRepository.existsByUsername(signUpDto.getUsername())) {
-            throw new CustomAlertException(ALREADY_USING_USERNAME);
+            throw new CustomApiException(ALREADY_USING_USERNAME);
         }
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
 
@@ -67,14 +68,12 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
         updateProfileImg(member.getUsername(), profileImg);
 
-
         List<PetDto> petDtos = signUpDto.getPets();
         List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(member)).collect(Collectors.toList());
         for (Pet pet : pets) {
             petRepository.save(pet);
         }
         member.setPets(pets);
-
         return MemberSummaryDto.toDto(member);
     }
 
@@ -86,7 +85,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberSummaryDto getMemberSummaryDto(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
         return MemberSummaryDto.toDto(member);
     }
 
@@ -94,7 +93,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Long updateProfileImg(String username, UploadFile profileImg) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
         member.changeProfileImg(profileImg);
         return member.getId();
     }

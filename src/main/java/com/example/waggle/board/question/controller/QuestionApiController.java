@@ -15,6 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -33,6 +37,8 @@ public class QuestionApiController {
     private final QuestionService questionService;
     private final FileStore fileStore;
 
+    private Sort latestSorting = Sort.by("createdDate").descending();
+
     @Operation(
             summary = "질문 작성",
             description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다."
@@ -46,7 +52,7 @@ public class QuestionApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleQuestionWrite(@RequestPart QuestionWriteDto questionDto) throws IOException {
+    public ResponseEntity<?> singleQuestionWrite(@RequestBody QuestionWriteDto questionDto) throws IOException {
         Long questionId = questionService.createQuestion(questionDto);
         return ResponseEntity.ok(questionId);
     }
@@ -78,12 +84,11 @@ public class QuestionApiController {
             description = "질문 조회 성공. 전체 질문 목록을 반환합니다."
     )
     @GetMapping("/all")
-    public ResponseEntity<?> question(@RequestParam(defaultValue = "1")int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
-        List<QuestionSummaryDto> allQuestions = questionService.getQuestions();
-        log.info("allStoryByMember = {}", allQuestions);
-        Pagination pagination = new Pagination(currentPage, allQuestions);
+    public ResponseEntity<?> question(@RequestParam(defaultValue = "0")int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
+        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Page<QuestionSummaryDto> questions = questionService.getPagedQuestions(pageable);
 
-        return ResponseEntity.ok(pagination);
+        return ResponseEntity.ok(questions);
     }
     @Operation(
             summary = "사용자의 질문 목록 조회",
@@ -98,9 +103,12 @@ public class QuestionApiController {
             description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다."
     )
     @GetMapping("/{username}")
-    public ResponseEntity<?> memberQuestion(@PathVariable String username) {
-        List<QuestionSummaryDto> allQuestionsByMember = questionService.getQuestionsByUsername(username);
-        return ResponseEntity.ok(allQuestionsByMember);
+    public ResponseEntity<?> memberQuestion(@RequestParam(defaultValue = "0")int currentPage,
+                                            @PathVariable String username) {
+        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Page<QuestionSummaryDto> questionsByUsername = questionService
+                .getPagedQuestionsByUsername(username, pageable);
+        return ResponseEntity.ok(questionsByUsername);
     }
     @Operation(
             summary = "특정 질문 조회",

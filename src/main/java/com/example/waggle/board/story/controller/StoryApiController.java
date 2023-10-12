@@ -12,6 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -30,6 +34,7 @@ public class StoryApiController {
 
     private final StoryService storyService;
     private final FileStore fileStore;
+    private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(
             summary = "스토리 작성",
@@ -48,7 +53,7 @@ public class StoryApiController {
         try {
             UploadFile uploadFile = fileStore.storeFile(thumbnail);
             String storeFileName = uploadFile.getStoreFileName();
-            Long storyId = storyService.saveStoryWithThumbnail(storyDto, storeFileName);
+            Long storyId = storyService.createStoryWithThumbnail(storyDto, storeFileName);
             return ResponseEntity.ok(storyId);
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,12 +89,11 @@ public class StoryApiController {
             description = "스토리 조회 성공. 전체 스토리 목록을 반환합니다."
     )
     @GetMapping("/all")
-    public ResponseEntity<?> story(@RequestParam(defaultValue = "1")int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
-        List<StorySummaryDto> allStoryByMember = storyService.getStories();
-        log.info("allStoryByMember = {}", allStoryByMember);
-        Pagination pagination = new Pagination(currentPage, allStoryByMember);
+    public ResponseEntity<?> story(@RequestParam(defaultValue = "0")int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
+        Pageable pageable = PageRequest.of(currentPage, 10,latestSorting);
+        Page<StorySummaryDto> storiesPaging = storyService.getPagedStories(pageable);
 
-        return ResponseEntity.ok(pagination);
+        return ResponseEntity.ok(storiesPaging);
     }
 
     @Operation(
@@ -105,9 +109,11 @@ public class StoryApiController {
             description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다."
     )
     @GetMapping("/{username}")
-    public ResponseEntity<?> memberStory(@PathVariable String username) {
-        List<StorySummaryDto> allStoryByMember = storyService.getStoriesByUsername(username);
-        return ResponseEntity.ok(allStoryByMember);
+    public ResponseEntity<?> memberStory(@RequestParam(defaultValue = "0")int currentPage,
+                                         @PathVariable String username) {
+        Pageable pageable = PageRequest.of(currentPage, 10,latestSorting);
+        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername(username, pageable);
+        return ResponseEntity.ok(storiesByUsername);
     }
 
     @Operation(
@@ -123,7 +129,8 @@ public class StoryApiController {
             description = "스토리를 찾을 수 없음. 지정된 스토리 ID에 해당하는 스토리를 찾을 수 없습니다."
     )
     @GetMapping("/{username}/{boardId}")
-    public ResponseEntity<?> singleStoryForm(@PathVariable String username, @PathVariable Long boardId) {
+    public ResponseEntity<?> singleStoryForm(@PathVariable String username,
+                                             @PathVariable Long boardId) {
         StoryDetailDto storyByBoardId = storyService.getStoryByBoardId(boardId);
         return ResponseEntity.ok(storyByBoardId);
     }

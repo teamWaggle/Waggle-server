@@ -39,7 +39,7 @@ public class CommentApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/story/{boardId}/write")
-    public ResponseEntity<?> StoryCommentWrite(@RequestPart CommentWriteDto commentWriteDto,
+    public ResponseEntity<?> StoryCommentWrite(@RequestBody CommentWriteDto commentWriteDto,
                                                @PathVariable Long boardId){
         Long commentId = commentService.createComment(boardId, commentWriteDto, BoardType.STORY);
         return ResponseEntity.ok(commentId);
@@ -57,7 +57,7 @@ public class CommentApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/story/{boardId}/edit")
-    public ResponseEntity<?> StoryCommentEdit(@RequestPart CommentWriteDto commentWriteDto,
+    public ResponseEntity<?> StoryCommentEdit(@RequestBody CommentWriteDto commentWriteDto,
                                                @PathVariable Long boardId){
         Long commentId = commentService.updateComment(boardId, commentWriteDto);
         return ResponseEntity.ok(commentId);
@@ -75,7 +75,7 @@ public class CommentApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/question/{boardId}/write")
-    public ResponseEntity<?> QuestionCommentWrite(@RequestPart CommentWriteDto commentWriteDto,
+    public ResponseEntity<?> QuestionCommentWrite(@RequestBody CommentWriteDto commentWriteDto,
                                                   @PathVariable Long boardId){
         Long commentId = commentService.createComment(boardId, commentWriteDto, BoardType.QUESTION);
         return ResponseEntity.ok(commentId);
@@ -93,7 +93,7 @@ public class CommentApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/question/{boardId}/edit")
-    public ResponseEntity<?> QuestionCommentEdit(@RequestPart CommentWriteDto commentWriteDto,
+    public ResponseEntity<?> QuestionCommentEdit(@RequestBody CommentWriteDto commentWriteDto,
                                               @PathVariable Long boardId){
         Long commentId = commentService.updateComment(boardId, commentWriteDto);
         return ResponseEntity.ok(commentId);
