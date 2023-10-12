@@ -40,14 +40,14 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public Page<StorySummaryDto> getStoriesByUsername(String username, Pageable pageable) {
+    public Page<StorySummaryDto> getPagedStoriesByUsername(String username, Pageable pageable) {
         Page<Story> stories = storyRepository.findByMemberUsername(username,pageable);
         return stories.map(StorySummaryDto::toDto);
     }
 
 
     @Override
-    public Page<StorySummaryDto> getStoriesPaging(Pageable pageable) {
+    public Page<StorySummaryDto> getPagedStories(Pageable pageable) {
         Page<Story> all = storyRepository.findAll(pageable);
         return all.map(StorySummaryDto::toDto);
     }

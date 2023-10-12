@@ -38,7 +38,7 @@ public class HelpU extends Board {
     private String lostLocate;
     private LocalDateTime lostDate;
     private String characteristic;
-    private String RFID;
+    private String rfid;
     private String contact;
     private String thumbnail;
 
@@ -48,7 +48,7 @@ public class HelpU extends Board {
                  String title, String petName, String petKind,
                  int petAge, Gender petGender, String lostLocate,
                  LocalDateTime lostDate, String characteristic,
-                 String RFID, String contact, String thumbnail) {
+                 String rfid, String contact, String thumbnail) {
         super(id, member, content, boardHashtags, medias, comments);
         this.title = title;
         this.petName = petName;
@@ -58,7 +58,7 @@ public class HelpU extends Board {
         this.lostLocate = lostLocate;
         this.lostDate = lostDate;
         this.characteristic = characteristic;
-        this.RFID = RFID;
+        this.rfid = rfid;
         this.contact = contact;
         this.thumbnail = thumbnail;
     }
@@ -72,7 +72,7 @@ public class HelpU extends Board {
         this.lostLocate = helpUWriteDto.getLostLocate();
         this.lostDate = helpUWriteDto.getLostDate();
         this.characteristic = helpUWriteDto.getCharacteristic();
-        this.RFID = helpUWriteDto.getRFID();
+        this.rfid = helpUWriteDto.getRFID();
         this.contact = helpUWriteDto.getContact();
         this.thumbnail = helpUWriteDto.getThumbnail();
     }

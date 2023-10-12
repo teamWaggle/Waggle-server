@@ -94,7 +94,7 @@ public class HelpUApiController {
     @GetMapping("/all")
     public ResponseEntity<?> helpU(@RequestParam(defaultValue = "0") int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<HelpUSummaryDto> allHelpU = helpUService.getAllHelpUByPaging(pageable);
+        Page<HelpUSummaryDto> allHelpU = helpUService.getPagedHelpUs(pageable);
 
         return ResponseEntity.ok(allHelpU);
     }
@@ -114,7 +114,7 @@ public class HelpUApiController {
     @GetMapping("/{username}")
     public ResponseEntity<?> memberHelpU(@RequestParam(defaultValue = "1")int currentPage, @PathVariable String username) {
         Pageable pageable = PageRequest.of(currentPage, 10,latestSorting);
-        Page<HelpUSummaryDto> helpUsByUsername = helpUService.getHelpUsByUsername(username, pageable);
+        Page<HelpUSummaryDto> helpUsByUsername = helpUService.getPagedHelpUsByUsername(username, pageable);
         return ResponseEntity.ok(helpUsByUsername);
     }
 
@@ -131,7 +131,7 @@ public class HelpUApiController {
             description = "헬퓨를 찾을 수 없음. 지정된 헬퓨 ID에 해당하는 헬퓨를 찾을 수 없습니다."
     )
     @GetMapping("/{username}/{boardId}")
-    public ResponseEntity<?> singleStoryForm(@PathVariable String username, @PathVariable Long boardId) {
+    public ResponseEntity<?> singleHelpUForm(@PathVariable String username, @PathVariable Long boardId) {
         HelpUDetailDto helpUByBoardId = helpUService.getHelpUByBoardId(boardId);
         return ResponseEntity.ok(helpUByBoardId);
     }

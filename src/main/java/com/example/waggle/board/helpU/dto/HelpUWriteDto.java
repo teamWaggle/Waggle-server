@@ -29,7 +29,7 @@ public class HelpUWriteDto {
     private String lostLocate;
     private LocalDateTime lostDate;
     private String content;
-    private String RFID;
+    private String rfid;
     private String characteristic;
     private String username;
 
@@ -48,7 +48,7 @@ public class HelpUWriteDto {
                 .lostLocate(lostLocate)
                 .lostDate(lostDate)
                 .content(content)
-                .RFID(RFID)
+                .rfid(rfid)
                 .characteristic(characteristic)
                 .member(member)
                 .build();
@@ -67,7 +67,7 @@ public class HelpUWriteDto {
                 .lostLocate(helpU.getLostLocate())
                 .lostDate(helpU.getLostDate())
                 .content(helpU.getContent())
-                .RFID(helpU.getRFID())
+                .rfid(helpU.getRfid())
                 .characteristic(helpU.getCharacteristic())
                 .medias(helpU.getMedias().stream()
                         .map(h -> h.getUrl()).collect(Collectors.toList()))

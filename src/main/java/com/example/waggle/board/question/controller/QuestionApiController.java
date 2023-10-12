@@ -86,7 +86,7 @@ public class QuestionApiController {
     @GetMapping("/all")
     public ResponseEntity<?> question(@RequestParam(defaultValue = "0")int currentPage) {  // TODO 인기순, 최신순에 따른 필터링 필요
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<QuestionSummaryDto> questions = questionService.getQuestionsPaging(pageable);
+        Page<QuestionSummaryDto> questions = questionService.getPagedQuestions(pageable);
 
         return ResponseEntity.ok(questions);
     }
@@ -107,7 +107,7 @@ public class QuestionApiController {
                                             @PathVariable String username) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<QuestionSummaryDto> questionsByUsername = questionService
-                .getQuestionsByUsername(username, pageable);
+                .getPagedQuestionsByUsername(username, pageable);
         return ResponseEntity.ok(questionsByUsername);
     }
     @Operation(

@@ -12,9 +12,9 @@ public interface HelpUService {
 
     List<HelpUSummaryDto> getAllHelpU();
 
-    Page<HelpUSummaryDto> getAllHelpUByPaging(Pageable pageable);
+    Page<HelpUSummaryDto> getPagedHelpUs(Pageable pageable);
 
-    Page<HelpUSummaryDto> getHelpUsByUsername(String username, Pageable pageable);
+    Page<HelpUSummaryDto> getPagedHelpUsByUsername(String username, Pageable pageable);
 
     HelpUDetailDto getHelpUByBoardId(Long boardId);
 

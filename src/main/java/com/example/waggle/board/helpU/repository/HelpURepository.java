@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface HelpURepository extends JpaRepository<HelpU, Long> {
 
-    Page<HelpU> findByMemberUsername(@Param("username") String username,Pageable pageable);
+    Page<HelpU> findByMemberUsername(String username,Pageable pageable);
 
     List<HelpU> findAll();
 
