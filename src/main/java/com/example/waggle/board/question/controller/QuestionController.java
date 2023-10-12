@@ -19,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -77,14 +79,14 @@ public class QuestionController {
 
     @PostMapping("/write")
     public String singleQuestionWrite(@Validated @ModelAttribute QuestionWriteDto questionDto,
-                                      BindingResult bindingResult) {
+                                      BindingResult bindingResult) throws IOException {
         //validation
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
             return "question/writeQuetion";
         }
         String username = SecurityUtil.getCurrentUsername();
-        Long questionId = questionService.createQuestion(questionDto);
+        Long questionId = questionService.createQuestion(questionDto, new ArrayList<>());
         String title = questionDto.getTitle();
         return "redirect:/question/" + username + "/" +title + "/"+ questionId;
     }

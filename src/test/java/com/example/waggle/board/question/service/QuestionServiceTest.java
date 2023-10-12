@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,24 +117,24 @@ class QuestionServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setQAndA() {
+    private void setQAndA() throws IOException {
         memberService.signUp(signUpDto1, null);
         memberService.signUp(signUpDto2, null);
 
-        questionService.createQuestion(questionWriteDto1);
-        questionService.createQuestion(questionWriteDto2);
+        questionService.createQuestion(questionWriteDto1, new ArrayList<>());
+        questionService.createQuestion(questionWriteDto2, new ArrayList<>());
 
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
 
-        questionService.createAnswer(answerWriteDto1, allQuestion.get(0).getId());
-        questionService.createAnswer(answerWriteDto2, allQuestion.get(0).getId());
+        questionService.createAnswer(allQuestion.get(0).getId(), answerWriteDto1, new ArrayList<>());
+        questionService.createAnswer(allQuestion.get(0).getId(), answerWriteDto2, new ArrayList<>());
     }
 
 
 
     @Test
     @WithMockCustomUser
-    void findAllQuestion() {
+    void findAllQuestion() throws IOException {
         //given
         setQAndA();
 
@@ -146,7 +147,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    void findAllQuestionByUsername() {
+    void findAllQuestionByUsername() throws IOException {
         //given
         setQAndA();
 
@@ -161,7 +162,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    void findQuestionByBoardId() {
+    void findQuestionByBoardId() throws IOException {
         //given
         setQAndA();
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
@@ -176,12 +177,12 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    void changeQuestion() {
+    void changeQuestion() throws IOException {
         //given
         setQAndA();
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
         //when
-        questionService.updateQuestion(allQuestion.get(0).getId(), questionEditDto1);
+        questionService.updateQuestion(allQuestion.get(0).getId(), questionEditDto1, new ArrayList<>());
         QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getTitle()).isEqualTo("EditQuestion");
@@ -190,13 +191,13 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    void changeAnswer() {
+    void changeAnswer() throws IOException {
         //given
         setQAndA();
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
         QuestionDetailDto findQuestion = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
         //when
-        questionService.updateAnswer(findQuestion.getAnswers().get(0).getId(), answerEditDto1);
+        questionService.updateAnswer(findQuestion.getAnswers().get(0).getId(), answerEditDto1, new ArrayList<>());
         QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("EditAnswer");
@@ -205,7 +206,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    void deleteQuestion() {
+    void deleteQuestion() throws IOException {
         //given
         setQAndA();
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
@@ -218,7 +219,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    void deleteAnswer() {
+    void deleteAnswer() throws IOException {
         //given
         setQAndA();
         List<QuestionSummaryDto> allQuestion = questionService.getQuestions();

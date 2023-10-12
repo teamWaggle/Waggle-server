@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,7 +139,7 @@ class ReplyServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setAll() {
+    private void setAll() throws IOException {
         //member set
         memberService.signUp(signUpDto1, null);
         memberService.signUp(signUpDto2, null);
@@ -147,8 +148,8 @@ class ReplyServiceTest {
         memberService.signUp(signUpDto5, null);
 
         //story set
-        storyService.createStory(storyWriteDto1);
-        storyService.createStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
 
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
 
@@ -163,7 +164,7 @@ class ReplyServiceTest {
 
     @Test
     @WithMockCustomUser
-    void findReplies() {
+    void findReplies() throws IOException {
         //given
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
@@ -178,7 +179,7 @@ class ReplyServiceTest {
 
     @Test
     @WithMockCustomUser
-    void changeReply() {
+    void changeReply() throws IOException {
         //given
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
@@ -195,7 +196,7 @@ class ReplyServiceTest {
 
     @Test
     @WithMockCustomUser
-    void deleteReply() {
+    void deleteReply() throws IOException {
         //given
         setAll();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);

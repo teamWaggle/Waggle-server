@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,19 +112,19 @@ class CommentServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setBoardAndMember() {
+    private void setBoardAndMember() throws IOException {
         //member set
         memberService.signUp(signUpDto1, null);
         memberService.signUp(signUpDto2, null);
 
         //story set
-        storyService.createStory(storyWriteDto1);
-        storyService.createStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
     }
 
     @Test
     @WithMockCustomUser
-    void saveComment() {
+    void saveComment() throws IOException {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
@@ -138,7 +140,7 @@ class CommentServiceTest {
 
     @Test
     @WithMockCustomUser
-    void editCommentV1() {
+    void editCommentV1() throws IOException {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);
@@ -161,7 +163,7 @@ class CommentServiceTest {
     @Test
     @WithMockCustomUser
     @Rollback(value = false)
-    void deleteComment() {
+    void deleteComment() throws IOException {
         //given
         setBoardAndMember();
         StorySummaryDto storySummaryDto = storyService.getStories().get(0);

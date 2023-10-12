@@ -18,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -79,7 +81,7 @@ public class StoryController {
 
     @PostMapping("/write")
     public String singleStoryWrite(@Validated @ModelAttribute StoryWriteDto storyDto,
-                                   BindingResult bindingResult) {
+                                   BindingResult bindingResult) throws IOException {
         //validation
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
@@ -87,7 +89,7 @@ public class StoryController {
         }
 
         String username = SecurityUtil.getCurrentUsername();
-        Long boardId = storyService.createStory(storyDto);
+        Long boardId = storyService.createStory(storyDto, new ArrayList<>(), null);
         return "redirect:/story/" + username + "/" + boardId;
     }
 
