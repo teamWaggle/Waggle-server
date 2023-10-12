@@ -14,11 +14,11 @@ import java.util.List;
 public interface QuestionService {
     List<QuestionSummaryDto> getQuestions();
 
-    Page<QuestionSummaryDto> getQuestionsByUsername(String username,Pageable pageable);
+    Page<QuestionSummaryDto> getPagedQuestionsByUsername(String username,Pageable pageable);
 
     QuestionDetailDto getQuestionByBoardId(Long boardId);
 
-    Page<QuestionSummaryDto> getQuestionsPaging(Pageable pageable);
+    Page<QuestionSummaryDto> getPagedQuestions(Pageable pageable);
 
     Long createQuestion(QuestionWriteDto questionWriteDto);
 

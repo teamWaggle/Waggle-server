@@ -11,10 +11,10 @@ import java.util.List;
 public interface StoryService {
     List<StorySummaryDto> getStories();
 
-    Page<StorySummaryDto> getStoriesByUsername(String username,Pageable pageable);
+    Page<StorySummaryDto> getPagedStoriesByUsername(String username,Pageable pageable);
 
 
-    Page<StorySummaryDto> getStoriesPaging(Pageable pageable);
+    Page<StorySummaryDto> getPagedStories(Pageable pageable);
 
     StoryDetailDto getStoryByBoardId(Long boardId);
 

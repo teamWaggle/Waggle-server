@@ -28,7 +28,7 @@ public class HelpUDetailDto {
     private String lostLocate;
     private LocalDateTime lostDate;
     private String content;
-    private String RFID;
+    private String rfid;
     private String characteristic;
 
     @Builder.Default
@@ -48,7 +48,7 @@ public class HelpUDetailDto {
                 .lostDate(helpU.getLostDate())
                 .lostLocate(helpU.getLostLocate())
                 .content(helpU.getContent())
-                .RFID(helpU.getRFID())
+                .rfid(helpU.getRfid())
                 .characteristic(helpU.getCharacteristic())
                 .medias(helpU.getMedias().stream()
                         .map(h -> h.getUrl()).collect(Collectors.toList()))

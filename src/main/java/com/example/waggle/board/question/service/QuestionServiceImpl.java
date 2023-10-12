@@ -42,7 +42,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<QuestionSummaryDto> getQuestionsByUsername(String username, Pageable pageable) {
+    public Page<QuestionSummaryDto> getPagedQuestionsByUsername(String username, Pageable pageable) {
         Page<Question> questionByUsername = questionRepository.findByMemberUsername(username, pageable);
         return questionByUsername.map(QuestionSummaryDto::toDto);
     }
@@ -63,7 +63,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<QuestionSummaryDto> getQuestionsPaging(Pageable pageable) {
+    public Page<QuestionSummaryDto> getPagedQuestions(Pageable pageable) {
         Page<Question> all = questionRepository.findAll(pageable);
         return all.map(QuestionSummaryDto::toDto);
     }

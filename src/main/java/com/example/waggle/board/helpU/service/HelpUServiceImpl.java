@@ -44,13 +44,13 @@ public class HelpUServiceImpl implements HelpUService{
     }
 
     @Override
-    public Page<HelpUSummaryDto> getAllHelpUByPaging(Pageable pageable) {
+    public Page<HelpUSummaryDto> getPagedHelpUs(Pageable pageable) {
         Page<HelpU> all = helpURepository.findAll(pageable);
         return all.map(HelpUSummaryDto::toDto);
     }
 
     @Override
-    public Page<HelpUSummaryDto> getHelpUsByUsername(String username, Pageable pageable) {
+    public Page<HelpUSummaryDto> getPagedHelpUsByUsername(String username, Pageable pageable) {
         Page<HelpU> pageHelpUByUsername = helpURepository.findByMemberUsername(username, pageable);
         return pageHelpUByUsername.map(HelpUSummaryDto::toDto);
     }
