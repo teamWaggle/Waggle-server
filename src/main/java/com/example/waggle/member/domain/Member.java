@@ -55,7 +55,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private List<TeamMember> teamMembers = new ArrayList<>();
 
 
-
     public void setPets(List<Pet> pets) {
         this.pets = pets;
     }

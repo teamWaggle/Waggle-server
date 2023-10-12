@@ -11,7 +11,7 @@ import com.example.waggle.media.domain.Media;
 import com.example.waggle.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,23 +40,16 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    public List<StorySummaryDto> getStoriesByUsername(String username) {
-        List<Story> stories = storyRepository.findByMemberUsername(username);
-        return stories.stream().map(StorySummaryDto::toDto).collect(Collectors.toList());
+    public Page<StorySummaryDto> getPagedStoriesByUsername(String username, Pageable pageable) {
+        Page<Story> stories = storyRepository.findByMemberUsername(username,pageable);
+        return stories.map(StorySummaryDto::toDto);
     }
 
-    @Override
-    public List<StorySummaryDto> getStoriesBySortingDateDesc() {
-        List<Story> storiesByDateDesc = storyRepository.findAllByOrderByCreatedDateDesc();
-        return storiesByDateDesc.stream()
-                .map(StorySummaryDto::toDto)
-                .collect(Collectors.toList());
-    }
 
     @Override
-    public List<StorySummaryDto> getStoriesBySortingRecommendDesc() {
-
-        return null;
+    public Page<StorySummaryDto> getPagedStories(Pageable pageable) {
+        Page<Story> all = storyRepository.findAll(pageable);
+        return all.map(StorySummaryDto::toDto);
     }
 
 
@@ -90,7 +83,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Transactional
     @Override
-    public Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail) {
+    public Long createStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail) {
         Member signInMember = utilService.getSignInMember();
         storyWriteDto.changeThumbnail(thumbnail);
 

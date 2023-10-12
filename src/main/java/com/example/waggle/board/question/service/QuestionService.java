@@ -5,15 +5,20 @@ import com.example.waggle.board.question.dto.AnswerWriteDto;
 import com.example.waggle.board.question.dto.QuestionDetailDto;
 import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface QuestionService {
     List<QuestionSummaryDto> getQuestions();
 
-    List<QuestionSummaryDto> getQuestionsByUsername(String username);
+    Page<QuestionSummaryDto> getPagedQuestionsByUsername(String username,Pageable pageable);
 
     QuestionDetailDto getQuestionByBoardId(Long boardId);
+
+    Page<QuestionSummaryDto> getPagedQuestions(Pageable pageable);
 
     Long createQuestion(QuestionWriteDto questionWriteDto);
 

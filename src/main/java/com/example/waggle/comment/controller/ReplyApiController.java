@@ -33,7 +33,7 @@ public class ReplyApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/{commentId}/write")
-    public ResponseEntity<?> replyWrite(@RequestPart ReplyWriteDto replyWriteDto,
+    public ResponseEntity<?> replyWrite(@RequestBody ReplyWriteDto replyWriteDto,
                                                @PathVariable Long commentId){
         Long replyId = replyService.createReply(commentId, replyWriteDto);
         return ResponseEntity.ok(replyId);
@@ -51,7 +51,7 @@ public class ReplyApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다."
     )
     @PostMapping("/story/{commentId}/edit")
-    public ResponseEntity<?> replyEdit(@RequestPart ReplyWriteDto replyWriteDto,
+    public ResponseEntity<?> replyEdit(@RequestBody ReplyWriteDto replyWriteDto,
                                               @PathVariable Long commentId){
         Long replyId = replyService.updateReply(commentId, replyWriteDto);
         return ResponseEntity.ok(replyId);

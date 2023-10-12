@@ -3,23 +3,24 @@ package com.example.waggle.board.story.service;
 import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface StoryService {
     List<StorySummaryDto> getStories();
 
-    List<StorySummaryDto> getStoriesByUsername(String username);
+    Page<StorySummaryDto> getPagedStoriesByUsername(String username,Pageable pageable);
 
-    List<StorySummaryDto> getStoriesBySortingDateDesc();
 
-    List<StorySummaryDto> getStoriesBySortingRecommendDesc();
+    Page<StorySummaryDto> getPagedStories(Pageable pageable);
 
     StoryDetailDto getStoryByBoardId(Long boardId);
 
     Long createStory(StoryWriteDto storyWriteDto);
 
-    Long saveStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail);
+    Long createStoryWithThumbnail(StoryWriteDto storyWriteDto, String thumbnail);
 
     Long updateStory(Long storyId, StoryWriteDto storyWriteDto);
 

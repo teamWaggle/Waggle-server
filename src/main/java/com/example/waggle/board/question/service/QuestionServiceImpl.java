@@ -13,6 +13,8 @@ import com.example.waggle.media.domain.Media;
 import com.example.waggle.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +42,9 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionSummaryDto> getQuestionsByUsername(String username) {
-        List<Question> questions = questionRepository.findByMemberUsername(username);
-        return questions.stream().map(QuestionSummaryDto::toDto).collect(Collectors.toList());
+    public Page<QuestionSummaryDto> getPagedQuestionsByUsername(String username, Pageable pageable) {
+        Page<Question> questionByUsername = questionRepository.findByMemberUsername(username, pageable);
+        return questionByUsername.map(QuestionSummaryDto::toDto);
     }
 
     @Override
@@ -58,6 +60,12 @@ public class QuestionServiceImpl implements QuestionService {
         questionDetailDto.linkAnswerView(answerDetailDtos);
 
         return questionDetailDto;
+    }
+
+    @Override
+    public Page<QuestionSummaryDto> getPagedQuestions(Pageable pageable) {
+        Page<Question> all = questionRepository.findAll(pageable);
+        return all.map(QuestionSummaryDto::toDto);
     }
 
     @Transactional
