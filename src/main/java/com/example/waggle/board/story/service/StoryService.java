@@ -1,27 +1,32 @@
 package com.example.waggle.board.story.service;
 
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
-import com.example.waggle.board.story.dto.StoryViewDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface StoryService {
-    public List<StorySimpleViewDto> findAllStory();
+    List<StorySummaryDto> getStories();
 
-    public List<StorySimpleViewDto> findAllStoryByUsername(String username);
+    Page<StorySummaryDto> getPagedStoriesByUsername(String username,Pageable pageable);
 
-    public StoryViewDto findStoryViewByBoardId(Long id);
 
-    public Long saveStory(StoryWriteDto saveStoryDto);
+    Page<StorySummaryDto> getPagedStories(Pageable pageable);
 
-    public Long saveStoryWithThumbnail(StoryWriteDto saveStoryDto, String thumbnail);
+    StoryDetailDto getStoryByBoardId(Long boardId);
 
-    public String changeStory(StoryWriteDto storyDto);
+    Long createStory(StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException;
 
-    public StoryWriteDto findStoryWriteByBoardId(Long id);
+    Long updateStory(Long boardId, StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException;
 
-    public boolean checkMember(Long boardId);
+    StoryWriteDto getStoryWriteDtoByBoardId(Long boardId);
 
-    public void removeStory(StoryViewDto storyDto);
+    boolean validateMember(Long boardId);
+
+    void deleteStory(Long boardId);
 }

@@ -3,8 +3,7 @@ package com.example.waggle.member.controller;
 import com.example.waggle.commons.component.file.FileStore;
 import com.example.waggle.commons.security.JwtToken;
 import com.example.waggle.commons.component.file.UploadFile;
-import com.example.waggle.member.dto.MemberDto;
-import com.example.waggle.member.dto.MemberSimpleDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignInDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.member.service.MemberService;
@@ -78,8 +77,8 @@ public class MemberApiController {
     public ResponseEntity<?> register(@RequestPart SignUpDto signUpDto, @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
         try {
             UploadFile uploadFile = fileStore.storeFile(profileImg);
-            MemberDto memberDto = memberService.signUpWithProfileImg(signUpDto, uploadFile);
-            return ResponseEntity.ok(memberDto);
+            MemberSummaryDto memberSummaryDto = memberService.signUp(signUpDto, uploadFile);
+            return ResponseEntity.ok(memberSummaryDto);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -123,7 +122,7 @@ public class MemberApiController {
     )
     @GetMapping("/{username}")
     public ResponseEntity<?> singleStoryWriteForm(@PathVariable String username) {
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
-        return ResponseEntity.ok(memberSimpleDto);
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
+        return ResponseEntity.ok(memberSummaryDto);
     }
 }

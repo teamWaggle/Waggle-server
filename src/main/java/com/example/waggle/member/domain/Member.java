@@ -35,7 +35,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String nickname;
 
-    private String address; // 도로명 주소
+    private String address;
 
     private String phone;
 
@@ -53,7 +53,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
-
 
 
     public void setPets(List<Pet> pets) {

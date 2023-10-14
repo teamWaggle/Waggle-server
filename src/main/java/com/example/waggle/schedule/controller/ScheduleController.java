@@ -27,7 +27,7 @@ public class ScheduleController {
     @GetMapping
     public String scheduleMain(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        List<TeamDto> allTeamByUsername = teamService.findAllTeamByUsername(username);
+        List<TeamDto> allTeamByUsername = teamService.getTeamsByUsername(username);
         Boolean isTeamLeader = Boolean.FALSE;
         if (allTeamByUsername.size() > 0) {
             isTeamLeader = teamService.isTeamLeader(allTeamByUsername.get(0).getId(), username);
@@ -41,13 +41,13 @@ public class ScheduleController {
 
     @GetMapping("/{teamId}/schedules")
     public ResponseEntity<List<ScheduleDto>> getTeamSchedules(@PathVariable Long teamId) {
-        List<ScheduleDto> teamSchedules = scheduleService.findByTeamId(teamId);
+        List<ScheduleDto> teamSchedules = scheduleService.getSchedulesByTeamId(teamId);
         return ResponseEntity.ok(teamSchedules);
     }
 
     @PostMapping("/create")
     public String createSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
-        scheduleService.addSchedule(scheduleDto, scheduleDto.getTeamId());
+        scheduleService.createSchedule(scheduleDto, scheduleDto.getTeamId());
         return "redirect:/schedule";
     }
 

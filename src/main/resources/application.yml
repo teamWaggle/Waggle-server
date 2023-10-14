@@ -30,7 +30,7 @@ logging.level:
   org.hibernate.type: trace
 
 file:
-  dir: /Users/ahnsugyeong/Desktop/2023/Waggle/src/main/resources/static/images/
+  dir: ${user.dir}/src/main/resources/static/files/
 
 server:
   error:

@@ -1,9 +1,12 @@
 package com.example.waggle.commons.component;
 
+import com.example.waggle.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.board.helpU.service.HelpUService;
 import com.example.waggle.board.story.domain.Story;
 
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.dto.MemberDto;
+import com.example.waggle.member.dto.MemberDetailDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
@@ -32,6 +35,7 @@ public class TestDataInit {
     private final MemberService memberService;
     private final TeamService teamService;
     private final ScheduleService scheduleService;
+    private final HelpUService helpUService;
 
     private final StoryRepository storyRepository;
     private final MemberRepository memberRepository;
@@ -41,6 +45,7 @@ public class TestDataInit {
     @PostConstruct
     public void init() {
 //        initMember();
+//        initHelpU();
 //        initStory();
 //        initTeamAndSchedule();
     }
@@ -51,10 +56,11 @@ public class TestDataInit {
                     .nickname("nickname" + i)
                     .username("user" + i)
                     .password("12345678")
+                    .phone("01011112222")
                     .build();
-            MemberDto memberDto = memberService.signUp(signUpDto);
-            Member member = memberRepository.findByUsername(memberDto.getUsername()).get();
-            members.add(member);
+            MemberSummaryDto memberSummaryDto = memberService.signUp(signUpDto, null);
+            //Member member = memberRepository.findByUsername(memberSummaryDto.getUsername()).get();
+            //members.add(member);
         }
     }
 
@@ -72,13 +78,27 @@ public class TestDataInit {
     public void initTeamAndSchedule() {
         String username = "user1";
 
-        TeamDto team1 = teamService.createTeamWithMember(TeamDto.builder().name("team1").build(), username);
-        TeamDto team2 = teamService.createTeamWithMember(TeamDto.builder().name("team2").build(), username);
-        teamService.addMember(team1.getId(), "user2");
-        teamService.addMember(team1.getId(), "user3");
+        Long team1 = teamService.createTeam(TeamDto.builder().name("team1").build(), username);
+        Long team2 = teamService.createTeam(TeamDto.builder().name("team2").build(), username);
+        teamService.addMember(team1, "user2");
+        teamService.addMember(team1, "user3");
 
-        scheduleService.addSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1.getId());
-        scheduleService.addSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2.getId());
+        scheduleService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1);
+        scheduleService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2);
+    }
+
+    public void initHelpU() {
+        List<HelpUWriteDto> helps = new ArrayList<>();
+        helps.add(HelpUWriteDto.builder().username("user1").content("1").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("2").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("3").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("4").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("5").title("2").petName("3").build());
+        helps.add(HelpUWriteDto.builder().username("user1").content("6").title("2").petName("3").build());
+
+        for (HelpUWriteDto help : helps) {
+            Long helpU = helpUService.createHelpUTest(help,"user1");
+        }
     }
 
 

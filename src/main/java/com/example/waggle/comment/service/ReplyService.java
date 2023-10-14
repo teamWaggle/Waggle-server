@@ -1,20 +1,19 @@
 package com.example.waggle.comment.service;
 
 
-import com.example.waggle.comment.dto.CommentViewDto;
 import com.example.waggle.comment.dto.ReplyViewDto;
 import com.example.waggle.comment.dto.ReplyWriteDto;
 
 import java.util.List;
 
 public interface ReplyService {
-    public List<ReplyViewDto> findReplies(Long commentId);
+    List<ReplyViewDto> getReplies(Long commentId);
 
-    public Long saveReply(CommentViewDto commentViewDto, ReplyWriteDto replyWriteDto);
+    Long createReply(Long commentId, ReplyWriteDto replyWriteDto);
 
-    public boolean checkMember(ReplyViewDto viewDto);
+    Long updateReply(Long replyId, ReplyWriteDto replyWriteDto);
 
-    public Long changeReply(ReplyViewDto replyViewDto, ReplyWriteDto replyWriteDto);
+    void deleteReply(Long replyId);
 
-    public void deleteReply(ReplyViewDto viewDto);
+    boolean validateMember(Long replyId);
 }

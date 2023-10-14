@@ -1,20 +1,25 @@
 package com.example.waggle.board.story.controller;
 
+import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.commons.security.SecurityUtil;
-import com.example.waggle.board.story.dto.StoryViewDto;
-import com.example.waggle.board.story.dto.StorySimpleViewDto;
+import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
-import com.example.waggle.member.dto.MemberSimpleDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.board.story.service.StoryService;
 import com.example.waggle.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -44,8 +49,9 @@ public class StoryController {
     @GetMapping("/{username}")
     public String memberStory(@PathVariable String username,
                               Model model) {
-        List<StorySimpleViewDto> allStoryByMember = storyService.findAllStoryByUsername(username);
-        model.addAttribute("simpleStories", allStoryByMember);
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername(username, pageable);
+        model.addAttribute("simpleStories", storiesByUsername);
         return "story/memberStory";
     }
 
@@ -53,7 +59,7 @@ public class StoryController {
     public String singleStoryForm(@PathVariable String username,
                                   @PathVariable Long boardId,
                                   Model model) {
-        StoryViewDto storyByBoardId = storyService.findStoryViewByBoardId(boardId);
+        StoryDetailDto storyByBoardId = storyService.getStoryByBoardId(boardId);
         model.addAttribute("storyDto", storyByBoardId);
         return "story/story";
     }
@@ -64,18 +70,18 @@ public class StoryController {
     @GetMapping("/write")
     public String singleStoryWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(username);
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
         StoryWriteDto storyDto = new StoryWriteDto();
 
         model.addAttribute("storyDto", storyDto);
-        model.addAttribute("memberSimpleDto",memberSimpleDto);
+        model.addAttribute("memberSimpleDto", memberSummaryDto);
 
         return "story/writeStory";
     }
 
     @PostMapping("/write")
     public String singleStoryWrite(@Validated @ModelAttribute StoryWriteDto storyDto,
-                                   BindingResult bindingResult) {
+                                   BindingResult bindingResult) throws IOException {
         //validation
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
@@ -83,7 +89,7 @@ public class StoryController {
         }
 
         String username = SecurityUtil.getCurrentUsername();
-        Long boardId = storyService.saveStory(storyDto);
+        Long boardId = storyService.createStory(storyDto, new ArrayList<>(), null);
         return "redirect:/story/" + username + "/" + boardId;
     }
 
@@ -92,14 +98,14 @@ public class StoryController {
 //        if (storyDto.getUsername() != SecurityUtil.getCurrentUsername()) {
 //            // 작성자 외의 접근 error 처리
 //        }
-        if (!storyService.checkMember(boardId)) {
+        if (!storyService.validateMember(boardId)) {
             //error
             return "redirect:/story";
         }
-        StoryWriteDto storyDto = storyService.findStoryWriteByBoardId(boardId);
-        MemberSimpleDto memberSimpleDto = memberService.findMemberSimpleDto(SecurityUtil.getCurrentUsername());
+        StoryWriteDto storyDto = storyService.getStoryWriteDtoByBoardId(boardId);
+        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(SecurityUtil.getCurrentUsername());
         model.addAttribute("storyDto", storyDto);
-        model.addAttribute("profileImg", memberSimpleDto.getProfileImg());
+        model.addAttribute("profileImg", memberSummaryDto.getProfileImg());
 
         return "story/editStory";
     }
@@ -107,8 +113,9 @@ public class StoryController {
     @PostMapping("/edit/{boardId}")
     public String singleStoryEdit(@ModelAttribute StoryWriteDto storyDto,
                                   @PathVariable Long boardId) {
-        String username = storyService.changeStory(storyDto);
-        return "redirect:/story/" + username + "/" + boardId;
+//        String username = storyService.updateStory(storyDto);
+//        return "redirect:/story/" + username + "/" + boardId;
+        return null;
     }
 
 
