@@ -2,30 +2,36 @@ package com.example.waggle.board.question.service;
 
 
 import com.example.waggle.board.question.dto.AnswerWriteDto;
-import com.example.waggle.board.question.dto.QuestionSimpleViewDto;
-import com.example.waggle.board.question.dto.QuestionViewDto;
+import com.example.waggle.board.question.dto.QuestionDetailDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface QuestionService {
-    public List<QuestionSimpleViewDto> findAllQuestion();
+    List<QuestionSummaryDto> getQuestions();
 
-    public List<QuestionSimpleViewDto> findAllQuestionByUsername(String username);
+    Page<QuestionSummaryDto> getPagedQuestionsByUsername(String username,Pageable pageable);
 
-    public QuestionViewDto findQuestionByBoardId(Long boardId);
+    QuestionDetailDto getQuestionByBoardId(Long boardId);
 
-    public Long saveQuestion(QuestionWriteDto saveQuestionDto);
+    Page<QuestionSummaryDto> getPagedQuestions(Pageable pageable);
 
-    public void saveAnswer(AnswerWriteDto writeDto, Long boardId);
+    Long createQuestion(QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    public String changeQuestion(QuestionWriteDto questionDto, Long boardId);
+    Long createAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    public void changeAnswer(AnswerWriteDto answerDto, Long boardId);
+    Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    public boolean checkMember(Long boardId, String boardType);
+    Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException;
 
-    public void removeQuestion(Long id);
+    boolean validateMember(Long boardId, String boardType);
 
-    public void removeAnswer(Long id);
+    void deleteQuestion(Long boardId);
+
+    void deleteAnswer(Long boardId);
 }

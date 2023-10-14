@@ -22,16 +22,6 @@ public class MemberMention extends BaseEntity {
     @JoinColumn(name = "reply_id")
     private Reply reply;
 
-//    //mention target
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
-//    private Member member;
-
-    /**
-     * mention entity에 mention하고자 하는 사람의
-     * entity 정보를 굳이 다 끌고 올필요가 있을까?
-     * username만 가지고 있어도 충분하지 않을까
-     */
     private String username;
 
     //protected -> public

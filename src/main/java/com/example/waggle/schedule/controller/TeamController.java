@@ -1,7 +1,7 @@
 package com.example.waggle.schedule.controller;
 
 import com.example.waggle.commons.security.SecurityUtil;
-import com.example.waggle.member.dto.MemberSimpleDto;
+import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.member.service.MemberService;
 import com.example.waggle.schedule.service.TeamService;
@@ -25,52 +25,41 @@ public class TeamController {
     private final TeamService teamService;
 
     @GetMapping("/{teamId}/members")
-    public ResponseEntity<List<MemberSimpleDto>> getTeamSchedules(@PathVariable Long teamId) {
-        List<MemberSimpleDto> memberSimpleDtos = new ArrayList<>();
+    public ResponseEntity<List<MemberSummaryDto>> getTeamSchedules(@PathVariable Long teamId) {
+        List<MemberSummaryDto> memberSummaryDtos = new ArrayList<>();
 
-        Optional<TeamDto> byTeamId = teamService.findByTeamId(teamId);
-        if(byTeamId.isPresent()) {
-            TeamDto teamDto = byTeamId.get();
-            List<String> teamMembers = teamDto.getTeamMembers();
-            for (String teamMember : teamMembers) {
-                memberSimpleDtos.add(memberService.findMemberSimpleDto(teamMember));
-            }
+        TeamDto teamDto = teamService.getTeamById(teamId);
+        List<String> teamMembers = teamDto.getTeamMembers();
+        for (String teamMember : teamMembers) {
+            memberSummaryDtos.add(memberService.getMemberSummaryDto(teamMember));
         }
-        return ResponseEntity.ok(memberSimpleDtos);
+        return ResponseEntity.ok(memberSummaryDtos);
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createTeam(@RequestParam String name) {
         TeamDto teamDto = TeamDto.builder().name(name).build();
-        TeamDto createdTeamDto = teamService.createTeamWithMember(teamDto, SecurityUtil.getCurrentUsername());
-        if (createdTeamDto != null) {
-            return ResponseEntity.ok(createdTeamDto);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create team");
-        }
+        Long createdTeamDto = teamService.createTeam(teamDto, SecurityUtil.getCurrentUsername());
+        return ResponseEntity.ok(createdTeamDto);
     }
+
     @PostMapping("/update")
     public ResponseEntity<?> updateTeam(@RequestParam Long teamId, @RequestParam String name) {
         TeamDto teamDto = TeamDto.builder().name(name).build();
-        TeamDto updatedTeamDto = teamService.updateTeam(teamId, teamDto);
-
-        if (updatedTeamDto != null) {
-            return ResponseEntity.ok(updatedTeamDto);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update team");
-        }
+        Long updatedTeamDto = teamService.updateTeam(teamId, teamDto);
+        return ResponseEntity.ok(updatedTeamDto);
     }
 
     @PostMapping("/delete")
     public String deleteTeam(@ModelAttribute TeamDto teamDto) {
-        teamService.removeTeam(teamDto.getId());
+        teamService.deleteTeam(teamDto.getId());
         return "redirect:/schedule";
     }
 
     @GetMapping("/teams")
     public ResponseEntity<List<TeamDto>> getAllTeams() {
         log.info("team/teams");
-        List<TeamDto> teams = teamService.findAllTeamByUsername(SecurityUtil.getCurrentUsername());
+        List<TeamDto> teams = teamService.getTeamsByUsername(SecurityUtil.getCurrentUsername());
         for (TeamDto team : teams) {
             log.info("team = {}", team);
         }
@@ -92,22 +81,14 @@ public class TeamController {
 
     @PostMapping("/addMember")
     public ResponseEntity<String> addMember(@RequestParam Long teamId, @RequestParam String username) {
-        TeamDto teamDto = teamService.addMember(teamId, username);
-        if (teamDto != null) {
-            return ResponseEntity.ok("Team member added successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add team member");
-        }
+        teamService.addMember(teamId, username);
+        return ResponseEntity.ok("Team member added successfully");
     }
 
     @PostMapping("/removeMember")
     public ResponseEntity<String> removeMember(@RequestParam Long teamId, @RequestParam String username) {
-        Boolean isSuccess = teamService.removeMember(teamId, username);
-        if (isSuccess) {
-            return ResponseEntity.ok("Team member removed successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove team member");
-        }
+        teamService.removeMember(teamId, username);
+        return ResponseEntity.ok("Team member removed successfully");
     }
 
 }

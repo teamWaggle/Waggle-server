@@ -29,7 +29,6 @@ public class SignUpDto{
     private String address;
     @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
     private String phone;
-    private UploadFile profileImg;
 
     @Builder.Default
     private List<PetDto> pets = new ArrayList<>();
@@ -45,11 +44,7 @@ public class SignUpDto{
                 .nickname(nickname)
                 .address(address)
                 .phone(phone)
-                .profileImg(profileImg)
                 .roles(roles)
                 .build();
-    }
-    public void changeProfileImg(UploadFile profileImg) {
-        this.profileImg = profileImg;
     }
 }

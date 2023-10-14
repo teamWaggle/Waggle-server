@@ -1,4 +1,4 @@
-<div th:fragment="fragment-postSummary(storySimpleViewDto)">
+<div th:fragment="fragment-postSummary(storySummaryDto)">
     <!DOCTYPE html>
     <html xmlns:th="http://www.thymeleaf.org">
     <head>
@@ -42,26 +42,26 @@
     <div class="post-summary">
         <div class="post-summary-profile">
             <div style="display: flex; align-items: center;"
-                 th:onclick="|location.href='@{/story/{username}(username=${storySimpleViewDto.username})}'|">
-                <th:block th:if="${storySimpleViewDto.profileImg}">
+                 th:onclick="|location.href='@{/story/{username}(username=${storySummaryDto.username})}'|">
+                <th:block th:if="${storySummaryDto.profileImg}">
                     <div style="width: 30px; height: 30px; border-radius: 50%;">
-                        <img th:src="|/images/${storySimpleViewDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
+                        <img th:src="|/images/${storySummaryDto.profileImg.getStoreFileName()}|" alt="프로필 사진"
                              style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </th:block>
-                <th:block th:unless="${storySimpleViewDto.profileImg}">
+                <th:block th:unless="${storySummaryDto.profileImg}">
                     <div style="width: 30px; height: 30px; border-radius: 50%;">
                         <img th:src="|/images/defaultProfileImg.png|" alt="프로필 사진"
                              style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </th:block>
-                <div style="margin-left: 10px;" th:text="${storySimpleViewDto.username}"></div>
+                <div style="margin-left: 10px;" th:text="${storySummaryDto.username}"></div>
             </div>
-            <div style="white-space: nowrap;" th:text="${storySimpleViewDto.createdDate}"></div>
+            <div style="white-space: nowrap;" th:text="${storySummaryDto.createdDate}"></div>
         </div>
 
-        <img th:src="${storySimpleViewDto.thumbnail}"
-             th:onclick="|location.href='@{/story/{username}/{id}(username=${storySimpleViewDto.username}, id=${storySimpleViewDto.id})}'|"/>
+        <img th:src="${storySummaryDto.thumbnail}"
+             th:onclick="|location.href='@{/story/{username}/{id}(username=${storySummaryDto.username}, id=${storySummaryDto.id})}'|"/>
 
 
     </div>
