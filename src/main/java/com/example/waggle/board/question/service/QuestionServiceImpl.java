@@ -87,7 +87,6 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
-
         return question.getId();
     }
 

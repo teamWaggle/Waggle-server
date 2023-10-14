@@ -77,4 +77,8 @@ public class HelpU extends Board {
         this.thumbnail = helpUWriteDto.getThumbnail();
     }
 
+    public void changeThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
 }

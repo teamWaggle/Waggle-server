@@ -75,7 +75,7 @@ public class StoryServiceImpl implements StoryService {
         Member signInMember = utilService.getSignInMember();
         Story saveStory = storyWriteDto.toEntity(signInMember);
         Story story = storyRepository.save(saveStory);
-        changeThumbnail(story, thumbnail);
+        if(thumbnail != null) changeThumbnail(story, thumbnail);
 
         if (!storyWriteDto.getHashtags().isEmpty()) {
             for (String hashtagContent : storyWriteDto.getHashtags()) {
