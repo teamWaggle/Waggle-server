@@ -51,7 +51,7 @@ public class HelpUDetailDto {
                 .rfid(helpU.getRfid())
                 .characteristic(helpU.getCharacteristic())
                 .medias(helpU.getMedias().stream()
-                        .map(h -> h.getUrl()).collect(Collectors.toList()))
+                        .map(h -> h.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .username(helpU.getMember().getUsername())
                 .build();
     }

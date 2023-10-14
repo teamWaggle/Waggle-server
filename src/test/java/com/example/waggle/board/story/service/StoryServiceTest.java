@@ -134,8 +134,6 @@ class StoryServiceTest {
 
         //then
         assertThat(allStory.size()).isEqualTo(2);
-
-        log.info("success");
     }
 
     @Test

@@ -71,7 +71,7 @@ public class HelpUServiceImpl implements HelpUService{
         helpURepository.save(helpU);
         if (!helpUWriteDto.getMedias().isEmpty()) {
             for (String mediaUrl : helpUWriteDto.getMedias()) {
-                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
+//                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
             }
         }
         return helpU.getId();
@@ -90,7 +90,7 @@ public class HelpUServiceImpl implements HelpUService{
         log.info("save HelpU completely");
         if (!helpUWriteDto.getMedias().isEmpty()) {
             for (String mediaUrl : helpUWriteDto.getMedias()) {
-                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
+//                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
             }
         }
         return helpU.getId();
@@ -107,7 +107,7 @@ public class HelpUServiceImpl implements HelpUService{
 
         if (!helpUDto.getMedias().isEmpty()) {
             for (String mediaURL : helpUDto.getMedias()) {
-                Media.builder().url(mediaURL).board(saveHelpU).build().linkBoard(saveHelpU);
+//                Media.builder().url(mediaURL).board(saveHelpU).build().linkBoard(saveHelpU);
             }
         }
 
@@ -124,7 +124,7 @@ public class HelpUServiceImpl implements HelpUService{
         helpU.getMedias().clear();
         if (!helpUWriteDto.getMedias().isEmpty()) {
             for (String mediaUrl : helpUWriteDto.getMedias()) {
-                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
+//                Media.builder().url(mediaUrl).board(helpU).build().linkBoard(helpU);
             }
         }
         return helpU.getId();
