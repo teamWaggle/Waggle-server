@@ -35,7 +35,6 @@ class RecommendRepositoryTest {
 
     // member made(2) -> story made -> recommend -> counting
 
-    @BeforeEach
     void setting() {
         member = Member.builder()
                 .username("username")
@@ -62,7 +61,7 @@ class RecommendRepositoryTest {
     @Test
     @Transactional
     void countByBoardId() {
-
+        setting();
         int countRecommend = recommendRepository.countByBoardId(story1.getId());
         assertThat(countRecommend).isEqualTo(2);
     }
@@ -70,6 +69,8 @@ class RecommendRepositoryTest {
     @Test
     @Transactional
     void existsByMemberIdAndBoardId() {
+        setting();
+
         Long member1Id = member1.getId();
         Long memberId = member.getId();
         Long storyId = story1.getId();
@@ -86,6 +87,7 @@ class RecommendRepositoryTest {
     @Test
     @Transactional
     void findRecommendByMemberIdAndBoardId() {
+        setting();
         Long member1Id = member1.getId();
         Long storyId = story1.getId();
 
