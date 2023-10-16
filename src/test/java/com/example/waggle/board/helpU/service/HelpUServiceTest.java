@@ -18,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,23 +94,23 @@ class HelpUServiceTest {
 
     @Test
     @WithMockCustomUser
-    void helpU_create_service() {
+    void helpU_create_service() throws IOException{
         setting();
         memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1);
+        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
 
         List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         assertThat(allHelpU.size()).isEqualTo(1);
     }
     @Test
     @WithMockCustomUser
-    void helpU_read_All_ByPaging_service() {
+    void helpU_read_All_ByPaging_service() throws IOException {
         setting();
         memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1);
-        helpUService.createHelpU(hwd2);
-        helpUService.createHelpU(hwd3);
-        helpUService.createHelpU(hwd4);
+        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd3,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd4,new ArrayList<>(),null);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 3);
@@ -119,13 +121,13 @@ class HelpUServiceTest {
 
     @Test
     @WithMockCustomUser
-    void helpU_read_Mine_ByPaging_service() {
+    void helpU_read_Mine_ByPaging_service() throws IOException {
         setting();
         memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1);
-        helpUService.createHelpU(hwd2);
-        helpUService.createHelpU(hwd3);
-        helpUService.createHelpU(hwd4);
+        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd3,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd4,new ArrayList<>(),null);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 2);
@@ -136,38 +138,38 @@ class HelpUServiceTest {
 
     @Test
     @WithMockCustomUser
-    void helpU_read_One_ByPaging_service() {
+    void helpU_read_One_ByPaging_service() throws IOException{
         setting();
         memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1);
-        helpUService.createHelpU(hwd2);
-        helpUService.createHelpU(hwd3);
-        helpUService.createHelpU(hwd4);
+        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd3,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd4,new ArrayList<>(),null);
 
         HelpUDetailDto helpUByBoardId = helpUService.getHelpUByBoardId(helpUId);
         assertThat(helpUByBoardId.getContent()).isEqualTo("helpU page. hi");
     }
     @Test
     @WithMockCustomUser
-    void helpU_update_One_ByPaging_service() {
+    void helpU_update_One_ByPaging_service() throws IOException{
         setting();
         memberService.signUp(signUpDto1,null);
-        helpUService.createHelpU(hwd1);
-        helpUService.createHelpU(hwd2);
-        Long helpU = helpUService.createHelpU(hwd3);
+        helpUService.createHelpU(hwd1,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
+        Long helpU = helpUService.createHelpU(hwd3,new ArrayList<>(),null);
 
-        Long aLong = helpUService.updateHelpU(helpU, hwd4);
+        Long aLong = helpUService.updateHelpU(helpU, hwd4,new ArrayList<>(),null);
         HelpUDetailDto helpUByBoardId = helpUService.getHelpUByBoardId(aLong);
         assertThat(helpUByBoardId.getPetName()).isEqualTo("iiii");
     }
     @Test
     @WithMockCustomUser
-    void helpU_delete_One_service() {
+    void helpU_delete_One_service() throws IOException{
         setting();
         memberService.signUp(signUpDto1,null);
-        helpUService.createHelpU(hwd1);
-        helpUService.createHelpU(hwd2);
-        Long helpU = helpUService.createHelpU(hwd3);
+        helpUService.createHelpU(hwd1,new ArrayList<>(),null);
+        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
+        Long helpU = helpUService.createHelpU(hwd3,new ArrayList<>(),null);
         helpUService.deleteHelpU(helpU);
         List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         assertThat(allHelpU.size()).isEqualTo(2);

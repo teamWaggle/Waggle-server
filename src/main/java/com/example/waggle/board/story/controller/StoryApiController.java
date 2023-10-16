@@ -49,7 +49,10 @@ public class StoryApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다."
     )
     @PostMapping("/write")
-    public ResponseEntity<?> singleStoryWrite(@RequestPart StoryWriteDto storyWriteDto, @RequestPart List<MultipartFile> multipartFiles,@RequestPart MultipartFile thumbnail, BindingResult bindingResult) throws IOException {
+    public ResponseEntity<?> singleStoryWrite(@RequestPart StoryWriteDto storyWriteDto,
+                                              @RequestPart List<MultipartFile> multipartFiles,
+                                              @RequestPart MultipartFile thumbnail,
+                                              BindingResult bindingResult) throws IOException {
         Long boardId = storyService.createStory(storyWriteDto, multipartFiles, thumbnail);
         return ResponseEntity.ok(boardId);
     }
@@ -67,7 +70,10 @@ public class StoryApiController {
             description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다."
     )
     @PostMapping("/edit/{boardId}")
-    public ResponseEntity<?> singleStoryEdit(@ModelAttribute StoryWriteDto storyDto, @RequestPart List<MultipartFile> multipartFiles, @RequestPart MultipartFile thumbnail, @PathVariable Long boardId) throws IOException {
+    public ResponseEntity<?> singleStoryEdit(@ModelAttribute StoryWriteDto storyDto,
+                                             @RequestPart List<MultipartFile> multipartFiles,
+                                             @RequestPart MultipartFile thumbnail,
+                                             @PathVariable Long boardId) throws IOException {
         storyService.updateStory(boardId, storyDto, multipartFiles, thumbnail);
         return ResponseEntity.ok(boardId);  //TODO redirect return "redirect:/story/" + username + "/" + boardId;
     }
