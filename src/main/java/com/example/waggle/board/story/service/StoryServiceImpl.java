@@ -93,7 +93,8 @@ public class StoryServiceImpl implements StoryService {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
-        story.changeStory(storyWriteDto.getContent(), storyWriteDto.getThumbnail());
+        if(thumbnail != null)changeThumbnail(story, thumbnail);
+        story.changeContent(storyWriteDto.getContent());
 
         story.getMedias().clear();
         mediaService.createMedias(story.getId(), multipartFiles, STORY);
