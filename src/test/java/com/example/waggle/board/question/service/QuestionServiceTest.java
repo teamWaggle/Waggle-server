@@ -161,7 +161,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Disabled
+    //@Disabled
     void findQuestionByBoardId() throws IOException {
         //given
         setQAndA();
@@ -177,7 +177,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Disabled
+    //@Disabled
     void changeQuestion() throws IOException {
         //given
         setQAndA();
@@ -193,7 +193,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Disabled
+    //@Disabled
     void changeAnswer() throws IOException {
         //given
         setQAndA();
@@ -209,7 +209,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Disabled
+    //@Disabled
     void deleteQuestion() throws IOException {
         //given
         setQAndA();
@@ -223,7 +223,7 @@ class QuestionServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Disabled
+    //@Disabled
     void deleteAnswer() throws IOException {
         //given
         setQAndA();
