@@ -1911,3 +1911,234 @@
 1697280779102|0|statement|connection 331|url jdbc:h2:mem:1691958e-3271-4839-8755-0adc548e9a0f|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
 1697280779102|0|statement|connection 331|url jdbc:h2:mem:1691958e-3271-4839-8755-0adc548e9a0f|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
 1697280779102|0|statement|connection 331|url jdbc:h2:mem:1691958e-3271-4839-8755-0adc548e9a0f|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697439003430|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists answer cascade |drop table if exists answer cascade 
+1697439003433|1|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists board cascade |drop table if exists board cascade 
+1697439003435|1|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697439003439|3|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists comment cascade |drop table if exists comment cascade 
+1697439003441|1|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697439003442|1|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697439003443|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists media cascade |drop table if exists media cascade 
+1697439003444|1|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists member cascade |drop table if exists member cascade 
+1697439003445|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697439003446|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697439003446|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists pet cascade |drop table if exists pet cascade 
+1697439003447|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists question cascade |drop table if exists question cascade 
+1697439003447|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697439003448|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists reply cascade |drop table if exists reply cascade 
+1697439003448|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697439003449|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697439003449|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists story cascade |drop table if exists story cascade 
+1697439003450|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists team cascade |drop table if exists team cascade 
+1697439003451|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697439003452|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697439003453|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697439003453|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697439003454|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697439003454|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697439003454|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697439003455|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697439003455|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697439003455|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697439003455|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697439003456|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697439003456|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697439003456|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697439003456|0|statement|connection 369|url jdbc:h2:mem:b26a05f7-35d1-469c-815c-e98f803704cb|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697439523801|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists answer cascade |drop table if exists answer cascade 
+1697439523804|1|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists board cascade |drop table if exists board cascade 
+1697439523805|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697439523809|3|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists comment cascade |drop table if exists comment cascade 
+1697439523809|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697439523810|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697439523811|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists media cascade |drop table if exists media cascade 
+1697439523817|6|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists member cascade |drop table if exists member cascade 
+1697439523817|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697439523818|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697439523818|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists pet cascade |drop table if exists pet cascade 
+1697439523819|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists question cascade |drop table if exists question cascade 
+1697439523819|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697439523820|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists reply cascade |drop table if exists reply cascade 
+1697439523827|7|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697439523828|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697439523828|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists story cascade |drop table if exists story cascade 
+1697439523829|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists team cascade |drop table if exists team cascade 
+1697439523829|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697439523830|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697439523830|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697439523840|1|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697439523842|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697439523846|3|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697439523847|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697439523847|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697439523847|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697439523847|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697439523848|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697439523849|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697439523850|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697439523850|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697439523850|0|statement|connection 371|url jdbc:h2:mem:f6241519-a0d4-4fdd-bff1-bb7549804f91|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697439954529|1|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists answer cascade |drop table if exists answer cascade 
+1697439954532|1|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists board cascade |drop table if exists board cascade 
+1697439954534|1|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697439954536|1|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists comment cascade |drop table if exists comment cascade 
+1697439954537|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697439954538|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697439954538|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists media cascade |drop table if exists media cascade 
+1697439954540|1|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists member cascade |drop table if exists member cascade 
+1697439954540|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697439954541|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697439954542|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists pet cascade |drop table if exists pet cascade 
+1697439954543|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists question cascade |drop table if exists question cascade 
+1697439954544|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697439954545|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists reply cascade |drop table if exists reply cascade 
+1697439954545|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697439954546|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697439954546|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists story cascade |drop table if exists story cascade 
+1697439954547|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists team cascade |drop table if exists team cascade 
+1697439954548|1|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697439954549|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697439954550|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697439954552|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697439954552|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697439954553|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697439954553|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697439954553|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697439954553|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697439954554|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697439954554|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697439954554|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697439954555|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697439954555|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697439954555|0|statement|connection 371|url jdbc:h2:mem:93c4b172-5f50-43d5-a6bf-598b10c3310e|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697440224095|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists answer cascade |drop table if exists answer cascade 
+1697440224098|1|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists board cascade |drop table if exists board cascade 
+1697440224099|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697440224100|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists comment cascade |drop table if exists comment cascade 
+1697440224101|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697440224101|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697440224102|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists media cascade |drop table if exists media cascade 
+1697440224103|1|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists member cascade |drop table if exists member cascade 
+1697440224103|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697440224104|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697440224104|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists pet cascade |drop table if exists pet cascade 
+1697440224105|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists question cascade |drop table if exists question cascade 
+1697440224105|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697440224106|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists reply cascade |drop table if exists reply cascade 
+1697440224107|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697440224107|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697440224107|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists story cascade |drop table if exists story cascade 
+1697440224108|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists team cascade |drop table if exists team cascade 
+1697440224110|1|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697440224111|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697440224111|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697440224111|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697440224112|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697440224112|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697440224112|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697440224112|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697440224113|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697440224114|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697440224114|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697440224114|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697440224114|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697440224115|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697440224115|0|statement|connection 372|url jdbc:h2:mem:f92b2a29-e0a6-4677-915b-2fdd6eed7d77|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697444705981|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists answer cascade |drop table if exists answer cascade 
+1697444705984|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists board cascade |drop table if exists board cascade 
+1697444705985|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697444705986|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists comment cascade |drop table if exists comment cascade 
+1697444705986|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697444705987|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697444705987|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists media cascade |drop table if exists media cascade 
+1697444705989|1|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists member cascade |drop table if exists member cascade 
+1697444705989|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697444705990|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697444705992|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists pet cascade |drop table if exists pet cascade 
+1697444705993|1|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists question cascade |drop table if exists question cascade 
+1697444705994|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697444705995|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists reply cascade |drop table if exists reply cascade 
+1697444705995|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697444705996|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697444705996|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists story cascade |drop table if exists story cascade 
+1697444705997|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists team cascade |drop table if exists team cascade 
+1697444705997|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697444705997|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697444705998|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697444705998|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697444705998|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697444705998|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697444705999|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697444705999|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697444705999|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697444705999|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697444705999|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697444705999|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697444706000|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697444706000|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697444706000|0|statement|connection 350|url jdbc:h2:mem:c1ab9e9e-2c0f-4e9b-aac0-7b296746df34|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697445375465|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists answer cascade |drop table if exists answer cascade 
+1697445375468|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists board cascade |drop table if exists board cascade 
+1697445375469|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697445375469|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists comment cascade |drop table if exists comment cascade 
+1697445375470|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697445375470|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697445375471|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists media cascade |drop table if exists media cascade 
+1697445375472|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists member cascade |drop table if exists member cascade 
+1697445375473|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697445375473|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697445375474|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists pet cascade |drop table if exists pet cascade 
+1697445375476|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists question cascade |drop table if exists question cascade 
+1697445375477|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697445375477|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists reply cascade |drop table if exists reply cascade 
+1697445375478|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697445375478|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697445375479|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists story cascade |drop table if exists story cascade 
+1697445375479|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists team cascade |drop table if exists team cascade 
+1697445375480|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697445375480|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697445375480|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697445375481|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697445375481|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697445375481|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697445375481|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697445375482|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697445375482|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697445375482|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697445375482|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697445375483|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697445375483|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697445375483|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697445375483|0|statement|connection 372|url jdbc:h2:mem:767cec53-cc85-4ec5-b0db-9c43f7ef6985|drop sequence if exists team_seq|drop sequence if exists team_seq
+1697502207455|1|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists answer cascade |drop table if exists answer cascade 
+1697502207462|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists board cascade |drop table if exists board cascade 
+1697502207463|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
+1697502207463|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists comment cascade |drop table if exists comment cascade 
+1697502207464|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists hashtag cascade |drop table if exists hashtag cascade 
+1697502207467|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists help_u cascade |drop table if exists help_u cascade 
+1697502207467|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists media cascade |drop table if exists media cascade 
+1697502207468|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists member cascade |drop table if exists member cascade 
+1697502207469|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists member_roles cascade |drop table if exists member_roles cascade 
+1697502207470|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists member_mention cascade |drop table if exists member_mention cascade 
+1697502207471|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists pet cascade |drop table if exists pet cascade 
+1697502207472|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists question cascade |drop table if exists question cascade 
+1697502207472|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists recommend cascade |drop table if exists recommend cascade 
+1697502207472|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists reply cascade |drop table if exists reply cascade 
+1697502207473|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists schedule cascade |drop table if exists schedule cascade 
+1697502207473|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists schedule_member cascade |drop table if exists schedule_member cascade 
+1697502207473|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists story cascade |drop table if exists story cascade 
+1697502207473|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists team cascade |drop table if exists team cascade 
+1697502207473|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop table if exists team_member cascade |drop table if exists team_member cascade 
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists board_hashtag_seq|drop sequence if exists board_hashtag_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists board_seq|drop sequence if exists board_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists comment_seq|drop sequence if exists comment_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists hashtag_seq|drop sequence if exists hashtag_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists media_seq|drop sequence if exists media_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists member_mention_seq|drop sequence if exists member_mention_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists member_seq|drop sequence if exists member_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists pet_seq|drop sequence if exists pet_seq
+1697502207474|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists recommend_seq|drop sequence if exists recommend_seq
+1697502207475|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists reply_seq|drop sequence if exists reply_seq
+1697502207475|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists schedule_member_seq|drop sequence if exists schedule_member_seq
+1697502207475|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists schedule_seq|drop sequence if exists schedule_seq
+1697502207475|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
+1697502207475|0|statement|connection 372|url jdbc:h2:mem:87f742df-6942-4487-806c-422f3b193b16|drop sequence if exists team_seq|drop sequence if exists team_seq

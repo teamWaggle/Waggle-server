@@ -35,7 +35,6 @@ class CommentRepositoryTest {
     //board-comment-reply check
     @Test
     @Transactional
-    @Rollback
     void test() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
@@ -70,7 +69,6 @@ class CommentRepositoryTest {
     //board-comment-reply-memberMention check
     @Test
     @Transactional
-    @Rollback
     void testMention() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();

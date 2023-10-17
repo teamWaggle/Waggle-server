@@ -32,9 +32,8 @@ public class Story extends Board {
         this.thumbnail = thumbnail;
     }
 
-    public void changeStory(String content, String thumbnail) {
+    public void changeContent(String content) {
         this.content = content;
-        this.thumbnail = thumbnail;
     }
 
     public void changeThumbnail(String thumbnail) {
