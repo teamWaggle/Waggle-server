@@ -77,8 +77,7 @@ class BoardRepositoryTest {
             BoardHashtag build = BoardHashtag.builder().board(testStory).hashtag(hashtag).build();
         }
 
-//        List<Story> findStories = storyRepository.findByHashtag("vacation");
-//        assertThat(findStories.size()).isEqualTo(1);
+
     }
 
 }
