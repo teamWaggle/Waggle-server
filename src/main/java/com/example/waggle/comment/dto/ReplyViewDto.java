@@ -18,6 +18,7 @@ public class ReplyViewDto {
 
     private Long id;
     private String content;
+    private String username;
     @Builder.Default
     private List<String> mentionMembers = new ArrayList<>();
 
@@ -25,6 +26,7 @@ public class ReplyViewDto {
         return ReplyViewDto.builder()
                 .id(reply.getId())
                 .content(reply.getContent())
+                .username(reply.getMember().getUsername())
                 .mentionMembers(reply.getMemberMentions().stream()
                         .map(m->m.getUsername()).collect(Collectors.toList()))
                 .build();
