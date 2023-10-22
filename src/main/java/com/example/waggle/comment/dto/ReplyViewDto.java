@@ -27,7 +27,7 @@ public class ReplyViewDto {
                 .id(reply.getId())
                 .content(reply.getContent())
                 .username(reply.getMember().getUsername())
-                .mentionMembers(reply.getMemberMentions().stream()
+                .mentionMembers(reply.getMentions().stream()
                         .map(m->m.getUsername()).collect(Collectors.toList()))
                 .build();
     }

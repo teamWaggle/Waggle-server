@@ -1,4 +1,4 @@
-package com.example.waggle.memberMention.domain;
+package com.example.waggle.mention.domain;
 
 import com.example.waggle.commons.component.auditing.BaseEntity;
 import com.example.waggle.comment.domain.Reply;
@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberMention extends BaseEntity {
+public class Mention extends BaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "member_mention_id")
@@ -24,7 +24,6 @@ public class MemberMention extends BaseEntity {
 
     private String username;
 
-    //protected -> public
     public void setReply(Reply reply) {
         this.reply = reply;
     }

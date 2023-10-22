@@ -19,7 +19,7 @@ public class ReplyWriteDto {
 
     private String content;
     @Builder.Default
-    private List<String> mentionMembers = new ArrayList<>();
+    private List<String> mentions = new ArrayList<>();
     private Long commentId;
 
     public Reply toEntity(Member member, Comment comment) {

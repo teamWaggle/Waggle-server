@@ -1,24 +1,20 @@
 package com.example.waggle.comment.repository;
 
-import com.example.waggle.board.story.domain.Story;
-import com.example.waggle.comment.domain.Comment;
-import com.example.waggle.comment.repository.CommentRepository;
-import com.example.waggle.memberMention.domain.MemberMention;
-import com.example.waggle.memberMention.repository.MemberMentionRepository;
-import com.example.waggle.comment.domain.Reply;
-import com.example.waggle.board.story.repository.StoryRepository;
-import com.example.waggle.comment.repository.ReplyRepository;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.example.waggle.board.story.domain.Story;
+import com.example.waggle.board.story.repository.StoryRepository;
+import com.example.waggle.comment.domain.Comment;
+import com.example.waggle.comment.domain.Reply;
+import com.example.waggle.mention.domain.Mention;
+import com.example.waggle.mention.repository.MentionRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class CommentRepositoryTest {
@@ -30,7 +26,7 @@ class CommentRepositoryTest {
     @Autowired
     ReplyRepository replyRepository;
     @Autowired
-    MemberMentionRepository memberMentionRepository;
+    MentionRepository mentionRepository;
 
     //board-comment-reply check
     @Test
@@ -103,11 +99,11 @@ class CommentRepositoryTest {
         halo.addReply(reply2);
 
         //memberMention
-        MemberMention hann = MemberMention.builder().username("hann").build();
-        memberMentionRepository.save(hann);
+        Mention hann = Mention.builder().username("hann").build();
+        mentionRepository.save(hann);
 
         //reply-memberMention link
-        reply1.addMemberMention(hann);
+        reply1.addMention(hann);
 
         List<Reply> all = replyRepository.findAll();
         assertThat(all.size()).isEqualTo(2);
