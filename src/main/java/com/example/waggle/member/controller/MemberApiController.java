@@ -25,28 +25,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Slf4j
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
+@RestController
 @Tag(name = "Member API", description = "회원 API")
 public class MemberApiController {
 
     private final MemberService memberService;
     private final FileStore fileStore;
 
-    @Operation(
-            summary = "로그인",
-            description = "아이디와 비밀번호를 통해 로그인을 진행합니다. 성공 시 엑세스 토큰을 반환합니다."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "로그인 성공. 엑세스 토큰을 반환합니다."
-    )
-    @ApiResponse(
-            responseCode = "401",
-            description = "로그인 실패. 인증되지 않음."
-    )
-    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "아이디와 비밀번호를 통해 로그인을 진행합니다. 성공 시 엑세스 토큰을 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
+    @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
+    @PostMapping("/tokens")
     public ResponseEntity<?> login(@RequestBody SignInDto signInDto, HttpServletResponse response) {
         JwtToken jwtToken = memberService.signIn(signInDto);
 
@@ -57,24 +48,17 @@ public class MemberApiController {
             response.addCookie(cookie);
             return ResponseEntity.ok(jwtToken.getAccessToken());
         } else {
-            return ResponseEntity.ok("unauthorized");   // TODO 로그인 실패 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
         }
     }
 
-    @Operation(
-            summary = "회원가입",
-            description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다."
-    )
-    @ApiResponse(
-            responseCode = "400",
-            description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패."
-    )
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestPart SignUpDto signUpDto, @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
+    @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
+    @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
+    @PostMapping
+    public ResponseEntity<?> register(@RequestPart SignUpDto signUpDto,
+                                      @RequestPart(value = "profileImg", required = false) MultipartFile profileImg)
+            throws IOException {
         try {
             UploadFile uploadFile = fileStore.storeFile(profileImg);
             MemberSummaryDto memberSummaryDto = memberService.signUp(signUpDto, uploadFile);
@@ -85,15 +69,9 @@ public class MemberApiController {
         }
     }
 
-    @Operation(
-            summary = "로그아웃",
-            description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "로그아웃 성공. 'success' 반환."
-    )
-    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다.")
+    @ApiResponse(responseCode = "200", description = "로그아웃 성공. 'success' 반환.")
+    @DeleteMapping("/tokens")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         ResponseCookie deleteCookie = ResponseCookie.from("access_token", "")
                 .path("/")
@@ -108,20 +86,11 @@ public class MemberApiController {
         return ResponseEntity.ok("success");
     }
 
-    @Operation(
-            summary = "회원 정보 조회",
-            description = "username을 통해 username, nickname, profileImg를 조회합니다."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환."
-    )
-    @ApiResponse(
-            responseCode = "404",
-            description = "회원 정보 조회 실패. 사용자가 존재하지 않음."
-    )
+    @Operation(summary = "회원 정보 조회", description = "username을 통해 username, nickname, profileImg를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
+    @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
     @GetMapping("/{username}")
-    public ResponseEntity<?> singleStoryWriteForm(@PathVariable String username) {
+    public ResponseEntity<?> getMemberInfo(@PathVariable String username) {
         MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
         return ResponseEntity.ok(memberSummaryDto);
     }
