@@ -1,5 +1,6 @@
 package com.example.waggle.comment.dto;
 
+import com.example.waggle.comment.domain.Comment;
 import com.example.waggle.comment.domain.Reply;
 import com.example.waggle.member.domain.Member;
 import lombok.AllArgsConstructor;
@@ -19,11 +20,13 @@ public class ReplyWriteDto {
     private String content;
     @Builder.Default
     private List<String> mentionMembers = new ArrayList<>();
+    private Long commentId;
 
-    public Reply toEntity(Member member) {
+    public Reply toEntity(Member member, Comment comment) {
         return Reply.builder()
-                .content(content)
                 .member(member)
+                .comment(comment)
+                .content(content)
                 .build();
     }
 
