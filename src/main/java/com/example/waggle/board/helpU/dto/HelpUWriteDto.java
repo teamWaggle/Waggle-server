@@ -70,7 +70,7 @@ public class HelpUWriteDto {
                 .rfid(helpU.getRfid())
                 .characteristic(helpU.getCharacteristic())
                 .medias(helpU.getMedias().stream()
-                        .map(h -> h.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
+                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .username(helpU.getMember().getUsername())
                 .build();
     }

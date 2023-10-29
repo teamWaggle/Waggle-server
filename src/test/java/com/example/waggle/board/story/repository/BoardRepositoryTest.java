@@ -28,8 +28,6 @@ class BoardRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback
-    @Disabled
     void test() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
@@ -58,7 +56,6 @@ class BoardRepositoryTest {
     }
     @Test
     @Transactional
-    @Rollback
     void testFindByHashtag() {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
@@ -80,8 +77,7 @@ class BoardRepositoryTest {
             BoardHashtag build = BoardHashtag.builder().board(testStory).hashtag(hashtag).build();
         }
 
-//        List<Story> findStories = storyRepository.findByHashtag("vacation");
-//        assertThat(findStories.size()).isEqualTo(1);
+
     }
 
 }

@@ -162,7 +162,6 @@ class CommentServiceTest {
 
     @Test
     @WithMockCustomUser
-    @Rollback(value = false)
     void deleteComment() throws IOException {
         //given
         setBoardAndMember();
