@@ -40,6 +40,7 @@ public class ReplyServiceImpl implements ReplyService {
         List<Reply> replies = replyRepository.findByCommentId(commentId);
         return replies.stream().map(ReplyViewDto::toDto).collect(Collectors.toList());
     }
+
     @Transactional
     @Override
     public Long createReply(Long commentId, ReplyWriteDto replyWriteDto) {
@@ -52,14 +53,7 @@ public class ReplyServiceImpl implements ReplyService {
         comment.addReply(reply);
         replyRepository.save(reply);
 
-        for (String mention : replyWriteDto.getMentions()) {
-            if (memberRepository.existsByUsername(mention)) {
-                reply.addMention(Mention.builder()
-                        .username(mention)
-                        .build()
-                );
-            }
-        }
+        addMentionsToReply(reply, replyWriteDto.getMentions());
 
         return reply.getId();
     }
@@ -67,27 +61,17 @@ public class ReplyServiceImpl implements ReplyService {
     @Transactional
     @Override
     public Long updateReply(Long replyId, ReplyWriteDto replyWriteDto) {
-        Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
-
+        Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
         reply.getMentions().clear();
-        for (String mention : replyWriteDto.getMentions()) {
-            if (memberRepository.existsByUsername(mention)) {
-                reply.addMention(Mention.builder()
-                        .username(mention)
-                        .build()
-                );
-            }
-        }
+        addMentionsToReply(reply, replyWriteDto.getMentions());
         return reply.getId();
     }
 
     @Transactional
     @Override
     public void deleteReply(Long replyId) {
-        Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
+        Reply reply = getReplyById(replyId);
         if (!validateMember(replyId)) {
             throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
@@ -97,9 +81,24 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public boolean validateMember(Long replyId) {
         Member member = utilService.getSignInMember();
-        Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
+        Reply reply = getReplyById(replyId);
         return reply.getMember().equals(member);
+    }
+
+    private Reply getReplyById(Long replyId) {
+        return replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
+    }
+
+    private void addMentionsToReply(Reply reply, List<String> mentions) {
+        for (String mention : mentions) {
+            if (memberRepository.existsByUsername(mention)) {
+                reply.addMention(Mention.builder()
+                        .username(mention)
+                        .build()
+                );
+            }
+        }
     }
 
 }
