@@ -36,7 +36,6 @@ class QuestionRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     void test() {
         Question question = Question.builder().title("question").content("i have a question sir.").build();
         questionRepository.save(question);
@@ -51,7 +50,6 @@ class QuestionRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(false)
     void findByMemberUsernameTest() {
         // given
         Member member = Member.builder()

@@ -64,7 +64,7 @@
     │   │               ├── commons
     │   │               ├── hashtag
     │   │               ├── media
-    │   │               ├── memberMention
+    │   │               ├── mention
     │   │               ├── recommend
     │   │               └── schedule
     └───└── resources

@@ -74,7 +74,7 @@ public class HelpU extends Board {
         this.characteristic = helpUWriteDto.getCharacteristic();
         this.rfid = helpUWriteDto.getRfid();
         this.contact = helpUWriteDto.getContact();
-        this.thumbnail = helpUWriteDto.getThumbnail();
+        //this.thumbnail = helpUWriteDto.getThumbnail();
     }
 
     public void changeThumbnail(String thumbnail) {
