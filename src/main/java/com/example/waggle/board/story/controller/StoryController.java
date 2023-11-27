@@ -1,12 +1,14 @@
 package com.example.waggle.board.story.controller;
 
-import com.example.waggle.board.story.dto.StorySummaryDto;
-import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.board.story.dto.StoryDetailDto;
+import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
-import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.board.story.service.StoryService;
-import com.example.waggle.member.service.MemberService;
+import com.example.waggle.commons.security.SecurityUtil;
+import com.example.waggle.member.dto.MemberSummaryDto;
+import com.example.waggle.member.service.MemberQueryService;
+import java.io.IOException;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,11 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @Slf4j
@@ -30,7 +32,7 @@ public class StoryController {
 
 
     private final StoryService storyService;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
 
     /**
      * view
@@ -70,7 +72,7 @@ public class StoryController {
     @GetMapping("/write")
     public String singleStoryWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
+        MemberSummaryDto memberSummaryDto = memberQueryService.getMemberSummaryDto(username);
         StoryWriteDto storyDto = new StoryWriteDto();
 
         model.addAttribute("storyDto", storyDto);
@@ -103,7 +105,7 @@ public class StoryController {
             return "redirect:/story";
         }
         StoryWriteDto storyDto = storyService.getStoryWriteDtoByBoardId(boardId);
-        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(SecurityUtil.getCurrentUsername());
+        MemberSummaryDto memberSummaryDto = memberQueryService.getMemberSummaryDto(SecurityUtil.getCurrentUsername());
         model.addAttribute("storyDto", storyDto);
         model.addAttribute("profileImg", memberSummaryDto.getProfileImg());
 

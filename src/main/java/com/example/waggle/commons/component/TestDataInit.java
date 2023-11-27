@@ -3,36 +3,30 @@ package com.example.waggle.commons.component;
 import com.example.waggle.board.helpU.dto.HelpUWriteDto;
 import com.example.waggle.board.helpU.service.HelpUService;
 import com.example.waggle.board.story.domain.Story;
-
+import com.example.waggle.board.story.repository.StoryRepository;
 import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.dto.MemberDetailDto;
 import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.member.repository.MemberRepository;
+import com.example.waggle.member.service.MemberCommandService;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
-
-import com.example.waggle.board.story.repository.StoryRepository;
-import com.example.waggle.member.repository.MemberRepository;
-
-import com.example.waggle.member.service.MemberService;
 import com.example.waggle.schedule.service.ScheduleService;
 import com.example.waggle.schedule.service.TeamService;
-
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class TestDataInit {
-    private final MemberService memberService;
+    private final MemberCommandService memberCommandService;
     private final TeamService teamService;
     private final ScheduleService scheduleService;
     private final HelpUService helpUService;
@@ -58,7 +52,7 @@ public class TestDataInit {
                     .password("12345678")
                     .phone("01011112222")
                     .build();
-            MemberSummaryDto memberSummaryDto = memberService.signUp(signUpDto, null);
+            MemberSummaryDto memberSummaryDto = memberCommandService.signUp(signUpDto, null);
             //Member member = memberRepository.findByUsername(memberSummaryDto.getUsername()).get();
             //members.add(member);
         }

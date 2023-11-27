@@ -1,12 +1,15 @@
 package com.example.waggle.board.question.controller;
 
-import com.example.waggle.commons.security.SecurityUtil;
-import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionDetailDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.board.question.dto.QuestionWriteDto;
-import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.board.question.service.QuestionService;
-import com.example.waggle.member.service.MemberService;
+import com.example.waggle.commons.security.SecurityUtil;
+import com.example.waggle.member.dto.MemberSummaryDto;
+import com.example.waggle.member.service.MemberQueryService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,11 +20,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @Slf4j
@@ -30,7 +33,7 @@ import java.util.List;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
 
     private Sort latestSorting = Sort.by("createdDate").descending();
 
@@ -69,7 +72,7 @@ public class QuestionController {
     @GetMapping("/write")
     public String singleQuestionWriteForm(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(username);
+        MemberSummaryDto memberSummaryDto = memberQueryService.getMemberSummaryDto(username);
         QuestionDetailDto questionDto = new QuestionDetailDto(username);
 
         model.addAttribute("profileImg", memberSummaryDto.getProfileImg());
@@ -97,7 +100,7 @@ public class QuestionController {
     @GetMapping("/edit/{title}/{boardId}")
     public String questionSingleEditForm(Model model, @PathVariable Long boardId) {
         QuestionDetailDto questionDto = questionService.getQuestionByBoardId(boardId);
-        MemberSummaryDto memberSummaryDto = memberService.getMemberSummaryDto(questionDto.getUsername());
+        MemberSummaryDto memberSummaryDto = memberQueryService.getMemberSummaryDto(questionDto.getUsername());
 
         model.addAttribute("profileImg", memberSummaryDto.getProfileImg().getStoreFileName());
         model.addAttribute("question", questionDto);

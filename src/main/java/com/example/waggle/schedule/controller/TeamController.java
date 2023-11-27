@@ -2,26 +2,24 @@ package com.example.waggle.schedule.controller;
 
 import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.member.dto.MemberSummaryDto;
+import com.example.waggle.member.service.MemberQueryService;
 import com.example.waggle.schedule.dto.TeamDto;
-import com.example.waggle.member.service.MemberService;
 import com.example.waggle.schedule.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/team")
 public class TeamController {
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
     private final TeamService teamService;
 
     @GetMapping("/{teamId}/members")
@@ -31,7 +29,7 @@ public class TeamController {
         TeamDto teamDto = teamService.getTeamById(teamId);
         List<String> teamMembers = teamDto.getTeamMembers();
         for (String teamMember : teamMembers) {
-            memberSummaryDtos.add(memberService.getMemberSummaryDto(teamMember));
+            memberSummaryDtos.add(memberQueryService.getMemberSummaryDto(teamMember));
         }
         return ResponseEntity.ok(memberSummaryDtos);
     }

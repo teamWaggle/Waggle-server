@@ -2,7 +2,6 @@ package com.example.waggle.comment.service;
 
 import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.board.story.service.StoryService;
-import com.example.waggle.comment.service.CommentService;
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.comment.dto.CommentViewDto;
 import com.example.waggle.comment.dto.CommentWriteDto;
@@ -10,15 +9,12 @@ import com.example.waggle.board.story.dto.StorySummaryDto;
 import com.example.waggle.board.story.dto.StoryWriteDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.commons.util.service.BoardType;
-import com.example.waggle.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;

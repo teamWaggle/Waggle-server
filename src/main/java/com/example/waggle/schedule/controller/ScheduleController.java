@@ -3,24 +3,26 @@ package com.example.waggle.schedule.controller;
 import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
-import com.example.waggle.member.service.MemberService;
 import com.example.waggle.schedule.service.ScheduleService;
 import com.example.waggle.schedule.service.TeamService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/schedule")
 public class ScheduleController {
-    private final MemberService memberService;
+
     private final TeamService teamService;
     private final ScheduleService scheduleService;
 
