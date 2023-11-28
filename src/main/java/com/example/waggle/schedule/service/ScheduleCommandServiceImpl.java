@@ -1,5 +1,8 @@
 package com.example.waggle.schedule.service;
 
+import static com.example.waggle.commons.exception.ErrorCode.SCHEDULE_NOT_FOUND;
+import static com.example.waggle.commons.exception.ErrorCode.TEAM_NOT_FOUND;
+
 import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.member.domain.Member;
 import com.example.waggle.member.domain.ScheduleMember;
@@ -9,42 +12,22 @@ import com.example.waggle.schedule.domain.Team;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.repository.ScheduleRepository;
 import com.example.waggle.schedule.repository.TeamRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.waggle.commons.exception.ErrorCode.SCHEDULE_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.TEAM_NOT_FOUND;
-
-@Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
-public class ScheduleServiceImpl implements ScheduleService {
+public class ScheduleCommandServiceImpl implements ScheduleCommandService{
+
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
 
-    @Override
-    public ScheduleDto getScheduleById(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new CustomAlertException(SCHEDULE_NOT_FOUND));
-        return ScheduleDto.toDto(schedule);
-    }
-
-    @Override
-    public List<ScheduleDto> getSchedulesByTeamId(Long teamId) {
-        List<Schedule> result = scheduleRepository.findAllByTeamId(teamId);
-        return result.stream().map(ScheduleDto::toDto).collect(Collectors.toList());
-    }
-
-    @Transactional
     @Override
     public Long createSchedule(ScheduleDto scheduleDto, Long teamId) {
         Team team = teamRepository.findById(teamId)
@@ -70,7 +53,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return schedule.getId();
     }
 
-    @Transactional
     @Override
     public Long updateSchedule(ScheduleDto scheduleDto) {
         Schedule schedule = scheduleRepository.findById(scheduleDto.getId())
@@ -82,7 +64,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return schedule.getId();
     }
 
-    @Transactional
     @Override
     public void deleteSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)

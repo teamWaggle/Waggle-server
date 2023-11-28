@@ -11,7 +11,7 @@ import com.example.waggle.member.repository.MemberRepository;
 import com.example.waggle.member.service.MemberCommandService;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
-import com.example.waggle.schedule.service.ScheduleService;
+import com.example.waggle.schedule.service.ScheduleCommandService;
 import com.example.waggle.schedule.service.TeamService;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 public class TestDataInit {
     private final MemberCommandService memberCommandService;
     private final TeamService teamService;
-    private final ScheduleService scheduleService;
+    private final ScheduleCommandService scheduleCommandService;
     private final HelpUService helpUService;
 
     private final StoryRepository storyRepository;
@@ -77,8 +77,8 @@ public class TestDataInit {
         teamService.addMember(team1, "user2");
         teamService.addMember(team1, "user3");
 
-        scheduleService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1);
-        scheduleService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2);
+        scheduleCommandService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1);
+        scheduleCommandService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2);
     }
 
     public void initHelpU() {

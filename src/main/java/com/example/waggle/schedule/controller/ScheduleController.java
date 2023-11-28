@@ -3,7 +3,8 @@ package com.example.waggle.schedule.controller;
 import com.example.waggle.commons.security.SecurityUtil;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
-import com.example.waggle.schedule.service.ScheduleService;
+import com.example.waggle.schedule.service.ScheduleCommandService;
+import com.example.waggle.schedule.service.ScheduleQueryService;
 import com.example.waggle.schedule.service.TeamService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ScheduleController {
 
     private final TeamService teamService;
-    private final ScheduleService scheduleService;
+    private final ScheduleCommandService scheduleCommandService;
+    private final ScheduleQueryService scheduleQueryService;
 
     @GetMapping
     public String scheduleMain(Model model) {
@@ -43,19 +45,19 @@ public class ScheduleController {
 
     @GetMapping("/{teamId}/schedules")
     public ResponseEntity<List<ScheduleDto>> getTeamSchedules(@PathVariable Long teamId) {
-        List<ScheduleDto> teamSchedules = scheduleService.getSchedulesByTeamId(teamId);
+        List<ScheduleDto> teamSchedules = scheduleQueryService.getSchedulesByTeamId(teamId);
         return ResponseEntity.ok(teamSchedules);
     }
 
     @PostMapping("/create")
     public String createSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
-        scheduleService.createSchedule(scheduleDto, scheduleDto.getTeamId());
+        scheduleCommandService.createSchedule(scheduleDto, scheduleDto.getTeamId());
         return "redirect:/schedule";
     }
 
     @PostMapping("/update")
     public String updateSchedule(@ModelAttribute ScheduleDto scheduleDto, Model model) {
-        scheduleService.updateSchedule(scheduleDto);
+        scheduleCommandService.updateSchedule(scheduleDto);
         return "redirect:/schedule";
     }
 
