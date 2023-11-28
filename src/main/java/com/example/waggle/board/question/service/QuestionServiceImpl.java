@@ -1,16 +1,26 @@
 package com.example.waggle.board.question.service;
 
 
+import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.commons.exception.ErrorCode.INVALID_BOARD_TYPE;
+
 import com.example.waggle.board.question.domain.Answer;
 import com.example.waggle.board.question.domain.Question;
-import com.example.waggle.board.question.dto.*;
+import com.example.waggle.board.question.dto.AnswerDetailDto;
+import com.example.waggle.board.question.dto.AnswerWriteDto;
+import com.example.waggle.board.question.dto.QuestionDetailDto;
+import com.example.waggle.board.question.dto.QuestionSummaryDto;
+import com.example.waggle.board.question.dto.QuestionWriteDto;
 import com.example.waggle.board.question.repository.AnswerRepository;
 import com.example.waggle.board.question.repository.QuestionRepository;
 import com.example.waggle.commons.exception.CustomAlertException;
 import com.example.waggle.commons.exception.CustomPageException;
 import com.example.waggle.commons.util.service.UtilService;
-import com.example.waggle.media.service.MediaService;
 import com.example.waggle.member.domain.Member;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,14 +28,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.commons.exception.ErrorCode.*;
-import static com.example.waggle.commons.util.service.BoardType.ANSWER;
-import static com.example.waggle.commons.util.service.BoardType.QUESTION;
 
 
 @Slf4j
@@ -37,7 +39,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final UtilService utilService;
-    private final MediaService mediaService;
+//    private final MediaService mediaService;
 
 
     @Override
@@ -86,7 +88,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
+//        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
         return question.getId();
     }
 
@@ -105,7 +107,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        mediaService.createMedias(answer.getId(), multipartFiles, ANSWER);
+//        mediaService.createMedias(answer.getId(), multipartFiles, ANSWER);
         question.addAnswer(answer);
 
         return answer.getId();
@@ -120,7 +122,7 @@ public class QuestionServiceImpl implements QuestionService {
         question.changeQuestion(questionWriteDto.getContent(), questionWriteDto.getTitle());
 
         question.getMedias().clear();
-        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
+//        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
 
         question.getBoardHashtags().clear();
         for (String hashtag : questionWriteDto.getHashtags()) {
@@ -138,7 +140,7 @@ public class QuestionServiceImpl implements QuestionService {
         answer.changeAnswer(answerWriteDto.getContent());
 
         answer.getMedias().clear();
-        mediaService.createMedias(answer.getId(), multipartFiles, ANSWER);
+//        mediaService.createMedias(answer.getId(), multipartFiles, ANSWER);
 
         answer.getBoardHashtags().clear();
         for (String hashtag : answerWriteDto.getHashtags()) {
