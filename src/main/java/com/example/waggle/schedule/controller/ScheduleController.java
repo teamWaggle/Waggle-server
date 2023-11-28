@@ -5,7 +5,8 @@ import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.schedule.service.ScheduleCommandService;
 import com.example.waggle.schedule.service.ScheduleQueryService;
-import com.example.waggle.schedule.service.TeamService;
+import com.example.waggle.schedule.service.TeamCommandService;
+import com.example.waggle.schedule.service.TeamQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +25,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/schedule")
 public class ScheduleController {
 
-    private final TeamService teamService;
+    private final TeamCommandService teamCommandService;
+    private final TeamQueryService teamQueryService;
     private final ScheduleCommandService scheduleCommandService;
     private final ScheduleQueryService scheduleQueryService;
 
     @GetMapping
     public String scheduleMain(Model model) {
         String username = SecurityUtil.getCurrentUsername();
-        List<TeamDto> allTeamByUsername = teamService.getTeamsByUsername(username);
+        List<TeamDto> allTeamByUsername = teamQueryService.getTeamsByUsername(username);
         Boolean isTeamLeader = Boolean.FALSE;
         if (allTeamByUsername.size() > 0) {
-            isTeamLeader = teamService.isTeamLeader(allTeamByUsername.get(0).getId(), username);
+            isTeamLeader = teamQueryService.isTeamLeader(allTeamByUsername.get(0).getId(), username);
         }
 
         model.addAttribute("currentUsername", username);

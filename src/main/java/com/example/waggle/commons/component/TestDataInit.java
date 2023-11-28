@@ -12,7 +12,7 @@ import com.example.waggle.member.service.MemberCommandService;
 import com.example.waggle.schedule.dto.ScheduleDto;
 import com.example.waggle.schedule.dto.TeamDto;
 import com.example.waggle.schedule.service.ScheduleCommandService;
-import com.example.waggle.schedule.service.TeamService;
+import com.example.waggle.schedule.service.TeamCommandService;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TestDataInit {
     private final MemberCommandService memberCommandService;
-    private final TeamService teamService;
+    private final TeamCommandService teamCommandService;
     private final ScheduleCommandService scheduleCommandService;
     private final HelpUService helpUService;
 
@@ -72,10 +72,10 @@ public class TestDataInit {
     public void initTeamAndSchedule() {
         String username = "user1";
 
-        Long team1 = teamService.createTeam(TeamDto.builder().name("team1").build(), username);
-        Long team2 = teamService.createTeam(TeamDto.builder().name("team2").build(), username);
-        teamService.addMember(team1, "user2");
-        teamService.addMember(team1, "user3");
+        Long team1 = teamCommandService.createTeam(TeamDto.builder().name("team1").build(), username);
+        Long team2 = teamCommandService.createTeam(TeamDto.builder().name("team2").build(), username);
+        teamCommandService.addMember(team1, "user2");
+        teamCommandService.addMember(team1, "user3");
 
         scheduleCommandService.createSchedule(ScheduleDto.builder().title("산책").description("뚝섬한강공원").scheduleTime(LocalDateTime.now()).build(), team1);
         scheduleCommandService.createSchedule(ScheduleDto.builder().title("애견카페").scheduleTime(LocalDateTime.now()).build(), team2);
