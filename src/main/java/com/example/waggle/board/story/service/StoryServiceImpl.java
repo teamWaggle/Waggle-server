@@ -1,5 +1,8 @@
 package com.example.waggle.board.story.service;
 
+import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+
 import com.example.waggle.board.story.domain.Story;
 import com.example.waggle.board.story.dto.StoryDetailDto;
 import com.example.waggle.board.story.dto.StorySummaryDto;
@@ -8,25 +11,18 @@ import com.example.waggle.board.story.repository.StoryRepository;
 import com.example.waggle.commons.component.file.FileStore;
 import com.example.waggle.commons.component.file.UploadFile;
 import com.example.waggle.commons.exception.CustomPageException;
-import com.example.waggle.commons.util.service.BoardType;
 import com.example.waggle.commons.util.service.UtilService;
-import com.example.waggle.media.domain.Media;
-import com.example.waggle.media.service.MediaService;
 import com.example.waggle.member.domain.Member;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.commons.util.service.BoardType.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -37,7 +33,7 @@ public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;
     private final UtilService utilService;
-    private final MediaService mediaService;
+//    private final MediaService mediaService;
     private final FileStore fileStore;
 
 
@@ -82,7 +78,7 @@ public class StoryServiceImpl implements StoryService {
                 utilService.saveHashtag(saveStory, hashtagContent);
             }
         }
-        mediaService.createMedias(story.getId(), multipartFiles, STORY);
+//        mediaService.createMedias(story.getId(), multipartFiles, STORY);
 
         return saveStory.getId();
     }
@@ -97,7 +93,7 @@ public class StoryServiceImpl implements StoryService {
         story.changeContent(storyWriteDto.getContent());
 
         story.getMedias().clear();
-        mediaService.createMedias(story.getId(), multipartFiles, STORY);
+//        mediaService.createMedias(story.getId(), multipartFiles, STORY);
 
         story.getBoardHashtags().clear();
         for (String hashtag : storyWriteDto.getHashtags()) {
