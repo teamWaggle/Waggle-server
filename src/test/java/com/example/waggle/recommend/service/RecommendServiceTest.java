@@ -12,8 +12,6 @@ import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.board.story.repository.StoryRepository;
 import com.example.waggle.member.repository.MemberRepository;
 import com.example.waggle.commons.util.service.BoardType;
-import com.example.waggle.recommend.service.RecommendService;
-import com.example.waggle.member.service.MemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -15,7 +15,6 @@ import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.commons.util.service.BoardType;
 import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.member.service.MemberService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

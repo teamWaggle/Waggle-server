@@ -6,8 +6,6 @@ import com.example.waggle.member.dto.MemberSummaryDto;
 import com.example.waggle.member.dto.SignInDto;
 import com.example.waggle.member.dto.SignUpDto;
 import com.example.waggle.member.repository.MemberRepository;
-import com.example.waggle.member.service.MemberService;
-import com.example.waggle.pet.service.PetService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
