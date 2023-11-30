@@ -2,11 +2,11 @@ package com.example.waggle.pet.service;
 
 import com.example.waggle.commons.component.DatabaseCleanUp;
 import com.example.waggle.commons.exception.CustomAlertException;
-import com.example.waggle.member.domain.Gender;
-import com.example.waggle.member.dto.MemberSummaryDto;
-import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.pet.dto.PetDto;
-import com.example.waggle.pet.repository.PetRepository;
+import com.example.waggle.domain.member.domain.Gender;
+import com.example.waggle.domain.member.dto.MemberSummaryDto;
+import com.example.waggle.domain.member.dto.SignUpDto;
+import com.example.waggle.domain.pet.dto.PetDto;
+import com.example.waggle.domain.pet.repository.PetRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

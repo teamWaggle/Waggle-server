@@ -1,8 +1,8 @@
 package com.example.waggle.commons.util.service;
 
-import com.example.waggle.board.Board;
-import com.example.waggle.hashtag.domain.Hashtag;
-import com.example.waggle.member.domain.Member;
+import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.hashtag.domain.Hashtag;
+import com.example.waggle.domain.member.domain.Member;
 
 public interface UtilService {
 

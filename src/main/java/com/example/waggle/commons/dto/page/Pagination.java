@@ -1,10 +1,8 @@
 package com.example.waggle.commons.dto.page;
 
-import com.example.waggle.board.question.dto.QuestionSummaryDto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

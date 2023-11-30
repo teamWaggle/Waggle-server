@@ -1,6 +1,6 @@
 package com.example.waggle.commons;
 
-import com.example.waggle.board.story.dto.StorySummaryDto;
+import com.example.waggle.domain.board.story.dto.StorySummaryDto;
 import com.example.waggle.commons.dto.page.Pagination;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

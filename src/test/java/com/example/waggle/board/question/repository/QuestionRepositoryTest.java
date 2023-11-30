@@ -1,12 +1,12 @@
 package com.example.waggle.board.question.repository;
 
 
-import com.example.waggle.board.question.domain.Answer;
-import com.example.waggle.board.question.repository.AnswerRepository;
-import com.example.waggle.board.question.domain.Question;
-import com.example.waggle.board.question.repository.QuestionRepository;
-import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.repository.MemberRepository;
+import com.example.waggle.domain.board.question.domain.Answer;
+import com.example.waggle.domain.board.question.repository.AnswerRepository;
+import com.example.waggle.domain.board.question.domain.Question;
+import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

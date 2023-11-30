@@ -2,12 +2,14 @@ package com.example.waggle.comment.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.waggle.board.story.domain.Story;
-import com.example.waggle.board.story.repository.StoryRepository;
-import com.example.waggle.comment.domain.Comment;
-import com.example.waggle.comment.domain.Reply;
-import com.example.waggle.mention.domain.Mention;
-import com.example.waggle.mention.repository.MentionRepository;
+import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.comment.domain.Comment;
+import com.example.waggle.domain.comment.domain.Reply;
+import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.comment.repository.ReplyRepository;
+import com.example.waggle.domain.mention.domain.Mention;
+import com.example.waggle.domain.mention.repository.MentionRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

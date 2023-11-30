@@ -1,7 +1,7 @@
 package com.example.waggle.commons.security;
 
-import com.example.waggle.member.domain.Member;
-import com.example.waggle.member.repository.MemberRepository;
+import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

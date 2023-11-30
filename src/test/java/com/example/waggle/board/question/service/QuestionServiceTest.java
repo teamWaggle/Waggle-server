@@ -1,12 +1,13 @@
 package com.example.waggle.board.question.service;
 
-import com.example.waggle.board.question.dto.AnswerWriteDto;
-import com.example.waggle.board.question.dto.QuestionDetailDto;
-import com.example.waggle.board.question.dto.QuestionSummaryDto;
-import com.example.waggle.board.question.dto.QuestionWriteDto;
+import com.example.waggle.domain.board.question.dto.AnswerWriteDto;
+import com.example.waggle.domain.board.question.dto.QuestionDetailDto;
+import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
+import com.example.waggle.domain.board.question.dto.QuestionWriteDto;
 import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.member.dto.SignUpDto;
+import com.example.waggle.domain.board.question.service.QuestionService;
+import com.example.waggle.domain.member.dto.SignUpDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
