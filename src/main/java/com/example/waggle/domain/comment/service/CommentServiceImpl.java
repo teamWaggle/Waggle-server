@@ -5,9 +5,9 @@ import com.example.waggle.domain.comment.domain.Comment;
 import com.example.waggle.domain.comment.dto.CommentViewDto;
 import com.example.waggle.domain.comment.dto.CommentWriteDto;
 import com.example.waggle.domain.comment.repository.CommentRepository;
-import com.example.waggle.commons.exception.CustomPageException;
-import com.example.waggle.commons.util.service.BoardType;
-import com.example.waggle.commons.util.service.UtilService;
+import com.example.waggle.global.exception.CustomPageException;
+import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.commons.exception.ErrorCode.COMMENT_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor

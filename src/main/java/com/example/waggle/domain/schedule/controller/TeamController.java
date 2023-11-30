@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.controller;
 
-import com.example.waggle.commons.security.SecurityUtil;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.domain.member.dto.MemberSummaryDto;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.dto.TeamDto;

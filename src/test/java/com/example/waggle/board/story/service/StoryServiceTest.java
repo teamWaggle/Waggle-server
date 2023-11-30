@@ -1,7 +1,7 @@
 package com.example.waggle.board.story.service;
 
-import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.domain.board.story.dto.StorySummaryDto;
 import com.example.waggle.domain.board.story.dto.StoryDetailDto;
 import com.example.waggle.domain.board.story.dto.StoryWriteDto;

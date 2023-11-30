@@ -1,9 +1,9 @@
 package com.example.waggle.domain.schedule.service;
 
-import static com.example.waggle.commons.exception.ErrorCode.SCHEDULE_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.TEAM_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.SCHEDULE_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
 
-import com.example.waggle.commons.exception.CustomAlertException;
+import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.member.domain.ScheduleMember;
 import com.example.waggle.domain.schedule.domain.Schedule;

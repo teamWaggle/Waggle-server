@@ -1,6 +1,6 @@
 package com.example.waggle.schedule.service;
 
-import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.domain.member.dto.MemberSummaryDto;
 import com.example.waggle.domain.member.dto.SignUpDto;
 import com.example.waggle.domain.member.repository.MemberRepository;

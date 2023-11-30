@@ -1,7 +1,7 @@
 package com.example.waggle.member.service;
 
-import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.commons.security.JwtToken;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.domain.member.dto.MemberSummaryDto;
 import com.example.waggle.domain.member.dto.SignInDto;
 import com.example.waggle.domain.member.dto.SignUpDto;

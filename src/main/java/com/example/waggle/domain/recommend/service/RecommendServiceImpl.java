@@ -6,9 +6,9 @@ import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.domain.board.question.dto.QuestionDetailDto;
 import com.example.waggle.domain.board.story.dto.StorySummaryDto;
 import com.example.waggle.domain.board.story.dto.StoryDetailDto;
-import com.example.waggle.commons.exception.CustomPageException;
-import com.example.waggle.commons.util.service.BoardType;
-import com.example.waggle.commons.util.service.UtilService;
+import com.example.waggle.global.exception.CustomPageException;
+import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.recommend.domain.Recommend;
@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.waggle.commons.exception.ErrorCode.CANNOT_RECOMMEND_MYSELF;
-import static com.example.waggle.commons.exception.ErrorCode.RECOMMEND_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_RECOMMEND_MYSELF;
+import static com.example.waggle.global.exception.ErrorCode.RECOMMEND_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor

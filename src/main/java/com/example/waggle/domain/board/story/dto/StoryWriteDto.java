@@ -2,7 +2,7 @@ package com.example.waggle.domain.board.story.dto;
 
 import com.example.waggle.domain.board.story.domain.Story;
 import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.commons.validation.UpdateCheck;
+import com.example.waggle.global.validation.UpdateCheck;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

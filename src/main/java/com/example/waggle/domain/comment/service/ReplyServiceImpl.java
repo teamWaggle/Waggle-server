@@ -1,9 +1,9 @@
 package com.example.waggle.domain.comment.service;
 
 
-import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.commons.exception.ErrorCode.COMMENT_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.REPLY_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.REPLY_NOT_FOUND;
 
 import com.example.waggle.domain.comment.domain.Comment;
 import com.example.waggle.domain.comment.domain.Reply;
@@ -11,8 +11,8 @@ import com.example.waggle.domain.comment.dto.ReplyViewDto;
 import com.example.waggle.domain.comment.dto.ReplyWriteDto;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
-import com.example.waggle.commons.exception.CustomPageException;
-import com.example.waggle.commons.util.service.UtilService;
+import com.example.waggle.global.exception.CustomPageException;
+import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.mention.domain.Mention;
 import com.example.waggle.domain.member.repository.MemberRepository;

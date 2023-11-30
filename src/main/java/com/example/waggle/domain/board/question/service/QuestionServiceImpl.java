@@ -1,9 +1,9 @@
 package com.example.waggle.domain.board.question.service;
 
 
-import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.commons.exception.ErrorCode.INVALID_BOARD_TYPE;
+import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.global.exception.ErrorCode.INVALID_BOARD_TYPE;
 
 import com.example.waggle.domain.board.question.domain.Answer;
 import com.example.waggle.domain.board.question.domain.Question;
@@ -14,9 +14,9 @@ import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.domain.board.question.dto.QuestionWriteDto;
 import com.example.waggle.domain.board.question.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
-import com.example.waggle.commons.exception.CustomAlertException;
-import com.example.waggle.commons.exception.CustomPageException;
-import com.example.waggle.commons.util.service.UtilService;
+import com.example.waggle.global.exception.CustomAlertException;
+import com.example.waggle.global.exception.CustomPageException;
+import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.domain.member.domain.Member;
 
 import java.io.IOException;

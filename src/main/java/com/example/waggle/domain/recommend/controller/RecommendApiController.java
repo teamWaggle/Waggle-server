@@ -1,6 +1,6 @@
 package com.example.waggle.domain.recommend.controller;
 
-import com.example.waggle.commons.util.service.BoardType;
+import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.domain.recommend.service.RecommendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

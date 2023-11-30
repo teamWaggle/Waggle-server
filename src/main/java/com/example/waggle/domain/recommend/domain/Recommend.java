@@ -1,6 +1,6 @@
 package com.example.waggle.domain.recommend.domain;
 
-import com.example.waggle.commons.component.auditing.BaseEntity;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.domain.Member;
 import jakarta.persistence.*;

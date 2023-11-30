@@ -1,8 +1,8 @@
 package com.example.waggle.domain.media.domain;
 
-import com.example.waggle.commons.component.auditing.BaseTimeEntity;
+import com.example.waggle.global.component.auditing.BaseTimeEntity;
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.commons.component.file.UploadFile;
+import com.example.waggle.global.component.file.UploadFile;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

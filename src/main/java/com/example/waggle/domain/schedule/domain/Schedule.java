@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.domain;
 
-import com.example.waggle.commons.component.auditing.BaseEntity;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.domain.ScheduleMember;
 import com.example.waggle.domain.schedule.dto.ScheduleDto;
 import jakarta.persistence.*;

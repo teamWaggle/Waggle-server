@@ -1,7 +1,7 @@
 package com.example.waggle.domain.member.dto;
 
 import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.commons.component.file.UploadFile;
+import com.example.waggle.global.component.file.UploadFile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

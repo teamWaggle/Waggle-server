@@ -1,10 +1,10 @@
 package com.example.waggle.domain.pet.service;
 
-import static com.example.waggle.commons.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.PET_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.PET_NOT_FOUND;
 
-import com.example.waggle.commons.exception.CustomAlertException;
-import com.example.waggle.commons.exception.CustomPageException;
+import com.example.waggle.global.exception.CustomAlertException;
+import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.pet.domain.Pet;

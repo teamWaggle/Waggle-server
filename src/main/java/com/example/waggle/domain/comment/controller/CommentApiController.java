@@ -2,7 +2,7 @@ package com.example.waggle.domain.comment.controller;
 
 import com.example.waggle.domain.comment.dto.CommentWriteDto;
 import com.example.waggle.domain.comment.service.CommentService;
-import com.example.waggle.commons.util.service.BoardType;
+import com.example.waggle.global.util.service.BoardType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -2,7 +2,7 @@ package com.example.waggle.domain.comment.service;
 
 import com.example.waggle.domain.comment.dto.CommentViewDto;
 import com.example.waggle.domain.comment.dto.CommentWriteDto;
-import com.example.waggle.commons.util.service.BoardType;
+import com.example.waggle.global.util.service.BoardType;
 
 import java.util.List;
 

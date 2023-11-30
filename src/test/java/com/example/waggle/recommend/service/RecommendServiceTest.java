@@ -1,8 +1,8 @@
 package com.example.waggle.recommend.service;
 
-import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.domain.board.story.service.StoryService;
-import com.example.waggle.commons.component.DatabaseCleanUp;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.domain.board.story.domain.Story;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.board.story.dto.StorySummaryDto;
@@ -11,7 +11,7 @@ import com.example.waggle.domain.board.story.dto.StoryWriteDto;
 import com.example.waggle.domain.member.dto.SignUpDto;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.commons.util.service.BoardType;
+import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.domain.recommend.service.RecommendService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

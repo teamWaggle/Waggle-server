@@ -4,7 +4,7 @@ import com.example.waggle.domain.board.question.dto.QuestionDetailDto;
 import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
 import com.example.waggle.domain.board.question.dto.QuestionWriteDto;
 import com.example.waggle.domain.board.question.service.QuestionService;
-import com.example.waggle.commons.security.SecurityUtil;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.domain.member.dto.MemberSummaryDto;
 import com.example.waggle.domain.member.service.MemberQueryService;
 

@@ -1,7 +1,7 @@
 package com.example.waggle.pet.service;
 
-import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.commons.exception.CustomAlertException;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.domain.member.dto.MemberSummaryDto;
 import com.example.waggle.domain.member.dto.SignUpDto;

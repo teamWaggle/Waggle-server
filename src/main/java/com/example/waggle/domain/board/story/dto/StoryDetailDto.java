@@ -1,9 +1,9 @@
 package com.example.waggle.domain.board.story.dto;
 
 import com.example.waggle.domain.board.story.domain.Story;
-import com.example.waggle.commons.component.file.UploadFile;
+import com.example.waggle.global.component.file.UploadFile;
 import com.example.waggle.domain.comment.dto.CommentViewDto;
-import com.example.waggle.commons.util.DateUtil;
+import com.example.waggle.global.util.DateUtil;
 import lombok.*;
 
 import java.util.ArrayList;

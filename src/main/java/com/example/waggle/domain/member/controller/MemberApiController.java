@@ -1,8 +1,8 @@
 package com.example.waggle.domain.member.controller;
 
-import com.example.waggle.commons.component.file.FileStore;
-import com.example.waggle.commons.component.file.UploadFile;
-import com.example.waggle.commons.security.JwtToken;
+import com.example.waggle.global.component.file.FileStore;
+import com.example.waggle.global.component.file.UploadFile;
+import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.domain.member.dto.MemberSummaryDto;
 import com.example.waggle.domain.member.dto.SignInDto;
 import com.example.waggle.domain.member.dto.SignUpDto;

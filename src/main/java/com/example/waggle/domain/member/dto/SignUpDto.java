@@ -2,7 +2,7 @@ package com.example.waggle.domain.member.dto;
 
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.pet.dto.PetDto;
-import com.example.waggle.commons.validation.ValidationGroups;
+import com.example.waggle.global.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;

@@ -1,19 +1,19 @@
 package com.example.waggle.domain.board.helpU.service;
 
-import static com.example.waggle.commons.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.commons.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.commons.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.example.waggle.commons.util.service.BoardType.HELPU;
+import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.example.waggle.global.util.service.BoardType.HELPU;
 
 import com.example.waggle.domain.board.helpU.domain.HelpU;
 import com.example.waggle.domain.board.helpU.dto.HelpUDetailDto;
 import com.example.waggle.domain.board.helpU.dto.HelpUSummaryDto;
 import com.example.waggle.domain.board.helpU.dto.HelpUWriteDto;
 import com.example.waggle.domain.board.helpU.repository.HelpURepository;
-import com.example.waggle.commons.component.file.FileStore;
-import com.example.waggle.commons.component.file.UploadFile;
-import com.example.waggle.commons.exception.CustomApiException;
-import com.example.waggle.commons.util.service.UtilService;
+import com.example.waggle.global.component.file.FileStore;
+import com.example.waggle.global.component.file.UploadFile;
+import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import java.io.IOException;

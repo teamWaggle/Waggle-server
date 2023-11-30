@@ -1,6 +1,6 @@
 package com.example.waggle;
 
-import com.example.waggle.commons.security.SecurityUtil;
+import com.example.waggle.global.security.SecurityUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
