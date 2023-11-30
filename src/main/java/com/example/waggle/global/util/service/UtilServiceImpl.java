@@ -2,13 +2,13 @@ package com.example.waggle.global.util.service;
 
 import com.example.waggle.domain.board.helpU.repository.HelpURepository;
 import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.CustomPageException;
+import com.example.waggle.global.exception.ErrorCode;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.hashtag.domain.BoardHashtag;
 import com.example.waggle.domain.hashtag.domain.Hashtag;
 import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.global.exception.CustomPageException;
-import com.example.waggle.global.exception.ErrorCode;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.board.question.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
-import static com.example.waggle.global.exception.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -55,23 +53,23 @@ public class UtilServiceImpl implements UtilService {
         switch (boardType) {
             case STORY:
                 board = storyRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             case QUESTION:
                 board = questionRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             case ANSWER:
                 board = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             case HELPU:
                 board = helpURepository.findById(boardId)
-                        .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype
-                throw new CustomApiException(INVALID_BOARD_TYPE);
+                throw new CustomApiException(ErrorCode.INVALID_BOARD_TYPE);
         }
         return board.getMember().equals(signInMember);
     }
@@ -93,7 +91,7 @@ public class UtilServiceImpl implements UtilService {
             Member signInMember = getMember(SecurityUtil.getCurrentUsername());
             return signInMember;
         }
-        throw new CustomPageException(REFRESH_TOKEN_NOT_FOUND);
+        throw new CustomPageException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
     }
 
     @Override
@@ -105,23 +103,23 @@ public class UtilServiceImpl implements UtilService {
         switch (boardType) {
             case STORY:
                 board = storyRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             case QUESTION:
                 board = questionRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             case ANSWER:
                 board = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             case HELPU:
                 board = helpURepository.findById(boardId)
-                        .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype
-                throw new CustomPageException(INVALID_BOARD_TYPE);
+                throw new CustomPageException(ErrorCode.INVALID_BOARD_TYPE);
         }
         return board;
     }

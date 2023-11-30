@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.schedule.dto.TeamDto;
+import com.example.waggle.web.dto.schedule.TeamDto;
 
 public interface TeamCommandService {
 

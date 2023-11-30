@@ -8,7 +8,7 @@ import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.pet.domain.Pet;
-import com.example.waggle.domain.pet.dto.PetDto;
+import com.example.waggle.web.dto.pet.PetDto;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -2,9 +2,9 @@ package com.example.waggle.member.service;
 
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.domain.member.dto.MemberSummaryDto;
-import com.example.waggle.domain.member.dto.SignInDto;
-import com.example.waggle.domain.member.dto.SignUpDto;
+import com.example.waggle.web.dto.member.MemberSummaryDto;
+import com.example.waggle.web.dto.member.SignInDto;
+import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;

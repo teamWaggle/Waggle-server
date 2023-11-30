@@ -2,7 +2,7 @@ package com.example.waggle.domain.schedule.domain;
 
 import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.domain.ScheduleMember;
-import com.example.waggle.domain.schedule.dto.ScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

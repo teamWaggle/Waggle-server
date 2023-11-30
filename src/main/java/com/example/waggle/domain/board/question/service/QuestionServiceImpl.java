@@ -7,11 +7,11 @@ import static com.example.waggle.global.exception.ErrorCode.INVALID_BOARD_TYPE;
 
 import com.example.waggle.domain.board.question.domain.Answer;
 import com.example.waggle.domain.board.question.domain.Question;
-import com.example.waggle.domain.board.question.dto.AnswerDetailDto;
-import com.example.waggle.domain.board.question.dto.AnswerWriteDto;
-import com.example.waggle.domain.board.question.dto.QuestionDetailDto;
-import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
-import com.example.waggle.domain.board.question.dto.QuestionWriteDto;
+import com.example.waggle.web.dto.answer.AnswerDetailDto;
+import com.example.waggle.web.dto.answer.AnswerWriteDto;
+import com.example.waggle.web.dto.question.QuestionDetailDto;
+import com.example.waggle.web.dto.question.QuestionSummaryDto;
+import com.example.waggle.web.dto.question.QuestionWriteDto;
 import com.example.waggle.domain.board.question.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.global.exception.CustomAlertException;

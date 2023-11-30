@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.schedule.dto.ScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleDto;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package com.example.waggle.domain.board.helpU.service;
 
-import com.example.waggle.domain.board.helpU.dto.HelpUDetailDto;
-import com.example.waggle.domain.board.helpU.dto.HelpUSummaryDto;
-import com.example.waggle.domain.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.web.dto.helpU.HelpUDetailDto;
+import com.example.waggle.web.dto.helpU.HelpUSummaryDto;
+import com.example.waggle.web.dto.helpU.HelpUWriteDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

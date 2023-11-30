@@ -1,6 +1,6 @@
 package com.example.waggle.domain.pet.service;
 
-import com.example.waggle.domain.pet.dto.PetDto;
+import com.example.waggle.web.dto.pet.PetDto;
 
 public interface PetCommandService {
 

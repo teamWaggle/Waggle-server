@@ -6,9 +6,9 @@ import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.global.util.service.BoardType.HELPU;
 
 import com.example.waggle.domain.board.helpU.domain.HelpU;
-import com.example.waggle.domain.board.helpU.dto.HelpUDetailDto;
-import com.example.waggle.domain.board.helpU.dto.HelpUSummaryDto;
-import com.example.waggle.domain.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.web.dto.helpU.HelpUDetailDto;
+import com.example.waggle.web.dto.helpU.HelpUSummaryDto;
+import com.example.waggle.web.dto.helpU.HelpUWriteDto;
 import com.example.waggle.domain.board.helpU.repository.HelpURepository;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;

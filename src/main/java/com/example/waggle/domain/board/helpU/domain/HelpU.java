@@ -1,7 +1,7 @@
 package com.example.waggle.domain.board.helpU.domain;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.web.dto.helpU.HelpUWriteDto;
 import com.example.waggle.domain.comment.domain.Comment;
 import com.example.waggle.domain.hashtag.domain.BoardHashtag;
 import com.example.waggle.domain.member.domain.Gender;

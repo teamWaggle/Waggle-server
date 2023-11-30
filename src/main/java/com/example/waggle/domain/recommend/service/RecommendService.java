@@ -1,10 +1,10 @@
 package com.example.waggle.domain.recommend.service;
 
-import com.example.waggle.domain.board.question.dto.AnswerDetailDto;
-import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
-import com.example.waggle.domain.board.question.dto.QuestionDetailDto;
-import com.example.waggle.domain.board.story.dto.StorySummaryDto;
-import com.example.waggle.domain.board.story.dto.StoryDetailDto;
+import com.example.waggle.web.dto.answer.AnswerDetailDto;
+import com.example.waggle.web.dto.question.QuestionSummaryDto;
+import com.example.waggle.web.dto.question.QuestionDetailDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.global.util.service.BoardType;
 
 import java.util.List;

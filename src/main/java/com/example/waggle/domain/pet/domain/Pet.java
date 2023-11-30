@@ -3,7 +3,7 @@ package com.example.waggle.domain.pet.domain;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.domain.pet.dto.PetDto;
+import com.example.waggle.web.dto.pet.PetDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

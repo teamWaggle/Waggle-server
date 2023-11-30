@@ -1,8 +1,8 @@
 package com.example.waggle.domain.comment.service;
 
 
-import com.example.waggle.domain.comment.dto.ReplyViewDto;
-import com.example.waggle.domain.comment.dto.ReplyWriteDto;
+import com.example.waggle.web.dto.reply.ReplyViewDto;
+import com.example.waggle.web.dto.reply.ReplyWriteDto;
 
 import java.util.List;
 

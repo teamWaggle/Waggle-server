@@ -1,16 +1,16 @@
 package com.example.waggle.global.component;
 
-import com.example.waggle.domain.board.helpU.dto.HelpUWriteDto;
+import com.example.waggle.web.dto.helpU.HelpUWriteDto;
 import com.example.waggle.domain.board.helpU.service.HelpUService;
 import com.example.waggle.domain.board.story.domain.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.domain.member.dto.MemberSummaryDto;
-import com.example.waggle.domain.member.dto.SignUpDto;
+import com.example.waggle.web.dto.member.MemberSummaryDto;
+import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
-import com.example.waggle.domain.schedule.dto.ScheduleDto;
-import com.example.waggle.domain.schedule.dto.TeamDto;
+import com.example.waggle.web.dto.schedule.ScheduleDto;
+import com.example.waggle.web.dto.schedule.TeamDto;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.TeamCommandService;
 import jakarta.annotation.PostConstruct;

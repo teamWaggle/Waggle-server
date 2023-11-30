@@ -8,7 +8,7 @@ import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.member.domain.ScheduleMember;
 import com.example.waggle.domain.schedule.domain.Schedule;
 import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.dto.ScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleDto;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;

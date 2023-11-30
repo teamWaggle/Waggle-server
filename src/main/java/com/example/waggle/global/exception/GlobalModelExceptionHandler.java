@@ -1,6 +1,6 @@
 package com.example.waggle.global.exception;
 
-import com.example.waggle.global.dto.error.ErrorDto;
+import com.example.waggle.web.dto.error.ErrorDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;

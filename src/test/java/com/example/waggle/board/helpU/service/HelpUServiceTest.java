@@ -1,13 +1,13 @@
 package com.example.waggle.board.helpU.service;
 
-import com.example.waggle.domain.board.helpU.dto.HelpUDetailDto;
-import com.example.waggle.domain.board.helpU.dto.HelpUSummaryDto;
-import com.example.waggle.domain.board.helpU.dto.HelpUWriteDto;
-import com.example.waggle.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.helpU.HelpUDetailDto;
+import com.example.waggle.web.dto.helpU.HelpUSummaryDto;
+import com.example.waggle.web.dto.helpU.HelpUWriteDto;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.domain.board.helpU.service.HelpUService;
 import com.example.waggle.domain.member.domain.Gender;
-import com.example.waggle.domain.member.dto.SignUpDto;
+import com.example.waggle.web.dto.member.SignUpDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

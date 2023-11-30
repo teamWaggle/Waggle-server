@@ -4,9 +4,9 @@ import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 
 import com.example.waggle.domain.board.story.domain.Story;
-import com.example.waggle.domain.board.story.dto.StoryDetailDto;
-import com.example.waggle.domain.board.story.dto.StorySummaryDto;
-import com.example.waggle.domain.board.story.dto.StoryWriteDto;
+import com.example.waggle.web.dto.story.StoryDetailDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryWriteDto;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;

@@ -1,14 +1,14 @@
 package com.example.waggle.comment.service;
 
-import com.example.waggle.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.domain.board.story.service.StoryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.domain.comment.dto.CommentViewDto;
-import com.example.waggle.domain.comment.dto.CommentWriteDto;
-import com.example.waggle.domain.board.story.dto.StorySummaryDto;
-import com.example.waggle.domain.board.story.dto.StoryWriteDto;
+import com.example.waggle.web.dto.comment.CommentViewDto;
+import com.example.waggle.web.dto.comment.CommentWriteDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryWriteDto;
 import com.example.waggle.domain.comment.service.CommentService;
-import com.example.waggle.domain.member.dto.SignUpDto;
+import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.global.util.service.BoardType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;

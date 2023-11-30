@@ -1,10 +1,10 @@
 package com.example.waggle.domain.board.question.service;
 
 
-import com.example.waggle.domain.board.question.dto.AnswerWriteDto;
-import com.example.waggle.domain.board.question.dto.QuestionDetailDto;
-import com.example.waggle.domain.board.question.dto.QuestionSummaryDto;
-import com.example.waggle.domain.board.question.dto.QuestionWriteDto;
+import com.example.waggle.web.dto.answer.AnswerWriteDto;
+import com.example.waggle.web.dto.question.QuestionDetailDto;
+import com.example.waggle.web.dto.question.QuestionSummaryDto;
+import com.example.waggle.web.dto.question.QuestionWriteDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

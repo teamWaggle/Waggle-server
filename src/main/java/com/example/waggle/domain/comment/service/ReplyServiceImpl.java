@@ -7,8 +7,8 @@ import static com.example.waggle.global.exception.ErrorCode.REPLY_NOT_FOUND;
 
 import com.example.waggle.domain.comment.domain.Comment;
 import com.example.waggle.domain.comment.domain.Reply;
-import com.example.waggle.domain.comment.dto.ReplyViewDto;
-import com.example.waggle.domain.comment.dto.ReplyWriteDto;
+import com.example.waggle.web.dto.reply.ReplyViewDto;
+import com.example.waggle.web.dto.reply.ReplyWriteDto;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.global.exception.CustomPageException;
