@@ -1,19 +1,14 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.comment.service.reply.ReplyCommandService;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
-import com.example.waggle.domain.comment.service.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Reply API", description = "대댓글 API")
 public class ReplyApiController {
 
-    private final ReplyService replyService;
+    private final ReplyCommandService replyService;
 
     @Operation(summary = "대댓글 작성", description = "사용자가 대댓글을 작성합니다. 작성한 대댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공. 작성한 대댓글의 고유 ID를 반환합니다.")

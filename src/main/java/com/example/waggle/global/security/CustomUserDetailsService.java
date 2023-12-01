@@ -1,6 +1,6 @@
 package com.example.waggle.global.security;
 
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

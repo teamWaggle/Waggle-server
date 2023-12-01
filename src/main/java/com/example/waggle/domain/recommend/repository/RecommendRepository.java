@@ -1,6 +1,6 @@
 package com.example.waggle.domain.recommend.repository;
 
-import com.example.waggle.domain.recommend.domain.Recommend;
+import com.example.waggle.domain.recommend.entity.Recommend;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.example.waggle.domain.member.repository;
 
-import com.example.waggle.domain.member.domain.TeamMember;
+import com.example.waggle.domain.member.entity.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

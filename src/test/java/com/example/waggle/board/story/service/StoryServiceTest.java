@@ -1,12 +1,14 @@
 package com.example.waggle.board.story.service;
 
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.domain.board.story.service.StoryCommandService;
+import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
-import com.example.waggle.domain.board.story.service.StoryService;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.web.dto.story.StoryDetailDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryWriteDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +31,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class StoryServiceTest {
 
     @Autowired
-    private StoryService storyService;
+    private StoryQueryService storyService;
     @Autowired
-    private MemberService memberService;
+    StoryCommandService storyCommandService;
+    @Autowired
+    private MemberCommandService memberService;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
@@ -116,8 +120,8 @@ class StoryServiceTest {
         memberService.signUp(signUpDto2, null);
 
         //story set
-        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
-        storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
+        storyCommandService.createStory(storyWriteDto1, new ArrayList<>(), null);
+        storyCommandService.createStory(storyWriteDto2, new ArrayList<>(), null);
     }
 
 
@@ -183,8 +187,8 @@ class StoryServiceTest {
                 .medias(medias2)
                 .build();
         //when
-        boolean isSameUser = storyService.validateMember(id);
-        storyService.updateStory(id, editDto, new ArrayList<>(), null);
+        boolean isSameUser = storyCommandService.validateMember(id);
+        storyCommandService.updateStory(id, editDto, new ArrayList<>(), null);
         StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(id);
 
         //then
@@ -201,7 +205,7 @@ class StoryServiceTest {
         List<StorySummaryDto> findStories = storyService.getStories();
         StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(findStories.get(0).getId());
         //when
-        storyService.deleteStory(storyViewByBoardId.getId());
+        storyCommandService.deleteStory(storyViewByBoardId.getId());
         log.info("=========remove service ==============");
         //then
         List<StorySummaryDto> allStory = storyService.getStories();

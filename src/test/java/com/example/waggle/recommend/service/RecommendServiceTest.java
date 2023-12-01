@@ -1,18 +1,21 @@
 package com.example.waggle.recommend.service;
 
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.domain.board.story.service.StoryService;
-import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.story.domain.Story;
-import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
-import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.board.story.service.StoryCommandService;
+import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.recommend.service.RecommendCommandService;
+import com.example.waggle.domain.recommend.service.RecommendQueryService;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.domain.recommend.service.RecommendService;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.web.dto.story.StoryDetailDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryWriteDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,11 +33,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RecommendServiceTest {
 
     @Autowired
-    private StoryService storyService;
+    private StoryCommandService storyService;
     @Autowired
-    private MemberService memberService;
+    private StoryQueryService storyQueryService;
     @Autowired
-    private RecommendService recommendService;
+    private MemberCommandService memberService;
+    @Autowired
+    private RecommendCommandService recommendService;
+    @Autowired
+    private RecommendQueryService recommendQueryService;
     @Autowired
     private StoryRepository storyRepository;
     @Autowired
@@ -127,12 +134,12 @@ class RecommendServiceTest {
     void recommendBoard() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
 
         //when
         recommendService.handleRecommendation(storySummaryDto.getId(), BoardType.STORY);
-        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(storySummaryDto.getId());
-        recommendService.checkRecommend(storyViewByBoardId);
+        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(storySummaryDto.getId());
+        recommendQueryService.checkRecommend(storyViewByBoardId);
 
         //then
         assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(1);
@@ -142,13 +149,13 @@ class RecommendServiceTest {
     void cancelRecommendBoard() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
         recommendService.handleRecommendation(storySummaryDto.getId(),BoardType.STORY);
         recommendService.handleRecommendation(storySummaryDto.getId(),BoardType.STORY);
 
         //when
-        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(storySummaryDto.getId());
-        recommendService.checkRecommend(storyViewByBoardId);
+        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(storySummaryDto.getId());
+        recommendQueryService.checkRecommend(storyViewByBoardId);
 
         //then
         assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(0);

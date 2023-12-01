@@ -1,8 +1,8 @@
 package com.example.waggle.web.dto.pet;
 
-import com.example.waggle.domain.member.domain.Gender;
-import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.domain.pet.domain.Pet;
+import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.pet.entity.Pet;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

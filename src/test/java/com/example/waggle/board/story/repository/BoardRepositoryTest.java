@@ -1,8 +1,8 @@
 package com.example.waggle.board.story.repository;
 
-import com.example.waggle.domain.board.story.domain.Story;
-import com.example.waggle.domain.hashtag.domain.BoardHashtag;
-import com.example.waggle.domain.hashtag.domain.Hashtag;
+import com.example.waggle.domain.board.story.entity.Story;
+import com.example.waggle.domain.hashtag.entity.BoardHashtag;
+import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import org.junit.jupiter.api.Test;

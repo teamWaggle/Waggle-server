@@ -1,6 +1,6 @@
 package com.example.waggle.board.story.repository;
 
-import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

@@ -1,22 +1,15 @@
 package com.example.waggle.domain.board.story.service;
 
-import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-
-import com.example.waggle.domain.board.story.domain.Story;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.domain.member.domain.Member;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.waggle.web.dto.story.StoryDetailDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryWriteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,6 +17,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 
 
 @Slf4j
@@ -34,7 +34,6 @@ public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;
     private final UtilService utilService;
-//    private final MediaService mediaService;
     private final FileStore fileStore;
 
 

@@ -1,25 +1,26 @@
 package com.example.waggle.global.component;
 
-import com.example.waggle.web.dto.helpU.HelpUWriteDto;
-import com.example.waggle.domain.board.helpU.service.HelpUService;
-import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.help.service.HelpService;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
-import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
-import com.example.waggle.web.dto.schedule.ScheduleDto;
-import com.example.waggle.web.dto.schedule.TeamDto;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.TeamCommandService;
+import com.example.waggle.web.dto.help.HelpWriteDto;
+import com.example.waggle.web.dto.member.MemberSummaryDto;
+import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.web.dto.schedule.ScheduleDto;
+import com.example.waggle.web.dto.schedule.TeamDto;
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
@@ -29,7 +30,7 @@ public class TestDataInit {
     private final MemberCommandService memberCommandService;
     private final TeamCommandService teamCommandService;
     private final ScheduleCommandService scheduleCommandService;
-    private final HelpUService helpUService;
+    private final HelpService helpUService;
 
     private final StoryRepository storyRepository;
     private final MemberRepository memberRepository;
@@ -82,16 +83,16 @@ public class TestDataInit {
     }
 
     public void initHelpU() {
-        List<HelpUWriteDto> helps = new ArrayList<>();
-        helps.add(HelpUWriteDto.builder().username("user1").content("1").title("2").petName("3").build());
-        helps.add(HelpUWriteDto.builder().username("user1").content("2").title("2").petName("3").build());
-        helps.add(HelpUWriteDto.builder().username("user1").content("3").title("2").petName("3").build());
-        helps.add(HelpUWriteDto.builder().username("user1").content("4").title("2").petName("3").build());
-        helps.add(HelpUWriteDto.builder().username("user1").content("5").title("2").petName("3").build());
-        helps.add(HelpUWriteDto.builder().username("user1").content("6").title("2").petName("3").build());
+        List<HelpWriteDto> helps = new ArrayList<>();
+        helps.add(HelpWriteDto.builder().username("user1").content("1").title("2").petName("3").build());
+        helps.add(HelpWriteDto.builder().username("user1").content("2").title("2").petName("3").build());
+        helps.add(HelpWriteDto.builder().username("user1").content("3").title("2").petName("3").build());
+        helps.add(HelpWriteDto.builder().username("user1").content("4").title("2").petName("3").build());
+        helps.add(HelpWriteDto.builder().username("user1").content("5").title("2").petName("3").build());
+        helps.add(HelpWriteDto.builder().username("user1").content("6").title("2").petName("3").build());
 
-        for (HelpUWriteDto help : helps) {
-            Long helpU = helpUService.createHelpUTest(help,"user1");
+        for (HelpWriteDto help : helps) {
+            Long helpU = helpUService.createHelpTest(help,"user1");
         }
     }
 

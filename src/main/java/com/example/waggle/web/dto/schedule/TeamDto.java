@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.domain.Team;
 import lombok.*;
 

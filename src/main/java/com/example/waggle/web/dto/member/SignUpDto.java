@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.member;
 
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.pet.PetDto;
 import com.example.waggle.global.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;

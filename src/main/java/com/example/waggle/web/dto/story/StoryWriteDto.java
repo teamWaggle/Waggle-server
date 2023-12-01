@@ -1,7 +1,7 @@
 package com.example.waggle.web.dto.story;
 
-import com.example.waggle.domain.board.story.domain.Story;
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.board.story.entity.Story;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.validation.UpdateCheck;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;

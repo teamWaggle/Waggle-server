@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.question;
 
-import com.example.waggle.domain.board.question.domain.Question;
+import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.web.dto.answer.AnswerDetailDto;
 import com.example.waggle.web.dto.comment.CommentViewDto;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
