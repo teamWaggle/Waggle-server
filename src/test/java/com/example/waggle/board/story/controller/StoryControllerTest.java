@@ -1,12 +1,10 @@
 package com.example.waggle.board.story.controller;
 
-import com.example.waggle.domain.board.story.service.StoryService;
 import com.example.waggle.web.controller.StoryApiController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,8 +19,6 @@ class StoryControllerTest {
     @InjectMocks
     StoryApiController storyController;
 
-    @Mock
-    StoryService storyService;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
