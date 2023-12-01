@@ -1,41 +1,29 @@
-package com.example.waggle.domain.comment.service;
+package com.example.waggle.domain.comment.service.comment;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.web.dto.comment.CommentViewDto;
-import com.example.waggle.web.dto.comment.CommentWriteDto;
 import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.web.dto.comment.CommentWriteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
-public class CommentServiceImpl implements CommentService {
+public class CommentCommandServiceImpl implements CommentCommandService{
 
     private final CommentRepository commentRepository;
     private final UtilService utilService;
-
-    @Override
-    public List<CommentViewDto> getComments(Long boardId) {
-        List<Comment> comments = commentRepository.findByBoardId(boardId);
-        return comments.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
-    }
-
-    @Transactional
     @Override
     public Long createComment(Long boardId, CommentWriteDto commentWriteDto, BoardType boardType) {
         Member signInMember = utilService.getSignInMember();
@@ -62,13 +50,5 @@ public class CommentServiceImpl implements CommentService {
             throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         commentRepository.delete(comment);
-    }
-
-    @Override
-    public boolean validateMember(Long commentId) {
-        Member signInMember = utilService.getSignInMember();
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
-        return comment.getMember().equals(signInMember);
     }
 }

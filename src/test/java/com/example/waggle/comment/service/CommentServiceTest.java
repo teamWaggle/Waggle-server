@@ -2,8 +2,8 @@ package com.example.waggle.comment.service;
 
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
-import com.example.waggle.domain.comment.service.CommentCommandService;
-import com.example.waggle.domain.comment.service.CommentQueryService;
+import com.example.waggle.domain.comment.service.comment.CommentCommandService;
+import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;

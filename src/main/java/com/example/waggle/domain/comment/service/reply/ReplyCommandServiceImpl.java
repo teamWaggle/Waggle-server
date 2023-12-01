@@ -1,4 +1,4 @@
-package com.example.waggle.domain.comment.service;
+package com.example.waggle.domain.comment.service.reply;
 
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.entity.Reply;
