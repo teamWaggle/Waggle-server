@@ -2,9 +2,9 @@ package com.example.waggle.domain.board.story.entity;
 
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.hashtag.domain.BoardHashtag;
-import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.domain.media.domain.Media;
+import com.example.waggle.domain.hashtag.entity.BoardHashtag;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.comment.entity.Comment;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

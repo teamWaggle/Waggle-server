@@ -8,7 +8,7 @@ import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
-import com.example.waggle.domain.mention.domain.Mention;
+import com.example.waggle.domain.mention.entity.Mention;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import java.util.ArrayList;
 import java.util.List;

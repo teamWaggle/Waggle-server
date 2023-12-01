@@ -2,8 +2,8 @@ package com.example.waggle.web.dto.global;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.story.entity.Story;
-import com.example.waggle.domain.hashtag.domain.BoardHashtag;
-import com.example.waggle.domain.hashtag.domain.Hashtag;
+import com.example.waggle.domain.hashtag.entity.BoardHashtag;
+import com.example.waggle.domain.hashtag.entity.Hashtag;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;

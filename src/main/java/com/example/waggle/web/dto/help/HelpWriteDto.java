@@ -1,8 +1,8 @@
 package com.example.waggle.web.dto.help;
 
 import com.example.waggle.domain.board.help.entity.Help;
-import com.example.waggle.domain.member.domain.Gender;
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.domain.member.entity.Member;
 import lombok.*;
 
 import java.time.LocalDateTime;

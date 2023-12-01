@@ -1,8 +1,8 @@
 package com.example.waggle.recommend.repository;
 
-import com.example.waggle.domain.recommend.domain.Recommend;
+import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.board.story.entity.Story;
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;

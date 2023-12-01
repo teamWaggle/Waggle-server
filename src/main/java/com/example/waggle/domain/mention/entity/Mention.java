@@ -1,4 +1,4 @@
-package com.example.waggle.domain.mention.domain;
+package com.example.waggle.domain.mention.entity;
 
 import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.comment.entity.Reply;

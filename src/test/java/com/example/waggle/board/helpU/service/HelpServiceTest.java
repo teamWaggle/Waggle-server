@@ -2,7 +2,7 @@ package com.example.waggle.board.helpU.service;
 
 import com.example.waggle.domain.board.help.service.HelpCommandService;
 import com.example.waggle.domain.board.help.service.HelpQueryService;
-import com.example.waggle.domain.member.domain.Gender;
+import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;

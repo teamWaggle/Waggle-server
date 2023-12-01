@@ -3,7 +3,7 @@ package com.example.waggle.global.component;
 import com.example.waggle.domain.board.help.service.HelpService;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;

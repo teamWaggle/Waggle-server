@@ -1,4 +1,4 @@
-package com.example.waggle.domain.hashtag.domain;
+package com.example.waggle.domain.hashtag.entity;
 
 import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;

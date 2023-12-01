@@ -1,4 +1,4 @@
-package com.example.waggle.domain.media.domain;
+package com.example.waggle.domain.media.entity;
 
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
 import com.example.waggle.domain.board.Board;

@@ -1,7 +1,7 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.domain.recommend.service.RecommendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Recommend API", description = "추천 API")
 public class RecommendApiController {
-    private final RecommendService recommendService;
+    private final RecommendCommandService recommendService;
 
     @Operation(summary = "스토리 좋아요 혹은 취소", description = "사용자가 좋아요 버튼을 누릅니다(추가 혹은 취소). 게시글의 좋아요 수가 추가되거나 감소됩니다.")
     @ApiResponse(responseCode = "200", description = "좋아요 추가 혹은 취소 성공.")

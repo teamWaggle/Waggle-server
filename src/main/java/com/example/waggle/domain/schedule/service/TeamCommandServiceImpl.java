@@ -4,8 +4,8 @@ import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
 
 import com.example.waggle.global.exception.CustomAlertException;
-import com.example.waggle.domain.member.domain.Member;
-import com.example.waggle.domain.member.domain.TeamMember;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.entity.TeamMember;
 import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.web.dto.schedule.TeamDto;
 import com.example.waggle.domain.schedule.repository.TeamRepository;

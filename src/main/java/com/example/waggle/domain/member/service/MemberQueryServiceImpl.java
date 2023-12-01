@@ -3,7 +3,7 @@ package com.example.waggle.domain.member.service;
 import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
 import com.example.waggle.global.exception.CustomApiException;
-import com.example.waggle.domain.member.domain.Member;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.member.MemberSummaryDto;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

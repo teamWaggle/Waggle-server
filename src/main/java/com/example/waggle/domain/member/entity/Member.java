@@ -1,8 +1,8 @@
-package com.example.waggle.domain.member.domain;
+package com.example.waggle.domain.member.entity;
 
 
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
-import com.example.waggle.domain.pet.domain.Pet;
+import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.global.component.file.UploadFile;
 import jakarta.persistence.*;
 import lombok.*;
