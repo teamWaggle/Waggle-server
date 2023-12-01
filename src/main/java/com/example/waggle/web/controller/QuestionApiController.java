@@ -1,9 +1,10 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.board.question.service.QuestionCommandService;
+import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.web.dto.question.QuestionDetailDto;
 import com.example.waggle.web.dto.question.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionWriteDto;
-import com.example.waggle.domain.board.question.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +28,8 @@ import java.util.List;
 @Tag(name = "Question API", description = "질문 API")
 public class QuestionApiController {
 
-    private final QuestionService questionService;
+    private final QuestionCommandService questionCommandService;
+    private final QuestionQueryService questionQueryService;
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "질문 작성", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
@@ -36,7 +38,7 @@ public class QuestionApiController {
     @PostMapping
     public ResponseEntity<Long> createQuestion(@RequestPart QuestionWriteDto questionWriteDto,
                                                @RequestPart List<MultipartFile> multipartFiles) throws IOException {
-        Long boardId = questionService.createQuestion(questionWriteDto, multipartFiles);
+        Long boardId = questionCommandService.createQuestion(questionWriteDto, multipartFiles);
         return ResponseEntity.ok(boardId);
     }
 
@@ -47,7 +49,7 @@ public class QuestionApiController {
     public ResponseEntity<Long> updateQuestion(@PathVariable Long boardId,
                                                @ModelAttribute QuestionWriteDto questionDto,
                                                @RequestPart List<MultipartFile> multipartFiles) throws IOException {
-        questionService.updateQuestion(boardId, questionDto, multipartFiles);
+        questionCommandService.updateQuestion(boardId, questionDto, multipartFiles);
         return ResponseEntity.ok(boardId);
     }
 
@@ -56,7 +58,7 @@ public class QuestionApiController {
     @GetMapping
     public ResponseEntity<Page<QuestionSummaryDto>> getAllQuestions(@RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<QuestionSummaryDto> questions = questionService.getPagedQuestions(pageable);
+        Page<QuestionSummaryDto> questions = questionQueryService.getPagedQuestions(pageable);
         return ResponseEntity.ok(questions);
     }
 
@@ -67,7 +69,7 @@ public class QuestionApiController {
     public ResponseEntity<Page<QuestionSummaryDto>> getQuestionsByUsername(@RequestParam(defaultValue = "0") int currentPage,
                                                                            @PathVariable String username) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<QuestionSummaryDto> questionsByUsername = questionService.getPagedQuestionsByUsername(username, pageable);
+        Page<QuestionSummaryDto> questionsByUsername = questionQueryService.getPagedQuestionsByUsername(username, pageable);
         return ResponseEntity.ok(questionsByUsername);
     }
 
@@ -76,7 +78,7 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "404", description = "질문을 찾을 수 없음. 지정된 질문 ID에 해당하는 질문을 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
     public ResponseEntity<QuestionDetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
-        QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(boardId);
+        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         return ResponseEntity.ok(questionByBoardId);
     }
 }

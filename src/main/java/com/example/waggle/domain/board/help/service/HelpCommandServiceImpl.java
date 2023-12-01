@@ -23,7 +23,7 @@ import static com.example.waggle.global.util.service.BoardType.HELP;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class HelpCommandServiceImpl implements HelpCommandService{
     private final HelpRepository helpRepository;
@@ -31,7 +31,6 @@ public class HelpCommandServiceImpl implements HelpCommandService{
     private final UtilService utilService;
     private final FileStore fileStore;
 
-    @Transactional
     @Override
     public Long createHelp(HelpWriteDto helpWriteDto,
                            List<MultipartFile> multipartFiles,
@@ -44,8 +43,6 @@ public class HelpCommandServiceImpl implements HelpCommandService{
         return help.getId();
     }
 
-
-    @Transactional
     @Override
     public Long createHelpTest(HelpWriteDto helpWriteDto, String username) {
         Member signInMember = memberRepository.findByUsername(username)
@@ -64,8 +61,6 @@ public class HelpCommandServiceImpl implements HelpCommandService{
         return help.getId();
     }
 
-
-    @Transactional
     @Override
     public Long updateHelp(Long boardId,
                            HelpWriteDto helpWriteDto,
@@ -82,7 +77,6 @@ public class HelpCommandServiceImpl implements HelpCommandService{
         return help.getId();
     }
 
-    @Transactional
     @Override
     public void deleteHelp(Long boardId) {
         Help help = helpRepository.findById(boardId)
