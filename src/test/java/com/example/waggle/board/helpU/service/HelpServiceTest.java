@@ -1,13 +1,14 @@
 package com.example.waggle.board.helpU.service;
 
+import com.example.waggle.domain.board.help.service.HelpCommandService;
+import com.example.waggle.domain.board.help.service.HelpQueryService;
+import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.help.HelpDetailDto;
 import com.example.waggle.web.dto.help.HelpSummaryDto;
 import com.example.waggle.web.dto.help.HelpWriteDto;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.help.service.HelpService;
-import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.web.dto.member.SignUpDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -27,10 +28,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
-class HelpUServiceTest {
+class HelpServiceTest {
 
     @Autowired
-    private HelpService helpUService;
+    private HelpCommandService helpCommandService;
+    @Autowired
+    private HelpQueryService helpQueryService;
     @Autowired
     private MemberCommandService memberCommandService;
     @Autowired
@@ -96,9 +99,9 @@ class HelpUServiceTest {
     void helpU_create_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
 
-        List<HelpSummaryDto> allHelpU = helpUService.getAllHelp();
+        List<HelpSummaryDto> allHelpU = helpQueryService.getAllHelp();
         assertThat(allHelpU.size()).isEqualTo(1);
     }
     @Test
@@ -106,14 +109,14 @@ class HelpUServiceTest {
     void helpU_read_All_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
-        helpUService.createHelp(hwd2,new ArrayList<>(),null);
-        helpUService.createHelp(hwd3,new ArrayList<>(),null);
-        helpUService.createHelp(hwd4,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd4,new ArrayList<>(),null);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 3);
-        Page<HelpSummaryDto> allHelpUByPaging = helpUService.getPagedHelpList(pageable);
+        Page<HelpSummaryDto> allHelpUByPaging = helpQueryService.getPagedHelpList(pageable);
         assertThat(allHelpUByPaging.getContent().size()).isEqualTo(3);
         assertThat(allHelpUByPaging.getContent().get(0).getPetName()).isEqualTo("i");
     }
@@ -123,14 +126,14 @@ class HelpUServiceTest {
     void helpU_read_Mine_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
-        helpUService.createHelp(hwd2,new ArrayList<>(),null);
-        helpUService.createHelp(hwd3,new ArrayList<>(),null);
-        helpUService.createHelp(hwd4,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd4,new ArrayList<>(),null);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 2);
-        Page<HelpSummaryDto> allHelpUByPaging = helpUService.getPagedHelpListByUsername("member1",pageable);
+        Page<HelpSummaryDto> allHelpUByPaging = helpQueryService.getPagedHelpListByUsername("member1",pageable);
         assertThat(allHelpUByPaging.getContent().size()).isEqualTo(2);
         assertThat(allHelpUByPaging.getContent().get(1).getPetName()).isEqualTo("ii");
     }
@@ -140,12 +143,12 @@ class HelpUServiceTest {
     void helpU_read_One_ByPaging_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
-        helpUService.createHelp(hwd2,new ArrayList<>(),null);
-        helpUService.createHelp(hwd3,new ArrayList<>(),null);
-        helpUService.createHelp(hwd4,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd4,new ArrayList<>(),null);
 
-        HelpDetailDto helpUByBoardId = helpUService.getHelpByBoardId(helpUId);
+        HelpDetailDto helpUByBoardId = helpQueryService.getHelpByBoardId(helpUId);
         assertThat(helpUByBoardId.getContent()).isEqualTo("helpU page. hi");
     }
     @Test
@@ -153,12 +156,12 @@ class HelpUServiceTest {
     void helpU_update_One_ByPaging_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        helpUService.createHelp(hwd1,new ArrayList<>(),null);
-        helpUService.createHelp(hwd2,new ArrayList<>(),null);
-        Long helpU = helpUService.createHelp(hwd3,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
+        Long helpU = helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
 
-        Long aLong = helpUService.updateHelp(helpU, hwd4,new ArrayList<>(),null);
-        HelpDetailDto helpUByBoardId = helpUService.getHelpByBoardId(aLong);
+        Long aLong = helpCommandService.updateHelp(helpU, hwd4,new ArrayList<>(),null);
+        HelpDetailDto helpUByBoardId = helpQueryService.getHelpByBoardId(aLong);
         assertThat(helpUByBoardId.getPetName()).isEqualTo("iiii");
     }
     @Test
@@ -166,11 +169,11 @@ class HelpUServiceTest {
     void helpU_delete_One_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        helpUService.createHelp(hwd1,new ArrayList<>(),null);
-        helpUService.createHelp(hwd2,new ArrayList<>(),null);
-        Long helpU = helpUService.createHelp(hwd3,new ArrayList<>(),null);
-        helpUService.deleteHelp(helpU);
-        List<HelpSummaryDto> allHelpU = helpUService.getAllHelp();
+        helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
+        Long helpU = helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
+        helpCommandService.deleteHelp(helpU);
+        List<HelpSummaryDto> allHelpU = helpQueryService.getAllHelp();
         assertThat(allHelpU.size()).isEqualTo(2);
     }
 }
