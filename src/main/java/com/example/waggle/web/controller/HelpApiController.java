@@ -1,6 +1,7 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.board.help.service.HelpService;
+import com.example.waggle.domain.board.help.service.HelpCommandService;
+import com.example.waggle.domain.board.help.service.HelpQueryService;
 import com.example.waggle.web.dto.help.HelpDetailDto;
 import com.example.waggle.web.dto.help.HelpSummaryDto;
 import com.example.waggle.web.dto.help.HelpWriteDto;
@@ -28,7 +29,8 @@ import java.util.List;
 @Tag(name = "help API", description = "헬퓨 API")
 public class HelpApiController {
 
-    private final HelpService helpService;
+    private final HelpCommandService helpCommandService;
+    private final HelpQueryService helpQueryService;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "헬퓨 작성", description = "사용자가 헬퓨를 작성합니다. 작성한 헬퓨의 정보를 저장하고 헬퓨의 고유 ID를 반환합니다.")
@@ -38,7 +40,7 @@ public class HelpApiController {
     public ResponseEntity<Long> createHelp(@RequestPart HelpWriteDto helpWriteDto,
                                             @RequestPart List<MultipartFile> multipartFiles,
                                             @RequestPart MultipartFile thumbnail) throws IOException {
-        Long boardId = helpService.createHelp(helpWriteDto, multipartFiles, thumbnail);
+        Long boardId = helpCommandService.createHelp(helpWriteDto, multipartFiles, thumbnail);
         return ResponseEntity.ok(boardId);
     }
 
@@ -50,7 +52,7 @@ public class HelpApiController {
                                             @ModelAttribute HelpWriteDto helpWriteDto,
                                             @RequestPart List<MultipartFile> multipartFiles,
                                             @RequestPart MultipartFile thumbnail) throws IOException {
-        helpService.updateHelp(boardId, helpWriteDto, multipartFiles, thumbnail);
+        helpCommandService.updateHelp(boardId, helpWriteDto, multipartFiles, thumbnail);
         return ResponseEntity.ok(boardId);
     }
 
@@ -60,7 +62,7 @@ public class HelpApiController {
     @GetMapping
     public ResponseEntity<Page<HelpSummaryDto>> getAllHelp(@RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<HelpSummaryDto> allhelp = helpService.getPagedHelpList(pageable);
+        Page<HelpSummaryDto> allhelp = helpQueryService.getPagedHelpList(pageable);
         return ResponseEntity.ok(allhelp);
     }
 
@@ -71,7 +73,7 @@ public class HelpApiController {
     public ResponseEntity<Page<HelpSummaryDto>> getHelpListByUsername(@RequestParam(defaultValue = "1") int currentPage,
                                                                     @PathVariable String username) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<HelpSummaryDto> helpsByMember = helpService.getPagedHelpListByUsername(username, pageable);
+        Page<HelpSummaryDto> helpsByMember = helpQueryService.getPagedHelpListByUsername(username, pageable);
         return ResponseEntity.ok(helpsByMember);
     }
 
@@ -80,7 +82,7 @@ public class HelpApiController {
     @ApiResponse(responseCode = "404", description = "헬퓨를 찾을 수 없음. 지정된 헬퓨 ID에 해당하는 헬퓨를 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
     public ResponseEntity<HelpDetailDto> getHelpByBoardId(@PathVariable Long boardId) {
-        HelpDetailDto helpByBoardId = helpService.getHelpByBoardId(boardId);
+        HelpDetailDto helpByBoardId = helpQueryService.getHelpByBoardId(boardId);
         return ResponseEntity.ok(helpByBoardId);
     }
 }
