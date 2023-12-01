@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.answer;
 
-import com.example.waggle.domain.board.question.domain.Answer;
+import com.example.waggle.domain.board.question.entity.Answer;
 import com.example.waggle.domain.member.domain.Member;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package com.example.waggle.domain.comment.repository;
 
-import com.example.waggle.domain.comment.domain.Comment;
+import com.example.waggle.domain.comment.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

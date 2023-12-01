@@ -1,4 +1,4 @@
-package com.example.waggle.domain.board.question.domain;
+package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
 import jakarta.persistence.*;

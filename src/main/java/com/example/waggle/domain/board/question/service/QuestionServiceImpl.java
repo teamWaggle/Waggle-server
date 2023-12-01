@@ -5,8 +5,8 @@ import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 import static com.example.waggle.global.exception.ErrorCode.INVALID_BOARD_TYPE;
 
-import com.example.waggle.domain.board.question.domain.Answer;
-import com.example.waggle.domain.board.question.domain.Question;
+import com.example.waggle.domain.board.question.entity.Answer;
+import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.web.dto.answer.AnswerDetailDto;
 import com.example.waggle.web.dto.answer.AnswerWriteDto;
 import com.example.waggle.web.dto.question.QuestionDetailDto;

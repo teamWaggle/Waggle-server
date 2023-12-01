@@ -1,7 +1,7 @@
 package com.example.waggle.web.dto.global;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.hashtag.domain.BoardHashtag;
 import com.example.waggle.domain.hashtag.domain.Hashtag;
 import jakarta.persistence.EntityManager;

@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.story;
 
-import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.global.component.file.UploadFile;
 import com.example.waggle.web.dto.comment.CommentViewDto;
 import com.example.waggle.global.util.DateUtil;

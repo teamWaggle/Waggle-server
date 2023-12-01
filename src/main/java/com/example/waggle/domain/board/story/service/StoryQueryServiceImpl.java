@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board.story.service;
 
-import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.web.dto.story.StoryDetailDto;

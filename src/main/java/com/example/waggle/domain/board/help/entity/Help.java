@@ -1,8 +1,8 @@
-package com.example.waggle.domain.board.help.domain;
+package com.example.waggle.domain.board.help.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.web.dto.help.HelpWriteDto;
-import com.example.waggle.domain.comment.domain.Comment;
+import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.hashtag.domain.BoardHashtag;
 import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.domain.member.domain.Member;

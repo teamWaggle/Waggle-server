@@ -1,11 +1,11 @@
-package com.example.waggle.domain.board.story.domain;
+package com.example.waggle.domain.board.story.entity;
 
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.hashtag.domain.BoardHashtag;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.domain.media.domain.Media;
-import com.example.waggle.domain.comment.domain.Comment;
+import com.example.waggle.domain.comment.entity.Comment;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;

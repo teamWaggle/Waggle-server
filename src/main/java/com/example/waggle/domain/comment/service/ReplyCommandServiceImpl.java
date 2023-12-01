@@ -1,6 +1,5 @@
 package com.example.waggle.domain.comment.service;
 
-
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;
@@ -10,7 +9,6 @@ import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.mention.domain.Mention;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.reply.ReplyViewDto;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,29 +16,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.waggle.global.exception.ErrorCode.*;
 
-
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
-public class ReplyServiceImpl implements ReplyService {
+public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private final MemberRepository memberRepository;
     private final UtilService utilService;
+    private final ReplyQueryService replyQueryService;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
 
-    @Override
-    public List<ReplyViewDto> getReplies(Long commentId) {
-        List<Reply> replies = replyRepository.findByCommentId(commentId);
-        return replies.stream().map(ReplyViewDto::toDto).collect(Collectors.toList());
-    }
-
-    @Transactional
     @Override
     public Long createReply(Long commentId, ReplyWriteDto replyWriteDto) {
         Member member = utilService.getSignInMember();
@@ -57,7 +47,6 @@ public class ReplyServiceImpl implements ReplyService {
         return reply.getId();
     }
 
-    @Transactional
     @Override
     public Long updateReply(Long replyId, ReplyWriteDto replyWriteDto) {
         Reply reply = getReplyById(replyId);
@@ -67,21 +56,13 @@ public class ReplyServiceImpl implements ReplyService {
         return reply.getId();
     }
 
-    @Transactional
     @Override
     public void deleteReply(Long replyId) {
         Reply reply = getReplyById(replyId);
-        if (!validateMember(replyId)) {
+        if (!replyQueryService.validateMember(replyId)) {
             throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         replyRepository.delete(reply);
-    }
-
-    @Override
-    public boolean validateMember(Long replyId) {
-        Member member = utilService.getSignInMember();
-        Reply reply = getReplyById(replyId);
-        return reply.getMember().equals(member);
     }
 
     private Reply getReplyById(Long replyId) {
@@ -99,5 +80,4 @@ public class ReplyServiceImpl implements ReplyService {
             }
         }
     }
-
 }

@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board.help.service;
 
-import com.example.waggle.domain.board.help.domain.Help;
+import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.global.exception.CustomApiException;
 import com.example.waggle.web.dto.help.HelpDetailDto;

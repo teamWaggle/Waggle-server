@@ -3,7 +3,7 @@ package com.example.waggle.recommend.service;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.domain.board.story.service.StoryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.story.domain.Story;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.member.domain.Member;
 import com.example.waggle.web.dto.story.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryDetailDto;

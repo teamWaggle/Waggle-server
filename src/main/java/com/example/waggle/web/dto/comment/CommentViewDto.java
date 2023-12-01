@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.comment;
 
-import com.example.waggle.domain.comment.domain.Comment;
+import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

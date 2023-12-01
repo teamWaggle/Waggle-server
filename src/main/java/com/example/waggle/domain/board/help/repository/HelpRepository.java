@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board.help.repository;
 
-import com.example.waggle.domain.board.help.domain.Help;
+import com.example.waggle.domain.board.help.entity.Help;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

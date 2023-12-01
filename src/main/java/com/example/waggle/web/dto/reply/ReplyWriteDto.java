@@ -1,7 +1,7 @@
 package com.example.waggle.web.dto.reply;
 
-import com.example.waggle.domain.comment.domain.Comment;
-import com.example.waggle.domain.comment.domain.Reply;
+import com.example.waggle.domain.comment.entity.Comment;
+import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
