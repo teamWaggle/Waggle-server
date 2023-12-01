@@ -7,67 +7,33 @@ import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryWriteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 
-
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
-public class StoryServiceImpl implements StoryService {
+public class StoryCommandServiceImpl implements StoryCommandService{
 
     private final StoryRepository storyRepository;
     private final UtilService utilService;
     private final FileStore fileStore;
 
-
     @Override
-    public List<StorySummaryDto> getStories() {
-        List<Story> stories = storyRepository.findAll();
-        return stories.stream().map(StorySummaryDto::toDto).collect(Collectors.toList());
-
-    }
-
-    @Override
-    public Page<StorySummaryDto> getPagedStoriesByUsername(String username, Pageable pageable) {
-        Page<Story> stories = storyRepository.findByMemberUsername(username,pageable);
-        return stories.map(StorySummaryDto::toDto);
-    }
-
-
-    @Override
-    public Page<StorySummaryDto> getPagedStories(Pageable pageable) {
-        Page<Story> all = storyRepository.findAll(pageable);
-        return all.map(StorySummaryDto::toDto);
-    }
-
-
-    @Override
-    public StoryDetailDto getStoryByBoardId(Long boardId) {
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
-        return StoryDetailDto.toDto(story);
-    }
-
-    @Transactional
-    @Override
-    public Long createStory(StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException {
+    public Long createStory(StoryWriteDto storyWriteDto,
+                            List<MultipartFile> multipartFiles,
+                            MultipartFile thumbnail) throws IOException {
         Member signInMember = utilService.getSignInMember();
         Story saveStory = storyWriteDto.toEntity(signInMember);
         Story story = storyRepository.save(saveStory);
@@ -83,9 +49,11 @@ public class StoryServiceImpl implements StoryService {
         return saveStory.getId();
     }
 
-    @Transactional
     @Override
-    public Long updateStory(Long boardId, StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException {
+    public Long updateStory(Long boardId,
+                            StoryWriteDto storyWriteDto,
+                            List<MultipartFile> multipartFiles,
+                            MultipartFile thumbnail) throws IOException {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
@@ -118,7 +86,6 @@ public class StoryServiceImpl implements StoryService {
         return story.getMember().equals(signInMember);
     }
 
-    @Transactional
     @Override
     public void deleteStory(Long boardId) {
         Story story = storyRepository.findById(boardId)

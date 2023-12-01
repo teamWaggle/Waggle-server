@@ -23,7 +23,7 @@ import static com.example.waggle.global.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
@@ -31,7 +31,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final AnswerRepository answerRepository;
     private final UtilService utilService;
 
-    @Transactional
     @Override
     public Long createQuestion(QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException {
         Member signInMember = utilService.getSignInMember();
@@ -48,7 +47,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return question.getId();
     }
 
-    @Transactional
     @Override
     public Long createAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException {
         Member signInMember = utilService.getSignInMember();
@@ -69,7 +67,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return answer.getId();
     }
 
-    @Transactional
     @Override
     public Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException {
         Question question = questionRepository.findById(boardId)
@@ -87,7 +84,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return question.getId();
     }
 
-    @Transactional
     @Override
     public Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException {
         Answer answer = answerRepository.findById(boardId)
@@ -127,7 +123,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return isSameUser;
     }
 
-    @Transactional
     @Override
     public void deleteQuestion(Long boardId) {
         Question question = questionRepository.findById(boardId)
@@ -140,7 +135,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         questionRepository.delete(question);
     }
 
-    @Transactional
     @Override
     public void deleteAnswer(Long boardId) {
         Answer answer = answerRepository.findById(boardId)
