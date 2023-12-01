@@ -1,6 +1,6 @@
 package com.example.waggle.global.util.service;
 
-import com.example.waggle.domain.board.helpU.repository.HelpURepository;
+import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.global.exception.CustomApiException;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.exception.ErrorCode;
@@ -30,7 +30,7 @@ public class UtilServiceImpl implements UtilService {
     private final StoryRepository storyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
-    private final HelpURepository helpURepository;
+    private final HelpRepository helpURepository;
     private final HashtagRepository hashtagRepository;
 
     @Override
@@ -63,7 +63,7 @@ public class UtilServiceImpl implements UtilService {
                 board = answerRepository.findById(boardId)
                         .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
-            case HELPU:
+            case HELP:
                 board = helpURepository.findById(boardId)
                         .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
                 break;
@@ -113,7 +113,7 @@ public class UtilServiceImpl implements UtilService {
                 board = answerRepository.findById(boardId)
                         .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
                 break;
-            case HELPU:
+            case HELP:
                 board = helpURepository.findById(boardId)
                         .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
                 break;

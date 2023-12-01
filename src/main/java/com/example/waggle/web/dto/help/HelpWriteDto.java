@@ -1,6 +1,6 @@
-package com.example.waggle.web.dto.helpU;
+package com.example.waggle.web.dto.help;
 
-import com.example.waggle.domain.board.helpU.domain.HelpU;
+import com.example.waggle.domain.board.help.domain.Help;
 import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.domain.member.domain.Member;
 import lombok.*;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @ToString
-public class HelpUWriteDto {
+public class HelpWriteDto {
     private Long id;
     private String title;
     private String petName;
@@ -35,8 +35,8 @@ public class HelpUWriteDto {
     @Builder.Default
     private List<String> medias = new ArrayList<>();
 
-    public HelpU toEntity(Member member) {
-        return HelpU.builder()
+    public Help toEntity(Member member) {
+        return Help.builder()
                 .title(title)
                 .petName(petName)
                 .petKind(petKind)
@@ -53,24 +53,24 @@ public class HelpUWriteDto {
                 .build();
     }
 
-    static public HelpUWriteDto toDto(HelpU helpU) {
-        return HelpUWriteDto.builder()
-                .id(helpU.getId())
-                .title(helpU.getTitle())
-                .petName(helpU.getPetName())
-                .petKind(helpU.getPetKind())
-                .petAge(helpU.getPetAge())
-                .petGender(helpU.getPetGender())
-                .contact(helpU.getContact())
-                .thumbnail(helpU.getThumbnail())
-                .lostLocate(helpU.getLostLocate())
-                .lostDate(helpU.getLostDate())
-                .content(helpU.getContent())
-                .rfid(helpU.getRfid())
-                .characteristic(helpU.getCharacteristic())
-                .medias(helpU.getMedias().stream()
+    static public HelpWriteDto toDto(Help help) {
+        return HelpWriteDto.builder()
+                .id(help.getId())
+                .title(help.getTitle())
+                .petName(help.getPetName())
+                .petKind(help.getPetKind())
+                .petAge(help.getPetAge())
+                .petGender(help.getPetGender())
+                .contact(help.getContact())
+                .thumbnail(help.getThumbnail())
+                .lostLocate(help.getLostLocate())
+                .lostDate(help.getLostDate())
+                .content(help.getContent())
+                .rfid(help.getRfid())
+                .characteristic(help.getCharacteristic())
+                .medias(help.getMedias().stream()
                         .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
-                .username(helpU.getMember().getUsername())
+                .username(help.getMember().getUsername())
                 .build();
     }
 

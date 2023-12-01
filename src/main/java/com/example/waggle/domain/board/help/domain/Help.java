@@ -1,7 +1,7 @@
-package com.example.waggle.domain.board.helpU.domain;
+package com.example.waggle.domain.board.help.domain;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.web.dto.helpU.HelpUWriteDto;
+import com.example.waggle.web.dto.help.HelpWriteDto;
 import com.example.waggle.domain.comment.domain.Comment;
 import com.example.waggle.domain.hashtag.domain.BoardHashtag;
 import com.example.waggle.domain.member.domain.Gender;
@@ -18,11 +18,11 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "help_u")
+@Table(name = "help")
 @SuperBuilder
-@DiscriminatorValue("type_helpU")
+@DiscriminatorValue("type_help")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HelpU extends Board {
+public class Help extends Board {
 
     private String title;
 
@@ -40,13 +40,13 @@ public class HelpU extends Board {
     private String contact;
     private String thumbnail;
 
-    public HelpU(Long id, Member member,
-                 String content, List<BoardHashtag> boardHashtags,
-                 List<Media> medias, List<Comment> comments,
-                 String title, String petName, String petKind,
-                 int petAge, Gender petGender, String lostLocate,
-                 LocalDateTime lostDate, String characteristic,
-                 String rfid, String contact, String thumbnail) {
+    public Help(Long id, Member member,
+                String content, List<BoardHashtag> boardHashtags,
+                List<Media> medias, List<Comment> comments,
+                String title, String petName, String petKind,
+                int petAge, Gender petGender, String lostLocate,
+                LocalDateTime lostDate, String characteristic,
+                String rfid, String contact, String thumbnail) {
         super(id, member, content, boardHashtags, medias, comments);
         this.title = title;
         this.petName = petName;
@@ -61,7 +61,7 @@ public class HelpU extends Board {
         this.thumbnail = thumbnail;
     }
 
-    public void changeHelpU(HelpUWriteDto helpUWriteDto) {
+    public void changeHelp(HelpWriteDto helpUWriteDto) {
         this.title = helpUWriteDto.getTitle();
         this.petName = helpUWriteDto.getPetName();
         this.petKind = helpUWriteDto.getPetKind();

@@ -1,11 +1,12 @@
 package com.example.waggle.board.helpU.service;
 
-import com.example.waggle.web.dto.helpU.HelpUDetailDto;
-import com.example.waggle.web.dto.helpU.HelpUSummaryDto;
-import com.example.waggle.web.dto.helpU.HelpUWriteDto;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.web.dto.help.HelpDetailDto;
+import com.example.waggle.web.dto.help.HelpSummaryDto;
+import com.example.waggle.web.dto.help.HelpWriteDto;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.helpU.service.HelpUService;
+import com.example.waggle.domain.board.help.service.HelpService;
 import com.example.waggle.domain.member.domain.Gender;
 import com.example.waggle.web.dto.member.SignUpDto;
 import lombok.extern.slf4j.Slf4j;
@@ -29,22 +30,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HelpUServiceTest {
 
     @Autowired
-    private HelpUService helpUService;
+    private HelpService helpUService;
     @Autowired
-    private MemberService memberService;
+    private MemberCommandService memberCommandService;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    HelpUWriteDto hwd1;
-    HelpUWriteDto hwd2;
-    HelpUWriteDto hwd3;
-    HelpUWriteDto hwd4;
+    HelpWriteDto hwd1;
+    HelpWriteDto hwd2;
+    HelpWriteDto hwd3;
+    HelpWriteDto hwd4;
 
     SignUpDto signUpDto1;
 
 
     void setting() {
-        hwd1 = HelpUWriteDto.builder()
+        hwd1 = HelpWriteDto.builder()
                 .content("helpU page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
@@ -52,7 +53,7 @@ class HelpUServiceTest {
                 .petName("i")
                 .petGender(Gender.MALE)
                 .build();
-        hwd2 = HelpUWriteDto.builder()
+        hwd2 = HelpWriteDto.builder()
                 .content("helpU page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
@@ -60,7 +61,7 @@ class HelpUServiceTest {
                 .petName("ii")
                 .petGender(Gender.MALE)
                 .build();
-        hwd3 = HelpUWriteDto.builder()
+        hwd3 = HelpWriteDto.builder()
                 .content("helpU page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
@@ -68,7 +69,7 @@ class HelpUServiceTest {
                 .petName("iii")
                 .petGender(Gender.MALE)
                 .build();
-        hwd4 = HelpUWriteDto.builder()
+        hwd4 = HelpWriteDto.builder()
                 .content("helpU page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
@@ -94,25 +95,25 @@ class HelpUServiceTest {
     @WithMockCustomUser
     void helpU_create_service() throws IOException{
         setting();
-        memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
+        memberCommandService.signUp(signUpDto1,null);
+        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
 
-        List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
+        List<HelpSummaryDto> allHelpU = helpUService.getAllHelp();
         assertThat(allHelpU.size()).isEqualTo(1);
     }
     @Test
     @WithMockCustomUser
     void helpU_read_All_ByPaging_service() throws IOException {
         setting();
-        memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd3,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd4,new ArrayList<>(),null);
+        memberCommandService.signUp(signUpDto1,null);
+        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
+        helpUService.createHelp(hwd2,new ArrayList<>(),null);
+        helpUService.createHelp(hwd3,new ArrayList<>(),null);
+        helpUService.createHelp(hwd4,new ArrayList<>(),null);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 3);
-        Page<HelpUSummaryDto> allHelpUByPaging = helpUService.getPagedHelpUs(pageable);
+        Page<HelpSummaryDto> allHelpUByPaging = helpUService.getPagedHelpList(pageable);
         assertThat(allHelpUByPaging.getContent().size()).isEqualTo(3);
         assertThat(allHelpUByPaging.getContent().get(0).getPetName()).isEqualTo("i");
     }
@@ -121,15 +122,15 @@ class HelpUServiceTest {
     @WithMockCustomUser
     void helpU_read_Mine_ByPaging_service() throws IOException {
         setting();
-        memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd3,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd4,new ArrayList<>(),null);
+        memberCommandService.signUp(signUpDto1,null);
+        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
+        helpUService.createHelp(hwd2,new ArrayList<>(),null);
+        helpUService.createHelp(hwd3,new ArrayList<>(),null);
+        helpUService.createHelp(hwd4,new ArrayList<>(),null);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 2);
-        Page<HelpUSummaryDto> allHelpUByPaging = helpUService.getPagedHelpUsByUsername("member1",pageable);
+        Page<HelpSummaryDto> allHelpUByPaging = helpUService.getPagedHelpListByUsername("member1",pageable);
         assertThat(allHelpUByPaging.getContent().size()).isEqualTo(2);
         assertThat(allHelpUByPaging.getContent().get(1).getPetName()).isEqualTo("ii");
     }
@@ -138,38 +139,38 @@ class HelpUServiceTest {
     @WithMockCustomUser
     void helpU_read_One_ByPaging_service() throws IOException{
         setting();
-        memberService.signUp(signUpDto1,null);
-        Long helpUId = helpUService.createHelpU(hwd1,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd3,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd4,new ArrayList<>(),null);
+        memberCommandService.signUp(signUpDto1,null);
+        Long helpUId = helpUService.createHelp(hwd1,new ArrayList<>(),null);
+        helpUService.createHelp(hwd2,new ArrayList<>(),null);
+        helpUService.createHelp(hwd3,new ArrayList<>(),null);
+        helpUService.createHelp(hwd4,new ArrayList<>(),null);
 
-        HelpUDetailDto helpUByBoardId = helpUService.getHelpUByBoardId(helpUId);
+        HelpDetailDto helpUByBoardId = helpUService.getHelpByBoardId(helpUId);
         assertThat(helpUByBoardId.getContent()).isEqualTo("helpU page. hi");
     }
     @Test
     @WithMockCustomUser
     void helpU_update_One_ByPaging_service() throws IOException{
         setting();
-        memberService.signUp(signUpDto1,null);
-        helpUService.createHelpU(hwd1,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
-        Long helpU = helpUService.createHelpU(hwd3,new ArrayList<>(),null);
+        memberCommandService.signUp(signUpDto1,null);
+        helpUService.createHelp(hwd1,new ArrayList<>(),null);
+        helpUService.createHelp(hwd2,new ArrayList<>(),null);
+        Long helpU = helpUService.createHelp(hwd3,new ArrayList<>(),null);
 
-        Long aLong = helpUService.updateHelpU(helpU, hwd4,new ArrayList<>(),null);
-        HelpUDetailDto helpUByBoardId = helpUService.getHelpUByBoardId(aLong);
+        Long aLong = helpUService.updateHelp(helpU, hwd4,new ArrayList<>(),null);
+        HelpDetailDto helpUByBoardId = helpUService.getHelpByBoardId(aLong);
         assertThat(helpUByBoardId.getPetName()).isEqualTo("iiii");
     }
     @Test
     @WithMockCustomUser
     void helpU_delete_One_service() throws IOException{
         setting();
-        memberService.signUp(signUpDto1,null);
-        helpUService.createHelpU(hwd1,new ArrayList<>(),null);
-        helpUService.createHelpU(hwd2,new ArrayList<>(),null);
-        Long helpU = helpUService.createHelpU(hwd3,new ArrayList<>(),null);
-        helpUService.deleteHelpU(helpU);
-        List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
+        memberCommandService.signUp(signUpDto1,null);
+        helpUService.createHelp(hwd1,new ArrayList<>(),null);
+        helpUService.createHelp(hwd2,new ArrayList<>(),null);
+        Long helpU = helpUService.createHelp(hwd3,new ArrayList<>(),null);
+        helpUService.deleteHelp(helpU);
+        List<HelpSummaryDto> allHelpU = helpUService.getAllHelp();
         assertThat(allHelpU.size()).isEqualTo(2);
     }
 }
