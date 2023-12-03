@@ -15,7 +15,6 @@ import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.answer.AnswerWriteDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import com.example.waggle.web.dto.question.QuestionWriteDto;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Long createQuestion(QuestionRequest.QuestionWriteDto request, List<MultipartFile> multipartFiles) throws IOException {
+    public Long createQuestion(QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles) {
         Member member = utilService.getSignInMember();
 
         Question createdQuestion = Question.builder()
@@ -57,7 +56,8 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long createAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException {
+    public Long createAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles)
+            throws IOException {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
@@ -77,24 +77,25 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long updateQuestion(Long boardId, QuestionWriteDto questionWriteDto, List<MultipartFile> multipartFiles) throws IOException {
+    public Long updateQuestion(Long boardId, QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles) {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
-        question.changeQuestion(questionWriteDto.getContent(), questionWriteDto.getTitle());
+        question.changeQuestion(request.getContent(), request.getTitle());
 
         question.getMedias().clear();
 //        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
 
         question.getBoardHashtags().clear();
-        for (String hashtag : questionWriteDto.getHashtags()) {
+        for (String hashtag : request.getHashtags()) {
             utilService.saveHashtag(question, hashtag);
         }
         return question.getId();
     }
 
     @Override
-    public Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles) throws IOException {
+    public Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles)
+            throws IOException {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
 
