@@ -27,8 +27,8 @@ import java.util.List;
 @RestController
 @Tag(name = "Story API", description = "스토리 API")
 public class StoryApiController {
-    private StoryCommandService storyCommandService;
-    private StoryQueryService storyService;
+    private final StoryCommandService storyCommandService;
+    private final StoryQueryService storyQueryService;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "스토리 작성", description = "사용자가 스토리를 작성합니다. 작성한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
@@ -60,7 +60,7 @@ public class StoryApiController {
     @GetMapping
     public ResponseEntity<Page<StorySummaryDto>> getAllStories(@RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<StorySummaryDto> stories = storyService.getPagedStories(pageable);
+        Page<StorySummaryDto> stories = storyQueryService.getPagedStories(pageable);
         return ResponseEntity.ok(stories);
     }
 
@@ -71,7 +71,7 @@ public class StoryApiController {
     public ResponseEntity<Page<StorySummaryDto>> getStoriesByUsername(@RequestParam(defaultValue = "0") int currentPage,
                                                                       @PathVariable String username) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername(username, pageable);
+        Page<StorySummaryDto> storiesByUsername = storyQueryService.getPagedStoriesByUsername(username, pageable);
         return ResponseEntity.ok(storiesByUsername);
     }
 
@@ -80,7 +80,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "404", description = "스토리를 찾을 수 없음. 지정된 스토리 ID에 해당하는 스토리를 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
     public ResponseEntity<StoryDetailDto> getStoryByBoardId(@PathVariable Long boardId) {
-        StoryDetailDto storyByBoardId = storyService.getStoryByBoardId(boardId);
+        StoryDetailDto storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
         return ResponseEntity.ok(storyByBoardId);
     }
 }

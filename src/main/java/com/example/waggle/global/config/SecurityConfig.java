@@ -1,6 +1,5 @@
 package com.example.waggle.global.config;
 
-import com.example.waggle.global.security.JwtAuthenticationFilter;
 import com.example.waggle.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -37,10 +35,11 @@ public class SecurityConfig {
                 // USER 권한이 있어야 요청할 수 있음
 //                .requestMatchers("/member/test", "/story/write", "/story/edit").hasRole("USER")
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
                 .and()
                 // JWT 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
