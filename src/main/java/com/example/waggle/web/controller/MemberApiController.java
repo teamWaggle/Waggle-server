@@ -1,25 +1,23 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.global.component.file.FileStore;
-import com.example.waggle.global.component.file.UploadFile;
-import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.web.dto.member.SignInDto;
-import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.JwtToken;
+import com.example.waggle.web.converter.MemberConverter;
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,23 +38,24 @@ public class MemberApiController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
-    private final FileStore fileStore;
+    private final AwsS3Service awsS3Service;
 
     @Operation(summary = "로그인", description = "아이디와 비밀번호를 통해 로그인을 진행합니다. 성공 시 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping("/tokens")
-    public ResponseEntity<?> login(@RequestBody SignInDto signInDto, HttpServletResponse response) {
-        JwtToken jwtToken = memberCommandService.signIn(signInDto);
+    public ApiResponseDto<String> login(@RequestBody MemberRequest.LoginRequestDto request,
+                                        HttpServletResponse response) {
+        JwtToken jwtToken = memberCommandService.signIn(request);
 
         if (jwtToken != null) {
             Cookie cookie = new Cookie("access_token", jwtToken.getAccessToken());
             cookie.setPath("/");
             cookie.setMaxAge(Integer.MAX_VALUE);
             response.addCookie(cookie);
-            return ResponseEntity.ok(jwtToken.getAccessToken());
+            return ApiResponseDto.onSuccess(jwtToken.getAccessToken());
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
+            return ApiResponseDto.onFailure(401, "Unauthorized", null);
         }
     }
 
@@ -64,23 +63,19 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping
-    public ResponseEntity<?> register(@RequestPart SignUpDto signUpDto,
-                                      @RequestPart(value = "profileImg", required = false) MultipartFile profileImg)
-            throws IOException {
-        try {
-            UploadFile uploadFile = fileStore.storeFile(profileImg);
-            MemberSummaryDto memberSummaryDto = memberCommandService.signUp(signUpDto, uploadFile);
-            return ResponseEntity.ok(memberSummaryDto);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ApiResponseDto<MemberResponse.MemberSummaryDto> register(
+            @RequestPart MemberRequest.RegisterRequestDto request,
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
+        String profileImgUrl = null;
+        if (profileImg != null) profileImgUrl = awsS3Service.uploadFile(profileImg);
+        Member member = memberCommandService.signUp(request, profileImgUrl);
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberSummaryDto(member));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다.")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공. 'success' 반환.")
     @DeleteMapping("/tokens")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ApiResponseDto<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
         ResponseCookie deleteCookie = ResponseCookie.from("access_token", "")
                 .path("/")
                 .httpOnly(true)
@@ -91,15 +86,15 @@ public class MemberApiController {
 
         SecurityContextHolder.clearContext();
 
-        return ResponseEntity.ok("success");
+        return ApiResponseDto.onSuccess(true);
     }
 
     @Operation(summary = "회원 정보 조회", description = "username을 통해 username, nickname, profileImg를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
     @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
     @GetMapping("/{username}")
-    public ResponseEntity<?> getMemberInfo(@PathVariable String username) {
-        MemberSummaryDto memberSummaryDto = memberQueryService.getMemberSummaryDto(username);
-        return ResponseEntity.ok(memberSummaryDto);
+    public ApiResponseDto<MemberResponse.MemberDetailDto> getMemberInfo(@PathVariable String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 }

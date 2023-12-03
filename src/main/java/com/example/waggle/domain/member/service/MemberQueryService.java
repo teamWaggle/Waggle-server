@@ -1,9 +1,9 @@
 package com.example.waggle.domain.member.service;
 
-import com.example.waggle.web.dto.member.MemberSummaryDto;
+import com.example.waggle.domain.member.entity.Member;
 
 public interface MemberQueryService {
 
-    MemberSummaryDto getMemberSummaryDto(String username);
+    Member getMemberByUsername(String username);
 
 }

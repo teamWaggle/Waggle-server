@@ -2,12 +2,16 @@ package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
+import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.dto.question.QuestionDetailDto;
+import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionWriteDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,11 +19,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,10 +45,10 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 작성 성공. 작성한 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
     @PostMapping
-    public ResponseEntity<Long> createQuestion(@RequestPart QuestionWriteDto questionWriteDto,
-                                               @RequestPart List<MultipartFile> multipartFiles) throws IOException {
-        Long boardId = questionCommandService.createQuestion(questionWriteDto, multipartFiles);
-        return ResponseEntity.ok(boardId);
+    public ApiResponseDto<Long> createQuestion(@RequestPart QuestionRequest.QuestionWriteDto request,
+                                                           @RequestPart(required = false) List<MultipartFile> multipartFiles) throws IOException {
+        Long boardId = questionCommandService.createQuestion(request, multipartFiles);
+    return ApiResponseDto.onSuccess(boardId);
     }
 
     @Operation(summary = "스토리 수정", description = "사용자가 스토리를 수정합니다. 수정한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")

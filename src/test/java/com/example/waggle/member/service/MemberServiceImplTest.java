@@ -1,20 +1,26 @@
 package com.example.waggle.member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.web.dto.member.SignInDto;
-import com.example.waggle.web.dto.member.SignUpDto;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j

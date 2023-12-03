@@ -23,7 +23,7 @@ public class AmazonS3Controller {
 
     @PostMapping("/uploadFile")
     public ResponseEntity<List<String>> uploadFile(@RequestBody List<MultipartFile> multipartFiles){
-        return ResponseEntity.ok(awsS3Service.uploadFile(multipartFiles));
+        return ResponseEntity.ok(awsS3Service.uploadFiles(multipartFiles));
     }
 
     @DeleteMapping("/deleteFile")

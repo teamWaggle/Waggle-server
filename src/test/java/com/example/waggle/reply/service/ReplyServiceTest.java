@@ -12,7 +12,6 @@ import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentViewDto;
 import com.example.waggle.web.dto.comment.CommentWriteDto;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;

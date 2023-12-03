@@ -39,7 +39,7 @@ public class StoryDetailDto {
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
-                .profileImg(story.getMember().getProfileImg())
+//                .profileImg(story.getMember().getProfileImg())    // TODO 수정 필요
                 .thumbnail(story.getThumbnail())
                 .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()

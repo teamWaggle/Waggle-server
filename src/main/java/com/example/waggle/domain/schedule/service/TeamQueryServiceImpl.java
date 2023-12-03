@@ -3,16 +3,14 @@ package com.example.waggle.domain.schedule.service;
 import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
 
-import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.TeamMember;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.web.dto.schedule.TeamDto;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.repository.TeamMemberRepository;
-
+import com.example.waggle.domain.schedule.domain.Team;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.global.exception.CustomAlertException;
+import com.example.waggle.web.dto.schedule.TeamDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,16 +54,16 @@ public class TeamQueryServiceImpl implements TeamQueryService {
         return TeamDto.toDto(team);
     }
 
-    @Override
-    public List<MemberSummaryDto> getTeamMembers(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
-
-        return team.getTeamMembers().stream()
-                .map(TeamMember::getMember)
-                .map(MemberSummaryDto::toDto)
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<MemberSummaryDto> getTeamMembers(Long teamId) {
+//        Team team = teamRepository.findById(teamId)
+//                .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
+//
+//        return team.getTeamMembers().stream()
+//                .map(TeamMember::getMember)
+//                .map(MemberSummaryDto::toDto)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public boolean isTeamLeader(Long teamId, String username) {

@@ -35,10 +35,11 @@ public class StoryApiController {
     @ApiResponse(responseCode = "200", description = "스토리 작성 성공. 작성한 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
     @PostMapping
-    public ResponseEntity<Long> createStory(@RequestPart StoryWriteDto storyWriteDto,
+    public ResponseEntity<Long> createStory(@RequestPart StoryWriteDto request,
                                             @RequestPart List<MultipartFile> multipartFiles,
                                             @RequestPart MultipartFile thumbnail) throws IOException {
-        Long boardId = storyCommandService.createStory(storyWriteDto, multipartFiles, thumbnail);
+
+        Long boardId = storyCommandService.createStory(request, multipartFiles, thumbnail);
         return ResponseEntity.ok(boardId);
     }
 

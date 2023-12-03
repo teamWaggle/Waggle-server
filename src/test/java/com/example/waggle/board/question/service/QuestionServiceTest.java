@@ -6,7 +6,6 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.answer.AnswerWriteDto;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.web.dto.question.QuestionDetailDto;
 import com.example.waggle.web.dto.question.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionWriteDto;

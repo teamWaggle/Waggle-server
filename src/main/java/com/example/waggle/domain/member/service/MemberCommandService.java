@@ -1,20 +1,16 @@
 package com.example.waggle.domain.member.service;
 
-import com.example.waggle.global.component.file.UploadFile;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.web.dto.member.SignInDto;
-import com.example.waggle.web.dto.member.SignUpDto;
+import com.example.waggle.web.dto.member.MemberRequest;
 import jakarta.servlet.http.HttpSession;
 
 public interface MemberCommandService {
 
-    JwtToken signIn(SignInDto signInDto);
+    JwtToken signIn(MemberRequest.LoginRequestDto request);
 
-    MemberSummaryDto signUp(SignUpDto signUpDto, UploadFile profileImg);
+    Member signUp(MemberRequest.RegisterRequestDto request, String profileImg);
 
     void signOut(HttpSession session);
-
-    Long updateProfileImg(String username, UploadFile profileImg);
 
 }

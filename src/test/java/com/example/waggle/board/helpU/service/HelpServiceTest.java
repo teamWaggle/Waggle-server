@@ -9,7 +9,6 @@ import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomU
 import com.example.waggle.web.dto.help.HelpDetailDto;
 import com.example.waggle.web.dto.help.HelpSummaryDto;
 import com.example.waggle.web.dto.help.HelpWriteDto;
-import com.example.waggle.web.dto.member.SignUpDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,8 @@
 package com.example.waggle.domain.board.story.service;
 
+import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.entity.Member;
@@ -8,17 +11,13 @@ import com.example.waggle.global.component.file.UploadFile;
 import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.story.StoryWriteDto;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
-
-import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,22 +30,29 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     private final FileStore fileStore;
 
     @Override
-    public Long createStory(StoryWriteDto storyWriteDto,
+    public Long createStory(StoryWriteDto request,
                             List<MultipartFile> multipartFiles,
                             MultipartFile thumbnail) throws IOException {
-        Member signInMember = utilService.getSignInMember();
-        Story saveStory = storyWriteDto.toEntity(signInMember);
-        Story story = storyRepository.save(saveStory);
+        Member member = utilService.getSignInMember();
+
+        Story createdStory = Story.builder()
+                .member(member)
+                .content(request.getContent())
+                .thumbnail(request.getThumbnail())
+                .build();
+
+        Story story = storyRepository.save(createdStory);
+
         if(thumbnail != null) changeThumbnail(story, thumbnail);
 
-        if (!storyWriteDto.getHashtags().isEmpty()) {
-            for (String hashtagContent : storyWriteDto.getHashtags()) {
-                utilService.saveHashtag(saveStory, hashtagContent);
+        if (!request.getHashtags().isEmpty()) {
+            for (String hashtagContent : request.getHashtags()) {
+                utilService.saveHashtag(story, hashtagContent);
             }
         }
 //        mediaService.createMedias(story.getId(), multipartFiles, STORY);
 
-        return saveStory.getId();
+        return story.getId();
     }
 
     @Override

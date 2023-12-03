@@ -1,20 +1,16 @@
 package com.example.waggle.domain.member.service;
 
 import static com.example.waggle.global.exception.ErrorCode.ALREADY_USING_USERNAME;
-import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
-import com.example.waggle.global.component.file.UploadFile;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.pet.entity.Pet;
+import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.CustomApiException;
 import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.JwtTokenProvider;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.web.dto.member.SignInDto;
-import com.example.waggle.web.dto.member.SignUpDto;
-import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.pet.entity.Pet;
+import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.pet.PetDto;
-import com.example.waggle.domain.pet.repository.PetRepository;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,33 +39,42 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public JwtToken signIn(SignInDto signInDto) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signInDto.getUsername(), signInDto.getPassword());
+    public JwtToken signIn(MemberRequest.LoginRequestDto request) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
         return jwtToken;
     }
 
     @Override
-    public MemberSummaryDto signUp(SignUpDto signUpDto, UploadFile profileImg) {
-        if (memberRepository.existsByUsername(signUpDto.getUsername())) {
+    public Member signUp(MemberRequest.RegisterRequestDto request, String profileImgUrl) {
+        if (memberRepository.existsByUsername(request.getUsername())) {
             throw new CustomApiException(ALREADY_USING_USERNAME);
         }
-        String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         List<String> roles = new ArrayList<>();
         roles.add(DEFAULT_ROLE);
 
-        Member member = memberRepository.save(signUpDto.toEntity(encodedPassword, roles));
-        updateProfileImg(member.getUsername(), profileImg);
+        Member createdMember = Member.builder()
+                .username(request.getUsername())
+                .password(encodedPassword)
+                .nickname(request.getNickname())
+                .address(request.getAddress())
+                .phone(request.getPhone())
+                .roles(roles)
+                .profileImgUrl(profileImgUrl)
+                .build();
 
-        List<PetDto> petDtos = signUpDto.getPets();
+        Member member = memberRepository.save(createdMember);
+
+        List<PetDto> petDtos = request.getPets();
         List<Pet> pets = petDtos.stream().map(petDto -> petDto.toEntity(member)).collect(Collectors.toList());
         for (Pet pet : pets) {
             petRepository.save(pet);
         }
         member.setPets(pets);
-        return MemberSummaryDto.toDto(member);
+        return member;
     }
 
     @Override
@@ -77,11 +82,4 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     }
 
-    @Override
-    public Long updateProfileImg(String username, UploadFile profileImg) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
-        member.changeProfileImg(profileImg);
-        return member.getId();
-    }
 }

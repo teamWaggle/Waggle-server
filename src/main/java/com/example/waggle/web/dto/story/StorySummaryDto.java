@@ -32,7 +32,7 @@ public class StorySummaryDto {
         return StorySummaryDto.builder()
                 .id(story.getId())
                 .username(story.getMember().getUsername())
-                .profileImg(story.getMember().getProfileImg())
+//                .profileImg(story.getMember().getProfileImgUrl()) // TODO 수정 필요
                 .thumbnail(story.getThumbnail())
                 .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()

@@ -6,8 +6,6 @@ import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.member.entity.Gender;
-import com.example.waggle.web.dto.member.MemberSummaryDto;
-import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.web.dto.pet.PetDto;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import lombok.extern.slf4j.Slf4j;

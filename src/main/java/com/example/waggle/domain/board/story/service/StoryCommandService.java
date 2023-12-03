@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface StoryCommandService {
-    Long createStory(StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException;
+    Long createStory(StoryWriteDto request, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException;
 
     Long updateStory(Long boardId, StoryWriteDto storyWriteDto, List<MultipartFile> multipartFiles, MultipartFile thumbnail) throws IOException;
 

@@ -12,7 +12,6 @@ import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.web.dto.member.SignUpDto;
 import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryWriteDto;
