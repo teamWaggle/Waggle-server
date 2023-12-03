@@ -31,8 +31,8 @@ spring:
 cloud:
   aws:
     credentials:
-      accessKey: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      secretKey: ${{ AWS_SECRET_ACCESS_KEY }}
+      accessKey: asdf
+      secretKey: asdf
     s3:
       bucket: waggle-bucket
     region:

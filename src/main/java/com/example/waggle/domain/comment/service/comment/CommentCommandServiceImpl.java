@@ -1,5 +1,8 @@
 package com.example.waggle.domain.comment.service.comment;
 
+import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
+import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
+
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
@@ -12,9 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,5 +50,12 @@ public class CommentCommandServiceImpl implements CommentCommandService{
             throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
         }
         commentRepository.delete(comment);
+    }
+
+    public boolean validateMember(Long commentId) {
+        Member signInMember = utilService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
+        return comment.getMember().equals(signInMember);
     }
 }
