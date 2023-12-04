@@ -4,7 +4,6 @@ import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.web.dto.answer.AnswerDetailDto;
 import com.example.waggle.web.dto.question.QuestionDetailDto;
 import java.util.List;

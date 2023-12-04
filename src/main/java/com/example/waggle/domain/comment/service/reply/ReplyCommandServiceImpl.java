@@ -7,7 +7,6 @@ import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.mention.entity.Mention;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
 import lombok.RequiredArgsConstructor;

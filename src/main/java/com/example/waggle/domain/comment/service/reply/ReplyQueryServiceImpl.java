@@ -3,7 +3,6 @@ package com.example.waggle.domain.comment.service.reply;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,6 @@ package com.example.waggle.domain.pet.service;
 
 import static com.example.waggle.global.exception.ErrorCode.PET_NOT_FOUND;
 
-import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.web.dto.pet.PetDto;
 import com.example.waggle.domain.pet.repository.PetRepository;

@@ -5,7 +5,6 @@ import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;

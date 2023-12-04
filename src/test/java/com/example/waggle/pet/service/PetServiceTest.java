@@ -4,7 +4,6 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.pet.PetDto;
 import com.example.waggle.domain.pet.repository.PetRepository;

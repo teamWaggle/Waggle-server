@@ -6,7 +6,6 @@ import com.example.waggle.web.dto.question.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionDetailDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.domain.member.entity.Member;

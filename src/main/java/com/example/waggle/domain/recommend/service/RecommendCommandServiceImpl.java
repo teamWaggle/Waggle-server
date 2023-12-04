@@ -4,7 +4,6 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.global.util.service.UtilService;
 import lombok.RequiredArgsConstructor;

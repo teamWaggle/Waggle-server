@@ -9,7 +9,6 @@ import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.web.dto.schedule.TeamDto;
 import java.util.ArrayList;
 import java.util.List;

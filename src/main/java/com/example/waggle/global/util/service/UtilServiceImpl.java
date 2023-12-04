@@ -2,7 +2,6 @@ package com.example.waggle.global.util.service;
 
 import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.global.exception.CustomApiException;
-import com.example.waggle.global.exception.CustomPageException;
 import com.example.waggle.global.exception.ErrorCode;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.domain.board.Board;

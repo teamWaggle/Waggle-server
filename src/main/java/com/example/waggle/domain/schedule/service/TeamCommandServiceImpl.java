@@ -3,7 +3,6 @@ package com.example.waggle.domain.schedule.service;
 import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
 
-import com.example.waggle.global.exception.CustomAlertException;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.TeamMember;
 import com.example.waggle.domain.schedule.domain.Team;
