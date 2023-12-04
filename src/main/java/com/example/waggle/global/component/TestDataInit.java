@@ -1,6 +1,6 @@
 package com.example.waggle.global.component;
 
-import com.example.waggle.domain.board.help.service.HelpService;
+import com.example.waggle.domain.board.help.service.HelpCommandService;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.entity.Member;
@@ -30,7 +30,7 @@ public class TestDataInit {
     private final MemberCommandService memberCommandService;
     private final TeamCommandService teamCommandService;
     private final ScheduleCommandService scheduleCommandService;
-    private final HelpService helpUService;
+    private final HelpCommandService helpUService;
 
     private final StoryRepository storyRepository;
     private final MemberRepository memberRepository;

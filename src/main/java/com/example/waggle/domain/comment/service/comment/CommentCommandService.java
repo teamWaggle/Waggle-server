@@ -10,4 +10,5 @@ public interface CommentCommandService {
 
     void deleteComment(Long commentId);
 
+    boolean validateMember(Long commentId);
 }

@@ -51,4 +51,11 @@ public class CommentCommandServiceImpl implements CommentCommandService{
         }
         commentRepository.delete(comment);
     }
+    @Override
+    public boolean validateMember(Long commentId) {
+        Member signInMember = utilService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
+        return comment.getMember().equals(signInMember);
+    }
 }
