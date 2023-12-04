@@ -13,4 +13,6 @@ public interface MemberCommandService {
 
     void logout(HttpSession session);
 
+    JwtToken refreshToken(String refreshToken);
+
 }

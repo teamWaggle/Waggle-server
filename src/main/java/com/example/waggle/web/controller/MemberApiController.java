@@ -43,9 +43,9 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping("/tokens")
-    public ApiResponseDto<String> login(@RequestBody MemberRequest.LoginRequestDto request) {
+    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.LoginRequestDto request) {
         JwtToken jwtToken = memberCommandService.signIn(request);
-        return ApiResponseDto.onSuccess(jwtToken.getAccessToken());
+        return ApiResponseDto.onSuccess(jwtToken);
     }
 
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다.")
@@ -60,6 +60,17 @@ public class MemberApiController {
         Member member = memberCommandService.signUp(request, profileImgUrl);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberSummaryDto(member));
     }
+
+    @Operation(summary = "토큰 재발급", description = "리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 재발급합니다.")
+    @ApiResponse(responseCode = "200", description = "토큰 재발급 성공. 새로운 토큰들 반환.")
+    @ApiResponse(responseCode = "401", description = "인증 실패. 리프레시 토큰이 유효하지 않음.")
+    @PostMapping("/tokens/refresh")
+    public ApiResponseDto<JwtToken> refreshToken(@RequestBody String refreshToken) {
+        JwtToken newTokens = memberCommandService.refreshToken(refreshToken);
+        return ApiResponseDto.onSuccess(newTokens);
+    }
+
+
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다.")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공. 'success' 반환.")

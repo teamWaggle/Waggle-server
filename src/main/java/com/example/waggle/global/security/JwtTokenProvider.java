@@ -1,5 +1,6 @@
 package com.example.waggle.global.security;
 
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -30,15 +31,45 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     private final Key key;
     private final RedisService redisService;
+    private final MemberQueryService memberQueryService;
 
     // application.yml에서 secret 값 가져와서 key에 저장
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisService redisService) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisService redisService,
+                            MemberQueryService memberQueryService) {
         this.redisService = redisService;
+        this.memberQueryService = memberQueryService;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Member 정보를 가지고 AccessToken, RefreshToken을 생성하는 메서드
+    // Refresh Token을 사용하여 새로운 Access Token을 발급하는 메서드
+    public JwtToken refreshAccessToken(String oldRefreshToken) {
+        // Refresh Token 유효성 검사
+        if (!validateToken(oldRefreshToken) || !existsRefreshToken(oldRefreshToken)) {
+            throw new RuntimeException("유효하지 않거나 만료된 리프레시 토큰입니다.");
+        }
+
+        // 이전 리프레시 토큰 삭제
+        redisService.deleteValue(oldRefreshToken);
+
+        // 새로운 Authentication 객체 생성
+        Claims claims = parseClaims(oldRefreshToken);
+        String username = claims.getSubject();
+        UserDetails userDetails = memberQueryService.getMemberByUsername(username);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
+                userDetails.getAuthorities());
+
+        // 새 토큰 생성
+        JwtToken newTokens = generateToken(authentication);
+
+        // 새 리프레시 토큰을 Redis에 저장
+        redisService.setValue(newTokens.getRefreshToken(), userDetails.getUsername());
+
+        return newTokens;
+    }
+
+
+    // Member 정보를 가지고 Access Token, Refresh Token을 발급하는 메서드
     public JwtToken generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -48,7 +79,7 @@ public class JwtTokenProvider {
         long now = (new Date()).getTime();
 
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + 86400000);   // 보통 30분 정도로 생성하지만 테스트를 위해 1일로 생성
+        Date accessTokenExpiresIn = new Date(now + 1800000);   // 30분
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
@@ -58,7 +89,8 @@ public class JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
+                .setSubject(authentication.getName())
+                .setExpiration(new Date(now + 604800000))    // 7일
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

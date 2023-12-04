@@ -15,7 +15,7 @@ public class RedisService {
     // key-value 설정
     public void setValue(String token, String username) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(token, username, Duration.ofMinutes(3));
+        values.set(token, username, Duration.ofDays(7));
     }
 
     // key 값으로 value 가져오기
@@ -25,7 +25,11 @@ public class RedisService {
     }
 
     public void deleteValue(String token) {
-        redisTemplate.delete(token.substring(7));
+        if (token != null && token.startsWith("Bearer ")) {
+            // "Bearer " 접두사 제거
+            token = token.substring(7);
+        }
+        redisTemplate.delete(token);
     }
 
 }

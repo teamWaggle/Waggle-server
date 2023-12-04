@@ -44,7 +44,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
-        log.info("refreshToken = {}", jwtToken.getRefreshToken());
         redisService.setValue(jwtToken.getRefreshToken(), request.getUsername());
         return jwtToken;
     }
@@ -83,6 +82,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public void logout(HttpSession session) {
 
+    }
+
+    @Override
+    public JwtToken refreshToken(String refreshToken) {
+        return jwtTokenProvider.refreshAccessToken(refreshToken);
     }
 
 }
