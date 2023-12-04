@@ -6,7 +6,9 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;
-import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.handler.HelpHandler;
+import com.example.waggle.global.exception.handler.MemberHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.help.HelpWriteDto;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static com.example.waggle.global.exception.ErrorCode.*;
 import static com.example.waggle.global.util.service.BoardType.HELP;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
     @Override
     public Long createHelpTest(HelpWriteDto helpWriteDto, String username) {
         Member signInMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         log.info("nickname = {}",signInMember.getNickname());
 
         Help help = helpWriteDto.toEntity(signInMember);
@@ -67,7 +68,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
                            List<MultipartFile> multipartFiles,
                            MultipartFile thumbnail)throws IOException {
         Help help = helpRepository.findById(boardId)
-                .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         help.changeHelp(helpWriteDto);
         if(thumbnail != null) changeThumbnail(help, thumbnail);
@@ -80,9 +81,9 @@ public class HelpCommandServiceImpl implements HelpCommandService{
     @Override
     public void deleteHelp(Long boardId) {
         Help help = helpRepository.findById(boardId)
-                .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!utilService.validateMemberUseBoard(boardId, HELP)) {
-            throw new CustomApiException(CANNOT_TOUCH_NOT_YOURS);
+            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
         helpRepository.delete(help);
     }

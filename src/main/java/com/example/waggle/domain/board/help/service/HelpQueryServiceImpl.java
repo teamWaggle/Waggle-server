@@ -2,7 +2,8 @@ package com.example.waggle.domain.board.help.service;
 
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
-import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.handler.HelpHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.help.HelpDetailDto;
 import com.example.waggle.web.dto.help.HelpSummaryDto;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class HelpQueryServiceImpl implements HelpQueryService{
     @Override
     public HelpDetailDto getHelpByBoardId(Long boardId) {
         Help help = helpRepository.findById(boardId)
-                .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         return HelpDetailDto.toDto(help);
     }

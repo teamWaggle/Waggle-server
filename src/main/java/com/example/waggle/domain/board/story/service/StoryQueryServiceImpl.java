@@ -2,6 +2,8 @@ package com.example.waggle.domain.board.story.service;
 
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.global.exception.handler.StoryHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class StoryQueryServiceImpl implements StoryQueryService{
     @Override
     public StoryDetailDto getStoryByBoardId(Long boardId) {
         Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
         return StoryDetailDto.toDto(story);
     }
 }

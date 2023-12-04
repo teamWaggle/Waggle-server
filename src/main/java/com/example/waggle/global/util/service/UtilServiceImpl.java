@@ -1,18 +1,19 @@
 package com.example.waggle.global.util.service;
 
-import com.example.waggle.domain.board.help.repository.HelpRepository;
-import com.example.waggle.global.exception.CustomApiException;
-import com.example.waggle.global.exception.ErrorCode;
-import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.hashtag.entity.BoardHashtag;
-import com.example.waggle.domain.hashtag.entity.Hashtag;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.hashtag.repository.HashtagRepository;
+import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.domain.board.question.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.hashtag.entity.BoardHashtag;
+import com.example.waggle.domain.hashtag.entity.Hashtag;
+import com.example.waggle.domain.hashtag.repository.HashtagRepository;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.global.exception.handler.*;
+import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class UtilServiceImpl implements UtilService {
     public Member getMember(String username) {
         //member setting
         Member signInMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomPageException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         return signInMember;
     }
@@ -52,23 +53,23 @@ public class UtilServiceImpl implements UtilService {
         switch (boardType) {
             case STORY:
                 board = storyRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case QUESTION:
                 board = questionRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case ANSWER:
                 board = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case HELP:
                 board = helpURepository.findById(boardId)
-                        .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype
-                throw new CustomApiException(ErrorCode.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
         }
         return board.getMember().equals(signInMember);
     }
@@ -90,7 +91,7 @@ public class UtilServiceImpl implements UtilService {
             Member signInMember = getMember(SecurityUtil.getCurrentUsername());
             return signInMember;
         }
-        throw new CustomPageException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        throw new MemberHandler(ErrorStatus.REFRESH_TOKEN_NOT_FOUND);
     }
 
     @Override
@@ -102,23 +103,23 @@ public class UtilServiceImpl implements UtilService {
         switch (boardType) {
             case STORY:
                 board = storyRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case QUESTION:
                 board = questionRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case ANSWER:
                 board = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomPageException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case HELP:
                 board = helpURepository.findById(boardId)
-                        .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype
-                throw new CustomPageException(ErrorCode.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
         }
         return board;
     }

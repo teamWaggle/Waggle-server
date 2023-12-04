@@ -1,20 +1,23 @@
 package com.example.waggle.domain.schedule.service;
 
-import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
-
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.TeamMember;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.web.dto.schedule.TeamDto;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.repository.TeamMemberRepository;
-
-import java.util.List;
+import com.example.waggle.domain.schedule.domain.Team;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.global.exception.handler.MemberHandler;
+import com.example.waggle.global.exception.handler.TeamHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.schedule.TeamDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Transactional
@@ -28,7 +31,7 @@ public class TeamCommandServiceImpl implements TeamCommandService{
     @Override
     public Long createTeam(TeamDto teamDto, String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Team team = teamRepository.save(teamDto.toEntity(member));
         TeamMember teamMember = TeamMember.builder()
@@ -42,9 +45,9 @@ public class TeamCommandServiceImpl implements TeamCommandService{
     @Override
     public Long addMember(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (validateMemberDuplication(team, member)) {
             TeamMember teamMember = TeamMember.builder()
@@ -61,7 +64,7 @@ public class TeamCommandServiceImpl implements TeamCommandService{
     @Override
     public Long updateTeam(Long teamId, TeamDto updateTeamDto) {
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         team.updateTeamName(updateTeamDto.getName());
         return team.getId();
     }
@@ -69,7 +72,7 @@ public class TeamCommandServiceImpl implements TeamCommandService{
     @Override
     public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomAlertException(TEAM_NOT_FOUND));
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
         List<TeamMember> teamMembers = team.getTeamMembers();
         for (TeamMember teamMember : teamMembers) {
@@ -81,7 +84,7 @@ public class TeamCommandServiceImpl implements TeamCommandService{
     @Override
     public void removeMember(Long teamId, String username) {
         TeamMember teamMember = teamMemberRepository.findTeamMemberByMemberUsernameAndTeamId(username, teamId)
-                .orElseThrow(() -> new CustomAlertException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         teamMember.removeTeam();
         teamMemberRepository.delete(teamMember);
     }
