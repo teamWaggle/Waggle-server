@@ -6,7 +6,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.repository.PetRepository;
-import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.JwtTokenProvider;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -49,7 +49,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Member signUp(MemberRequest.RegisterRequestDto request, String profileImgUrl) {
         if (memberRepository.existsByUsername(request.getUsername())) {
-            throw new CustomApiException(ALREADY_USING_USERNAME);
+            throw new GeneralException(ALREADY_USING_USERNAME);
         }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 

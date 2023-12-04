@@ -4,7 +4,7 @@ import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public Member getMemberByUsername(String username) {
         return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(MEMBER_NOT_FOUND));
     }
 }

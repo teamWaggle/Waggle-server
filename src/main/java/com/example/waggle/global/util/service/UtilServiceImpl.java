@@ -1,7 +1,7 @@
 package com.example.waggle.global.util.service;
 
 import com.example.waggle.domain.board.help.repository.HelpRepository;
-import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.ErrorCode;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.domain.board.Board;
@@ -64,11 +64,11 @@ public class UtilServiceImpl implements UtilService {
                 break;
             case HELP:
                 board = helpURepository.findById(boardId)
-                        .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new GeneralException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype
-                throw new CustomApiException(ErrorCode.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorCode.INVALID_BOARD_TYPE);
         }
         return board.getMember().equals(signInMember);
     }
@@ -114,7 +114,7 @@ public class UtilServiceImpl implements UtilService {
                 break;
             case HELP:
                 board = helpURepository.findById(boardId)
-                        .orElseThrow(() -> new CustomApiException(ErrorCode.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new GeneralException(ErrorCode.BOARD_NOT_FOUND));
                 break;
             default:
                 // error: Invalid dtype

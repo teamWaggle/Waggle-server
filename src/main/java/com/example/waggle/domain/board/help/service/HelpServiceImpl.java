@@ -6,7 +6,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;
-import com.example.waggle.global.exception.CustomApiException;
+import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.help.HelpDetailDto;
 import com.example.waggle.web.dto.help.HelpSummaryDto;
@@ -59,7 +59,7 @@ public class HelpServiceImpl implements HelpService {
     @Override
     public HelpDetailDto getHelpByBoardId(Long boardId) {
         Help help = helpRepository.findById(boardId)
-                .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BOARD_NOT_FOUND));
 
         return HelpDetailDto.toDto(help);
     }
@@ -82,7 +82,7 @@ public class HelpServiceImpl implements HelpService {
     @Override
     public Long createHelpTest(HelpWriteDto helpWriteDto, String username) {
         Member signInMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(MEMBER_NOT_FOUND));
         log.info("nickname = {}",signInMember.getNickname());
 
         Help help = helpWriteDto.toEntity(signInMember);
@@ -105,7 +105,7 @@ public class HelpServiceImpl implements HelpService {
                             List<MultipartFile> multipartFiles,
                             MultipartFile thumbnail)throws IOException {
         Help help = helpRepository.findById(boardId)
-                .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BOARD_NOT_FOUND));
 
         help.changeHelp(helpWriteDto);
         if(thumbnail != null) changeThumbnail(help, thumbnail);
@@ -119,9 +119,9 @@ public class HelpServiceImpl implements HelpService {
     @Override
     public void deleteHelp(Long boardId) {
         Help help = helpRepository.findById(boardId)
-                .orElseThrow(() -> new CustomApiException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(BOARD_NOT_FOUND));
         if (!utilService.validateMemberUseBoard(boardId, HELP)) {
-            throw new CustomApiException(CANNOT_TOUCH_NOT_YOURS);
+            throw new GeneralException(CANNOT_TOUCH_NOT_YOURS);
         }
         helpRepository.delete(help);
     }
