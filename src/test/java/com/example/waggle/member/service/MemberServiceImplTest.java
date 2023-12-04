@@ -1,26 +1,21 @@
 package com.example.waggle.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.member.MemberRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
@@ -30,23 +25,23 @@ class MemberServiceImplTest {
     @Autowired
     MemberRepository memberRepository;
     @Autowired
-    MemberService memberService;
+    MemberCommandService memberService;
     @Autowired
-    PetService petService;
+    PetCommandService petService;
     @Autowired
     TestRestTemplate testRestTemplate;
     @LocalServerPort
     int randomServerPort;
 
-    private SignUpDto signUpDto1;
-    private SignUpDto signUpDto2;
-    private SignUpDto signUpDto3;
+    private MemberRequest.RegisterRequestDto signUpDto1;
+    private MemberRequest.RegisterRequestDto signUpDto2;
+    private MemberRequest.RegisterRequestDto signUpDto3;
 
 
     @BeforeEach
     void beforeEach() {
         // Member 회원가입
-        signUpDto1 = SignUpDto.builder()
+        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -54,7 +49,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = SignUpDto.builder()
+        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -62,7 +57,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto3 = SignUpDto.builder()
+        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임3")
@@ -78,19 +73,19 @@ class MemberServiceImplTest {
 
     @Test
     public void signUp() {
-        MemberSummaryDto memberSummaryDto1 = memberService.signUp(signUpDto1, null);
-        MemberSummaryDto memberSummaryDto2 = memberService.signUp(signUpDto2, null);
+        Member member = memberService.signUp(signUpDto1, null);
+        Member member1 = memberService.signUp(signUpDto2, null);
 
-        assertThat(memberSummaryDto1.getUsername()).isEqualTo(signUpDto1.getUsername());
-        assertThat(memberSummaryDto2.getUsername()).isEqualTo(signUpDto2.getUsername());
+        assertThat(member.getUsername()).isEqualTo(signUpDto1.getUsername());
+        assertThat(member1.getUsername()).isEqualTo(signUpDto2.getUsername());
     }
 
     @Test
     @Disabled
     public void 중복_회원_예외() {
         // savedMemberDto1와 savedMemberDto3의 username 중복 ➡︎ IllegalArgumentException 발생해야 함.
-        MemberSummaryDto memberSummaryDto1 = memberService.signUp(signUpDto1, null);
-        MemberSummaryDto memberSummaryDto2 = memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto2, null);
         Assertions.assertThrows(IllegalArgumentException.class, () -> memberService.signUp(signUpDto3, null));
     }
 
@@ -100,7 +95,7 @@ class MemberServiceImplTest {
         memberService.signUp(signUpDto1, null);
         memberService.signUp(signUpDto2, null);
 
-        SignInDto signInDto = SignInDto.builder()
+        MemberRequest.LoginRequestDto signInDto = MemberRequest.LoginRequestDto.builder()
                 .username("member1")
                 .password("12345678").build();
 

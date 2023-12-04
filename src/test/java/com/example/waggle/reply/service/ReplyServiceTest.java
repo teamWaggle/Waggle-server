@@ -12,6 +12,7 @@ import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentViewDto;
 import com.example.waggle.web.dto.comment.CommentWriteDto;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;
@@ -51,11 +52,11 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    SignUpDto signUpDto1;
-    SignUpDto signUpDto2;
-    SignUpDto signUpDto3;
-    SignUpDto signUpDto4;
-    SignUpDto signUpDto5;
+    MemberRequest.RegisterRequestDto signUpDto1;
+    MemberRequest.RegisterRequestDto signUpDto2;
+    MemberRequest.RegisterRequestDto signUpDto3;
+    MemberRequest.RegisterRequestDto signUpDto4;
+    MemberRequest.RegisterRequestDto signUpDto5;
 
 
     StoryWriteDto storyWriteDto1;
@@ -78,35 +79,35 @@ class ReplyServiceTest {
         mentions2.add("user3");
         mentions2.add("user4");
 
-        signUpDto1 = SignUpDto.builder()
+        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto2 = SignUpDto.builder()
+        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
                 .username("user1")
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto3 = SignUpDto.builder()
+        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
                 .username("user2")
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto4 = SignUpDto.builder()
+        signUpDto4 = MemberRequest.RegisterRequestDto.builder()
                 .username("user3")
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto5 = SignUpDto.builder()
+        signUpDto5 = MemberRequest.RegisterRequestDto.builder()
                 .username("user4")
                 .password("12345678")
                 .nickname("닉네임1")
