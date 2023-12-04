@@ -9,6 +9,7 @@ import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomU
 import com.example.waggle.web.dto.help.HelpDetailDto;
 import com.example.waggle.web.dto.help.HelpSummaryDto;
 import com.example.waggle.web.dto.help.HelpWriteDto;
+import com.example.waggle.web.dto.member.MemberRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class HelpServiceTest {
     HelpWriteDto hwd3;
     HelpWriteDto hwd4;
 
-    SignUpDto signUpDto1;
+    MemberRequest.RegisterRequestDto signUpDto1;
 
 
     void setting() {
@@ -79,7 +80,7 @@ class HelpServiceTest {
                 .petName("iiii")
                 .petGender(Gender.MALE)
                 .build();
-        signUpDto1 = SignUpDto.builder()
+        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
