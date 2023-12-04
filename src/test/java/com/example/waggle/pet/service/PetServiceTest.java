@@ -1,14 +1,12 @@
 package com.example.waggle.pet.service;
 
-import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.commons.exception.CustomAlertException;
-import com.example.waggle.member.domain.Gender;
-import com.example.waggle.member.dto.MemberSummaryDto;
-import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.member.service.MemberService;
-import com.example.waggle.pet.dto.PetDto;
-import com.example.waggle.pet.repository.PetRepository;
-import com.example.waggle.pet.service.PetService;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.pet.service.PetCommandService;
+import com.example.waggle.domain.pet.service.PetQueryService;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.web.dto.pet.PetDto;
+import com.example.waggle.domain.pet.repository.PetRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -28,9 +26,11 @@ class PetServiceTest {
     @Autowired PetRepository petRepository;
 
     @Autowired
-    MemberService memberService;
+    MemberCommandService memberService;
     @Autowired
-    PetService petService;
+    PetCommandService petService;
+    @Autowired
+    PetQueryService petQueryService;
 
     private MemberSummaryDto memberSummaryDto;
     private Long savedPetId;
@@ -66,7 +66,7 @@ class PetServiceTest {
     @Test
     void findByPetId() {
         // petId로 조회
-        PetDto findPet = petService.getPetById(savedPetId);
+        PetDto findPet = petQueryService.getPetById(savedPetId);
         assertThat(savedPetId).isEqualTo(findPet.getId());
     }
 
@@ -80,7 +80,7 @@ class PetServiceTest {
                 .birthday(LocalDate.of(2016, 9, 17)).build();
 
         Long updatedPetId = petService.updatePet(savedPetId, updatePetDto);
-        PetDto updatedPetDto = petService.getPetById(updatedPetId);
+        PetDto updatedPetDto = petQueryService.getPetById(updatedPetId);
         assertThat(updatedPetDto.getName()).isEqualTo(updatePetDto.getName());
 
         // repository에서 member 조회시 펫 수정 확인
@@ -93,7 +93,7 @@ class PetServiceTest {
         // pet 삭제
         petService.deletePet(savedPetId);
 
-        Assertions.assertThrows(CustomAlertException.class, () -> petService.getPetById(savedPetId));
+        Assertions.assertThrows(CustomAlertException.class, () -> petQueryService.getPetById(savedPetId));
 
 //        List<PetDto> tmp = petService.findByMemberId(savedMemberDto.getId());
 //        assertThat(tmp.size()).isEqualTo(0);

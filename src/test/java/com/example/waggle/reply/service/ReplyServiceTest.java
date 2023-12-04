@@ -1,24 +1,21 @@
 package com.example.waggle.reply.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.example.waggle.board.story.dto.StorySummaryDto;
-import com.example.waggle.board.story.dto.StoryWriteDto;
-import com.example.waggle.board.story.service.StoryService;
-import com.example.waggle.comment.dto.CommentViewDto;
-import com.example.waggle.comment.dto.CommentWriteDto;
-import com.example.waggle.comment.dto.ReplyViewDto;
-import com.example.waggle.comment.dto.ReplyWriteDto;
-import com.example.waggle.comment.service.CommentService;
-import com.example.waggle.comment.service.ReplyService;
-import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.commons.util.service.BoardType;
-import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.member.service.MemberService;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.waggle.domain.board.story.service.StoryCommandService;
+import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.comment.service.comment.CommentCommandService;
+import com.example.waggle.domain.comment.service.comment.CommentQueryService;
+import com.example.waggle.domain.comment.service.reply.ReplyCommandService;
+import com.example.waggle.domain.comment.service.reply.ReplyQueryService;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.web.dto.comment.CommentViewDto;
+import com.example.waggle.web.dto.comment.CommentWriteDto;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.reply.ReplyViewDto;
+import com.example.waggle.web.dto.reply.ReplyWriteDto;
+import com.example.waggle.web.dto.story.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryWriteDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,18 +23,30 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest
 @Slf4j
 class ReplyServiceTest {
 
     @Autowired
-    private StoryService storyService;
+    private StoryCommandService storyService;
     @Autowired
-    private MemberService memberService;
+    private StoryQueryService storyQueryService;
     @Autowired
-    private CommentService commentService;
+    private MemberCommandService memberService;
     @Autowired
-    private ReplyService replyService;
+    private CommentCommandService commentService;
+    @Autowired
+    private CommentQueryService commentQueryService;
+    @Autowired
+    private ReplyCommandService replyService;
+    @Autowired
+    private ReplyQueryService replyQueryService;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
@@ -150,12 +159,12 @@ class ReplyServiceTest {
         storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
         storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
 
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
 
         //comment set
         commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
         //reply set
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
+        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
         replyService.createReply(comments.get(0).getId(), replyWriteDto1);
 
     }
@@ -166,10 +175,10 @@ class ReplyServiceTest {
     void findReplies() throws IOException {
         //given
         setAll();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
+        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
+        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
         //when
-        List<ReplyViewDto> replies = replyService.getReplies(comments.get(0).getId());
+        List<ReplyViewDto> replies = replyQueryService.getReplies(comments.get(0).getId());
         //then
         assertThat(replies.size()).isEqualTo(1);
         assertThat(replies.get(0).getMentionMembers().size()).isEqualTo(2);
@@ -181,13 +190,13 @@ class ReplyServiceTest {
     void changeReply() throws IOException {
         //given
         setAll();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
-        List<ReplyViewDto> replies = replyService.getReplies(comments.get(0).getId());
+        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
+        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
+        List<ReplyViewDto> replies = replyQueryService.getReplies(comments.get(0).getId());
         //when
         replyService.updateReply(replies.get(0).getId(), replyWriteDto2);
         //then
-        List<ReplyViewDto> editReplies = replyService.getReplies(comments.get(0).getId());
+        List<ReplyViewDto> editReplies = replyQueryService.getReplies(comments.get(0).getId());
         assertThat(editReplies.get(0).getContent()).isEqualTo("reply2");
         assertThat(editReplies.get(0).getMentionMembers().get(0)).isEqualTo("user3");
 
@@ -198,15 +207,15 @@ class ReplyServiceTest {
     void deleteReply() throws IOException {
         //given
         setAll();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
-        List<ReplyViewDto> replies = replyService.getReplies(comments.get(0).getId());
+        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
+        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
+        List<ReplyViewDto> replies = replyQueryService.getReplies(comments.get(0).getId());
 
         //when
         replyService.deleteReply(replies.get(0).getId());
 
         //then
-        List<ReplyViewDto> afterDeleteReplies = replyService.getReplies(comments.get(0).getId());
+        List<ReplyViewDto> afterDeleteReplies = replyQueryService.getReplies(comments.get(0).getId());
         assertThat(afterDeleteReplies.size()).isEqualTo(0);
     }
 }

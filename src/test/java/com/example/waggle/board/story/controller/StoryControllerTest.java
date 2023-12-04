@@ -1,8 +1,6 @@
 package com.example.waggle.board.story.controller;
 
-import com.example.waggle.board.story.controller.StoryController;
-import com.example.waggle.board.story.service.StoryService;
-import com.example.waggle.member.service.MemberService;
+import com.example.waggle.web.controller.StoryApiController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -20,9 +18,8 @@ class StoryControllerTest {
 
     MockMvc mvc;
     @InjectMocks
-    StoryController storyController;
-    @Mock
-    MemberService memberService;
+    StoryApiController storyController;
+
     @Mock
     StoryService storyService;
 
