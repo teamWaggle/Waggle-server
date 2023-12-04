@@ -1,22 +1,23 @@
 package com.example.waggle.domain.board.story.service;
 
-import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.file.FileStore;
 import com.example.waggle.global.component.file.UploadFile;
+import com.example.waggle.global.exception.handler.MemberHandler;
+import com.example.waggle.global.exception.handler.StoryHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.story.StoryWriteDto;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class StoryCommandServiceImpl implements StoryCommandService{
                             List<MultipartFile> multipartFiles,
                             MultipartFile thumbnail) throws IOException {
         Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         if(thumbnail != null)changeThumbnail(story, thumbnail);
         story.changeContent(storyWriteDto.getContent());
@@ -79,7 +80,7 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     @Override
     public StoryWriteDto getStoryWriteDtoByBoardId(Long boardId) {
         Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
         return StoryWriteDto.toDto(story);
     }
 
@@ -87,16 +88,16 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     public boolean validateMember(Long boardId) {
         Member signInMember = utilService.getSignInMember();
         Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
         return story.getMember().equals(signInMember);
     }
 
     @Override
     public void deleteStory(Long boardId) {
         Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!validateMember(boardId)) {
-            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
+            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
         storyRepository.delete(story);
     }

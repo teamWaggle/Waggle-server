@@ -3,6 +3,8 @@ package com.example.waggle.domain.comment.service.reply;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.exception.handler.ReplyHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.waggle.global.exception.ErrorCode.REPLY_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +38,6 @@ public class ReplyQueryServiceImpl implements ReplyQueryService{
 
     private Reply getReplyById(Long replyId) {
         return replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
+                .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
 }

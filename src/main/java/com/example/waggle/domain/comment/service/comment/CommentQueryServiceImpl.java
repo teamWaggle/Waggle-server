@@ -3,6 +3,8 @@ package com.example.waggle.domain.comment.service.comment;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.exception.handler.CommentHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.comment.CommentViewDto;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class CommentQueryServiceImpl implements CommentQueryService{
     public boolean validateMember(Long commentId) {
         Member signInMember = utilService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         return comment.getMember().equals(signInMember);
     }
 }

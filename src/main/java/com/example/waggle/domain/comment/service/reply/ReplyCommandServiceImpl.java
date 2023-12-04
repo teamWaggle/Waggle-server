@@ -7,6 +7,10 @@ import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.mention.entity.Mention;
+import com.example.waggle.global.exception.handler.CommentHandler;
+import com.example.waggle.global.exception.handler.MemberHandler;
+import com.example.waggle.global.exception.handler.ReplyHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.example.waggle.global.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Member member = utilService.getSignInMember();
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomPageException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
         Reply reply = replyWriteDto.toEntity(member, comment);
         comment.addReply(reply);
@@ -59,14 +61,14 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     public void deleteReply(Long replyId) {
         Reply reply = getReplyById(replyId);
         if (!replyQueryService.validateMember(replyId)) {
-            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
+            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
         replyRepository.delete(reply);
     }
 
     private Reply getReplyById(Long replyId) {
         return replyRepository.findById(replyId)
-                .orElseThrow(() -> new CustomPageException(REPLY_NOT_FOUND));
+                .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
 
     private void addMentionsToReply(Reply reply, List<String> mentions) {

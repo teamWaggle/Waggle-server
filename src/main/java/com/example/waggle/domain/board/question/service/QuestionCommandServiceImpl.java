@@ -1,25 +1,26 @@
 package com.example.waggle.domain.board.question.service;
 
-import static com.example.waggle.global.exception.ErrorCode.BOARD_NOT_FOUND;
-import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.global.exception.ErrorCode.INVALID_BOARD_TYPE;
-
 import com.example.waggle.domain.board.question.entity.Answer;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.global.exception.handler.AnswerHandler;
+import com.example.waggle.global.exception.handler.MemberHandler;
+import com.example.waggle.global.exception.handler.QuestionHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.answer.AnswerWriteDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +31,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final UtilService utilService;
-    private final MemberRepository memberRepository;
 
     @Override
     public Long createQuestion(QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles) {
@@ -58,7 +58,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
             throws IOException {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
         Answer saveAnswer = answerWriteDto.toEntity(signInMember);
         Answer answer = answerRepository.save(saveAnswer);
 
@@ -77,7 +77,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Override
     public Long updateQuestion(Long boardId, QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles) {
         Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         question.changeQuestion(request.getContent(), request.getTitle());
 
@@ -95,7 +95,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     public Long updateAnswer(Long boardId, AnswerWriteDto answerWriteDto, List<MultipartFile> multipartFiles)
             throws IOException {
         Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         answer.changeAnswer(answerWriteDto.getContent());
 
@@ -117,16 +117,16 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         switch (boardType) {
             case "question":
                 Question question = questionRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomAlertException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
                 isSameUser = question.getMember().equals(member);
                 break;
             case "answer":
                 Answer answer = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomAlertException(BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
                 isSameUser = answer.getMember().equals(member);
                 break;
             default:
-                throw new CustomPageException(INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
         }
         return isSameUser;
     }
@@ -134,10 +134,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Override
     public void deleteQuestion(Long boardId) {
         Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         if (!validateMember(boardId, "question")) {
-            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
+            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
 
         questionRepository.delete(question);
@@ -146,9 +146,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Override
     public void deleteAnswer(Long boardId) {
         Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new CustomPageException(BOARD_NOT_FOUND));
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!validateMember(boardId, "answer")) {
-            throw new CustomPageException(CANNOT_TOUCH_NOT_YOURS);
+            throw new AnswerHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
         answerRepository.delete(answer);
     }

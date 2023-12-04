@@ -1,6 +1,5 @@
 package com.example.waggle.board.story.controller;
 
-import com.example.waggle.domain.board.story.service.StoryService;
 import com.example.waggle.web.controller.StoryApiController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
