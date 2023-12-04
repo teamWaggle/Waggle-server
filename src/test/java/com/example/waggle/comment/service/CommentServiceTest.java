@@ -1,5 +1,6 @@
 package com.example.waggle.comment.service;
 
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
@@ -11,8 +12,7 @@ import com.example.waggle.web.dto.comment.CommentViewDto;
 import com.example.waggle.web.dto.comment.CommentWriteDto;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
+import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,8 +48,8 @@ class CommentServiceTest {
     MemberRequest.RegisterRequestDto signUpDto2;
 
 
-    StoryWriteDto storyWriteDto1;
-    StoryWriteDto storyWriteDto2;
+    StoryRequest.Post storyWriteDto1;
+    StoryRequest.Post storyWriteDto2;
 
     CommentWriteDto commentWriteDto1;
     CommentWriteDto commentWriteDto2;
@@ -87,14 +87,14 @@ class CommentServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        storyWriteDto1 = StoryWriteDto.builder()
+        storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
                 .thumbnail("www.waggle")
                 .build();
 
-        storyWriteDto2 = StoryWriteDto.builder()
+        storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
@@ -131,11 +131,11 @@ class CommentServiceTest {
     void saveComment() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
+        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.getComments(story.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getContent()).isEqualTo("comment1");
@@ -147,15 +147,15 @@ class CommentServiceTest {
     void editCommentV1() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
-        commentCommandService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
+        Story story = storyService.getStories().get(0);
+        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.getComments(story.getId());
         List<CommentViewDto> editComments = new ArrayList<>();
 
         //when
         if (commentService.validateMember(comments.get(0).getId())) {
             commentCommandService.updateComment(comments.get(0).getId(), commentWriteDto2);
-             editComments = commentService.getComments(storySummaryDto.getId());
+             editComments = commentService.getComments(story.getId());
         }
 
         //then
@@ -169,15 +169,15 @@ class CommentServiceTest {
     void deleteComment() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyService.getStories().get(0);
+        Story story = storyService.getStories().get(0);
 
-        commentCommandService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.getComments(storySummaryDto.getId());
+        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        List<CommentViewDto> comments = commentService.getComments(story.getId());
 
         //when
         log.info("boardId is {}", comments.get(0).getId());
         commentCommandService.deleteComment(comments.get(0).getId());
-        List<CommentViewDto> deleteComments = commentService.getComments(storySummaryDto.getId());
+        List<CommentViewDto> deleteComments = commentService.getComments(story.getId());
         //then
         assertThat(deleteComments.size()).isEqualTo(0);
 

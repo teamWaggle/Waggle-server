@@ -1,5 +1,6 @@
 package com.example.waggle.reply.service;
 
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
@@ -15,8 +16,7 @@ import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomU
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.reply.ReplyViewDto;
 import com.example.waggle.web.dto.reply.ReplyWriteDto;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
+import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,8 +59,8 @@ class ReplyServiceTest {
     MemberRequest.RegisterRequestDto signUpDto5;
 
 
-    StoryWriteDto storyWriteDto1;
-    StoryWriteDto storyWriteDto2;
+    StoryRequest.Post storyWriteDto1;
+    StoryRequest.Post storyWriteDto2;
 
     CommentWriteDto commentWriteDto1;
     ReplyWriteDto replyWriteDto1;
@@ -117,12 +117,12 @@ class ReplyServiceTest {
 
 
 
-        storyWriteDto1 = StoryWriteDto.builder()
+        storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .thumbnail("www.waggle")
                 .build();
 
-        storyWriteDto2 = StoryWriteDto.builder()
+        storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .thumbnail("www.waggle")
                 .build();
@@ -160,12 +160,12 @@ class ReplyServiceTest {
         storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
         storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
 
-        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
+        Story story = storyQueryService.getStories().get(0);
 
         //comment set
-        commentService.createComment(storySummaryDto.getId(), commentWriteDto1, BoardType.STORY);
+        commentService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
         //reply set
-        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
+        List<CommentViewDto> comments = commentQueryService.getComments(story.getId());
         replyService.createReply(comments.get(0).getId(), replyWriteDto1);
 
     }
@@ -176,8 +176,8 @@ class ReplyServiceTest {
     void findReplies() throws IOException {
         //given
         setAll();
-        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
-        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
+        Story story = storyQueryService.getStories().get(0);
+        List<CommentViewDto> comments = commentQueryService.getComments(story.getId());
         //when
         List<ReplyViewDto> replies = replyQueryService.getReplies(comments.get(0).getId());
         //then
@@ -191,8 +191,8 @@ class ReplyServiceTest {
     void changeReply() throws IOException {
         //given
         setAll();
-        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
-        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
+        Story story = storyQueryService.getStories().get(0);
+        List<CommentViewDto> comments = commentQueryService.getComments(story.getId());
         List<ReplyViewDto> replies = replyQueryService.getReplies(comments.get(0).getId());
         //when
         replyService.updateReply(replies.get(0).getId(), replyWriteDto2);
@@ -208,8 +208,8 @@ class ReplyServiceTest {
     void deleteReply() throws IOException {
         //given
         setAll();
-        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
-        List<CommentViewDto> comments = commentQueryService.getComments(storySummaryDto.getId());
+        Story story = storyQueryService.getStories().get(0);
+        List<CommentViewDto> comments = commentQueryService.getComments(story.getId());
         List<ReplyViewDto> replies = replyQueryService.getReplies(comments.get(0).getId());
 
         //when

@@ -1,14 +1,13 @@
 package com.example.waggle.board.story.service;
 
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
+import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,10 +41,10 @@ class StoryServiceTest {
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
 
-    StoryWriteDto storyWriteDto1;
-    StoryWriteDto storyWriteDto2;
-    StoryWriteDto storyWriteDto3;
-    StoryWriteDto storyWriteDto4;
+    StoryRequest.Post storyWriteDto1;
+    StoryRequest.Post storyWriteDto2;
+    StoryRequest.Post storyWriteDto3;
+    StoryRequest.Post storyWriteDto4;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -80,27 +79,27 @@ class StoryServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        storyWriteDto1 = StoryWriteDto.builder()
+        storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
                 .thumbnail("www.waggle")
                 .build();
 
-        storyWriteDto2 = StoryWriteDto.builder()
+        storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
                 .thumbnail("www.waggle")
                 .build();
 
-        storyWriteDto3 = StoryWriteDto.builder()
+        storyWriteDto3 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
                 .thumbnail("www.waggle")
                 .build();
-        storyWriteDto4 = StoryWriteDto.builder()
+        storyWriteDto4 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
@@ -133,10 +132,10 @@ class StoryServiceTest {
         setBoardAndMember();
 
         //when
-        List<StorySummaryDto> allStory = storyService.getStories();
+        List<Story> stories = storyService.getStories();
 
         //then
-        assertThat(allStory.size()).isEqualTo(2);
+        assertThat(stories.size()).isEqualTo(2);
     }
 
     @Test
@@ -147,11 +146,11 @@ class StoryServiceTest {
 
         //when
         Pageable pageable = PageRequest.of(0, 3);
-        Page<StorySummaryDto> storiesByUsername = storyService.getPagedStoriesByUsername("member1", pageable);
+        Page<Story> member1 = storyService.getPagedStoriesByUsername("member1", pageable);
         //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
         //then
-        assertThat(storiesByUsername.getContent().size()).isEqualTo(2);
+        assertThat(member1.getContent().size()).isEqualTo(2);
         //assertThat(user1.size()).isEqualTo(1);
     }
 
@@ -162,12 +161,12 @@ class StoryServiceTest {
         setBoardAndMember();
 
         //when
-        List<StorySummaryDto> allStory = storyService.getStories();
-        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(allStory.get(0).getId());
+        List<Story> stories = storyService.getStories();
+        Story storyByBoardId = storyService.getStoryByBoardId(stories.get(0).getId());
 
         //then
-        assertThat(storyViewByBoardId.getUsername()).isEqualTo("member1");
-        assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
+        assertThat(storyByBoardId.getMember().getUsername()).isEqualTo("member1");
+        assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
     }
 
     @Test
@@ -179,7 +178,7 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
-        StoryWriteDto editDto = StoryWriteDto.builder()
+        StoryRequest.Post editDto = StoryRequest.Post.builder()
                 .id(id)
                 .content("edit edit edit")
                 .thumbnail("www.choco")
@@ -189,12 +188,12 @@ class StoryServiceTest {
         //when
         boolean isSameUser = storyCommandService.validateMember(id);
         storyCommandService.updateStory(id, editDto, new ArrayList<>(), null);
-        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(id);
+        Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then
         assertThat(isSameUser).isTrue();
-        assertThat(storyViewByBoardId.getContent()).isEqualTo("edit edit edit");
-        assertThat(storyViewByBoardId.getHashtags().size()).isEqualTo(2);
+        assertThat(storyByBoardId.getContent()).isEqualTo("edit edit edit");
+        assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
     }
 
     @Test
@@ -202,15 +201,13 @@ class StoryServiceTest {
     void deleteStory() throws IOException {
         //given
         setBoardAndMember();
-        List<StorySummaryDto> findStories = storyService.getStories();
-        StoryDetailDto storyViewByBoardId = storyService.getStoryByBoardId(findStories.get(0).getId());
+        List<Story> stories = storyService.getStories();
+        Story storyByBoardId = storyService.getStoryByBoardId(stories.get(0).getId());
         //when
-        storyCommandService.deleteStory(storyViewByBoardId.getId());
+        storyCommandService.deleteStory(storyByBoardId.getId());
         log.info("=========remove service ==============");
         //then
-        List<StorySummaryDto> allStory = storyService.getStories();
-
-        assertThat(allStory.size()).isEqualTo(1);
+        assertThat(stories.size()).isEqualTo(1);
     }
 
     @Test
@@ -222,11 +219,11 @@ class StoryServiceTest {
         Sort sort = Sort.by("createdDate").descending();
         Pageable pageable = PageRequest.of(0, 2,sort);
 
-        Page<StorySummaryDto> storiesPaging = storyService.getPagedStories(pageable);
-        List<StorySummaryDto> content = storiesPaging.getContent();
+        Page<Story> pagedStories = storyService.getPagedStories(pageable);
+        List<Story> content = pagedStories.getContent();
 
-        for (StorySummaryDto storySummaryDto : content) {
-            log.info("storySummaryDto.getId() = {}" ,storySummaryDto.getId());
+        for (Story story : content) {
+            log.info("storySummaryDto.getId() = {}" ,story.getId());
         }
     }
 }
