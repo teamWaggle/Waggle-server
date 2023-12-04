@@ -10,7 +10,9 @@ import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.JwtTokenProvider;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.pet.PetDto;
-import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,10 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -77,11 +75,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
         member.setPets(pets);
         return member;
-    }
-
-    @Override
-    public void logout(HttpSession session) {
-
     }
 
     @Override
