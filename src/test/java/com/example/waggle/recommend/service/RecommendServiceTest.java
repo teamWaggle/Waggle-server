@@ -12,6 +12,7 @@ import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.web.dto.story.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryWriteDto;
@@ -49,8 +50,8 @@ class RecommendServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    SignUpDto signUpDto1;
-    SignUpDto signUpDto2;
+    MemberRequest.RegisterRequestDto signUpDto1;
+    MemberRequest.RegisterRequestDto signUpDto2;
 
     StoryWriteDto storyWriteDto1;
     StoryWriteDto storyWriteDto2;
@@ -72,7 +73,7 @@ class RecommendServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = SignUpDto.builder()
+        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -80,7 +81,7 @@ class RecommendServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = SignUpDto.builder()
+        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
