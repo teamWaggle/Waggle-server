@@ -1,16 +1,16 @@
 package com.example.waggle.board.question.service;
 
-import com.example.waggle.board.question.dto.AnswerWriteDto;
-import com.example.waggle.board.question.dto.QuestionDetailDto;
-import com.example.waggle.board.question.dto.QuestionSummaryDto;
-import com.example.waggle.board.question.dto.QuestionWriteDto;
-import com.example.waggle.commons.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.commons.component.DatabaseCleanUp;
-import com.example.waggle.member.dto.SignUpDto;
-import com.example.waggle.member.service.MemberService;
+import com.example.waggle.domain.board.question.service.QuestionCommandService;
+import com.example.waggle.domain.board.question.service.QuestionQueryService;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.web.dto.answer.AnswerWriteDto;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.question.QuestionDetailDto;
+import com.example.waggle.web.dto.question.QuestionSummaryDto;
+import com.example.waggle.web.dto.question.QuestionWriteDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,9 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuestionServiceTest {
 
     @Autowired
-    private QuestionService questionService;
+    private QuestionCommandService questionService;
     @Autowired
-    private MemberService memberService;
+    private QuestionQueryService questionQueryService;
+    @Autowired
+    private MemberCommandService memberService;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
@@ -138,7 +140,7 @@ class QuestionServiceTest {
         setQAndA();
 
         //when
-        List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
+        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
 
         //then
         assertThat(allQuestion.size()).isEqualTo(2);
@@ -152,7 +154,7 @@ class QuestionServiceTest {
 
         //when
         Pageable pageable = PageRequest.of(0, 2);
-        Page<QuestionSummaryDto> questionsByUsername = questionService
+        Page<QuestionSummaryDto> questionsByUsername = questionQueryService
                 .getPagedQuestionsByUsername("member1", pageable);
 
         //then
@@ -164,9 +166,9 @@ class QuestionServiceTest {
     void findQuestionByBoardId() throws IOException {
         //given
         setQAndA();
-        List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
+        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
         //when
-        QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
+        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getTitle()).isEqualTo("question1");
         assertThat(questionByBoardId.getAnswers().size()).isEqualTo(2);
@@ -180,10 +182,10 @@ class QuestionServiceTest {
         //given
         setQAndA();
 
-        List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
+        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
         //when
         questionService.updateQuestion(allQuestion.get(0).getId(), questionEditDto1, new ArrayList<>());
-        QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
+        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getTitle()).isEqualTo("EditQuestion");
         assertThat(questionByBoardId.getHashtags().size()).isEqualTo(1);
@@ -194,11 +196,11 @@ class QuestionServiceTest {
     void changeAnswer() throws IOException {
         //given
         setQAndA();
-        List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
-        QuestionDetailDto findQuestion = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
+        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
+        QuestionDetailDto findQuestion = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
         //when
         questionService.updateAnswer(findQuestion.getAnswers().get(0).getId(), answerEditDto1, new ArrayList<>());
-        QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
+        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("EditAnswer");
 
@@ -209,10 +211,10 @@ class QuestionServiceTest {
     void deleteQuestion() throws IOException {
         //given
         setQAndA();
-        List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
+        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
         //when
         questionService.deleteQuestion(allQuestion.get(0).getId());
-        List<QuestionSummaryDto> findAllQuestion = questionService.getQuestions();
+        List<QuestionSummaryDto> findAllQuestion = questionQueryService.getQuestions();
         //then
         assertThat(findAllQuestion.size()).isEqualTo(1);
     }
@@ -222,11 +224,11 @@ class QuestionServiceTest {
     void deleteAnswer() throws IOException {
         //given
         setQAndA();
-        List<QuestionSummaryDto> allQuestion = questionService.getQuestions();
-        QuestionDetailDto findQuestion = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
+        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
+        QuestionDetailDto findQuestion = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
         //when
         questionService.deleteAnswer(findQuestion.getAnswers().get(0).getId());
-        QuestionDetailDto questionByBoardId = questionService.getQuestionByBoardId(allQuestion.get(0).getId());
+        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
         //then
         assertThat(questionByBoardId.getAnswers().size()).isEqualTo(1);
     }

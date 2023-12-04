@@ -1,15 +1,13 @@
 package com.example.waggle.board.story.repository;
 
-import com.example.waggle.board.story.domain.Story;
-import com.example.waggle.hashtag.domain.BoardHashtag;
-import com.example.waggle.hashtag.domain.Hashtag;
-import com.example.waggle.hashtag.repository.HashtagRepository;
-import com.example.waggle.board.story.repository.StoryRepository;
-import org.junit.jupiter.api.Disabled;
+import com.example.waggle.domain.board.story.entity.Story;
+import com.example.waggle.domain.hashtag.entity.BoardHashtag;
+import com.example.waggle.domain.hashtag.entity.Hashtag;
+import com.example.waggle.domain.hashtag.repository.HashtagRepository;
+import com.example.waggle.domain.board.story.repository.StoryRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
