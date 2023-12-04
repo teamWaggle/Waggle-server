@@ -1,13 +1,16 @@
 package com.example.waggle.domain.board.help.entity;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.web.dto.help.HelpWriteDto;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
+import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.media.entity.Media;
-import jakarta.persistence.*;
+import com.example.waggle.web.dto.help.HelpRequest;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +36,7 @@ public class Help extends Board {
     @Enumerated
     private Gender petGender;
 
-    private String lostLocate;
     private LocalDateTime lostDate;
-    private String characteristic;
-    private String rfid;
     private String contact;
     private String thumbnail;
 
@@ -44,33 +44,26 @@ public class Help extends Board {
                 String content, List<BoardHashtag> boardHashtags,
                 List<Media> medias, List<Comment> comments,
                 String title, String petName, String petKind,
-                int petAge, Gender petGender, String lostLocate,
-                LocalDateTime lostDate, String characteristic,
-                String rfid, String contact, String thumbnail) {
+                int petAge, Gender petGender,
+                LocalDateTime lostDate, String contact, String thumbnail) {
         super(id, member, content, boardHashtags, medias, comments);
         this.title = title;
         this.petName = petName;
         this.petKind = petKind;
         this.petAge = petAge;
         this.petGender = petGender;
-        this.lostLocate = lostLocate;
         this.lostDate = lostDate;
-        this.characteristic = characteristic;
-        this.rfid = rfid;
         this.contact = contact;
         this.thumbnail = thumbnail;
     }
 
-    public void changeHelp(HelpWriteDto helpUWriteDto) {
+    public void changeHelp(HelpRequest.Post helpUWriteDto) {
         this.title = helpUWriteDto.getTitle();
         this.petName = helpUWriteDto.getPetName();
         this.petKind = helpUWriteDto.getPetKind();
         this.petAge = helpUWriteDto.getPetAge();
         this.petGender = helpUWriteDto.getPetGender();
-        this.lostLocate = helpUWriteDto.getLostLocate();
         this.lostDate = helpUWriteDto.getLostDate();
-        this.characteristic = helpUWriteDto.getCharacteristic();
-        this.rfid = helpUWriteDto.getRfid();
         this.contact = helpUWriteDto.getContact();
         //this.thumbnail = helpUWriteDto.getThumbnail();
     }
