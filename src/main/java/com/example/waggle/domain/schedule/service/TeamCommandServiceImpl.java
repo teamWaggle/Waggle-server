@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.waggle.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.example.waggle.global.exception.ErrorCode.TEAM_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Transactional

@@ -15,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.waggle.global.exception.ErrorCode.CANNOT_TOUCH_NOT_YOURS;
-import static com.example.waggle.global.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor

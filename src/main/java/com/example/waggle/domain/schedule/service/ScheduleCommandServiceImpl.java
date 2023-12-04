@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.waggle.global.exception.ErrorCode.SCHEDULE_NOT_FOUND;
-
 @RequiredArgsConstructor
 @Transactional
 @Service
