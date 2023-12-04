@@ -19,7 +19,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends GenericFilterBean {
-    private final JwtTokenProvider jwtTokenProvider;
+
+    private final TokenService tokenService;
 
 
     @Override
@@ -37,9 +38,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
 
         // 2. validateToken으로 토큰 유효성 검사
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && tokenService.validateToken(token)) {
             // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            Authentication authentication = tokenService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("username", authentication.getName());
             log.info("set Authentication to security context for '{}', uri: '{}'", authentication.getName(), ((HttpServletRequest) request).getRequestURI());

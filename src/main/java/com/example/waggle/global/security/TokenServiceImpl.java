@@ -2,6 +2,7 @@ package com.example.waggle.global.security;
 
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
+import com.example.waggle.web.dto.member.MemberRequest.LoginRequestDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -19,41 +20,57 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@Component
-public class JwtTokenProvider {
+@Service
+public class TokenServiceImpl implements TokenService {
+
+
     private final Key key;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisService redisService;
     private final MemberQueryService memberQueryService;
 
-    // application.yml에서 secret 값 가져와서 key에 저장
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisService redisService,
+    public TokenServiceImpl(@Value("${jwt.secret}") String key,
+                            AuthenticationManagerBuilder authenticationManagerBuilder,
+                            RedisService redisService,
                             MemberQueryService memberQueryService) {
+        byte[] keyBytes = Decoders.BASE64.decode(key);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.redisService = redisService;
         this.memberQueryService = memberQueryService;
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Refresh Token을 사용하여 새로운 Access Token을 발급하는 메서드
-    public JwtToken refreshAccessToken(String oldRefreshToken) {
+    @Override
+    public JwtToken login(LoginRequestDto request) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                request.getUsername(), request.getPassword());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        JwtToken jwtToken = generateToken(authentication);
+        redisService.setValue(jwtToken.getRefreshToken(), request.getUsername());
+        return jwtToken;
+    }
+
+    @Override
+    public JwtToken issueTokens(String refreshToken) {
         // Refresh Token 유효성 검사
-        if (!validateToken(oldRefreshToken) || !existsRefreshToken(oldRefreshToken)) {
+        if (!validateToken(refreshToken) || !existsRefreshToken(refreshToken)) {
             throw new RuntimeException("유효하지 않거나 만료된 리프레시 토큰입니다.");
         }
 
         // 이전 리프레시 토큰 삭제
-        redisService.deleteValue(oldRefreshToken);
+        redisService.deleteValue(refreshToken);
 
         // 새로운 Authentication 객체 생성
-        Claims claims = parseClaims(oldRefreshToken);
+        Claims claims = parseClaims(refreshToken);
         String username = claims.getSubject();
         UserDetails userDetails = memberQueryService.getMemberByUsername(username);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
@@ -62,14 +79,10 @@ public class JwtTokenProvider {
         // 새 토큰 생성
         JwtToken newTokens = generateToken(authentication);
 
-        // 새 리프레시 토큰을 Redis에 저장
-        redisService.setValue(newTokens.getRefreshToken(), userDetails.getUsername());
-
         return newTokens;
     }
 
-
-    // Member 정보를 가지고 Access Token, Refresh Token을 발급하는 메서드
+    @Override
     public JwtToken generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -94,6 +107,9 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        // 새 리프레시 토큰을 Redis에 저장
+        redisService.setValue(refreshToken, authentication.getName());
+
         return JwtToken.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
@@ -101,7 +117,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    // Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
+    @Override
     public Authentication getAuthentication(String accessToken) {
         // Jwt 토큰 복호화
         Claims claims = parseClaims(accessToken);
@@ -121,7 +137,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    // 토큰 정보를 검증하는 메서드
+    @Override
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -141,8 +157,12 @@ public class JwtTokenProvider {
         return false;
     }
 
+    @Override
+    public boolean logout(String refreshToken) {
+        redisService.deleteValue(refreshToken);
+        return true;
+    }
 
-    // accessToken
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()
@@ -156,9 +176,7 @@ public class JwtTokenProvider {
     }
 
     // RefreshToken 존재유무 확인
-    public boolean existsRefreshToken(String refreshToken) {
+    private boolean existsRefreshToken(String refreshToken) {
         return redisService.getValue(refreshToken) != null;
     }
-
-
 }
