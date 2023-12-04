@@ -78,7 +78,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void signOut(HttpSession session) {
+    public void logout(HttpSession session) {
 
     }
 

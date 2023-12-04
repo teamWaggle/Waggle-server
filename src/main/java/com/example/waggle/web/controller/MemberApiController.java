@@ -12,7 +12,6 @@ import com.example.waggle.web.dto.member.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,19 +43,9 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping("/tokens")
-    public ApiResponseDto<String> login(@RequestBody MemberRequest.LoginRequestDto request,
-                                        HttpServletResponse response) {
+    public ApiResponseDto<String> login(@RequestBody MemberRequest.LoginRequestDto request) {
         JwtToken jwtToken = memberCommandService.signIn(request);
-
-        if (jwtToken != null) {
-            Cookie cookie = new Cookie("access_token", jwtToken.getAccessToken());
-            cookie.setPath("/");
-            cookie.setMaxAge(Integer.MAX_VALUE);
-            response.addCookie(cookie);
-            return ApiResponseDto.onSuccess(jwtToken.getAccessToken());
-        } else {
-            return ApiResponseDto.onFailure(401, "Unauthorized", null);
-        }
+        return ApiResponseDto.onSuccess(jwtToken.getAccessToken());
     }
 
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다.")

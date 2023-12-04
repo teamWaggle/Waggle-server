@@ -11,6 +11,6 @@ public interface MemberCommandService {
 
     Member signUp(MemberRequest.RegisterRequestDto request, String profileImg);
 
-    void signOut(HttpSession session);
+    void logout(HttpSession session);
 
 }
