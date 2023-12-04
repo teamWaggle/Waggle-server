@@ -34,6 +34,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
+    private final RedisService redisService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -43,6 +44,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
+        log.info("refreshToken = {}", jwtToken.getRefreshToken());
+        redisService.setValue(jwtToken.getRefreshToken(), request.getUsername());
         return jwtToken;
     }
 
