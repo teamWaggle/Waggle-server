@@ -63,7 +63,7 @@ public class HelpResponse {
     public static class ListDto {
         @Builder.Default
         private List<HelpResponse.SummaryDto> helpList = new ArrayList<>();
-        private long totalQuestions;
+        private long totalHelps;
         private boolean isFirst;
         private boolean isLast;
     }

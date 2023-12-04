@@ -1,22 +1,23 @@
-package com.example.waggle.web.dto.comment;
+package com.example.waggle.web.dto.reply;
 
-import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentResponse {
+public class ReplyResponse {
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public class ViewDto {
+
         private Long id;
         private String content;
         private String username;
         @Builder.Default
-        private List<ReplyViewDto> replies = new ArrayList<>();
+        private List<String> mentionMembers = new ArrayList<>();
     }
 
     @Builder
@@ -27,10 +28,9 @@ public class CommentResponse {
     @AllArgsConstructor
     public static class ListDto {
         @Builder.Default
-        private List<CommentResponse.ViewDto> commentList = new ArrayList<>();
-        private long totalComments;
+        private List<ReplyResponse.ViewDto> replyList = new ArrayList<>();
+        private long totalReplies;
         private boolean isFirst;
         private boolean isLast;
     }
-
 }

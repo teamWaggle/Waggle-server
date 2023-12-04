@@ -28,7 +28,7 @@ public class HelpConverter {
                 .helpList(collect)
                 .isFirst(pagedHelp.isFirst())
                 .isLast(pagedHelp.isLast())
-                .totalQuestions(pagedHelp.getTotalElements())
+                .totalHelps(pagedHelp.getTotalElements())
                 .build();
     }
 

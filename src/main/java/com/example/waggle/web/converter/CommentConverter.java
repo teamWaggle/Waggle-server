@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 public class CommentConverter {
 
-    public static CommentResponse.viewDto toViewDto(Comment comment) {
-        return CommentResponse.viewDto.builder()
+    public static CommentResponse.ViewDto toViewDto(Comment comment) {
+        return CommentResponse.ViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
                 .username(comment.getMember().getUsername())
@@ -21,13 +21,13 @@ public class CommentConverter {
     }
 
     public static CommentResponse.ListDto toListDto(Page<Comment> pagedComment) {
-        List<CommentResponse.viewDto> collect = pagedComment.stream()
+        List<CommentResponse.ViewDto> collect = pagedComment.stream()
                 .map(CommentConverter::toViewDto).collect(Collectors.toList());
         return CommentResponse.ListDto.builder()
-                .helpList(collect)
+                .commentList(collect)
                 .isFirst(pagedComment.isFirst())
                 .isLast(pagedComment.isLast())
-                .totalQuestions(pagedComment.getTotalElements())
+                .totalComments(pagedComment.getTotalElements())
                 .build();
     }
 }
