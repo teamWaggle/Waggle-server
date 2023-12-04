@@ -5,6 +5,9 @@ import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.pet.PetDto;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -32,20 +35,20 @@ class PetServiceTest {
     @Autowired
     PetQueryService petQueryService;
 
-    private MemberSummaryDto memberSummaryDto;
+    private MemberResponse.MemberSummaryDto memberSummaryDto;
     private Long savedPetId;
 
     @BeforeEach
     void beforeEach() {
         // member 저장
-        SignUpDto signUpDto = SignUpDto.builder()
+        MemberRequest.RegisterRequestDto signUpDto = MemberRequest.RegisterRequestDto.builder()
                 .username("user")
                 .password("12345678")
                 .nickname("닉네임")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        memberSummaryDto = memberService.signUp(signUpDto, null);
+        memberService.signUp(signUpDto, null);
 
         // pet 저장
         PetDto petDto = PetDto.builder()
@@ -93,7 +96,7 @@ class PetServiceTest {
         // pet 삭제
         petService.deletePet(savedPetId);
 
-        Assertions.assertThrows(CustomAlertException.class, () -> petQueryService.getPetById(savedPetId));
+        Assertions.assertThrows(GeneralException.class, () -> petQueryService.getPetById(savedPetId));
 
 //        List<PetDto> tmp = petService.findByMemberId(savedMemberDto.getId());
 //        assertThat(tmp.size()).isEqualTo(0);
