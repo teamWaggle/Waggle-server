@@ -3,13 +3,13 @@ package com.example.waggle.comment.service;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.web.dto.comment.CommentViewDto;
-import com.example.waggle.web.dto.comment.CommentWriteDto;
+import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -51,8 +51,8 @@ class CommentServiceTest {
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
 
-    CommentWriteDto commentWriteDto1;
-    CommentWriteDto commentWriteDto2;
+    CommentRequest.Post commentWriteDto1;
+    CommentRequest.Post commentWriteDto2;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -101,11 +101,11 @@ class CommentServiceTest {
                 .thumbnail("www.waggle")
                 .build();
 
-        commentWriteDto1 = CommentWriteDto.builder()
+        commentWriteDto1 = CommentRequest.Post.builder()
                 .content("comment1")
                 .build();
 
-        commentWriteDto2 = CommentWriteDto.builder()
+        commentWriteDto2 = CommentRequest.Post.builder()
                 .content("comment2")
                 .build();
 
@@ -135,11 +135,11 @@ class CommentServiceTest {
 
         //when
         commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.getComments(story.getId());
+        List<Comment> comments = commentService.getComments(story.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getContent()).isEqualTo("comment1");
-        assertThat(comments.get(0).getUsername()).isEqualTo("member1");
+        assertThat(comments.get(0).getMember().getUsername()).isEqualTo("member1");
     }
 
     @Test
@@ -149,18 +149,15 @@ class CommentServiceTest {
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
         commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.getComments(story.getId());
-        List<CommentViewDto> editComments = new ArrayList<>();
+        List<Comment> comments = commentService.getComments(story.getId());
 
         //when
         if (commentService.validateMember(comments.get(0).getId())) {
             commentCommandService.updateComment(comments.get(0).getId(), commentWriteDto2);
-             editComments = commentService.getComments(story.getId());
         }
 
         //then
-        log.info("comment = {}", editComments.get(0).getContent());
-        assertThat(editComments.get(0).getContent()).isEqualTo("comment2");
+        assertThat(comments.get(0).getContent()).isEqualTo("comment2");
     }
 
 
@@ -172,14 +169,13 @@ class CommentServiceTest {
         Story story = storyService.getStories().get(0);
 
         commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
-        List<CommentViewDto> comments = commentService.getComments(story.getId());
+        List<Comment> comments = commentService.getComments(story.getId());
 
         //when
         log.info("boardId is {}", comments.get(0).getId());
         commentCommandService.deleteComment(comments.get(0).getId());
-        List<CommentViewDto> deleteComments = commentService.getComments(story.getId());
         //then
-        assertThat(deleteComments.size()).isEqualTo(0);
+        assertThat(comments.size()).isEqualTo(0);
 
     }
 }

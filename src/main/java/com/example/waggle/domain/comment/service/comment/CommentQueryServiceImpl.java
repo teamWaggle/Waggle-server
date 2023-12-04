@@ -6,14 +6,12 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.comment.CommentViewDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,9 +21,9 @@ public class CommentQueryServiceImpl implements CommentQueryService{
     private final CommentRepository commentRepository;
     private final UtilService utilService;
     @Override
-    public List<CommentViewDto> getComments(Long boardId) {
+    public List<Comment> getComments(Long boardId) {
         List<Comment> comments = commentRepository.findByBoardId(boardId);
-        return comments.stream().map(CommentViewDto::toDto).collect(Collectors.toList());
+        return comments;
     }
 
     @Override
