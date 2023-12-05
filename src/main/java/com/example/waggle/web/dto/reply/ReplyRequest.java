@@ -14,7 +14,7 @@ public class ReplyRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class Post {
+    public static class Post {
 
         private String content;
         @Builder.Default

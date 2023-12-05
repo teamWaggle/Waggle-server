@@ -13,7 +13,7 @@ public class StoryResponse {
     @AllArgsConstructor
     @Builder
     @ToString
-    public class DetailDto {
+    public static class DetailDto {
 
         private Long id;
         private String content;
@@ -37,7 +37,7 @@ public class StoryResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class SummaryDto {
+    public static class SummaryDto {
 
         private Long id;
         private String username;
@@ -54,7 +54,7 @@ public class StoryResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class ListDto {
+    public static class ListDto {
         @Builder.Default
         private List<StoryResponse.SummaryDto> storyList = new ArrayList<>();
         private long totalQuestions;

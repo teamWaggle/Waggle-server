@@ -12,7 +12,7 @@ public class AnswerResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class ViewDto {
+    public static class ViewDto {
 
         private Long id;
         private String content;

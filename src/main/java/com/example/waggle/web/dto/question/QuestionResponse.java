@@ -33,7 +33,7 @@ public class QuestionResponse {
     @AllArgsConstructor
     public static class ListDto {
         @Builder.Default
-        private List<QuestionResponse.SummaryDto> questionsList = new ArrayList<>();
+        private List<SummaryDto> questionsList = new ArrayList<>();
         private long totalQuestions;
         private boolean isFirst;
         private boolean isLast;
@@ -55,16 +55,8 @@ public class QuestionResponse {
         private boolean recommendIt;
 
         @Builder.Default
+        private List<String> medias = new ArrayList<>();
+        @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-
-//        @Builder.Default
-//        private List<String> medias = new ArrayList<>();
-//        @Builder.Default
-//        private List<CommentViewDto> comments = new ArrayList<>();
-//        @Builder.Default
-//        private List<ReplyViewDto> replies = new ArrayList<>();
-//        @Builder.Default
-//        private List<AnswerDetailDto> answers = new ArrayList<>();
     }
-
 }

@@ -15,7 +15,7 @@ public class AnswerRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class Post {
+    public static class Post {
         private Long id;
 
         @NotNull(message = "답변 내용을 작성해주세요.")

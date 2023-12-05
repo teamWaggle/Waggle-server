@@ -14,7 +14,7 @@ public class HelpResponse {
     @AllArgsConstructor
     @Builder
     @ToString
-    public class SummaryDto {
+    public static class SummaryDto {
 
         private Long id;
         private String title;
@@ -35,7 +35,7 @@ public class HelpResponse {
     @AllArgsConstructor
     @Builder
     @ToString
-    public class DetailDto {
+    public static class DetailDto {
         private Long id;
         private String title;
         private String petName;
