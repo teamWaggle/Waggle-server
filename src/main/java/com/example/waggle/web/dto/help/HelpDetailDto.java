@@ -24,11 +24,8 @@ public class HelpDetailDto {
     private Gender petGender;
     private String contact;
     private String thumbnail;
-    private String lostLocate;
     private LocalDateTime lostDate;
     private String content;
-    private String rfid;
-    private String characteristic;
 
     @Builder.Default
     private List<String> medias = new ArrayList<>();
@@ -45,10 +42,7 @@ public class HelpDetailDto {
                 .contact(help.getContact())
                 .thumbnail(help.getThumbnail())
                 .lostDate(help.getLostDate())
-                .lostLocate(help.getLostLocate())
                 .content(help.getContent())
-                .rfid(help.getRfid())
-                .characteristic(help.getCharacteristic())
                 .medias(help.getMedias().stream()
                         .map(h -> h.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .username(help.getMember().getUsername())

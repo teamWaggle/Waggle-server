@@ -4,8 +4,6 @@ import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StorySummaryDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,30 +22,30 @@ public class StoryQueryServiceImpl implements StoryQueryService{
     private final StoryRepository storyRepository;
 
     @Override
-    public List<StorySummaryDto> getStories() {
+    public List<Story> getStories() {
         List<Story> stories = storyRepository.findAll();
-        return stories.stream().map(StorySummaryDto::toDto).collect(Collectors.toList());
+        return stories;
 
     }
 
     @Override
-    public Page<StorySummaryDto> getPagedStoriesByUsername(String username, Pageable pageable) {
+    public Page<Story> getPagedStoriesByUsername(String username, Pageable pageable) {
         Page<Story> stories = storyRepository.findByMemberUsername(username,pageable);
-        return stories.map(StorySummaryDto::toDto);
+        return stories;
     }
 
 
     @Override
-    public Page<StorySummaryDto> getPagedStories(Pageable pageable) {
+    public Page<Story> getPagedStories(Pageable pageable) {
         Page<Story> all = storyRepository.findAll(pageable);
-        return all.map(StorySummaryDto::toDto);
+        return all;
     }
 
 
     @Override
-    public StoryDetailDto getStoryByBoardId(Long boardId) {
+    public Story getStoryByBoardId(Long boardId) {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-        return StoryDetailDto.toDto(story);
+        return story;
     }
 }

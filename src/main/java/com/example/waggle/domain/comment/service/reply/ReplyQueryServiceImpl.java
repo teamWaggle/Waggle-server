@@ -6,14 +6,12 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,9 +22,9 @@ public class ReplyQueryServiceImpl implements ReplyQueryService{
     private final UtilService utilService;
 
     @Override
-    public List<ReplyViewDto> getReplies(Long commentId) {
+    public List<Reply> getReplies(Long commentId) {
         List<Reply> replies = replyRepository.findByCommentId(commentId);
-        return replies.stream().map(ReplyViewDto::toDto).collect(Collectors.toList());
+        return replies;
     }
 
     @Override
