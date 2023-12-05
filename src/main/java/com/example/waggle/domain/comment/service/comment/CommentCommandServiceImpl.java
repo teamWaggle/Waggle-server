@@ -9,7 +9,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.comment.CommentWriteDto;
+import com.example.waggle.web.dto.comment.CommentRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,23 +25,25 @@ public class CommentCommandServiceImpl implements CommentCommandService{
     private final CommentRepository commentRepository;
     private final UtilService utilService;
     @Override
-    public Long createComment(Long boardId, CommentWriteDto commentWriteDto, BoardType boardType) {
+    public Long createComment(Long boardId, CommentRequest.Post commentWriteDto, BoardType boardType) {
         Member signInMember = utilService.getSignInMember();
         Board board = utilService.getBoard(boardId, boardType);
-        Comment comment = commentRepository.save(commentWriteDto.toEntity(signInMember, board));
-        return comment.getId();
+        Comment build = Comment.builder()
+                .content(commentWriteDto.getContent())
+                .board(board)
+                .member(signInMember)
+                .build();
+        return build.getId();
     }
 
-    @Transactional
     @Override
-    public Long updateComment(Long commentId, CommentWriteDto commentWriteDto) {
+    public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         comment.changeContent(commentWriteDto.getContent());
         return comment.getId();
     }
 
-    @Transactional
     @Override
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)

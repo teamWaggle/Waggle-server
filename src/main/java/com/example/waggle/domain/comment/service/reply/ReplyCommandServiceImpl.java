@@ -12,7 +12,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.reply.ReplyWriteDto;
+import com.example.waggle.web.dto.reply.ReplyRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,23 +33,24 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     private final ReplyRepository replyRepository;
 
     @Override
-    public Long createReply(Long commentId, ReplyWriteDto replyWriteDto) {
+    public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto) {
         Member member = utilService.getSignInMember();
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        Reply reply = replyWriteDto.toEntity(member, comment);
-        comment.addReply(reply);
-        replyRepository.save(reply);
+        Reply build = Reply.builder().member(member).content(replyWriteDto.getContent()).build();
 
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        comment.addReply(build);
+        //replyRepository.save(reply);
 
-        return reply.getId();
+        addMentionsToReply(build, replyWriteDto.getMentions());
+
+        return build.getId();
     }
 
     @Override
-    public Long updateReply(Long replyId, ReplyWriteDto replyWriteDto) {
+    public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
         reply.getMentions().clear();

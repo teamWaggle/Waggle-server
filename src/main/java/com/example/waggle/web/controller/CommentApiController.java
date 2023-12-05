@@ -2,7 +2,7 @@ package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.web.dto.comment.CommentWriteDto;
+import com.example.waggle.web.dto.comment.CommentRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +24,7 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "스토리 댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/story")
-    public ResponseEntity<Long> createStoryComment(@RequestBody CommentWriteDto commentWriteDto) {
+    public ResponseEntity<Long> createStoryComment(@RequestBody CommentRequest.Post commentWriteDto) {
         Long commentId = commentService.createComment(commentWriteDto.getBoardId(), commentWriteDto, BoardType.STORY);
         return ResponseEntity.ok(commentId);
     }
@@ -33,7 +33,8 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "스토리 댓글 수정 성공. 수정한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/story/{commentId}")
-    public ResponseEntity<Long> updateStoryComment(@PathVariable Long commentId, @RequestBody CommentWriteDto commentWriteDto) {
+    public ResponseEntity<Long> updateStoryComment(@PathVariable Long commentId,
+                                                   @RequestBody CommentRequest.Post commentWriteDto) {
         Long updatedCommentId = commentService.updateComment(commentId, commentWriteDto);
         return ResponseEntity.ok(updatedCommentId);
     }
@@ -42,7 +43,7 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "질문 댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/question")
-    public ResponseEntity<Long> createQuestionComment(@RequestBody CommentWriteDto commentWriteDto) {
+    public ResponseEntity<Long> createQuestionComment(@RequestBody CommentRequest.Post commentWriteDto) {
         Long commentId = commentService.createComment(commentWriteDto.getBoardId(), commentWriteDto, BoardType.QUESTION);
         return ResponseEntity.ok(commentId);
     }
@@ -51,7 +52,8 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "질문 댓글 수정 성공. 수정한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/question/{commentId}")
-    public ResponseEntity<Long> updateQuestionComment(@PathVariable Long commentId, @RequestBody CommentWriteDto commentWriteDto) {
+    public ResponseEntity<Long> updateQuestionComment(@PathVariable Long commentId,
+                                                      @RequestBody CommentRequest.Post commentWriteDto) {
         Long updatedCommentId = commentService.updateComment(commentId, commentWriteDto);
         return ResponseEntity.ok(updatedCommentId);
     }

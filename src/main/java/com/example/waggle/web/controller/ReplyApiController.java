@@ -1,7 +1,7 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.comment.service.reply.ReplyCommandService;
-import com.example.waggle.web.dto.reply.ReplyWriteDto;
+import com.example.waggle.web.dto.reply.ReplyRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공. 작성한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping
-    public ResponseEntity<Long> createReply(@RequestBody ReplyWriteDto replyWriteDto) {
+    public ResponseEntity<Long> createReply(@RequestBody ReplyRequest.Post replyWriteDto) {
         Long replyId = replyService.createReply(replyWriteDto.getCommentId(), replyWriteDto);
         return ResponseEntity.ok(replyId);
     }
@@ -32,7 +32,7 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 수정 성공. 수정한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{replyId}")
-    public ResponseEntity<Long> updateReply(@PathVariable Long replyId, @RequestBody ReplyWriteDto replyWriteDto) {
+    public ResponseEntity<Long> updateReply(@PathVariable Long replyId, @RequestBody ReplyRequest.Post replyWriteDto) {
         Long updatedReplyId = replyService.updateReply(replyId, replyWriteDto);
         return ResponseEntity.ok(updatedReplyId);
     }

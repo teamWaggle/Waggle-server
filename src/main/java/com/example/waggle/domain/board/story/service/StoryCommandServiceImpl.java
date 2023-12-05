@@ -9,7 +9,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.story.StoryWriteDto;
+import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     private final FileStore fileStore;
 
     @Override
-    public Long createStory(StoryWriteDto request,
+    public Long createStory(StoryRequest.Post request,
                             List<MultipartFile> multipartFiles,
                             MultipartFile thumbnail) throws IOException {
         Member member = utilService.getSignInMember();
@@ -57,7 +57,7 @@ public class StoryCommandServiceImpl implements StoryCommandService{
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryWriteDto storyWriteDto,
+                            StoryRequest.Post storyWriteDto,
                             List<MultipartFile> multipartFiles,
                             MultipartFile thumbnail) throws IOException {
         Story story = storyRepository.findById(boardId)
@@ -77,12 +77,12 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     }
 
 
-    @Override
-    public StoryWriteDto getStoryWriteDtoByBoardId(Long boardId) {
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-        return StoryWriteDto.toDto(story);
-    }
+//    @Override
+//    public StoryWriteDto getStoryWriteDtoByBoardId(Long boardId) {
+//        Story story = storyRepository.findById(boardId)
+//                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+//        return StoryWriteDto.toDto(story);
+//    }
 
     @Override
     public boolean validateMember(Long boardId) {
