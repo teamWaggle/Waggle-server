@@ -15,7 +15,8 @@ public class AnswerRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class AnswerWriteDto {
+    public class Post {
+        private Long id;
 
         @NotNull(message = "답변 내용을 작성해주세요.")
         @Max(1500)

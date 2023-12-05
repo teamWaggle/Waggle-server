@@ -1,17 +1,10 @@
 package com.example.waggle.web.dto.question;
 
-import com.example.waggle.web.dto.answer.AnswerDetailDto;
-import com.example.waggle.web.dto.comment.CommentViewDto;
-import com.example.waggle.web.dto.reply.ReplyViewDto;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 public class QuestionResponse {
 
@@ -21,7 +14,7 @@ public class QuestionResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class QuestionSummaryDto {
+    public static class SummaryDto {
         private Long id;
         private String username;
         private String title;
@@ -38,9 +31,9 @@ public class QuestionResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class QuestionsListDto {
+    public static class ListDto {
         @Builder.Default
-        private List<QuestionSummaryDto> questionsList = new ArrayList<>();
+        private List<QuestionResponse.SummaryDto> questionsList = new ArrayList<>();
         private long totalQuestions;
         private boolean isFirst;
         private boolean isLast;
@@ -52,7 +45,7 @@ public class QuestionResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class QuestionDetailDto {
+    public static class DetailDto {
         private Long id;
         private String content;
         private String username;
@@ -62,15 +55,16 @@ public class QuestionResponse {
         private boolean recommendIt;
 
         @Builder.Default
-        private List<String> medias = new ArrayList<>();
-        @Builder.Default
-        private List<CommentViewDto> comments = new ArrayList<>();
-        @Builder.Default
-        private List<ReplyViewDto> replies = new ArrayList<>();
-        @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-        @Builder.Default
-        private List<AnswerDetailDto> answers = new ArrayList<>();
+
+//        @Builder.Default
+//        private List<String> medias = new ArrayList<>();
+//        @Builder.Default
+//        private List<CommentViewDto> comments = new ArrayList<>();
+//        @Builder.Default
+//        private List<ReplyViewDto> replies = new ArrayList<>();
+//        @Builder.Default
+//        private List<AnswerDetailDto> answers = new ArrayList<>();
     }
 
 }

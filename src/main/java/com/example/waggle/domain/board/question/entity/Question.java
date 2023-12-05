@@ -1,6 +1,7 @@
 package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.media.entity.Media;

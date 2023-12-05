@@ -44,8 +44,8 @@ public class HelpConverter {
                 .thumbnail(help.getThumbnail())
                 .lostDate(help.getLostDate())
                 .content(help.getContent())
-                .medias(help.getMedias().stream()
-                        .map(h -> h.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
+//                .medias(help.getMedias().stream()
+//                        .map(h -> h.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .username(help.getMember().getUsername())
                 .build();
     }

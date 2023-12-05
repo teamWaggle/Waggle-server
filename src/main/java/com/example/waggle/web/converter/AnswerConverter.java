@@ -1,6 +1,6 @@
 package com.example.waggle.web.converter;
 
-import com.example.waggle.domain.board.question.entity.Answer;
+import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.web.dto.answer.AnswerResponse;
 import com.example.waggle.web.dto.comment.CommentViewDto;
 import org.springframework.data.domain.Page;

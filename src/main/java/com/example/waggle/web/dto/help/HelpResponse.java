@@ -23,7 +23,6 @@ public class HelpResponse {
         private int petAge;
         private Gender petGender;
         private String thumbnail;
-        private String lostLocate;
         private LocalDateTime lostDate;
         private String username;
     }
@@ -43,14 +42,11 @@ public class HelpResponse {
         private Gender petGender;
         private String contact;
         private String thumbnail;
-        private String lostLocate;
         private LocalDateTime lostDate;
         private String content;
-        private String rfid;
-        private String characteristic;
 
-        @Builder.Default
-        private List<String> medias = new ArrayList<>();
+//        @Builder.Default
+//        private List<String> medias = new ArrayList<>();
         private String username;
     }
 
