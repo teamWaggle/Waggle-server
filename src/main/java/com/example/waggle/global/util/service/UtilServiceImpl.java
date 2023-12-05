@@ -69,7 +69,7 @@ public class UtilServiceImpl implements UtilService {
                 break;
             default:
                 // error: Invalid dtype
-                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board.getMember().equals(signInMember);
     }
@@ -91,7 +91,7 @@ public class UtilServiceImpl implements UtilService {
             Member signInMember = getMember(SecurityUtil.getCurrentUsername());
             return signInMember;
         }
-        throw new MemberHandler(ErrorStatus.REFRESH_TOKEN_NOT_FOUND);
+        throw new MemberHandler(ErrorStatus.MEMBER_REFRESH_TOKEN_NOT_FOUND);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class UtilServiceImpl implements UtilService {
                 break;
             default:
                 // error: Invalid dtype
-                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board;
     }

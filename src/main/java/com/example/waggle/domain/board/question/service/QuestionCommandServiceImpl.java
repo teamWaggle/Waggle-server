@@ -126,7 +126,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 isSameUser = answer.getMember().equals(member);
                 break;
             default:
-                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return isSameUser;
     }
