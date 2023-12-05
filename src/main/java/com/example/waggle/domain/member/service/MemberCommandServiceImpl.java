@@ -6,23 +6,16 @@ import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.global.security.JwtTokenProvider;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.pet.PetDto;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,17 +27,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public JwtToken signIn(MemberRequest.LoginRequestDto request) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
-        return jwtToken;
-    }
 
     @Override
     public Member signUp(MemberRequest.RegisterRequestDto request, String profileImgUrl) {
@@ -75,11 +58,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
         member.setPets(pets);
         return member;
-    }
-
-    @Override
-    public void signOut(HttpSession session) {
-
     }
 
 }
