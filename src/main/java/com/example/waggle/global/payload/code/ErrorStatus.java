@@ -42,12 +42,14 @@ public enum ErrorStatus implements BaseCode {
 
     // 게시판 관련 오류 (4150 ~ 4199)
     BOARD_CANNOT_RECOMMEND_OWN(BAD_REQUEST, 4150, "자신의 게시물에는 좋아요를 누를 수 없습니다."),
-    BOARD_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4151, "다른 사용자의 게시물이나 정보를 수정하거나 삭제할 수 없습니다."),
+    BOARD_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4151, "다른 사용자의 게시물을 수정하거나 삭제할 수 없습니다."),
     BOARD_INVALID_TYPE(BAD_REQUEST, 4152,"잘못된 게시글 유형입니다."),
     BOARD_NOT_FOUND(NOT_FOUND, 4153, "존재하지 않는 게시글입니다."),
     RECOMMEND_NOT_FOUND(NOT_FOUND,4154,"존재하지 않는 추천입니다"),
     COMMENT_NOT_FOUND(NOT_FOUND, 4155,"존재하지 않는 댓글입니다"),
-    REPLY_NOT_FOUND(NOT_FOUND, 4156,"존재하지 않는 대댓글입니다"),
+    COMMENT_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4156, "다른 사용자의 댓글을 수정하거나 삭제할 수 없습니다."),
+    REPLY_NOT_FOUND(NOT_FOUND, 4157,"존재하지 않는 대댓글입니다"),
+    REPLY_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4158, "다른 사용자의 대댓글을 수정하거나 삭제할 수 없습니다."),
 
 
     // 스케줄 관련 오류 (4200 ~ 4249)

@@ -12,7 +12,7 @@ public class HelpRequest {
     @AllArgsConstructor
     @Builder
     @ToString
-    public class Post {
+    public static class Post {
         private Long id;
         private String title;
         private String petName;

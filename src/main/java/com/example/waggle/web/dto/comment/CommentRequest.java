@@ -10,7 +10,7 @@ public class CommentRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class Post {
+    public static class Post {
         private String content;
         private String username;
         private Long boardId;

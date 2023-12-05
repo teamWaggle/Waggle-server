@@ -1,5 +1,7 @@
 package com.example.waggle.domain.board.help.service;
 
+import static com.example.waggle.global.util.service.BoardType.HELP;
+
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.domain.member.entity.Member;
@@ -11,16 +13,13 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.help.HelpRequest;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
-
-import static com.example.waggle.global.util.service.BoardType.HELP;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -99,7 +98,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
         Help help = helpRepository.findById(boardId)
                 .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!utilService.validateMemberUseBoard(boardId, HELP)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new HelpHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         helpRepository.delete(help);
     }
