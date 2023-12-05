@@ -10,7 +10,7 @@ import com.example.waggle.global.exception.handler.HelpHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.help.HelpWriteDto;
+import com.example.waggle.web.dto.help.HelpRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,38 +33,54 @@ public class HelpCommandServiceImpl implements HelpCommandService{
     private final FileStore fileStore;
 
     @Override
-    public Long createHelp(HelpWriteDto helpWriteDto,
+    public Long createHelp(HelpRequest.Post helpWriteDto,
                            List<MultipartFile> multipartFiles,
                            MultipartFile thumbnail) throws IOException {
         Member signInMember = utilService.getSignInMember();
-        Help help = helpWriteDto.toEntity(signInMember);
-        helpRepository.save(help);
-        if(thumbnail != null) changeThumbnail(help, thumbnail);
+        Help build = Help.builder()
+                .title(helpWriteDto.getTitle())
+                .contact(helpWriteDto.getContact())
+                .petKind(helpWriteDto.getPetKind())
+                .petGender(helpWriteDto.getPetGender())
+                .petAge(helpWriteDto.getPetAge())
+                .lostDate(helpWriteDto.getLostDate())
+                .petName(helpWriteDto.getPetName())
+                .build();
+        helpRepository.save(build);
+        if(thumbnail != null) changeThumbnail(build, thumbnail);
 //        mediaService.createMedias(help.getId(), multipartFiles, help);
-        return help.getId();
+        return build.getId();
     }
 
     @Override
-    public Long createHelpTest(HelpWriteDto helpWriteDto, String username) {
+    public Long createHelpTest(HelpRequest.Post helpWriteDto, String username) {
         Member signInMember = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         log.info("nickname = {}",signInMember.getNickname());
 
-        Help help = helpWriteDto.toEntity(signInMember);
+        Help help = Help.builder()
+                .title(helpWriteDto.getTitle())
+                .contact(helpWriteDto.getContact())
+                .petKind(helpWriteDto.getPetKind())
+                .petGender(helpWriteDto.getPetGender())
+                .petAge(helpWriteDto.getPetAge())
+                .lostDate(helpWriteDto.getLostDate())
+                .petName(helpWriteDto.getPetName())
+                .build();;
         log.info("save help");
         helpRepository.save(help);
         log.info("save help completely");
-        if (!helpWriteDto.getMedias().isEmpty()) {
-            for (String mediaUrl : helpWriteDto.getMedias()) {
-//                Media.builder().url(mediaUrl).board(help).build().linkBoard(help);
-            }
-        }
+//        if (!helpWriteDto.getMedias().isEmpty()) {
+//            for (String mediaUrl : helpWriteDto.getMedias()) {
+////                Media.builder().url(mediaUrl).board(help).build().linkBoard(help);
+//            }
+//        }
         return help.getId();
     }
 
     @Override
     public Long updateHelp(Long boardId,
-                           HelpWriteDto helpWriteDto,
+                           HelpRequest.Post helpWriteDto,
                            List<MultipartFile> multipartFiles,
                            MultipartFile thumbnail)throws IOException {
         Help help = helpRepository.findById(boardId)

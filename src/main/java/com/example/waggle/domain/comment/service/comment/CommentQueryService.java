@@ -1,11 +1,11 @@
 package com.example.waggle.domain.comment.service.comment;
 
-import com.example.waggle.web.dto.comment.CommentViewDto;
+import com.example.waggle.domain.comment.entity.Comment;
 
 import java.util.List;
 
 public interface CommentQueryService {
-    List<CommentViewDto> getComments(Long boardId);
+    List<Comment> getComments(Long boardId);
 
     boolean validateMember(Long commentId);
 }

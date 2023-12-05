@@ -1,10 +1,10 @@
 package com.example.waggle.domain.comment.service.reply;
 
-import com.example.waggle.web.dto.reply.ReplyViewDto;
+import com.example.waggle.domain.comment.entity.Reply;
 
 import java.util.List;
 
 public interface ReplyQueryService {
-    List<ReplyViewDto> getReplies(Long commentId);
+    List<Reply> getReplies(Long commentId);
     boolean validateMember(Long replyId);
 }

@@ -14,6 +14,7 @@ import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryDetailDto;
+import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryWriteDto;
 import org.junit.jupiter.api.AfterEach;
@@ -53,8 +54,8 @@ class RecommendServiceTest {
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
 
-    StoryWriteDto storyWriteDto1;
-    StoryWriteDto storyWriteDto2;
+    StoryRequest.Post storyWriteDto1;
+    StoryRequest.Post storyWriteDto2;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -89,14 +90,14 @@ class RecommendServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        storyWriteDto1 = StoryWriteDto.builder()
+        storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
                 .thumbnail("www.waggle")
                 .build();
 
-        storyWriteDto2 = StoryWriteDto.builder()
+        storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
@@ -134,11 +135,11 @@ class RecommendServiceTest {
     void recommendBoard() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
+        Story story = storyQueryService.getStories().get(0);
 
         //when
-        recommendService.handleRecommendation(storySummaryDto.getId(), BoardType.STORY);
-        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(storySummaryDto.getId());
+        recommendService.handleRecommendation(story.getId(), BoardType.STORY);
+        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(story.getId());
         recommendQueryService.checkRecommend(storyViewByBoardId);
 
         //then
@@ -149,15 +150,16 @@ class RecommendServiceTest {
     void cancelRecommendBoard() throws IOException {
         //given
         setBoardAndMember();
-        StorySummaryDto storySummaryDto = storyQueryService.getStories().get(0);
-        recommendService.handleRecommendation(storySummaryDto.getId(),BoardType.STORY);
-        recommendService.handleRecommendation(storySummaryDto.getId(),BoardType.STORY);
+        Story story = storyQueryService.getStories().get(0);
+        recommendService.handleRecommendation(story.getId(),BoardType.STORY);
+        recommendService.handleRecommendation(story.getId(),BoardType.STORY);
 
         //when
-        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(storySummaryDto.getId());
-        recommendQueryService.checkRecommend(storyViewByBoardId);
+        Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
+        StoryDetailDto dto = StoryDetailDto.toDto(story);
+        recommendQueryService.checkRecommend(dto);
 
         //then
-        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(0);
+        assertThat(dto).isEqualTo(0);
     }
 }
