@@ -25,6 +25,8 @@ public class HelpResponse {
         private String thumbnail;
         private LocalDateTime lostDate;
         private String username;
+        private boolean recommendIt;
+        private int recommendCount;
     }
 
     @Getter
@@ -48,6 +50,8 @@ public class HelpResponse {
 //        @Builder.Default
 //        private List<String> medias = new ArrayList<>();
         private String username;
+        private boolean recommendIt;
+        private int recommendCount;
     }
 
     @Builder

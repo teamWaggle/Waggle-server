@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.question.QuestionRequest;
@@ -31,6 +32,7 @@ public class QuestionApiController {
 
     private final QuestionCommandService questionCommandService;
     private final QuestionQueryService questionQueryService;
+    private final RecommendQueryService recommendQueryService;
     private final AwsS3Service awsS3Service;
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
@@ -64,7 +66,13 @@ public class QuestionApiController {
             @RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
-        return ApiResponseDto.onSuccess(QuestionConverter.toListDto(questions));
+        QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
+        listDto.getQuestionsList().stream()
+                .forEach(q->{
+                    q.setRecommendIt(recommendQueryService.checkRecommend(q.getId(),q.getUsername()));
+                    q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
+                });
+        return ApiResponseDto.onSuccess(listDto);
     }
 
     @Operation(summary = "사용자의 질문 목록 조회", description = "특정 사용자가 작성한 질문 목록을 조회합니다.")
@@ -76,7 +84,13 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionsByUsername(username,
                 pageable);
-        return ApiResponseDto.onSuccess(QuestionConverter.toListDto(questions));
+        QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
+        listDto.getQuestionsList().stream()
+                .forEach(q->{
+                    q.setRecommendIt(recommendQueryService.checkRecommend(q.getId(),q.getUsername()));
+                    q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
+                });
+        return ApiResponseDto.onSuccess(listDto);
     }
 
     @Operation(summary = "특정 질문 조회", description = "특정 질문의 상세 정보를 조회합니다.")
@@ -86,6 +100,8 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionResponse.DetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         QuestionResponse.DetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
+        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }
 

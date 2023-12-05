@@ -1,11 +1,13 @@
 package com.example.waggle.board.question.service;
 
+import com.example.waggle.domain.board.answer.service.AnswerCommandService;
+import com.example.waggle.domain.board.answer.service.AnswerQueryService;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.answer.AnswerWriteDto;
+import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
@@ -34,6 +36,10 @@ class QuestionServiceTest {
     @Autowired
     private MemberCommandService memberService;
     @Autowired
+    private AnswerCommandService answerService;
+    @Autowired
+    private AnswerQueryService answerQueryService;
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
     MemberRequest.RegisterRequestDto signUpDto1;
@@ -42,9 +48,9 @@ class QuestionServiceTest {
     QuestionRequest.QuestionWriteDto questionWriteDto1;
     QuestionRequest.QuestionWriteDto questionWriteDto2;
     QuestionRequest.QuestionWriteDto questionEditDto1;
-    AnswerWriteDto answerWriteDto1;
-    AnswerWriteDto answerWriteDto2;
-    AnswerWriteDto answerEditDto1;
+    AnswerRequest.Post answerWriteDto1;
+    AnswerRequest.Post answerWriteDto2;
+    AnswerRequest.Post answerEditDto1;
 
 
     List<String> tags1 = new ArrayList<>();
@@ -102,15 +108,15 @@ class QuestionServiceTest {
                 .hashtags(tags2)
                 .build();
 
-        answerWriteDto1 = AnswerWriteDto.builder()
+        answerWriteDto1 = AnswerRequest.Post.builder()
                 .content("i don't know that")
                 .build();
 
-        answerWriteDto2 = AnswerWriteDto.builder()
+        answerWriteDto2 = AnswerRequest.Post.builder()
                 .content("i know that!")
                 .build();
 
-        answerEditDto1 = AnswerWriteDto.builder()
+        answerEditDto1 = AnswerRequest.Post.builder()
                 .content("EditAnswer")
                 .build();
 
@@ -128,8 +134,8 @@ class QuestionServiceTest {
         Long question1 = questionService.createQuestion(questionWriteDto1, new ArrayList<>());
         Long question2 = questionService.createQuestion(questionWriteDto2, new ArrayList<>());
 
-        questionService.createAnswer(question1, answerWriteDto1, new ArrayList<>());
-        questionService.createAnswer(question1, answerWriteDto2, new ArrayList<>());
+        answerService.createAnswer(question1, answerWriteDto1);
+        answerService.createAnswer(question1, answerWriteDto2);
     }
 
 

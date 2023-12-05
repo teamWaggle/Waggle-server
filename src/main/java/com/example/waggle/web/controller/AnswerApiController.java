@@ -3,6 +3,7 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.answer.service.AnswerQueryService;
+import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest;
@@ -29,6 +30,7 @@ public class AnswerApiController {
 
     private final AnswerCommandService answerCommandService;
     private final AnswerQueryService answerQueryService;
+    private final RecommendQueryService recommendQueryService;
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "대답 작성", description = "사용자가 대답 작성합니다. 작성한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
@@ -41,7 +43,7 @@ public class AnswerApiController {
         return ApiResponseDto.onSuccess(answer);
     }
 
-    @Operation(summary = "스토리 수정", description = "사용자가 대답을 수정합니다. 수정한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
+    @Operation(summary = "대답 수정", description = "사용자가 대답을 수정합니다. 수정한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대답 수정 성공. 수정한 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 대답 수정에 실패했습니다.")
     @PutMapping("/{boardId}")
@@ -60,6 +62,12 @@ public class AnswerApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(questionId, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswers);
+        //recommend relation field
+        listDto.getAnswerList().stream()
+                .forEach(a->{
+                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(),a.getUsername()));
+                    a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
+                });
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -72,6 +80,12 @@ public class AnswerApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByUsername(username, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswerByUsername);
+
+        listDto.getAnswerList().stream()
+                .forEach(a->{
+                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(),a.getUsername()));
+                    a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
+                });
         return ApiResponseDto.onSuccess(listDto);
     }
 }

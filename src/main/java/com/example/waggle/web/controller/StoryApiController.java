@@ -3,6 +3,7 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.StoryConverter;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -30,6 +31,7 @@ import java.util.List;
 public class StoryApiController {
     private final StoryCommandService storyCommandService;
     private final StoryQueryService storyQueryService;
+    private final RecommendQueryService recommendQueryService;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "스토리 작성", description = "사용자가 스토리를 작성합니다. 작성한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
@@ -64,6 +66,11 @@ public class StoryApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Story> pagedStories = storyQueryService.getPagedStories(pageable);
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
+        listDto.getStoryList().stream()
+                .forEach(s->{
+                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(),s.getUsername()));
+                    s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
+                });
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -76,6 +83,11 @@ public class StoryApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Story> pagedStories = storyQueryService.getPagedStoriesByUsername(username, pageable);
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
+        listDto.getStoryList().stream()
+                .forEach(s->{
+                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(),s.getUsername()));
+                    s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
+                });
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -86,6 +98,8 @@ public class StoryApiController {
     public ApiResponseDto<StoryResponse.DetailDto> getStoryByBoardId(@PathVariable Long boardId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
         StoryResponse.DetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
+        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }
 }

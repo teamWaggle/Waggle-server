@@ -33,6 +33,7 @@ public class StoryResponse {
     }
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

@@ -3,6 +3,7 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.service.HelpCommandService;
 import com.example.waggle.domain.board.help.service.HelpQueryService;
+import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.HelpConverter;
 import com.example.waggle.web.dto.help.HelpRequest;
@@ -32,6 +33,7 @@ public class HelpApiController {
 
     private final HelpCommandService helpCommandService;
     private final HelpQueryService helpQueryService;
+    private final RecommendQueryService recommendQueryService;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "헬퓨 작성", description = "사용자가 헬퓨를 작성합니다. 작성한 헬퓨의 정보를 저장하고 헬퓨의 고유 ID를 반환합니다.")
@@ -65,6 +67,11 @@ public class HelpApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
         HelpResponse.ListDto listDto = HelpConverter.toListDto(pagedHelpList);
+        listDto.getHelpList().stream()
+                .forEach(h->{
+                    h.setRecommendIt(recommendQueryService.checkRecommend(h.getId(),h.getUsername()));
+                    h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
+                });
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -77,6 +84,11 @@ public class HelpApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpListByUsername(username, pageable);
         HelpResponse.ListDto listDto = HelpConverter.toListDto(pagedHelpList);
+        listDto.getHelpList().stream()
+                .forEach(h->{
+                    h.setRecommendIt(recommendQueryService.checkRecommend(h.getId(),h.getUsername()));
+                    h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
+                });
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -87,6 +99,8 @@ public class HelpApiController {
     public ApiResponseDto<HelpResponse.DetailDto> getHelpByBoardId(@PathVariable Long boardId) {
         Help help = helpQueryService.getHelpByBoardId(boardId);
         HelpResponse.DetailDto detailDto = HelpConverter.toDetailDto(help);
+        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }
 }

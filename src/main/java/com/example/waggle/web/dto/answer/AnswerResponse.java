@@ -1,7 +1,5 @@
 package com.example.waggle.web.dto.answer;
 
-import com.example.waggle.web.dto.comment.CommentViewDto;
-import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,6 +8,7 @@ import java.util.List;
 
 public class AnswerResponse {
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -23,13 +22,15 @@ public class AnswerResponse {
         private boolean recommendIt;
 
         @Builder.Default
-        private List<String> medias = new ArrayList<>();
-        @Builder.Default
-        private List<CommentViewDto> comments = new ArrayList<>();
-        @Builder.Default
-        private List<ReplyViewDto> replies = new ArrayList<>();
-        @Builder.Default
         private List<String> hashtags = new ArrayList<>();
+
+//        @Builder.Default
+//        private List<String> medias = new ArrayList<>();
+//        @Builder.Default
+//        private List<CommentViewDto> comments = new ArrayList<>();
+//        @Builder.Default
+//        private List<ReplyViewDto> replies = new ArrayList<>();
+
     }
 
     @Builder

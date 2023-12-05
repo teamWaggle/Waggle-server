@@ -13,10 +13,7 @@ import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.web.dto.story.StoryRequest;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,14 +90,12 @@ class RecommendServiceTest {
         storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
-                .medias(medias1)
                 .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
-                .medias(medias2)
                 .thumbnail("www.waggle")
                 .build();
 
@@ -139,11 +134,11 @@ class RecommendServiceTest {
 
         //when
         recommendService.handleRecommendation(story.getId(), BoardType.STORY);
-        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(story.getId());
-        recommendQueryService.checkRecommend(storyViewByBoardId);
+        Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
+        int count = recommendQueryService.countRecommend(storyByBoardId.getId());
 
         //then
-        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(1);
+        assertThat(count).isEqualTo(1);
     }
     @Test
     @WithMockCustomUser
@@ -156,10 +151,9 @@ class RecommendServiceTest {
 
         //when
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
-        StoryDetailDto dto = StoryDetailDto.toDto(story);
-        recommendQueryService.checkRecommend(dto);
+        boolean recommend = recommendQueryService.checkRecommend(storyByBoardId.getId(), storyByBoardId.getMember().getUsername());
 
         //then
-        assertThat(dto).isEqualTo(0);
+        assertThat(recommend).isFalse();
     }
 }
