@@ -32,12 +32,12 @@ public class ScheduleMember extends BaseEntity {
     public void addScheduleMember(Schedule schedule, Member member) {
         this.schedule = schedule;
         this.member = member;
-        schedule.getScheduleMembers().add(this);
+//        schedule.getScheduleMembers().add(this);
     }
 
     public void removeTeam() {
         if (schedule != null) {
-            schedule.getScheduleMembers().remove(this);
+//            schedule.getScheduleMembers().remove(this);
             schedule = null;
             member = null;
         }

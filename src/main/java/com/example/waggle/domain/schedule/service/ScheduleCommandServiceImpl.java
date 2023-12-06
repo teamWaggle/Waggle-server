@@ -57,8 +57,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
     public Long updateSchedule(ScheduleDto scheduleDto) {
         Schedule schedule = scheduleRepository.findById(scheduleDto.getId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
-        schedule.update(scheduleDto, scheduleMembers);
+//        List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
+//        schedule.update(scheduleDto, scheduleMembers);
         Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         return schedule.getId();

@@ -3,12 +3,15 @@ package com.example.waggle.web.dto.schedule;
 import com.example.waggle.domain.member.entity.ScheduleMember;
 import com.example.waggle.domain.schedule.domain.Schedule;
 import com.example.waggle.domain.schedule.domain.Team;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -29,10 +32,10 @@ public class ScheduleDto {
         return ScheduleDto.builder()
                 .id(schedule.getId())
                 .title(schedule.getTitle())
-                .description(schedule.getDescription())
-                .scheduleTime(schedule.getScheduleTime())
-                .scheduleMembers(schedule.getScheduleMembers().stream()
-                        .map(sm -> sm.getMember().getUsername()).collect(Collectors.toList()))
+//                .description(schedule.getDescription())
+//                .scheduleTime(schedule.getScheduleTime())
+//                .scheduleMembers(schedule.getScheduleMembers().stream()
+//                        .map(sm -> sm.getMember().getUsername()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -40,9 +43,10 @@ public class ScheduleDto {
         return Schedule.builder()
                 .team(team)
                 .title(title)
-                .description(description)
-                .scheduleTime(scheduleTime)
-                .scheduleMembers(scheduleMembers).build();
+//                .description(description)
+//                .scheduleTime(scheduleTime)
+//                .scheduleMembers(scheduleMembers)
+                .build();
     }
 
 }
