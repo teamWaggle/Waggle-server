@@ -34,7 +34,7 @@ public class HelpSummaryDto {
                 .petAge(help.getPetAge())
                 .petGender(help.getPetGender())
                 .thumbnail(help.getThumbnail())
-                .lostLocate(help.getLostLocate())
+//                .lostLocate(help.getLostLocate())
                 .lostDate(help.getLostDate())
                 .username(help.getMember().getUsername())
                 .build();

@@ -8,17 +8,15 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.mention.entity.Mention;
 import com.example.waggle.global.exception.handler.CommentHandler;
-import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.reply.ReplyRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -62,7 +60,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     public void deleteReply(Long replyId) {
         Reply reply = getReplyById(replyId);
         if (!replyQueryService.validateMember(replyId)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         replyRepository.delete(reply);
     }
