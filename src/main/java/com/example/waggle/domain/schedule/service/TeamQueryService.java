@@ -1,13 +1,13 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.web.dto.schedule.TeamResponse;
+import com.example.waggle.domain.schedule.domain.Team;
 import java.util.List;
 
 public interface TeamQueryService {
 
-    List<TeamResponse.ListDto> getTeamsByUsername(String username);
+    List<Team> getTeamsByUsername(String username);
 
-    TeamResponse.DetailDto getTeamById(Long teamId);
+    Team getTeamById(Long teamId);
 
     boolean isTeamLeader(Long teamId, String username);
 
