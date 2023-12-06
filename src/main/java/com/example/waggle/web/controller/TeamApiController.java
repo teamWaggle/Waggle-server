@@ -1,8 +1,8 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.web.dto.schedule.TeamDto;
 import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.schedule.TeamResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,8 +36,8 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 조회 성공.")
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @GetMapping("/{teamId}")
-    public ApiResponseDto<TeamDto> getTeam(@PathVariable Long teamId) {
-        return ApiResponseDto.onSuccess(TeamDto.builder().build());
+    public ApiResponseDto<TeamResponse.DetailDto> getTeam(@PathVariable Long teamId) {
+        return ApiResponseDto.onSuccess(TeamResponse.DetailDto.builder().build());
     }
 
     @Operation(summary = "팀 정보 업데이트", description = "팀의 정보를 업데이트합니다.")
@@ -60,23 +60,23 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀원 추가 성공.")
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @PostMapping("/{teamId}/members")
-    public ApiResponseDto<Boolean> addTeamMember(@PathVariable Long teamId, @RequestBody TeamRequest.MemberDto request) {
+    public ApiResponseDto<Boolean> addTeamMember(@PathVariable Long teamId, @RequestBody String username) {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "팀원 삭제", description = "지정된 팀에서 특정 팀원을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 팀원을 찾을 수 없습니다.")
-    @DeleteMapping("/{teamId}/members/{memberId}")
-    public ApiResponseDto<Boolean> deleteTeamMember(@PathVariable Long teamId, @PathVariable Long memberId) {
+    @DeleteMapping("/{teamId}/members/{username}")
+    public ApiResponseDto<Boolean> deleteTeamMember(@PathVariable Long teamId, @PathVariable String username) {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "팀 리더 변경", description = "지정된 팀의 리더를 변경합니다.")
     @ApiResponse(responseCode = "200", description = "팀 리더 변경 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 멤버를 찾을 수 없습니다.")
-    @PutMapping("/{teamId}/leader/{memberId}")
-    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
+    @PutMapping("/{teamId}/leader")
+    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @RequestBody String username) {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

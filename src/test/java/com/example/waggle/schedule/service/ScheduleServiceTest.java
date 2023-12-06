@@ -69,7 +69,7 @@ class ScheduleServiceTest {
         TeamDto team = TeamDto.builder()
                 .name("team").build();
         savedTeamId1 = teamService.createTeam(team, memberSummaryDto1.getUsername());
-        savedTeamId2 = teamService.addMember(savedTeamId1, memberSummaryDto2.getUsername());
+        savedTeamId2 = teamService.addTeamMember(savedTeamId1, memberSummaryDto2.getUsername());
 
 
         // schedule 생성

@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class TeamResponse {
     @Builder
     @ToString
     public static class DetailDto {
-        private Long id;
+        private Long teamId;
         private String name;
         private String description;
         private String coverImageUrl;
@@ -25,4 +26,13 @@ public class TeamResponse {
         // schedules, teamMembers, teamLeader
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class ListDto {
+        List<DetailDto> teams;
+    }
 }

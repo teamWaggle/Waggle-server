@@ -71,7 +71,7 @@ class TeamServiceTest {
         teamCommandService.createTeam(teamB, savedMemberSummaryDto1.getUsername());
 
         Long teamWithMember = teamCommandService.createTeam(teamC, savedMemberSummaryDto2.getUsername());
-        teamCommandService.addMember(teamWithMember, savedMemberSummaryDto1.getUsername());
+        teamCommandService.addTeamMember(teamWithMember, savedMemberSummaryDto1.getUsername());
 
         List<TeamDto> allTeamByUsername = teamService.getTeamsByUsername(savedMemberSummaryDto1.getUsername());
 
@@ -112,7 +112,7 @@ class TeamServiceTest {
         savedTeamId1 = teamCommandService.createTeam(team, savedMemberSummaryDto1.getUsername());
 
         // member2 가입
-        savedTeamId2 = teamCommandService.addMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
+        savedTeamId2 = teamCommandService.addTeamMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
 
         // team 테이블의 전체 개수 1개
         assertThat(teamService.getTeams().size()).isEqualTo(1);
@@ -132,7 +132,7 @@ class TeamServiceTest {
         savedTeamId1 = teamCommandService.createTeam(team, savedMemberSummaryDto1.getUsername());
 
         // member2 가입
-        savedTeamId2 = teamCommandService.addMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
+        savedTeamId2 = teamCommandService.addTeamMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
 
         // team 삭제
         TeamDto findTeam = teamService.getTeamById(savedTeamId2);
@@ -150,7 +150,7 @@ class TeamServiceTest {
         savedTeamId1 = teamCommandService.createTeam(team, savedMemberSummaryDto1.getUsername());
 
         // member2 가입
-        savedTeamId2 = teamCommandService.addMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
+        savedTeamId2 = teamCommandService.addTeamMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
 
         //TODO teamMember service 로 받아오기
     }
@@ -165,10 +165,10 @@ class TeamServiceTest {
         savedTeamId1 = teamCommandService.createTeam(team, savedMemberSummaryDto1.getUsername());
 
         // member2 가입
-        savedTeamId2 = teamCommandService.addMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
+        savedTeamId2 = teamCommandService.addTeamMember(savedTeamId1, savedMemberSummaryDto2.getUsername());
 
         // member1 삭제 -> team에 속한 전체 member 수는 1이 되어야 함
-        teamCommandService.removeMember(savedTeamId2, savedMemberSummaryDto1.getUsername());
+        teamCommandService.deleteTeamMember(savedTeamId2, savedMemberSummaryDto1.getUsername());
 
         TeamDto teamDto = teamService.getTeamById(savedTeamId2);
 
