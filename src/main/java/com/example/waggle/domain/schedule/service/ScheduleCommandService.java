@@ -1,12 +1,12 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.web.dto.schedule.ScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleRequest;
 
 public interface ScheduleCommandService {
 
-    Long createSchedule(ScheduleDto scheduleDto, Long teamId);
+    Long createSchedule(Long teamId, ScheduleRequest.ScheduleRequestDto request);
 
-    Long updateSchedule(ScheduleDto scheduleDto);
+    Long updateSchedule(Long scheduleId, ScheduleRequest.ScheduleRequestDto request);
 
     void deleteSchedule(Long scheduleId);
 
