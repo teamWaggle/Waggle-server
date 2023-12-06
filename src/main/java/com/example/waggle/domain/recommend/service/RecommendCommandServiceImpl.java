@@ -31,7 +31,7 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
         }
         else{
             if (board.getMember().equals(member)) {
-                throw new RecommendHandler(ErrorStatus.CANNOT_RECOMMEND_MYSELF);
+                throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
             }
             createRecommendation(board, member);
         }

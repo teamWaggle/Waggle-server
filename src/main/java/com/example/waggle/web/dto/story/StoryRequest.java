@@ -14,7 +14,7 @@ public class StoryRequest {
     @AllArgsConstructor
     @Builder
     @ToString(of = {"id", "content", "username"})
-    public class Post {
+    public static class Post {
         @NotBlank(groups = UpdateCheck.class)
         private Long id;
         @Max(500)

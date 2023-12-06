@@ -32,7 +32,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Member signUp(MemberRequest.RegisterRequestDto request, String profileImgUrl) {
         if (memberRepository.existsByUsername(request.getUsername())) {
-            throw new MemberHandler(ErrorStatus.ALREADY_USING_USERNAME);
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
         }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 

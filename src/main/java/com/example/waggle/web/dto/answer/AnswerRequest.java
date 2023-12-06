@@ -15,7 +15,7 @@ public class AnswerRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class AnswerWriteDto {
+    public static class AnswerWriteDto {
 
         @NotNull(message = "답변 내용을 작성해주세요.")
         @Max(1500)

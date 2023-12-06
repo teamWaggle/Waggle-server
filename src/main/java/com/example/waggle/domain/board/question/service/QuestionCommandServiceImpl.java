@@ -126,7 +126,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 isSameUser = answer.getMember().equals(member);
                 break;
             default:
-                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
+                throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return isSameUser;
     }
@@ -137,7 +137,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         if (!validateMember(boardId, "question")) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new MemberHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
 
         questionRepository.delete(question);
@@ -148,7 +148,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!validateMember(boardId, "answer")) {
-            throw new AnswerHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         answerRepository.delete(answer);
     }
