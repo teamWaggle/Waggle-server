@@ -1,13 +1,26 @@
 package com.example.waggle.domain.schedule.domain;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.entity.Member;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
+import com.example.waggle.global.component.auditing.BaseEntity;
+import com.example.waggle.web.dto.schedule.TeamRequest;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
@@ -39,8 +52,12 @@ public class Team extends BaseEntity {
     @JoinColumn(name = "team_leader_id")
     private Member teamLeader;
 
-    public void updateTeamName(String name) {
-        this.name = name;
+    public void update(TeamRequest.TeamRequestDto request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+//        this.coverImageUrl = request.get
+        this.colorScheme = request.getColorScheme();
+        this.maxTeamSize = request.getMaxTeamSize();
     }
 
     public void updateTeamLeader(Member teamLeader) {

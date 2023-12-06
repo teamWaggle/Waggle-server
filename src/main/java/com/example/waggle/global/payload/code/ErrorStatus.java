@@ -55,7 +55,7 @@ public enum ErrorStatus implements BaseCode {
     // 스케줄 관련 오류 (4200 ~ 4249)
     TEAM_NOT_FOUND(NOT_FOUND, 4200,"팀 정보가 존재하지 않습니다"),
     SCHEDULE_NOT_FOUND(NOT_FOUND,4201,"스케줄 정보가 존재하지 않습니다"),
-
+    TEAM_MEMBER_ALREADY_EXISTS(CONFLICT, 4202, "이미 팀에 속해 있는 멤버입니다"),
 
     // 펫 관련 오류 (4250 ~ 4299)
     PET_NOT_FOUND(NOT_FOUND, 4250,"펫 정보가 존재하지 않습니다");
