@@ -5,7 +5,6 @@ import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.CommentHandler;
-import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.global.util.service.UtilService;
@@ -49,7 +48,7 @@ public class CommentCommandServiceImpl implements CommentCommandService{
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         if (!validateMember(commentId)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
         }
         commentRepository.delete(comment);
     }

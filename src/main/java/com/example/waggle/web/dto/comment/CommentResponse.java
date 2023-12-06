@@ -11,7 +11,7 @@ public class CommentResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class ViewDto {
+    public static class ViewDto {
         private Long id;
         private String content;
         private String username;
