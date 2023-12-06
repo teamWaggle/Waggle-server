@@ -22,16 +22,21 @@ public class Team extends BaseEntity {
     private Long id;
 
     private String name;
+    private String description;
+    private String coverImageUrl;
+    private String colorScheme;
+    private Integer maxTeamSize;
+
 
     @Builder.Default
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_leader_id")
     private Member teamLeader;
 

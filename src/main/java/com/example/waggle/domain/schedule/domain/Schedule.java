@@ -1,25 +1,23 @@
 package com.example.waggle.domain.schedule.domain;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
-import com.example.waggle.domain.member.entity.ScheduleMember;
-import com.example.waggle.web.dto.schedule.ScheduleDto;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
+import com.example.waggle.domain.board.Board;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Schedule extends BaseEntity {
-    @Id @GeneratedValue
-    @Column(name = "schedule_id")
-    private Long id;
+public class Schedule extends Board {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
@@ -27,20 +25,8 @@ public class Schedule extends BaseEntity {
 
     private String title;
 
-    private String description;
+    private LocalDateTime startTime;
 
-    private LocalDateTime scheduleTime;
-
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<ScheduleMember> scheduleMembers = new ArrayList<>();
-
-
-    public void update(ScheduleDto scheduleDto, List<ScheduleMember> scheduleMembers) {
-        this.title = scheduleDto.getTitle();
-        this.description = scheduleDto.getDescription();
-        this.scheduleTime = scheduleDto.getScheduleTime();
-        this.scheduleMembers = scheduleMembers;
-    }
+    private LocalDateTime endTime;
 
 }
