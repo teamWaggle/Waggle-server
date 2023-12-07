@@ -3,6 +3,7 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.answer.service.AnswerQueryService;
+import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.AnswerConverter;
@@ -18,8 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,14 +34,17 @@ public class AnswerApiController {
     private final AnswerCommandService answerCommandService;
     private final AnswerQueryService answerQueryService;
     private final RecommendQueryService recommendQueryService;
+    private final AwsS3Service awsS3Service;
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "대답 작성", description = "사용자가 대답 작성합니다. 작성한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대답 작성 성공. 작성한 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
-    @PostMapping
+    @PostMapping("/{questionId}")
     public ApiResponseDto<Long> createAnswer(@RequestPart AnswerRequest.Post request,
-                                             @RequestParam Long questionId) throws IOException {
+                                             @RequestPart List<MultipartFile> multipartFiles,
+                                             @PathVariable Long questionId) throws IOException {
+        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
         Long answer = answerCommandService.createAnswer(questionId, request);
         return ApiResponseDto.onSuccess(answer);
     }

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class RecommendCommandServiceImpl implements RecommendCommandService {
     private final UtilService utilService;
@@ -25,14 +25,16 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     public void handleRecommendation(Long boardId, BoardType boardType) {
         Board board = utilService.getBoard(boardId, boardType);
         Member member = utilService.getSignInMember();
+        //boardWriter.equals(user)
+        if (board.getMember().equals(member)) {
+            throw new RecommendHandler(ErrorStatus.CANNOT_RECOMMEND_MYSELF);
+        }
+
         boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
         if (isRecommended) {
             cancelRecommendation(member.getId(), boardId);
         }
         else{
-            if (board.getMember().equals(member)) {
-                throw new RecommendHandler(ErrorStatus.CANNOT_RECOMMEND_MYSELF);
-            }
             createRecommendation(board, member);
         }
     }

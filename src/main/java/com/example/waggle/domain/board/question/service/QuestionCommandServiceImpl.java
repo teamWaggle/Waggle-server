@@ -1,12 +1,8 @@
 package com.example.waggle.domain.board.question.service;
 
-import com.example.waggle.domain.board.answer.entity.Answer;
-import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -27,7 +23,6 @@ import java.util.List;
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
     private final UtilService utilService;
 
     @Override
@@ -68,28 +63,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return question.getId();
     }
 
-
-
-//    @Override
-//    public boolean validateMember(Long boardId, String boardType) {
-//        Member member = utilService.getSignInMember();
-//        boolean isSameUser;
-//        switch (boardType) {
-//            case "question":
-//                Question question = questionRepository.findById(boardId)
-//                        .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-//                isSameUser = question.getMember().equals(member);
-//                break;
-//            case "answer":
-//                Answer answer = answerRepository.findById(boardId)
-//                        .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-//                isSameUser = answer.getMember().equals(member);
-//                break;
-//            default:
-//                throw new GeneralException(ErrorStatus.INVALID_BOARD_TYPE);
-//        }
-//        return isSameUser;
-//    }
 
     @Override
     public void deleteQuestion(Long boardId) {

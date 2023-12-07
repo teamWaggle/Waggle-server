@@ -1,5 +1,9 @@
 package com.example.waggle.domain.recommend.service;
 
+import com.example.waggle.domain.member.entity.Member;
+
+import java.util.List;
+
 public interface RecommendQueryService {
 //    void checkRecommend(QuestionDetailDto questionDetailDto);
 //
@@ -16,4 +20,6 @@ public interface RecommendQueryService {
     boolean checkRecommend(Long boardId, String boardWriter);
 
     int countRecommend(Long boardId);
+
+    List<Member> getRecommendingMembers(Long boardId);
 }

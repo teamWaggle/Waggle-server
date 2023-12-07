@@ -8,6 +8,8 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,11 @@ public class ReplyQueryServiceImpl implements ReplyQueryService{
     public List<Reply> getReplies(Long commentId) {
         List<Reply> replies = replyRepository.findByCommentId(commentId);
         return replies;
+    }
+
+    @Override
+    public Page<Reply> getPagedReplies(Long commentId, Pageable pageable) {
+        return replyRepository.findPagedReplyByCommentId(commentId, pageable);
     }
 
     @Override

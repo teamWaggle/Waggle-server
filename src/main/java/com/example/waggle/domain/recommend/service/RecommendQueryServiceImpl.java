@@ -1,12 +1,16 @@
 package com.example.waggle.domain.recommend.service;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.util.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +37,12 @@ public class RecommendQueryServiceImpl implements RecommendQueryService{
     @Override
     public int countRecommend(Long boardId) {
         return recommendRepository.countByBoardId(boardId);
+    }
+
+    @Override
+    public List<Member> getRecommendingMembers(Long boardId) {
+        List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
+        return byBoardId.stream().map(r -> r.getMember()).collect(Collectors.toList());
     }
 
 //    @Override

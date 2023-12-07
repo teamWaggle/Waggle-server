@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.example.waggle.global.util.service.BoardType.ANSWER;
 
@@ -24,13 +25,15 @@ import static com.example.waggle.global.util.service.BoardType.ANSWER;
 @Transactional
 @Service
 public class AnswerCommandServiceImpl implements AnswerCommandService{
+    //TODO user는 question 내에 하나의 answer만 사용할 수 있도록 제어
 
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final UtilService utilService;
     @Override
-    public Long createAnswer(Long questionId, AnswerRequest.Post answerWriteDto)
-            throws IOException {
+    public Long createAnswer(Long questionId,
+                             AnswerRequest.Post answerWriteDto,
+                             List<String> uploadFiles) throws IOException {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
@@ -39,8 +42,10 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
                 .member(signInMember)
                 .question(question)
                 .build();
-        //using cascade -> answer save in db
-        question.addAnswer(answer);
+        answerRepository.save(answer);
+//        question.addAnswer(answer);
+
+        //TODO save media
         if (!answerWriteDto.getHashtags().isEmpty()) {
             for (String hashtag : answerWriteDto.getHashtags()) {
                 utilService.saveHashtag(answer, hashtag);
@@ -50,8 +55,9 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
     }
 
     @Override
-    public Long updateAnswer(Long boardId, AnswerRequest.Post answerWriteDto)
-            throws IOException {
+    public Long updateAnswer(Long boardId,
+                             AnswerRequest.Post answerWriteDto,
+                             List<String> uploadFiles) throws IOException {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 

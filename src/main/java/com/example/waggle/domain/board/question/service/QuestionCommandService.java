@@ -13,8 +13,6 @@ public interface QuestionCommandService {
     Long updateQuestion(Long boardId, QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles);
 
 
-//    boolean validateMember(Long boardId, String boardType);
-
     void deleteQuestion(Long boardId);
 
 }

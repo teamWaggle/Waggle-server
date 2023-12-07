@@ -36,9 +36,9 @@ public class HelpApiController {
     private final RecommendQueryService recommendQueryService;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
-    @Operation(summary = "헬퓨 작성", description = "사용자가 헬퓨를 작성합니다. 작성한 헬퓨의 정보를 저장하고 헬퓨의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "헬퓨 작성 성공. 작성한 헬퓨의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 헬퓨 작성에 실패했습니다.")
+    @Operation(summary = "사이렌 작성", description = "사용자가 사이렌을 작성합니다. 작성한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "사이렌 작성 성공. 작성한 사이렌의 고유 ID를 반환합니다.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createHelp(@RequestPart HelpRequest.Post helpWriteDto,
                                      @RequestPart List<MultipartFile> multipartFiles,
@@ -47,9 +47,9 @@ public class HelpApiController {
         return ApiResponseDto.onSuccess(boardId);
     }
 
-    @Operation(summary = "헬퓨 수정", description = "사용자가 헬퓨를 수정합니다. 수정한 헬퓨의 정보를 저장하고 헬퓨의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "헬퓨 수정 성공. 수정한 헬퓨의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 헬퓨의 수정에 실패했습니다.")
+    @Operation(summary = "사이렌 수정", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "사이렌 수정 성공. 수정한 사이렌의 고유 ID를 반환합니다.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateHelp(@PathVariable Long boardId,
                                             @ModelAttribute HelpRequest.Post helpWriteDto,
@@ -60,8 +60,8 @@ public class HelpApiController {
     }
 
 
-    @Operation(summary = "전체 헬퓨 목록 조회", description = "전체 헬퓨 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "헬퓨 조회 성공. 전체 헬퓨 목록을 반환합니다.")
+    @Operation(summary = "전체 사이렌 목록 조회", description = "전체 사이렌 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 전체 사이렌 목록을 반환합니다.")
     @GetMapping
     public ApiResponseDto<HelpResponse.ListDto> getAllHelp(@RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
@@ -75,11 +75,11 @@ public class HelpApiController {
         return ApiResponseDto.onSuccess(listDto);
     }
 
-    @Operation(summary = "사용자의 헬퓨 목록 조회", description = "특정 사용자가 작성한 헬퓨 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "헬퓨 조회 성공. 사용자가 작성한 헬퓨 목록을 반환합니다.")
+    @Operation(summary = "사용자의 사이렌 목록 조회", description = "특정 사용자가 작성한 사이렌 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 사용자가 작성한 사이렌 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{username}")
-    public ApiResponseDto<HelpResponse.ListDto> getHelpListByUsername(@RequestParam(defaultValue = "1") int currentPage,
+    public ApiResponseDto<HelpResponse.ListDto> getHelpListByUsername(@RequestParam(defaultValue = "0") int currentPage,
                                                                     @PathVariable String username) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpListByUsername(username, pageable);
@@ -92,9 +92,9 @@ public class HelpApiController {
         return ApiResponseDto.onSuccess(listDto);
     }
 
-    @Operation(summary = "특정 헬퓨 조회", description = "특정 헬퓨의 상세 정보를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "헬퓨 조회 성공. 특정 헬퓨의 상세 정보를 반환합니다.")
-    @ApiResponse(responseCode = "404", description = "헬퓨를 찾을 수 없음. 지정된 헬퓨 ID에 해당하는 헬퓨를 찾을 수 없습니다.")
+    @Operation(summary = "특정 사이렌 조회", description = "특정 사이렌의 상세 정보를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 특정 사이렌의 상세 정보를 반환합니다.")
+    @ApiResponse(responseCode = "404", description = "사이렌을 찾을 수 없음. 지정된 사이렌 ID에 해당하는 사이렌을 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
     public ApiResponseDto<HelpResponse.DetailDto> getHelpByBoardId(@PathVariable Long boardId) {
         Help help = helpQueryService.getHelpByBoardId(boardId);

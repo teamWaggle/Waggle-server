@@ -54,6 +54,7 @@ public class QuestionApiController {
     public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
                                                @RequestPart QuestionRequest.QuestionWriteDto request,
                                                @RequestPart List<MultipartFile> multipartFiles) {
+        //TODO awsS3Service에서 update하는 board의 이전 files들을 지우는 과정 필요
         List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
         questionCommandService.updateQuestion(boardId, request, uploadedFiles);
         return ApiResponseDto.onSuccess(boardId);
