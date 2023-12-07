@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -49,5 +51,11 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     private void createRecommendation(Board board, Member member) {
         Recommend recommend = Recommend.builder().board(board).member(member).build();
         recommendRepository.save(recommend);
+    }
+
+    @Override
+    public void deleteRecommendByBoard(Long boardId) {
+        List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
+        byBoardId.stream().forEach(r -> recommendRepository.delete(r));
     }
 }

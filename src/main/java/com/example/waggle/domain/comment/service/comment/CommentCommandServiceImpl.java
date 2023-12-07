@@ -2,7 +2,9 @@ package com.example.waggle.domain.comment.service.comment;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.comment.entity.Comment;
+import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
@@ -15,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentCommandServiceImpl implements CommentCommandService{
 
     private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
     private final UtilService utilService;
     @Override
     public Long createComment(Long boardId, CommentRequest.Post commentWriteDto, BoardType boardType) {
@@ -50,11 +55,15 @@ public class CommentCommandServiceImpl implements CommentCommandService{
 
     @Override
     public void deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         if (!validateMember(commentId)) {
             throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        List<Reply> replies = replyRepository.findByCommentId(commentId);
+        replies.stream().forEach(r -> replyRepository.delete(r));
+
         commentRepository.delete(comment);
     }
 

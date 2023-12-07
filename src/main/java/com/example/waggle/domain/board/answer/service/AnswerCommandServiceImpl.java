@@ -4,7 +4,12 @@ import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.comment.entity.Comment;
+import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.recommend.entity.Recommend;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.example.waggle.global.util.service.BoardType.ANSWER;
 
@@ -28,7 +34,12 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
 
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
+    private final CommentRepository commentRepository;
+    private final RecommendRepository recommendRepository;
     private final UtilService utilService;
+    private final CommentCommandService commentCommandService;
+
+
     @Override
     public Long createAnswer(Long questionId,
                              AnswerRequest.Post answerWriteDto) throws IOException {
@@ -71,11 +82,19 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
 
     @Override
     public void deleteAnswer(Long boardId) {
-        Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!utilService.validateMemberUseBoard(boardId, ANSWER)) {
             throw new AnswerHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
+        Answer answer = answerRepository.findById(boardId)
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        List<Comment> comments = commentRepository.findByBoardId(answer.getId());
+        comments.stream().forEach(c -> commentCommandService.deleteComment(c.getId()));
+
+        List<Recommend> recommends = recommendRepository.findByBoardId(answer.getId());
+        recommends.stream().forEach(r -> recommendRepository.delete(r));
+
         answerRepository.delete(answer);
     }
+
 }

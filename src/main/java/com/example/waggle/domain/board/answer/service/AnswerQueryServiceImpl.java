@@ -35,6 +35,11 @@ public class AnswerQueryServiceImpl implements AnswerQueryService{
         return answerRepository.findByQuestionId(questionId,pageable);
     }
 
+    @Override
+    public List<Answer> getAnswersByQuestion(Long questionId) {
+        return answerRepository.findAnswerByQuestionId(questionId);
+    }
+
 //    @Override
 //    public List<Answer> getAnswers(Long questionId) {
 //        return

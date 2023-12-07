@@ -1,8 +1,13 @@
 package com.example.waggle.domain.board.question.service;
 
+import com.example.waggle.domain.board.answer.entity.Answer;
+import com.example.waggle.domain.board.answer.repository.AnswerRepository;
+import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.recommend.entity.Recommend;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -23,10 +28,15 @@ import java.util.List;
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
+    private final RecommendRepository recommendRepository;
     private final UtilService utilService;
+    private final AnswerCommandService answerCommandService;
+
+
 
     @Override
-    public Long createQuestion(QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles) {
+    public Long createQuestion(QuestionRequest.QuestionWriteDto request) {
         Member member = utilService.getSignInMember();
 
         Question createdQuestion = Question.builder()
@@ -47,7 +57,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long updateQuestion(Long boardId, QuestionRequest.QuestionWriteDto request, List<String> uploadedFiles) {
+    public Long updateQuestion(Long boardId, QuestionRequest.QuestionWriteDto request) {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
@@ -66,11 +76,18 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public void deleteQuestion(Long boardId) {
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (!utilService.validateMemberUseBoard(boardId, BoardType.QUESTION)) {
             throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
         }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
+        answers.stream().forEach(a -> answerCommandService.deleteAnswer(a.getId()));
+
+        List<Recommend> recommends = recommendRepository.findByBoardId(question.getId());
+        recommends.stream().forEach(r -> recommendRepository.delete(r));
+
         questionRepository.delete(question);
     }
 

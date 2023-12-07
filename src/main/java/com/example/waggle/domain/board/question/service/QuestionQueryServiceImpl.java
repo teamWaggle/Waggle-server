@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -19,11 +21,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final QuestionRepository questionRepository;
 
-//    @Override
-//    public List<Question> getQuestions() {
-//        List<Question> questions = questionRepository.findAll();
-//        return questions;
-//    }
+    @Override
+    public List<Question> getAllQuestion() {
+        List<Question> questions = questionRepository.findAll();
+        return questions;
+    }
 
     @Override
     public Page<Question> getPagedQuestionsByUsername(String username, Pageable pageable) {

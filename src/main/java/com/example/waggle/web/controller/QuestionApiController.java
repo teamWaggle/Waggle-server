@@ -43,7 +43,7 @@ public class QuestionApiController {
     public ApiResponseDto<Long> createQuestion(@RequestPart QuestionRequest.QuestionWriteDto request,
                                                @RequestPart(required = false) List<MultipartFile> multipartFiles) {
         List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        Long boardId = questionCommandService.createQuestion(request, uploadedFiles);
+        Long boardId = questionCommandService.createQuestion(request);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -56,7 +56,7 @@ public class QuestionApiController {
                                                @RequestPart List<MultipartFile> multipartFiles) {
         //TODO awsS3Service에서 update하는 board의 이전 files들을 지우는 과정 필요
         List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        questionCommandService.updateQuestion(boardId, request, uploadedFiles);
+        questionCommandService.updateQuestion(boardId, request);
         return ApiResponseDto.onSuccess(boardId);
     }
 
