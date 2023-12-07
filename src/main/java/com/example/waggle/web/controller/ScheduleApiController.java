@@ -1,7 +1,10 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.schedule.domain.Schedule;
+import com.example.waggle.domain.schedule.service.ScheduleCommandService;
+import com.example.waggle.domain.schedule.service.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.web.dto.schedule.ScheduleDto;
+import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,19 +28,24 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Schedule API", description = "일정 API")
 public class ScheduleApiController {
 
+    private final ScheduleCommandService scheduleCommandService;
+    private final ScheduleQueryService scheduleQueryService;
+
     @Operation(summary = "일정 생성", description = "새로운 일정을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "일정 생성 성공.")
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@PathVariable Long teamId,
                                                @RequestBody ScheduleRequest.ScheduleRequestDto request) {
-        return ApiResponseDto.onSuccess(0L);
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request);
+        return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
     @Operation(summary = "일정 조회", description = "특정 일정의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @GetMapping("/{scheduleId}")
-    public ApiResponseDto<ScheduleDto> getSchedule(@PathVariable Long scheduleId) {
-        return ApiResponseDto.onSuccess(new ScheduleDto());
+    public ApiResponseDto<ScheduleResponse.ScheduleResponseDto> getSchedule(@PathVariable Long scheduleId) {
+        Schedule schedule = scheduleQueryService.getScheduleById(scheduleId);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleResponseDto(schedule));
     }
 
     @Operation(summary = "일정 수정", description = "특정 일정의 정보를 수정합니다.")
@@ -45,13 +53,15 @@ public class ScheduleApiController {
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<Long> updateSchedule(@PathVariable Long scheduleId,
                                                @RequestBody ScheduleRequest.ScheduleRequestDto request) {
-        return ApiResponseDto.onSuccess(0L);
+        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, request);
+        return ApiResponseDto.onSuccess(updatedScheduleId);
     }
 
     @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @DeleteMapping("/{scheduleId}")
     public ApiResponseDto<Boolean> deleteSchedule(@PathVariable Long scheduleId) {
+        scheduleCommandService.deleteSchedule(scheduleId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -59,6 +69,7 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @GetMapping("/members/{memberId}")
     public ApiResponseDto<ScheduleResponse.ListDto> getAllSchedulesByUser(@PathVariable Long memberId) {
+        // TODO
         return ApiResponseDto.onSuccess(ScheduleResponse.ListDto.builder().build());
     }
 

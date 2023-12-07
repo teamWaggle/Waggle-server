@@ -20,7 +20,6 @@ public class ScheduleResponse {
     public static class ScheduleResponseDto {
         private Long scheduleId;
         private Long teamId;
-        private String colorScheme;
         private String title;
         private String content;
         private LocalDateTime startTime;
