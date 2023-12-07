@@ -1,19 +1,17 @@
 package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
-import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.media.entity.Media;
-import com.example.waggle.domain.comment.entity.Comment;
-import jakarta.persistence.CascadeType;
+import com.example.waggle.domain.member.entity.Member;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @ToString
@@ -25,25 +23,11 @@ import java.util.List;
 public class Question extends Board {
     private String title;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "question",cascade = CascadeType.PERSIST,orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
-
     public Question(Long id, Member member,
                     String content, String title, List<BoardHashtag> boardHashtags,
-                    List<Media> medias, List<Comment> comments, List<Answer> answers) {
-        super(id, member, content, boardHashtags,medias, comments);
+                    List<Media> medias) {
+        super(id, member, content, boardHashtags,medias);
         this.title = title;
-        if (answers != null) {
-            for (Answer answer : answers) {
-                addAnswer(answer);
-            }
-        }
-    }
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.setQuestion(this);
     }
 
     public void changeQuestion(String content, String title) {
