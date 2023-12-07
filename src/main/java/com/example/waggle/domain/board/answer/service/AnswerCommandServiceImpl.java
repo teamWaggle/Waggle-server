@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.List;
 
 import static com.example.waggle.global.util.service.BoardType.ANSWER;
 
@@ -32,8 +31,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
     private final UtilService utilService;
     @Override
     public Long createAnswer(Long questionId,
-                             AnswerRequest.Post answerWriteDto,
-                             List<String> uploadFiles) throws IOException {
+                             AnswerRequest.Post answerWriteDto) throws IOException {
         Member signInMember = utilService.getSignInMember();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
@@ -56,8 +54,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
 
     @Override
     public Long updateAnswer(Long boardId,
-                             AnswerRequest.Post answerWriteDto,
-                             List<String> uploadFiles) throws IOException {
+                             AnswerRequest.Post answerWriteDto) throws IOException {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 

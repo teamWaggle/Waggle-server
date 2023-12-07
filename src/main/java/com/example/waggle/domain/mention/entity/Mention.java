@@ -27,4 +27,7 @@ public class Mention extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public void changeReply(Reply reply) {
+        this.reply = reply;
+    }
 }

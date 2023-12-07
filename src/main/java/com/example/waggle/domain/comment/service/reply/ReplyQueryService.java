@@ -9,5 +9,4 @@ import java.util.List;
 public interface ReplyQueryService {
     List<Reply> getReplies(Long commentId);
     Page<Reply> getPagedReplies(Long commentId, Pageable pageable);
-    boolean validateMember(Long replyId);
 }

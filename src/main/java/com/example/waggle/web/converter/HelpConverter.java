@@ -11,12 +11,11 @@ public class HelpConverter {
 
     public static HelpResponse.SummaryDto toSummaryDto(Help help) {
         return HelpResponse.SummaryDto.builder()
-                .petAge(help.getPetAge())
-                .petName(help.getPetName())
-                .petGender(help.getPetGender())
+                .thumbnail(help.getThumbnail())
+                .lostLocate(help.getLostLocate())
+                .lostDate(help.getLostDate())
+                .category(help.getCategory())
                 .username(help.getMember().getUsername())
-//                .thumbnail() TODO need to refactor
-                .petKind(help.getPetKind())
                 .title(help.getTitle())
                 .build();
     }
@@ -36,16 +35,15 @@ public class HelpConverter {
         return HelpResponse.DetailDto.builder()
                 .id(help.getId())
                 .title(help.getTitle())
-                .petName(help.getPetName())
                 .petKind(help.getPetKind())
                 .petAge(help.getPetAge())
                 .petGender(help.getPetGender())
                 .contact(help.getContact())
                 .thumbnail(help.getThumbnail())
+                .category(help.getCategory())
+                .lostLocate(help.getLostLocate())
                 .lostDate(help.getLostDate())
                 .content(help.getContent())
-//                .medias(help.getMedias().stream()
-//                        .map(h -> h.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
                 .username(help.getMember().getUsername())
                 .build();
     }

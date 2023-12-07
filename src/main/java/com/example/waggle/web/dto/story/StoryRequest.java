@@ -24,7 +24,7 @@ public class StoryRequest {
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-//        @Builder.Default
-//        private List<String> medias = new ArrayList<>();
+        @Builder.Default
+        private List<String> medias = new ArrayList<>();
     }
 }

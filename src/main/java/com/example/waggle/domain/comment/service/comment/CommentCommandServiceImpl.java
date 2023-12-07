@@ -33,11 +33,15 @@ public class CommentCommandServiceImpl implements CommentCommandService{
                 .board(board)
                 .member(signInMember)
                 .build();
+        commentRepository.save(build);
         return build.getId();
     }
 
     @Override
     public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
+        if (!validateMember(commentId)) {
+            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+        }
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         comment.changeContent(commentWriteDto.getContent());

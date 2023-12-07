@@ -34,12 +34,7 @@ public class ReplyQueryServiceImpl implements ReplyQueryService{
         return replyRepository.findPagedReplyByCommentId(commentId, pageable);
     }
 
-    @Override
-    public boolean validateMember(Long replyId) {
-        Member member = utilService.getSignInMember();
-        Reply reply = getReplyById(replyId);
-        return reply.getMember().equals(member);
-    }
+
 
     private Reply getReplyById(Long replyId) {
         return replyRepository.findById(replyId)

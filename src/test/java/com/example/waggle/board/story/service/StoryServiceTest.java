@@ -186,12 +186,12 @@ class StoryServiceTest {
                 .medias(medias2)
                 .build();
         //when
-        boolean isSameUser = storyCommandService.validateMember(id);
+//        boolean isSameUser = storyCommandService.validateMember(id);
         storyCommandService.updateStory(id, editDto, new ArrayList<>(), null);
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then
-        assertThat(isSameUser).isTrue();
+//        assertThat(isSameUser).isTrue();
         assertThat(storyByBoardId.getContent()).isEqualTo("edit edit edit");
         assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
     }

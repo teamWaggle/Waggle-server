@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.help;
 
+import com.example.waggle.domain.board.help.entity.Category;
 import com.example.waggle.domain.member.entity.Gender;
 import lombok.*;
 
@@ -15,7 +16,6 @@ public class HelpRequest {
     public static class Post {
         private Long id;
         private String title;
-        private String petName;
         private String petKind;
         private int petAge;
         private Gender petGender;
@@ -24,8 +24,7 @@ public class HelpRequest {
         private String lostLocate;
         private LocalDateTime lostDate;
         private String content;
-        private String rfid;
-        private String characteristic;
         private String username;
+        private Category category;
     }
 }

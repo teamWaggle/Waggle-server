@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +51,6 @@ class HelpServiceTest {
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
-                .petName("i")
                 .petGender(Gender.MALE)
                 .build();
         hwd2 = HelpRequest.Post.builder()
@@ -60,7 +58,6 @@ class HelpServiceTest {
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
-                .petName("ii")
                 .petGender(Gender.MALE)
                 .build();
         hwd3 = HelpRequest.Post.builder()
@@ -68,7 +65,6 @@ class HelpServiceTest {
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
-                .petName("iii")
                 .petGender(Gender.MALE)
                 .build();
         hwd4 = HelpRequest.Post.builder()
@@ -76,7 +72,6 @@ class HelpServiceTest {
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
-                .petName("iiii")
                 .petGender(Gender.MALE)
                 .build();
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
@@ -98,7 +93,7 @@ class HelpServiceTest {
     void helpU_create_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1);
 
         List<Help> allHelp = helpQueryService.getAllHelp();
         assertThat(allHelp.size()).isEqualTo(1);
@@ -108,16 +103,15 @@ class HelpServiceTest {
     void helpU_read_All_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd4,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1);
+        helpCommandService.createHelp(hwd2);
+        helpCommandService.createHelp(hwd3);
+        helpCommandService.createHelp(hwd4);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 3);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
         assertThat(pagedHelpList.getContent().size()).isEqualTo(3);
-        assertThat(pagedHelpList.getContent().get(0).getPetName()).isEqualTo("i");
     }
 
     @Test
@@ -125,16 +119,15 @@ class HelpServiceTest {
     void helpU_read_Mine_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd4,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1);
+        helpCommandService.createHelp(hwd2);
+        helpCommandService.createHelp(hwd3);
+        helpCommandService.createHelp(hwd4);
 
         //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
         Pageable pageable = PageRequest.of(0, 2);
         Page<Help> member1 = helpQueryService.getPagedHelpListByUsername("member1", pageable);
         assertThat(member1.getContent().size()).isEqualTo(2);
-        assertThat(member1.getContent().get(1).getPetName()).isEqualTo("ii");
     }
 
     @Test
@@ -142,10 +135,10 @@ class HelpServiceTest {
     void helpU_read_One_ByPaging_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd4,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1);
+        helpCommandService.createHelp(hwd2);
+        helpCommandService.createHelp(hwd3);
+        helpCommandService.createHelp(hwd4);
 
         Help help = helpQueryService.getHelpByBoardId(helpUId);
         assertThat(help.getContent()).isEqualTo("helpU page. hi");
@@ -155,22 +148,21 @@ class HelpServiceTest {
     void helpU_update_One_ByPaging_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
-        Long helpU = helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
+        Long helpUId = helpCommandService.createHelp(hwd1);
+        helpCommandService.createHelp(hwd2);
+        helpCommandService.createHelp(hwd3);
 
-        Long aLong = helpCommandService.updateHelp(helpU, hwd4,new ArrayList<>(),null);
+        Long aLong = helpCommandService.updateHelp(helpUId, hwd4);
         Help help = helpQueryService.getHelpByBoardId(aLong);
-        assertThat(help.getPetName()).isEqualTo("iiii");
     }
     @Test
     @WithMockCustomUser
     void helpU_delete_One_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        helpCommandService.createHelp(hwd1,new ArrayList<>(),null);
-        helpCommandService.createHelp(hwd2,new ArrayList<>(),null);
-        Long helpU = helpCommandService.createHelp(hwd3,new ArrayList<>(),null);
+        helpCommandService.createHelp(hwd1);
+        helpCommandService.createHelp(hwd2);
+        Long helpU = helpCommandService.createHelp(hwd3);
         helpCommandService.deleteHelp(helpU);
         List<Help> allHelp = helpQueryService.getAllHelp();
         assertThat(allHelp.size()).isEqualTo(2);

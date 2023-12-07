@@ -42,4 +42,9 @@ public class Reply extends BaseEntity {
         this.content = content;
     }
 
+    public void addMention(Mention mention) {
+        this.getMentions().add(mention);
+        mention.changeReply(this);
+    }
+
 }
