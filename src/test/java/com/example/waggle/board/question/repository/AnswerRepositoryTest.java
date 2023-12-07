@@ -12,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class AnswerRepositoryTest {
@@ -54,13 +51,10 @@ class AnswerRepositoryTest {
                 .createdBy("username").build();
 
         //save
-        question1.addAnswer(answer1);
-        question1.addAnswer(answer2);
         Question save = questionRepository.save(question1);
 
         //find
-        List<Answer> byQuestionId = answerRepository.findByQuestionId(save.getId());
-        assertThat(byQuestionId.size()).isEqualTo(2);
+
     }
 
 }

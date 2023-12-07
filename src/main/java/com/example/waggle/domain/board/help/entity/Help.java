@@ -59,6 +59,7 @@ public class Help extends Board {
         this.lostDate = helpUWriteDto.getLostDate();
         this.lostLocate = helpUWriteDto.getLostLocate();
         this.contact = helpUWriteDto.getContact();
+        this.content = helpUWriteDto.getContent();
         this.thumbnail = helpUWriteDto.getThumbnail();
         this.category = helpUWriteDto.getCategory();
     }

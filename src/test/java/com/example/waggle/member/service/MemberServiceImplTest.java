@@ -5,7 +5,6 @@ import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.web.dto.member.MemberRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -100,7 +99,6 @@ class MemberServiceImplTest {
                 .password("12345678").build();
 
         // 로그인 요청
-        JwtToken jwtToken = memberService.signIn(signInDto);
 
         // HttpHeaders 객체 생성 및 토큰 추가
         HttpHeaders httpHeaders = new HttpHeaders();

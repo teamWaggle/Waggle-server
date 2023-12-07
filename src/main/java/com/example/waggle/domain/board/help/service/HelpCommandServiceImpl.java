@@ -3,7 +3,6 @@ package com.example.waggle.domain.board.help.service;
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.exception.handler.HelpHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -24,7 +23,6 @@ import static com.example.waggle.global.util.service.BoardType.HELP;
 @Service
 public class HelpCommandServiceImpl implements HelpCommandService{
     private final HelpRepository helpRepository;
-    private final MemberRepository memberRepository;
     private final UtilService utilService;
 
     @Override
@@ -33,6 +31,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
         Help build = Help.builder()
                 .title(helpWriteDto.getTitle())
                 .contact(helpWriteDto.getContact())
+                .content(helpWriteDto.getContent())
                 .petKind(helpWriteDto.getPetKind())
                 .petGender(helpWriteDto.getPetGender())
                 .petAge(helpWriteDto.getPetAge())

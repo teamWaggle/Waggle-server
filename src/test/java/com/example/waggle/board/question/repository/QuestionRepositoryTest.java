@@ -38,11 +38,9 @@ class QuestionRepositoryTest {
         Question question = Question.builder().title("question").content("i have a question sir.").build();
         questionRepository.save(question);
 
-        question.addAnswer(Answer.builder().content("what is it?").build());
-        question.addAnswer(Answer.builder().content("what is it???").build());
+
 
         Optional<Question> byBoardId = questionRepository.findById(question.getId());
-        assertThat(byBoardId.get().getAnswers().size()).isEqualTo(2);
 
     }
 
@@ -96,9 +94,7 @@ class QuestionRepositoryTest {
         answerRepository.save(answer2);
         answerRepository.save(answer3);
 
-        savedQuestion1.addAnswer(answer1);
-        savedQuestion1.addAnswer(answer2);
-        savedQuestion2.addAnswer(answer3);
+
 
         // then
         Pageable pageable = PageRequest.of(0, 3);

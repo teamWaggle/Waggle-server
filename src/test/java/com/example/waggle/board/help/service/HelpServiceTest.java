@@ -1,4 +1,4 @@
-package com.example.waggle.board.helpU.service;
+package com.example.waggle.board.help.service;
 
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.service.HelpCommandService;
@@ -47,28 +47,28 @@ class HelpServiceTest {
 
     void setting() {
         hwd1 = HelpRequest.Post.builder()
-                .content("helpU page. hi")
+                .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
                 .build();
         hwd2 = HelpRequest.Post.builder()
-                .content("helpU page. hi")
+                .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
                 .build();
         hwd3 = HelpRequest.Post.builder()
-                .content("helpU page. hi")
+                .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
                 .build();
         hwd4 = HelpRequest.Post.builder()
-                .content("helpU page. hi")
+                .content("help page4. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
@@ -90,25 +90,25 @@ class HelpServiceTest {
 
     @Test
     @WithMockCustomUser
-    void helpU_create_service() throws IOException{
+    void help_create_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1);
+        Long helpId = helpCommandService.createHelp(hwd1);
 
         List<Help> allHelp = helpQueryService.getAllHelp();
         assertThat(allHelp.size()).isEqualTo(1);
     }
     @Test
     @WithMockCustomUser
-    void helpU_read_All_ByPaging_service() throws IOException {
+    void help_read_All_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1);
+        Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
         helpCommandService.createHelp(hwd4);
 
-        //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
+        //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 3);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
         assertThat(pagedHelpList.getContent().size()).isEqualTo(3);
@@ -116,15 +116,15 @@ class HelpServiceTest {
 
     @Test
     @WithMockCustomUser
-    void helpU_read_Mine_ByPaging_service() throws IOException {
+    void help_read_Mine_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1);
+        Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
         helpCommandService.createHelp(hwd4);
 
-        //List<HelpUSummaryDto> allHelpU = helpUService.getAllHelpU();
+        //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
         Page<Help> member1 = helpQueryService.getPagedHelpListByUsername("member1", pageable);
         assertThat(member1.getContent().size()).isEqualTo(2);
@@ -132,38 +132,39 @@ class HelpServiceTest {
 
     @Test
     @WithMockCustomUser
-    void helpU_read_One_ByPaging_service() throws IOException{
+    void help_read_One_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1);
+        Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
         helpCommandService.createHelp(hwd4);
 
-        Help help = helpQueryService.getHelpByBoardId(helpUId);
-        assertThat(help.getContent()).isEqualTo("helpU page. hi");
+        Help help = helpQueryService.getHelpByBoardId(helpId);
+        assertThat(help.getContent()).isEqualTo("help page. hi");
     }
     @Test
     @WithMockCustomUser
-    void helpU_update_One_ByPaging_service() throws IOException{
+    void help_update_One_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
-        Long helpUId = helpCommandService.createHelp(hwd1);
+        Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
 
-        Long aLong = helpCommandService.updateHelp(helpUId, hwd4);
+        Long aLong = helpCommandService.updateHelp(helpId, hwd4);
         Help help = helpQueryService.getHelpByBoardId(aLong);
+        assertThat(help.getContent()).isEqualTo("help page4. hi");
     }
     @Test
     @WithMockCustomUser
-    void helpU_delete_One_service() throws IOException{
+    void help_delete_One_service() throws IOException{
         setting();
         memberCommandService.signUp(signUpDto1,null);
         helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
-        Long helpU = helpCommandService.createHelp(hwd3);
-        helpCommandService.deleteHelp(helpU);
+        Long help = helpCommandService.createHelp(hwd3);
+        helpCommandService.deleteHelp(help);
         List<Help> allHelp = helpQueryService.getAllHelp();
         assertThat(allHelp.size()).isEqualTo(2);
     }
