@@ -55,11 +55,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public boolean deleteTeam(Long teamId) {
+    public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         teamRepository.delete(team);
-        return true;
     }
 
     @Override
@@ -81,21 +80,19 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public boolean deleteTeamMember(Long teamId, String username) {
+    public void deleteTeamMember(Long teamId, String username) {
         TeamMember teamMember = teamMemberRepository.findTeamMemberByMemberUsernameAndTeamId(username, teamId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         teamMember.removeTeam();
-        return true;
     }
 
     @Override
-    public boolean changeTeamLeader(Long teamId, String username) {
+    public void changeTeamLeader(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         team.updateTeamLeader(member);
-        return true;
     }
 
     private boolean validateMemberDuplication(Team team, Member member) {

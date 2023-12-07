@@ -8,12 +8,12 @@ public interface TeamCommandService {
 
     Long updateTeam(Long teamId, TeamRequest.TeamRequestDto request);
 
-    boolean deleteTeam(Long teamId);
+    void deleteTeam(Long teamId);
 
     Long addTeamMember(Long teamId, String username);
 
-    boolean deleteTeamMember(Long teamId, String username);
+    void deleteTeamMember(Long teamId, String username);
 
-    boolean changeTeamLeader(Long teamId, String username);
+    void changeTeamLeader(Long teamId, String username);
 
 }
