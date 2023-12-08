@@ -29,14 +29,17 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
         Member member = utilService.getSignInMember();
         //boardWriter.equals(user)
         if (board.getMember().equals(member)) {
+            log.info("can't recommend mine");
             throw new RecommendHandler(ErrorStatus.CANNOT_RECOMMEND_MYSELF);
         }
 
         boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
         if (isRecommended) {
+            log.info("cancel recommend");
             cancelRecommendation(member.getId(), boardId);
         }
         else{
+            log.info("click recommend");
             createRecommendation(board, member);
         }
     }

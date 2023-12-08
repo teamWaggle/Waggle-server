@@ -7,13 +7,17 @@ import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.recommend.entity.Recommend;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +32,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Slf4j
 class RecommendServiceTest {
 
     @Autowired
@@ -40,6 +45,8 @@ class RecommendServiceTest {
     private RecommendCommandService recommendService;
     @Autowired
     private RecommendQueryService recommendQueryService;
+    @Autowired
+    private RecommendRepository recommendRepository;
     @Autowired
     private StoryRepository storyRepository;
     @Autowired
@@ -107,7 +114,6 @@ class RecommendServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    @Transactional
     void setBoardAndMember() throws IOException {
 
         //member set
@@ -127,6 +133,7 @@ class RecommendServiceTest {
 
     @Test
     @WithMockCustomUser
+    @Transactional
     void recommendBoard() throws IOException {
         //given
         setBoardAndMember();
@@ -142,6 +149,7 @@ class RecommendServiceTest {
     }
     @Test
     @WithMockCustomUser
+    @Transactional
     void cancelRecommendBoard() throws IOException {
         //given
         setBoardAndMember();
@@ -155,5 +163,42 @@ class RecommendServiceTest {
 
         //then
         assertThat(recommend).isFalse();
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void cannot_recommend_Mine() throws IOException {
+        //given
+        memberService.signUp(signUpDto1, null);
+        storyService.createStory(storyWriteDto1);
+        Story story = storyQueryService.getStories().get(0);
+        //then
+        try {
+            recommendService.handleRecommendation(story.getId(), BoardType.STORY);
+        } catch (GeneralException ge) {
+            log.info("ge = {}", ge);
+        }
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void story_remove_result_recommendEntity() throws IOException {
+        //given
+        memberService.signUp(signUpDto1, null);
+        Member member = memberService.signUp(signUpDto2, null);
+        StoryRequest.Post request = StoryRequest.Post.builder()
+                .content("hi")
+                .build();
+        storyService.createStory(request);
+        Story story = storyQueryService.getStories().get(0);
+        Recommend build = Recommend.builder().member(member).board(story).build();
+        recommendRepository.save(build);
+        //when
+        storyService.deleteStory(story.getId());
+        List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(story.getId());
+        //then
+        assertThat(recommendingMembers.size()).isEqualTo(0);
     }
 }
