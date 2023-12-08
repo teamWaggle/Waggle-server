@@ -1,29 +1,19 @@
 package com.example.waggle.domain.member.entity;
 
 
-import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.waggle.web.dto.member.MemberRequest;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -39,9 +29,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String password;
 
+    @Column(unique = true)
     private String nickname;
 
     private String address;
@@ -50,9 +41,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String profileImgUrl;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Pet> pets = new ArrayList<>();
+//    @Builder.Default
+//    @OneToMany(mappedBy = "member")
+//    private List<Pet> pets = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -63,9 +54,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private List<TeamMember> teamMembers = new ArrayList<>();
 
 
-    public void setPets(List<Pet> pets) {
-        this.pets = pets;
-    }
+//    public void setPets(List<Pet> pets) {
+//        this.pets = pets;
+//    }
 
 
     @Override
@@ -93,5 +84,13 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void updateInfo(MemberRequest.PutDto request) {
+        this.password = request.getPassword();
+        this.address = request.getAddress();
+        this.nickname = request.getNickname();
+        this.phone = request.getPhone();
+        this.profileImgUrl = request.getProfileImgUrl();
     }
 }
