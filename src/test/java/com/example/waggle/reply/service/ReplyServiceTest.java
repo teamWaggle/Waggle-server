@@ -157,8 +157,8 @@ class ReplyServiceTest {
         memberService.signUp(signUpDto5, null);
 
         //story set
-        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
-        storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto2);
 
         Story story = storyQueryService.getStories().get(0);
 

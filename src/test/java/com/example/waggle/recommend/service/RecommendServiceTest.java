@@ -121,7 +121,7 @@ class RecommendServiceTest {
         storyRepository.save(iiii);
 
         //story set
-        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto1);
         //storyService.saveStory(storyWriteDto2);
     }
 

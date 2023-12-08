@@ -45,7 +45,7 @@ public class StoryApiController {
                                             @RequestPart MultipartFile thumbnail) throws IOException {
         List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
         String uploadThumbnail = awsS3Service.uploadFile(thumbnail);
-        Long boardId = storyCommandService.createStory(request, uploadedFiles, uploadThumbnail);
+        Long boardId = storyCommandService.createStory(request);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -59,7 +59,7 @@ public class StoryApiController {
                                             @RequestPart MultipartFile thumbnail) throws IOException {
         List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
         String uploadThumbnail = awsS3Service.uploadFile(thumbnail);
-        storyCommandService.updateStory(boardId, storyWriteDto, uploadedFiles, uploadThumbnail);
+        storyCommandService.updateStory(boardId, storyWriteDto);
         return ApiResponseDto.onSuccess(boardId);
     }
 

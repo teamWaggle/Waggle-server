@@ -2,7 +2,12 @@ package com.example.waggle.domain.board.help.service;
 
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
+import com.example.waggle.domain.comment.entity.Comment;
+import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.recommend.entity.Recommend;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.HelpHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -14,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.example.waggle.global.util.service.BoardType.HELP;
 
@@ -23,7 +29,10 @@ import static com.example.waggle.global.util.service.BoardType.HELP;
 @Service
 public class HelpCommandServiceImpl implements HelpCommandService{
     private final HelpRepository helpRepository;
+    private final RecommendRepository recommendRepository;
+    private final CommentRepository commentRepository;
     private final UtilService utilService;
+    private final CommentCommandService commentCommandService;
 
     @Override
     public Long createHelp(HelpRequest.Post helpWriteDto) throws IOException {
@@ -68,6 +77,12 @@ public class HelpCommandServiceImpl implements HelpCommandService{
         }
         Help help = helpRepository.findById(boardId)
                 .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        List<Comment> comments = commentRepository.findByBoardId(help.getId());
+        comments.stream().forEach(c -> commentCommandService.deleteComment(c.getId()));
+
+        List<Recommend> recommends = recommendRepository.findByBoardId(help.getId());
+        recommends.stream().forEach(r -> recommendRepository.delete(r));
         helpRepository.delete(help);
     }
 
