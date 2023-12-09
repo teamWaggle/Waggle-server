@@ -43,7 +43,7 @@ public class TeamMember extends BaseEntity {
         member.getTeamMembers().add(this);
     }
 
-    public void removeTeam() {
+    public void removeTeamMember() {
         if (team != null) {
             team.getTeamMembers().remove(this);
             member.getTeamMembers().remove(this);

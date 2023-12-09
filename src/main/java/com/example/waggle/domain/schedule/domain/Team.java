@@ -65,7 +65,7 @@ public class Team extends BaseEntity {
         this.maxTeamSize = request.getMaxTeamSize();
     }
 
-    public void updateTeamLeader(Member teamLeader) {
+    public void updateLeader(Member teamLeader) {
         this.leader = teamLeader;
     }
 

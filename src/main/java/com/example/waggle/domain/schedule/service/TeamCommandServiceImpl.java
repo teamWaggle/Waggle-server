@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TeamCommandServiceImpl implements TeamCommandService {
 
-    private final MemberRepository memberRepository;
+    private final MemberQueryService memberQueryService;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final UtilService utilService;
@@ -67,8 +67,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public Long addTeamMember(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.getMemberByUsername(username);
 
         if (!validateMemberDuplication(team, member)) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
@@ -85,16 +84,15 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public void deleteTeamMember(Long teamId, String username) {
         TeamMember teamMember = teamMemberRepository.findTeamMemberByMemberUsernameAndTeamId(username, teamId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        teamMember.removeTeam();
+        teamMember.removeTeamMember();
     }
 
     @Override
     public void changeTeamLeader(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        team.updateTeamLeader(member);
+        Member member = memberQueryService.getMemberByUsername(username);
+        team.updateLeader(member);
     }
 
     private boolean validateMemberDuplication(Team team, Member member) {
