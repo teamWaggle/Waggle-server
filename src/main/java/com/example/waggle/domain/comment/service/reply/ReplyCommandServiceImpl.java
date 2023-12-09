@@ -14,12 +14,11 @@ import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.reply.ReplyRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,7 +48,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     @Override
     public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
         if (!validateMember(replyId)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
@@ -61,7 +60,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     @Override
     public void deleteReply(Long replyId) {
         if (!validateMember(replyId)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         Reply reply = getReplyById(replyId);
         replyRepository.delete(reply);

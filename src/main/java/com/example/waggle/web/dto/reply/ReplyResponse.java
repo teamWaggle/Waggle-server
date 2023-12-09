@@ -12,7 +12,6 @@ public class ReplyResponse {
     @AllArgsConstructor
     @Builder
     public static class ViewDto {
-
         private Long id;
         private String content;
         private String username;

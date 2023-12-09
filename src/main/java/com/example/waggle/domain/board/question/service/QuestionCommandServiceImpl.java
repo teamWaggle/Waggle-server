@@ -73,11 +73,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return question.getId();
     }
 
-
     @Override
     public void deleteQuestion(Long boardId) {
         if (!utilService.validateMemberUseBoard(boardId, BoardType.QUESTION)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
@@ -88,9 +87,8 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         List<Recommend> recommends = recommendRepository.findByBoardId(question.getId());
         recommends.stream().forEach(r -> recommendRepository.delete(r));
 
+
         questionRepository.delete(question);
     }
-
-
 
 }

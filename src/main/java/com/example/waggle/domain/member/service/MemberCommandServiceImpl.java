@@ -30,7 +30,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Long signUp(MemberRequest.RegisterRequestDto request) {
         if (memberRepository.existsByUsername(request.getUsername())) {
-            throw new MemberHandler(ErrorStatus.ALREADY_USING_USERNAME);
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
         }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 

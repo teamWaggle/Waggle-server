@@ -9,18 +9,18 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
+
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.story.StoryRequest;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,7 +73,7 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     @Override
     public void deleteStory(Long boardId) {
         if (!utilService.validateMemberUseBoard(boardId, BoardType.STORY)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));

@@ -30,7 +30,7 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
         //boardWriter.equals(user)
         if (board.getMember().equals(member)) {
             log.info("can't recommend mine");
-            throw new RecommendHandler(ErrorStatus.CANNOT_RECOMMEND_MYSELF);
+            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
         }
 
         boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());

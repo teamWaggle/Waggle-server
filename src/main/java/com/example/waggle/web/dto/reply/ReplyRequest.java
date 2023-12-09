@@ -15,7 +15,6 @@ public class ReplyRequest {
     @AllArgsConstructor
     @Builder
     public static class Post {
-
         private String content;
         @Builder.Default
         private List<String> mentions = new ArrayList<>();
