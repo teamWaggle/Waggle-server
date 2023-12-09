@@ -9,4 +9,6 @@ public interface ScheduleQueryService {
 
     List<Schedule> getSchedulesByTeamId(Long teamId);
 
+    List<Schedule> getSchedulesByMemberUsername(String username);
+
 }

@@ -10,6 +10,7 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,10 +68,10 @@ public class ScheduleApiController {
 
     @Operation(summary = "특정 사용자가 속한 팀의 모든 일정 조회", description = "특정 사용자가 속한 모든 팀의 일정을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @GetMapping("/members/{memberId}")
-    public ApiResponseDto<ScheduleResponse.ListDto> getAllSchedulesByUser(@PathVariable Long memberId) {
-        // TODO
-        return ApiResponseDto.onSuccess(ScheduleResponse.ListDto.builder().build());
+    @GetMapping("/members/{username}")
+    public ApiResponseDto<ScheduleResponse.ListDto> getSchedulesByMemberUsername(@PathVariable String username) {
+        List<Schedule> schedules = scheduleQueryService.getSchedulesByMemberUsername(username);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
 
