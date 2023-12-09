@@ -33,6 +33,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
                 .endTime(request.getEndTime())
                 .build();
 
+        team.addSchedule(createdSchedule);
+
         Schedule schedule = scheduleRepository.save(createdSchedule);
         return schedule.getId();
     }

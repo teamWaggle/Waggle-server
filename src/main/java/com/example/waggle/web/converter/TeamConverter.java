@@ -12,7 +12,7 @@ public class TeamConverter {
                 .description(team.getDescription())
                 .coverImageUrl(team.getCoverImageUrl())
                 .colorScheme(team.getColorScheme())
-                .maxTeamSize(team.getMaxTeamSize()).build();
-        // TODO schedules, teamMembers, teamLeader
+                .maxTeamSize(team.getMaxTeamSize())
+                .leaderUsername(team.getLeader().getUsername()).build();
     }
 }

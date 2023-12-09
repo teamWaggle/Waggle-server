@@ -49,8 +49,13 @@ public class Team extends BaseEntity {
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_leader_id")
-    private Member teamLeader;
+    @JoinColumn(name = "leader_id")
+    private Member leader;
+
+    public void addSchedule(Schedule schedule) {
+        this.schedules.add(schedule);
+        schedule.setTeam(this);
+    }
 
     public void update(TeamRequest.TeamRequestDto request) {
         this.name = request.getName();
@@ -61,7 +66,7 @@ public class Team extends BaseEntity {
     }
 
     public void updateTeamLeader(Member teamLeader) {
-        this.teamLeader = teamLeader;
+        this.leader = teamLeader;
     }
 
 }

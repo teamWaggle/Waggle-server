@@ -35,7 +35,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .description(request.getDescription())
 //                .coverImageUrl(request.get)
                 .colorScheme(request.getColorScheme())
-                .maxTeamSize(request.getMaxTeamSize()).build();
+                .maxTeamSize(request.getMaxTeamSize())
+                .leader(loginMember)
+                .build();
 
         Team team = teamRepository.save(createdTeam);
 

@@ -47,6 +47,6 @@ public class TeamQueryServiceImpl implements TeamQueryService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return team.getTeamLeader() != null && team.getTeamLeader().equals(member);
+        return team.getLeader() != null && team.getLeader().equals(member);
     }
 }

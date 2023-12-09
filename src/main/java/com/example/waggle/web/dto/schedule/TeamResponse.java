@@ -23,7 +23,7 @@ public class TeamResponse {
         private String coverImageUrl;
         private String colorScheme;
         private Integer maxTeamSize;
-        // TODO schedules, teamMembers, teamLeader
+        private String leaderUsername;
     }
 
     @Getter
