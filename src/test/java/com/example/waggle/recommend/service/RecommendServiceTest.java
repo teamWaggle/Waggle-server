@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -117,8 +118,8 @@ class RecommendServiceTest {
     void setBoardAndMember() throws IOException {
 
         //member set
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         Member build = Member.builder().username("user1").password("password").build();
         memberRepository.save(build);
@@ -170,7 +171,7 @@ class RecommendServiceTest {
     @Transactional
     void cannot_recommend_Mine() throws IOException {
         //given
-        memberService.signUp(signUpDto1, null);
+        memberService.signUp(signUpDto1);
         storyService.createStory(storyWriteDto1);
         Story story = storyQueryService.getStories().get(0);
         //then
@@ -186,14 +187,16 @@ class RecommendServiceTest {
     @Transactional
     void story_remove_result_recommendEntity() throws IOException {
         //given
-        memberService.signUp(signUpDto1, null);
-        Member member = memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto1.getUsername());
+
         StoryRequest.Post request = StoryRequest.Post.builder()
                 .content("hi")
                 .build();
         storyService.createStory(request);
         Story story = storyQueryService.getStories().get(0);
-        Recommend build = Recommend.builder().member(member).board(story).build();
+        Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
         recommendRepository.save(build);
         //when
         storyService.deleteStory(story.getId());

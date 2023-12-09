@@ -118,8 +118,8 @@ class CommentServiceTest {
 
     private void setBoardAndMember() throws IOException {
         //member set
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         //story set
         storyCommandService.createStory(storyWriteDto1);

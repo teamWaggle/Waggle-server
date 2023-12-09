@@ -1,6 +1,5 @@
 package com.example.waggle.schedule.service;
 
-import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.schedule.service.TeamCommandService;
 import com.example.waggle.domain.schedule.service.TeamQueryService;
@@ -47,8 +46,8 @@ class TeamServiceTest {
                 .password("12345678")
                 .build();
 
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
     }
 
     @AfterEach
@@ -94,12 +93,12 @@ class TeamServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        Member member = memberService.signUp(signUpDto, null);
+        memberService.signUp(signUpDto);
 
         TeamDto teamA = TeamDto.builder()
                 .name("teamA").build();
 
-        teamCommandService.createTeam(teamA, member.getUsername());
+        teamCommandService.createTeam(teamA, signUpDto.getUsername());
     }
 
     @Test

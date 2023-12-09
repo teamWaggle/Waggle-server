@@ -3,8 +3,11 @@ package com.example.waggle.member.service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.global.exception.handler.MemberHandler;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -26,6 +29,8 @@ class MemberServiceImplTest {
     @Autowired
     MemberCommandService memberService;
     @Autowired
+    MemberQueryService memberQueryService;
+    @Autowired
     PetCommandService petService;
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -35,6 +40,8 @@ class MemberServiceImplTest {
     private MemberRequest.RegisterRequestDto signUpDto1;
     private MemberRequest.RegisterRequestDto signUpDto2;
     private MemberRequest.RegisterRequestDto signUpDto3;
+
+    private MemberRequest.PutDto updateDto;
 
 
     @BeforeEach
@@ -63,6 +70,11 @@ class MemberServiceImplTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
+
+        updateDto = MemberRequest.PutDto.builder()
+                .password("34567898765")
+                .nickname("hann.o_i")
+                .build();
     }
 
     @AfterEach
@@ -72,27 +84,26 @@ class MemberServiceImplTest {
 
     @Test
     public void signUp() {
-        Member member = memberService.signUp(signUpDto1, null);
-        Member member1 = memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+
+        Member member = memberQueryService.getMemberByUsername(signUpDto1.getUsername());
 
         assertThat(member.getUsername()).isEqualTo(signUpDto1.getUsername());
-        assertThat(member1.getUsername()).isEqualTo(signUpDto2.getUsername());
     }
 
     @Test
-    @Disabled
     public void 중복_회원_예외() {
         // savedMemberDto1와 savedMemberDto3의 username 중복 ➡︎ IllegalArgumentException 발생해야 함.
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> memberService.signUp(signUpDto3, null));
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+        Assertions.assertThrows(MemberHandler.class, () -> memberService.signUp(signUpDto3));
     }
 
     @Test
     @Disabled
     public void signIn() {
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         MemberRequest.LoginRequestDto signInDto = MemberRequest.LoginRequestDto.builder()
                 .username("member1")
@@ -112,5 +123,17 @@ class MemberServiceImplTest {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(signInDto.getUsername());
+    }
+
+    @Test
+    @WithMockCustomUser
+    void member_Information_update() {
+        //given
+        Long aLong = memberService.signUp(signUpDto1);
+        //when
+        Long aLong1 = memberService.updateMemberInfo(updateDto);
+        Member memberByUsername = memberQueryService.getMemberByUsername("member1");
+        //then
+        assertThat(memberByUsername.getNickname()).isEqualTo(updateDto.getNickname());
     }
 }

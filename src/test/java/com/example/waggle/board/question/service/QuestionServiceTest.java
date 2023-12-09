@@ -131,8 +131,8 @@ class QuestionServiceTest {
     }
 
     private void setQAndA() throws IOException {
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         Long question1 = questionService.createQuestion(questionWriteDto1);
         Long question2 = questionService.createQuestion(questionWriteDto2);

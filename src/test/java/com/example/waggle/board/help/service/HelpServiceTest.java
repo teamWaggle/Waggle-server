@@ -92,7 +92,7 @@ class HelpServiceTest {
     @WithMockCustomUser
     void help_create_service() throws IOException{
         setting();
-        memberCommandService.signUp(signUpDto1,null);
+        memberCommandService.signUp(signUpDto1);
         Long helpId = helpCommandService.createHelp(hwd1);
 
         List<Help> allHelp = helpQueryService.getAllHelp();
@@ -102,7 +102,7 @@ class HelpServiceTest {
     @WithMockCustomUser
     void help_read_All_ByPaging_service() throws IOException {
         setting();
-        memberCommandService.signUp(signUpDto1,null);
+        memberCommandService.signUp(signUpDto1);
         Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
@@ -118,7 +118,7 @@ class HelpServiceTest {
     @WithMockCustomUser
     void help_read_Mine_ByPaging_service() throws IOException {
         setting();
-        memberCommandService.signUp(signUpDto1,null);
+        memberCommandService.signUp(signUpDto1);
         Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
@@ -134,7 +134,7 @@ class HelpServiceTest {
     @WithMockCustomUser
     void help_read_One_service() throws IOException{
         setting();
-        memberCommandService.signUp(signUpDto1,null);
+        memberCommandService.signUp(signUpDto1);
         Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
@@ -147,7 +147,7 @@ class HelpServiceTest {
     @WithMockCustomUser
     void help_update_One_service() throws IOException{
         setting();
-        memberCommandService.signUp(signUpDto1,null);
+        memberCommandService.signUp(signUpDto1);
         Long helpId = helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         helpCommandService.createHelp(hwd3);
@@ -160,7 +160,7 @@ class HelpServiceTest {
     @WithMockCustomUser
     void help_delete_One_service() throws IOException{
         setting();
-        memberCommandService.signUp(signUpDto1,null);
+        memberCommandService.signUp(signUpDto1);
         helpCommandService.createHelp(hwd1);
         helpCommandService.createHelp(hwd2);
         Long help = helpCommandService.createHelp(hwd3);
