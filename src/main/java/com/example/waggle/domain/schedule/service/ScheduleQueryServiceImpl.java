@@ -1,16 +1,19 @@
 package com.example.waggle.domain.schedule.service;
 
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.domain.Schedule;
+import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.schedule.ScheduleDto;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -18,17 +21,38 @@ import java.util.stream.Collectors;
 public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     private final ScheduleRepository scheduleRepository;
+    private final MemberQueryService memberQueryService;
 
     @Override
-    public ScheduleDto getScheduleById(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+    public Schedule getScheduleById(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        return ScheduleDto.toDto(schedule);
     }
 
     @Override
-    public List<ScheduleDto> getSchedulesByTeamId(Long teamId) {
-        List<Schedule> result = scheduleRepository.findAllByTeamId(teamId);
-        return result.stream().map(ScheduleDto::toDto).collect(Collectors.toList());
+    public List<Schedule> getSchedulesByTeamId(Long teamId) {
+        return scheduleRepository.findAllByTeamId(teamId);
     }
+
+    @Override
+    public List<Schedule> getSchedulesByMemberUsername(String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        return member.getTeamMembers().stream()
+                .map(TeamMember::getTeam)
+                .flatMap(team -> team.getSchedules().stream())
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<Schedule> getMonthlySchedulesByMember(String username, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDateTime startDateTime = startOfMonth.atStartOfDay();
+        LocalDateTime endDateTime = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth()).atTime(23, 59, 59);
+
+        return scheduleRepository.findSchedulesByMemberUsernameAndMonth(username, startDateTime, endDateTime);
+
+    }
+
 }

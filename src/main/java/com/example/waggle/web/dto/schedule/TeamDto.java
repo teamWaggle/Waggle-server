@@ -30,11 +30,11 @@ public class TeamDto {
                 .schedules(team.getSchedules().stream().map(ScheduleDto::toDto).collect(Collectors.toList()))
                 .teamMembers(team.getTeamMembers().stream()
                         .map(tm -> tm.getMember().getUsername()).collect(Collectors.toList()))
-                .teamLeader(team.getTeamLeader().getUsername())
+                .teamLeader(team.getLeader().getUsername())
                 .build();
     }
 
     public Team toEntity(Member teamLeader) {
-        return Team.builder().name(name).teamLeader(teamLeader).build();
+        return Team.builder().name(name).leader(teamLeader).build();
     }
 }

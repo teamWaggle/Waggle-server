@@ -1,8 +1,5 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.entity.ScheduleMember;
-import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.domain.Schedule;
 import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
@@ -10,14 +7,10 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.schedule.ScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -26,41 +19,32 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
 
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
-    private final MemberRepository memberRepository;
+
 
     @Override
-    public Long createSchedule(ScheduleDto scheduleDto, Long teamId) {
+    public Long createSchedule(Long teamId, Post request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
-        List<String> scheduleMembers = scheduleDto.getScheduleMembers();
-        List<ScheduleMember> scheduleMemberList = new ArrayList<>();
-        for (String scheduleMember : scheduleMembers) {
-            // TODO scheduleMember 저장
-        }
+        Schedule createdSchedule = Schedule.builder()
+                .team(team)
+                .title(request.getTitle())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .build();
 
-        Schedule schedule = scheduleRepository.save(scheduleDto.toEntity(team, scheduleMemberList));
+        team.addSchedule(createdSchedule);
 
-        for (String username : scheduleDto.getScheduleMembers()) {
-            Optional<Member> findMember = memberRepository.findByUsername(username);
-            if (findMember.isPresent()) {
-                Member member = findMember.get();
-                ScheduleMember scheduleMember = ScheduleMember.builder().schedule(schedule).member(member).build();
-                scheduleMember.addScheduleMember(schedule, member);
-            }
-        }
-        scheduleRepository.save(schedule);
+        Schedule schedule = scheduleRepository.save(createdSchedule);
         return schedule.getId();
     }
 
     @Override
-    public Long updateSchedule(ScheduleDto scheduleDto) {
-        Schedule schedule = scheduleRepository.findById(scheduleDto.getId())
+    public Long updateSchedule(Long scheduleId, Post request) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        List<ScheduleMember> scheduleMembers = scheduleRepository.findAllScheduleMembersByUsername(scheduleDto.getScheduleMembers());
-        schedule.update(scheduleDto, scheduleMembers);
-        Schedule updatedSchedule = scheduleRepository.findById(scheduleDto.getId())
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        schedule.update(request);
+
         return schedule.getId();
     }
 
