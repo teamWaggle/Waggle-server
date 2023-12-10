@@ -43,7 +43,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         TeamMember teamMember = TeamMember.builder().build();
         teamMember.addTeamMember(team, loginMember);
-        teamMemberRepository.save(teamMember);
 
         return team.getId();
     }
