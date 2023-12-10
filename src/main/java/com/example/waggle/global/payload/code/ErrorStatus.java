@@ -57,7 +57,7 @@ public enum ErrorStatus implements BaseCode {
     SCHEDULE_NOT_FOUND(NOT_FOUND,4201,"스케줄 정보가 존재하지 않습니다"),
     TEAM_MEMBER_ALREADY_EXISTS(CONFLICT, 4202, "이미 팀에 속해 있는 멤버입니다"),
     TEAM_LEADER_UNAUTHORIZED(BAD_REQUEST, 4203, "팀 리더만 리더를 변경할 수 있습니다"),
-    TEAM_MEMBER_NOT_IN_TEAM(NOT_FOUND, 4204, "멤버가 이 팀에 속해 있지 않습니다");
+    TEAM_MEMBER_NOT_IN_TEAM(NOT_FOUND, 4204, "멤버가 이 팀에 속해 있지 않습니다"),
 
 
 

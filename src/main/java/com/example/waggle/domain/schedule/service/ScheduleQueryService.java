@@ -11,4 +11,6 @@ public interface ScheduleQueryService {
 
     List<Schedule> getSchedulesByMemberUsername(String username);
 
+    List<Schedule> getMonthlySchedulesByMember(String username, int month, int year);
+
 }

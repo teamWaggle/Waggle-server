@@ -7,6 +7,8 @@ import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,17 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .map(TeamMember::getTeam)
                 .flatMap(team -> team.getSchedules().stream())
                 .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<Schedule> getMonthlySchedulesByMember(String username, int year, int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDateTime startDateTime = startOfMonth.atStartOfDay();
+        LocalDateTime endDateTime = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth()).atTime(23, 59, 59);
+
+        return scheduleRepository.findSchedulesByMemberUsernameAndMonth(username, startDateTime, endDateTime);
+
     }
 
 }

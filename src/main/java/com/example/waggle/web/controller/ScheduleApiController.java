@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -74,5 +75,16 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
+    @Operation(summary = "특정 사용자가 속한 팀의 특정 월 일정 조회", description = "특정 사용자가 속한 모든 팀의 특정 월에 대한 일정을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
+    @GetMapping("/members/{username}/monthly")
+    public ApiResponseDto<ScheduleResponse.ListDto> getMonthlySchedulesForMember (
+            @PathVariable String username,
+            @RequestParam int year,
+            @RequestParam int month) {
+
+        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(username, year, month);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+    }
 
 }
