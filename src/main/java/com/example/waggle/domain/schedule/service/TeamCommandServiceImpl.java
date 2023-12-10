@@ -74,9 +74,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         validateMemberDuplication(team, member);
 
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, member);
-        teamMemberRepository.save(teamMember);
+        addMemberToTeam(team, member);
 
         return team.getId();
     }
@@ -130,7 +128,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         if (accept) {
             participation.setStatus(Participation.ParticipationStatus.ACCEPTED);
-            addTeamMember(teamId, username);
+            addMemberToTeam(team, member);
         } else {
             participation.setStatus(Participation.ParticipationStatus.REJECTED);
         }
@@ -153,7 +151,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-
     private void validateMemberBelongsToTeam(Team team, Member member) {
         boolean isMember = team.getTeamMembers().stream()
                 .anyMatch(tm -> tm.getMember().equals(member));
@@ -166,6 +163,12 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         if (participationRepository.existsByTeamIdAndUsername(team.getId(), member.getUsername())) {
             throw new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS);
         }
+    }
+
+    private void addMemberToTeam(Team team, Member member) {
+        TeamMember teamMember = TeamMember.builder().build();
+        teamMember.addTeamMember(team, member);
+        teamMemberRepository.save(teamMember);
     }
 
 }

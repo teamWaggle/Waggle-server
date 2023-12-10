@@ -99,6 +99,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @PostMapping("/{teamId}/participation")
     public ApiResponseDto<Boolean> requestParticipation(@PathVariable Long teamId, @RequestBody String username) {
+        teamCommandService.requestParticipation(teamId, username);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -106,7 +107,9 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 참여 요청 승인/거절 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 요청을 찾을 수 없습니다.")
     @PutMapping("/{teamId}/participation/{username}")
-    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId, @PathVariable String username, @RequestBody boolean accept) {
+    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId, @PathVariable String username,
+                                                          @RequestBody boolean accept) {
+        teamCommandService.respondToParticipation(teamId, username, accept);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
