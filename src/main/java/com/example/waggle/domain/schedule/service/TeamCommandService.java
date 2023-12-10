@@ -1,17 +1,19 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.web.dto.schedule.TeamDto;
+import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 
 public interface TeamCommandService {
 
-    Long createTeam(TeamDto teamDto, String username);
+    Long createTeam(Post request);
 
-    Long addMember(Long teamId, String username);
-
-    Long updateTeam(Long teamId, TeamDto updateTeamDto);
+    Long updateTeam(Long teamId, Post request);
 
     void deleteTeam(Long teamId);
 
-    void removeMember(Long teamId, String username);
+    Long addTeamMember(Long teamId, String username);
+
+    void deleteTeamMember(Long teamId, String username);
+
+    void changeTeamLeader(Long teamId, String username);
 
 }

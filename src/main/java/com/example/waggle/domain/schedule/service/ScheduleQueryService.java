@@ -1,13 +1,16 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.web.dto.schedule.ScheduleDto;
-
+import com.example.waggle.domain.schedule.domain.Schedule;
 import java.util.List;
 
 public interface ScheduleQueryService {
 
-    ScheduleDto getScheduleById(Long scheduleId);
+    Schedule getScheduleById(Long scheduleId);
 
-    List<ScheduleDto> getSchedulesByTeamId(Long teamId);
+    List<Schedule> getSchedulesByTeamId(Long teamId);
+
+    List<Schedule> getSchedulesByMemberUsername(String username);
+
+    List<Schedule> getMonthlySchedulesByMember(String username, int month, int year);
 
 }
