@@ -44,7 +44,7 @@ public class CommentCommandServiceImpl implements CommentCommandService{
     @Override
     public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
         if (!validateMember(commentId)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
         }
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));

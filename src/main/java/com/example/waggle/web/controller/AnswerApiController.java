@@ -54,7 +54,9 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 대답 수정에 실패했습니다.")
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
+                                               @RequestPart List<MultipartFile> multipartFiles,
                                                @RequestPart AnswerRequest.Post request) throws IOException{
+        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
         answerCommandService.updateAnswer(boardId, request);
         return ApiResponseDto.onSuccess(boardId);
     }

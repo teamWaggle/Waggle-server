@@ -8,7 +8,6 @@ import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.BoardType;
@@ -46,10 +45,8 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         Question question = questionRepository.save(createdQuestion);
 
-        if (!request.getHashtags().isEmpty()) {
-            for (String hashtag : request.getHashtags()) {
-                utilService.saveHashtag(question, hashtag);
-            }
+        for (String hashtag : request.getHashtags()) {
+            utilService.saveHashtag(question, hashtag);
         }
 
 //        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);

@@ -19,15 +19,13 @@ public class MediaCommandServiceImpl implements MediaCommandService{
     private final UtilService utilService;
     private final MediaRepository mediaRepository;
     @Override
-    public void createMedia(List<String> uploadFiles, Long boardId, BoardType boardType) {
-        Board board = utilService.getBoard(boardId, boardType);
+    public void createMedia(List<String> uploadFiles, Board board) {
         uploadFiles.stream()
                 .forEach(f -> mediaRepository.save(Media.builder().board(board).uploadFile(f).build()));
     }
 
     @Override
-    public void updateMedia(List<String> uploadFiles, Long boardId, BoardType boardType) {
-        Board board = utilService.getBoard(boardId, boardType);
+    public void updateMedia(List<String> uploadFiles, Board board) {
         //TODO awsS3file how clean?
         board.getMedias().clear();
         uploadFiles.stream()

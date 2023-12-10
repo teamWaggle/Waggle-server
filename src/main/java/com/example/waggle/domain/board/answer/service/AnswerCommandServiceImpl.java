@@ -55,11 +55,6 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
 //        question.addAnswer(answer);
 
         //TODO save media
-        if (!answerWriteDto.getHashtags().isEmpty()) {
-            for (String hashtag : answerWriteDto.getHashtags()) {
-                utilService.saveHashtag(answer, hashtag);
-            }
-        }
         return answer.getId();
     }
 
@@ -83,7 +78,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
     @Override
     public void deleteAnswer(Long boardId) {
         if (!utilService.validateMemberUseBoard(boardId, ANSWER)) {
-            throw new AnswerHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));

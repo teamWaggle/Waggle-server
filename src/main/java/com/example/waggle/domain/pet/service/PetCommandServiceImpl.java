@@ -28,7 +28,7 @@ public class PetCommandServiceImpl implements PetCommandService {
     @Override
     public Long createPet(PetRequest.Post petDto) {
         Member member = utilService.getSignInMember();
-        Pet build = getPet(petDto, member);
+        Pet build = buildPet(petDto, member);
         Pet pet = petRepository.save(build);
         return pet.getId();
     }
@@ -37,7 +37,7 @@ public class PetCommandServiceImpl implements PetCommandService {
     public void createPets(List<PetRequest.Post> petList, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        petList.stream().forEach(pet -> petRepository.save(getPet(pet,member)));
+        petList.stream().forEach(pet -> petRepository.save(buildPet(pet,member)));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         pets.stream().forEach(pet -> petRepository.delete(pet));
     }
 
-    private static Pet getPet(PetRequest.Post petDto, Member member) {
+    private static Pet buildPet(PetRequest.Post petDto, Member member) {
         Pet build = Pet.builder()
                 .birthday(petDto.getBirthday())
                 .name(petDto.getName())

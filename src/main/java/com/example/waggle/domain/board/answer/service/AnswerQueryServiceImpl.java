@@ -27,7 +27,7 @@ public class AnswerQueryServiceImpl implements AnswerQueryService{
     @Override
     public Answer getAnswerByBoardId(Long boardId) {
         return answerRepository.findById(boardId)
-                .orElseThrow(()->new AnswerHandler(ErrorStatus.REPLY_NOT_FOUND));
+                .orElseThrow(()->new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
 
     @Override
