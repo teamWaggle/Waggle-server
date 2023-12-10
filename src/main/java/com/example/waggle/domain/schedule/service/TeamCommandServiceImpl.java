@@ -10,7 +10,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final UtilService utilService;
 
     @Override
-    public Long createTeam(TeamRequest.TeamRequestDto request) {
+    public Long createTeam(Post request) {
         Member loginMember = utilService.getSignInMember();
 
         Team createdTeam = Team.builder()
@@ -48,7 +48,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public Long updateTeam(Long teamId, TeamRequest.TeamRequestDto request) {
+    public Long updateTeam(Long teamId, Post request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         team.update(request);

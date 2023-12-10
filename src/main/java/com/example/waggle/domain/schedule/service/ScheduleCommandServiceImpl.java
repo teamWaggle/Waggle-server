@@ -7,7 +7,7 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
 
 
     @Override
-    public Long createSchedule(Long teamId, ScheduleRequest.ScheduleRequestDto request) {
+    public Long createSchedule(Long teamId, Post request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
@@ -40,7 +40,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
     }
 
     @Override
-    public Long updateSchedule(Long scheduleId, ScheduleRequest.ScheduleRequestDto request) {
+    public Long updateSchedule(Long scheduleId, Post request) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         schedule.update(request);

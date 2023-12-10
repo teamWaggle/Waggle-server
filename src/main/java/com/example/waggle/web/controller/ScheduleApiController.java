@@ -5,7 +5,7 @@ import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.ScheduleConverter;
-import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,7 +37,7 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 생성 성공.")
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@PathVariable Long teamId,
-                                               @RequestBody ScheduleRequest.ScheduleRequestDto request) {
+                                               @RequestBody Post request) {
         Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
@@ -54,7 +54,7 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 수정 성공.")
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<Long> updateSchedule(@PathVariable Long scheduleId,
-                                               @RequestBody ScheduleRequest.ScheduleRequestDto request) {
+                                               @RequestBody Post request) {
         Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, request);
         return ApiResponseDto.onSuccess(updatedScheduleId);
     }

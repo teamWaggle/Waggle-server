@@ -5,7 +5,7 @@ import com.example.waggle.domain.schedule.service.TeamCommandService;
 import com.example.waggle.domain.schedule.service.TeamQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.TeamConverter;
-import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import com.example.waggle.web.dto.schedule.TeamResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +35,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 생성 성공. 작성한 팀의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 팀 생성에 실패했습니다.")
     @PostMapping
-    public ApiResponseDto<Long> createTeam(@RequestBody TeamRequest.TeamRequestDto request) {
+    public ApiResponseDto<Long> createTeam(@RequestBody Post request) {
         Long createdTeamId = teamCommandService.createTeam(request);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
@@ -53,7 +53,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 정보 업데이트 성공.")
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @PutMapping("/{teamId}")
-    public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId, @RequestBody TeamRequest.TeamRequestDto request) {
+    public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId, @RequestBody Post request) {
         Long updatedTeamId = teamCommandService.updateTeam(teamId, request);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }

@@ -2,7 +2,7 @@ package com.example.waggle.domain.schedule.domain;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
-import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,7 +57,7 @@ public class Team extends BaseEntity {
         schedule.setTeam(this);
     }
 
-    public void update(TeamRequest.TeamRequestDto request) {
+    public void update(Post request) {
         this.name = request.getName();
         this.description = request.getDescription();
 //        this.coverImageUrl = request.get

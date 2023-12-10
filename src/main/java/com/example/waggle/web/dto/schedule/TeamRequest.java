@@ -25,7 +25,7 @@ public class TeamRequest {
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class TeamRequestDto {
+    public static class Post {
         private String name;
         private String description;
         private String colorScheme;

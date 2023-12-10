@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.domain;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -32,7 +32,7 @@ public class Schedule extends Board {
 
     private LocalDateTime endTime;
 
-    public void update(ScheduleRequest.ScheduleRequestDto request) {
+    public void update(Post request) {
         this.title = request.getTitle();
         this.startTime = request.getStartTime();
         this.endTime = request.getEndTime();

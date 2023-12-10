@@ -16,7 +16,7 @@ public class ScheduleRequest {
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class ScheduleRequestDto {
+    public static class Post {
         private String title;
         private String content;
         private LocalDateTime startTime;
