@@ -1,4 +1,4 @@
-package com.example.waggle.web.dto.schedule;
+package com.example.waggle.domain.schedule.domain;
 
 
 import jakarta.persistence.Column;
@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @Getter
@@ -28,6 +29,7 @@ public class Participation {
     @Column(nullable = false)
     private Long teamId;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ParticipationStatus status;
