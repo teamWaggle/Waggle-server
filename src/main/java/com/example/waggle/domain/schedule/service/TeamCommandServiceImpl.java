@@ -1,69 +1,57 @@
 package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.entity.TeamMember;
-import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.member.repository.TeamMemberRepository;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.domain.Team;
+import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.schedule.TeamDto;
+import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class TeamCommandServiceImpl implements TeamCommandService{
+public class TeamCommandServiceImpl implements TeamCommandService {
 
-    private final MemberRepository memberRepository;
+    private final MemberQueryService memberQueryService;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final UtilService utilService;
 
     @Override
-    public Long createTeam(TeamDto teamDto, String username) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public Long createTeam(Post request) {
+        Member loginMember = utilService.getSignInMember();
 
-        Team team = teamRepository.save(teamDto.toEntity(member));
-        TeamMember teamMember = TeamMember.builder()
-                .team(team)
-                .member(member).build();
-        teamMember.addTeamMember(team, member);
-        teamMemberRepository.save(teamMember);
+        Team createdTeam = Team.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+//                .coverImageUrl(request.get)
+                .colorScheme(request.getColorScheme())
+                .maxTeamSize(request.getMaxTeamSize())
+                .leader(loginMember)
+                .build();
+
+        Team team = teamRepository.save(createdTeam);
+
+        TeamMember teamMember = TeamMember.builder().build();
+        teamMember.addTeamMember(team, loginMember);
+
         return team.getId();
     }
 
     @Override
-    public Long addMember(Long teamId, String username) {
+    public Long updateTeam(Long teamId, Post request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        if (validateMemberDuplication(team, member)) {
-            TeamMember teamMember = TeamMember.builder()
-                    .team(team)
-                    .member(member).build();
-            teamMember.addTeamMember(team, member);
-            teamMemberRepository.save(teamMember);
-        } else {
-            // TODO 중복 회원 저장 예외
-        }
-        return team.getId();
-    }
-
-    @Override
-    public Long updateTeam(Long teamId, TeamDto updateTeamDto) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        team.updateTeamName(updateTeamDto.getName());
+        team.update(request);
         return team.getId();
     }
 
@@ -71,28 +59,64 @@ public class TeamCommandServiceImpl implements TeamCommandService{
     public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-
-        List<TeamMember> teamMembers = team.getTeamMembers();
-        for (TeamMember teamMember : teamMembers) {
-            teamMemberRepository.delete(teamMember);
-        }
         teamRepository.delete(team);
     }
 
     @Override
-    public void removeMember(Long teamId, String username) {
+    public Long addTeamMember(Long teamId, String username) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        if (!validateMemberDuplication(team, member)) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
+        }
+
+        TeamMember teamMember = TeamMember.builder().build();
+        teamMember.addTeamMember(team, member);
+        teamMemberRepository.save(teamMember);
+
+        return team.getId();
+    }
+
+    @Override
+    public void deleteTeamMember(Long teamId, String username) {
         TeamMember teamMember = teamMemberRepository.findTeamMemberByMemberUsernameAndTeamId(username, teamId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        teamMember.removeTeam();
-        teamMemberRepository.delete(teamMember);
+        teamMember.removeTeamMember();
+    }
+
+    @Override
+    public void changeTeamLeader(Long teamId, String username) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        checkIfCallerIsLeader(team);
+        checkIfMemberBelongsToTeam(team, member);
+
+        team.updateLeader(member);
     }
 
     private boolean validateMemberDuplication(Team team, Member member) {
-        List<TeamMember> teamMembers = team.getTeamMembers();
-        for (TeamMember teamMember : teamMembers) {
-            if (teamMember.getMember().equals(member)) return false;
+        return team.getTeamMembers().stream()
+                .noneMatch(teamMember -> teamMember.getMember().equals(member));
+    }
+
+    private void checkIfCallerIsLeader(Team team) {
+        String currentUsername = utilService.getSignInMember().getUsername();
+        if (!team.getLeader().getUsername().equals(currentUsername)) {
+            throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
-        return true;
+    }
+
+
+    private void checkIfMemberBelongsToTeam(Team team, Member member) {
+        boolean isMember = team.getTeamMembers().stream()
+                .anyMatch(tm -> tm.getMember().equals(member));
+        if (!isMember) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM);
+        }
     }
 
 }
