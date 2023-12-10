@@ -91,12 +91,32 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberQueryService.getMemberByUsername(username);
+
+        checkIfCallerIsLeader(team);
+        checkIfMemberBelongsToTeam(team, member);
+
         team.updateLeader(member);
     }
 
     private boolean validateMemberDuplication(Team team, Member member) {
         return team.getTeamMembers().stream()
                 .noneMatch(teamMember -> teamMember.getMember().equals(member));
+    }
+
+    private void checkIfCallerIsLeader(Team team) {
+        String currentUsername = utilService.getSignInMember().getUsername();
+        if (!team.getLeader().getUsername().equals(currentUsername)) {
+            throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
+        }
+    }
+
+
+    private void checkIfMemberBelongsToTeam(Team team, Member member) {
+        boolean isMember = team.getTeamMembers().stream()
+                .anyMatch(tm -> tm.getMember().equals(member));
+        if (!isMember) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM);
+        }
     }
 
 }
