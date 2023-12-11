@@ -40,6 +40,7 @@ public enum ErrorStatus implements BaseCode {
 
 
 
+
     // 게시판 관련 오류 (4150 ~ 4199)
     BOARD_CANNOT_RECOMMEND_OWN(BAD_REQUEST, 4150, "자신의 게시물에는 좋아요를 누를 수 없습니다."),
     BOARD_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4151, "다른 사용자의 게시물을 수정하거나 삭제할 수 없습니다."),

@@ -59,7 +59,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
     public Long updateHelp(Long boardId,
                            HelpRequest.Post helpWriteDto)throws IOException {
         if (!utilService.validateMemberUseBoard(boardId, HELP)) {
-            throw new MemberHandler(ErrorStatus.CANNOT_TOUCH_NOT_YOURS);
+            throw new MemberHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Help help = helpRepository.findById(boardId)
                 .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
