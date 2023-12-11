@@ -2,13 +2,14 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.web.dto.question.QuestionResponse;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class QuestionConverter {
-    public static QuestionResponse.QuestionSummaryDto toQuestionSummaryDto(Question question) {
-        return QuestionResponse.QuestionSummaryDto.builder()
+    public static QuestionResponse.SummaryDto toSummaryDto(Question question) {
+        return QuestionResponse.SummaryDto.builder()
                 .id(question.getId())
                 .username(question.getMember().getUsername())
                 .title(question.getTitle())
@@ -18,12 +19,12 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponse.QuestionsListDto toQuestionsListDto(Page<Question> questionPage) {
-        List<QuestionResponse.QuestionSummaryDto> questionsSummaryDtoList = questionPage.stream()
-                .map(QuestionConverter::toQuestionSummaryDto)
+    public static QuestionResponse.ListDto toListDto(Page<Question> questionPage) {
+        List<QuestionResponse.SummaryDto> questionsSummaryDtoList = questionPage.stream()
+                .map(QuestionConverter::toSummaryDto)
                 .collect(Collectors.toList());
 
-        return QuestionResponse.QuestionsListDto.builder()
+        return QuestionResponse.ListDto.builder()
                 .questionsList(questionsSummaryDtoList)
                 .totalQuestions(questionPage.getTotalElements())
                 .isFirst(questionPage.isFirst())
@@ -31,4 +32,15 @@ public class QuestionConverter {
                 .build();
     }
 
+    public static QuestionResponse.DetailDto toDetailDto(Question question) {
+            return QuestionResponse.DetailDto.builder()
+                    .id(question.getId())
+                    .content(question.getContent())
+                    .username(question.getMember().getUsername())
+                    .title(question.getTitle())
+                    .createDate(question.getCreatedDate())
+                    .hashtags(question.getBoardHashtags().stream()
+                            .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
+                    .build();
+    }
 }

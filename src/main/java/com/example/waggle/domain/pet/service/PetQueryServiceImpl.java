@@ -4,10 +4,11 @@ import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.handler.PetHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.pet.PetDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -17,10 +18,13 @@ public class PetQueryServiceImpl implements PetQueryService{
     private final PetRepository petRepository;
 
     @Override
-    public PetDto getPetById(Long petId) {
-        Pet pet = petRepository.findById(petId)
+    public Pet getPetById(Long petId) {
+        return petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        return PetDto.toDto(pet);
     }
 
+    @Override
+    public List<Pet> getPetsByUsername(String username) {
+        return petRepository.findByMemberUsername(username);
+    }
 }

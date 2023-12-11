@@ -1,11 +1,14 @@
 package com.example.waggle.board.question.service;
 
+import com.example.waggle.domain.board.answer.entity.Answer;
+import com.example.waggle.domain.board.answer.service.AnswerCommandService;
+import com.example.waggle.domain.board.answer.service.AnswerQueryService;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.answer.AnswerWriteDto;
+import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
@@ -34,6 +37,10 @@ class QuestionServiceTest {
     @Autowired
     private MemberCommandService memberService;
     @Autowired
+    private AnswerCommandService answerService;
+    @Autowired
+    private AnswerQueryService answerQueryService;
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
     MemberRequest.RegisterRequestDto signUpDto1;
@@ -42,15 +49,17 @@ class QuestionServiceTest {
     QuestionRequest.QuestionWriteDto questionWriteDto1;
     QuestionRequest.QuestionWriteDto questionWriteDto2;
     QuestionRequest.QuestionWriteDto questionEditDto1;
-    AnswerWriteDto answerWriteDto1;
-    AnswerWriteDto answerWriteDto2;
-    AnswerWriteDto answerEditDto1;
+    AnswerRequest.Post answerWriteDto1;
+    AnswerRequest.Post answerWriteDto2;
+    AnswerRequest.Post answerEditDto1;
 
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
     List<String> medias1 = new ArrayList<>();
     List<String> medias2 = new ArrayList<>();
+
+    Pageable pageable = PageRequest.of(0, 2);
 
 
     @BeforeEach
@@ -102,15 +111,15 @@ class QuestionServiceTest {
                 .hashtags(tags2)
                 .build();
 
-        answerWriteDto1 = AnswerWriteDto.builder()
+        answerWriteDto1 = AnswerRequest.Post.builder()
                 .content("i don't know that")
                 .build();
 
-        answerWriteDto2 = AnswerWriteDto.builder()
+        answerWriteDto2 = AnswerRequest.Post.builder()
                 .content("i know that!")
                 .build();
 
-        answerEditDto1 = AnswerWriteDto.builder()
+        answerEditDto1 = AnswerRequest.Post.builder()
                 .content("EditAnswer")
                 .build();
 
@@ -122,38 +131,22 @@ class QuestionServiceTest {
     }
 
     private void setQAndA() throws IOException {
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
-        Long question1 = questionService.createQuestion(questionWriteDto1, new ArrayList<>());
-        Long question2 = questionService.createQuestion(questionWriteDto2, new ArrayList<>());
+        Long question1 = questionService.createQuestion(questionWriteDto1);
+        Long question2 = questionService.createQuestion(questionWriteDto2);
 
-        questionService.createAnswer(question1, answerWriteDto1, new ArrayList<>());
-        questionService.createAnswer(question1, answerWriteDto2, new ArrayList<>());
+        answerService.createAnswer(question1, answerWriteDto1);
+        answerService.createAnswer(question1, answerWriteDto2);
     }
-
-
-//    @WithMockCustomUser
-//    @Test
-//    void findAllQuestion() throws IOException {
-//        //given
-//        setQAndA();
-//
-//        //when
-//        List<QuestionSummaryDto> allQuestion = questionQueryService.getPagedQuestionsByUsername();
-//
-//        //then
-//        assertThat(allQuestion.size()).isEqualTo(2);
-//    }
 
     @Test
     @WithMockCustomUser
     void findAllQuestionByUsername() throws IOException {
         //given
         setQAndA();
-
         //when
-        Pageable pageable = PageRequest.of(0, 2);
         Page<Question> member1 = questionQueryService
                 .getPagedQuestionsByUsername("member1", pageable);
 
@@ -166,8 +159,13 @@ class QuestionServiceTest {
     void findQuestionByBoardId() throws IOException {
         //given
         setQAndA();
-
-        //TODO list get->get first object at list->get Id & find it
+        //when
+        Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
+        Question questionByBoardId = questionQueryService
+                .getQuestionByBoardId(pagedQuestions.getContent().get(0).getId());
+        //then
+        assertThat(questionByBoardId.getTitle()).isEqualTo("question1");
+        assertThat(pagedQuestions.getSize()).isEqualTo(2);
     }
 
     @Test
@@ -175,49 +173,56 @@ class QuestionServiceTest {
     void changeQuestion() throws IOException {
         //given
         setQAndA();
-
-        //TODO list get-> get first object at list -> get Id & find it -> change field content -> check
+        //when
+        Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
+        Long aLong = questionService.updateQuestion(pagedQuestions.getContent().get(0).getId(), questionEditDto1);
+        //then
+        Question question = questionQueryService.getQuestionByBoardId(aLong);
+        assertThat(question.getTitle()).isEqualTo("EditQuestion");
     }
 
-//    @Test
-//    @WithMockCustomUser
-//    void changeAnswer() throws IOException {
-//        //given
-//        setQAndA();
-//        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
-//        QuestionDetailDto findQuestion = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
-//        //when
-//        questionService.updateAnswer(findQuestion.getAnswers().get(0).getId(), answerEditDto1, new ArrayList<>());
-//        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
-//        //then
-//        assertThat(questionByBoardId.getAnswers().get(0).getContent()).isEqualTo("EditAnswer");
-//
-//    }
-//
-//    @Test
-//    @WithMockCustomUser
-//    void deleteQuestion() throws IOException {
-//        //given
-//        setQAndA();
-//        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
-//        //when
-//        questionService.deleteQuestion(allQuestion.get(0).getId());
-//        List<QuestionSummaryDto> findAllQuestion = questionQueryService.getQuestions();
-//        //then
-//        assertThat(findAllQuestion.size()).isEqualTo(1);
-//    }
-//
-//    @Test
-//    @WithMockCustomUser
-//    void deleteAnswer() throws IOException {
-//        //given
-//        setQAndA();
-//        List<QuestionSummaryDto> allQuestion = questionQueryService.getQuestions();
-//        QuestionDetailDto findQuestion = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
-//        //when
-//        questionService.deleteAnswer(findQuestion.getAnswers().get(0).getId());
-//        QuestionDetailDto questionByBoardId = questionQueryService.getQuestionByBoardId(allQuestion.get(0).getId());
-//        //then
-//        assertThat(questionByBoardId.getAnswers().size()).isEqualTo(1);
-//    }
+    @Test
+    @WithMockCustomUser
+    void changeAnswer() throws IOException {
+        //given
+        setQAndA();
+        Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
+        Question question = pagedQuestions.getContent().get(0);
+        //when
+        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(question.getId(), pageable);
+        Long aLong = answerService.updateAnswer(pagedAnswers.getContent().get(0).getId(), answerEditDto1);
+        Answer answerByBoardId = answerQueryService.getAnswerByBoardId(aLong);
+        //then
+        assertThat(answerByBoardId.getContent()).isEqualTo("EditAnswer");
+    }
+
+    @Test
+    @WithMockCustomUser
+    void deleteQuestion() throws IOException {
+        //given
+        setQAndA();
+        //when
+        Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
+        Question question = pagedQuestions.getContent().get(0);
+        questionService.deleteQuestion(question.getId());
+        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(question.getId(), pageable);
+        List<Question> allQuestion = questionQueryService.getAllQuestion();
+        //then
+        assertThat(allQuestion.size()).isEqualTo(1);
+        assertThat(pagedAnswers.getContent().size()).isEqualTo(0);
+    }
+
+    @Test
+    @WithMockCustomUser
+    void deleteAnswer() throws IOException {
+        //given
+        setQAndA();
+        List<Question> allQuestion = questionQueryService.getAllQuestion();
+        //when
+        List<Answer> answers = answerQueryService.getAnswersByQuestion(allQuestion.get(0).getId());
+        answerService.deleteAnswer(answers.get(0).getId());
+        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(allQuestion.get(0).getId(),pageable);
+        //then
+        assertThat(pagedAnswers.getContent().size()).isEqualTo(1);
+    }
 }

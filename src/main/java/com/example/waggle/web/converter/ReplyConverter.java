@@ -14,7 +14,7 @@ public class ReplyConverter {
                 .username(reply.getMember().getUsername())
                 .content(reply.getContent())
                 .mentionMembers(reply.getMentions().stream()
-                        .map(r -> r.getUsername()).collect(Collectors.toList()))
+                        .map(r -> r.getMember().getUsername()).collect(Collectors.toList()))
                 .build();
     }
 

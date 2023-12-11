@@ -1,19 +1,16 @@
 package com.example.waggle.domain.recommend.service;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.util.service.UtilService;
-import com.example.waggle.web.dto.answer.AnswerDetailDto;
-import com.example.waggle.web.dto.question.QuestionDetailDto;
-import com.example.waggle.web.dto.question.QuestionSummaryDto;
-import com.example.waggle.web.dto.story.StoryDetailDto;
-import com.example.waggle.web.dto.story.StorySummaryDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,84 +22,93 @@ public class RecommendQueryServiceImpl implements RecommendQueryService{
     private final RecommendRepository recommendRepository;
 
     @Override
-    public void checkRecommend(QuestionDetailDto questionDetailDto) {
+    public boolean checkRecommend(Long boardId, String boardWriter) {
         Member signInMember = utilService.getSignInMember();
         boolean recommendIt = false;
         //(login user == board writer) checking
         if (!signInMember.getUsername()
-                .equals(questionDetailDto.getUsername())) {
+                .equals(boardWriter)) {
             recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), questionDetailDto.getId());
+                    .existsByMemberIdAndBoardId(signInMember.getId(), boardId);
         }
-
-        int count = recommendRepository.countByBoardId(questionDetailDto.getId());
-        questionDetailDto.linkRecommend(count, recommendIt);
+        return recommendIt;
     }
 
     @Override
-    public void checkRecommend(AnswerDetailDto answerDetailDto) {
-        Member signInMember = utilService.getSignInMember();
-        boolean recommendIt = false;
-        //(login user == board writer) checking
-        if (!signInMember.getUsername()
-                .equals(answerDetailDto.getUsername())) {
-            recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), answerDetailDto.getId());
-        }
-
-        int count = recommendRepository.countByBoardId(answerDetailDto.getId());
-        answerDetailDto.linkRecommend(count, recommendIt);
+    public int countRecommend(Long boardId) {
+        return recommendRepository.countByBoardId(boardId);
     }
 
     @Override
-    public void checkRecommend(StoryDetailDto storyDetailDto) {
-        Member signInMember = utilService.getSignInMember();
-        boolean recommendIt = false;
-        //(login user == board writer) checking
-        if (!signInMember.getUsername().equals(storyDetailDto.getUsername())) {
-            recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), storyDetailDto.getId());
-        }
-
-        int count = recommendRepository.countByBoardId(storyDetailDto.getId());
-        storyDetailDto.linkRecommend(count, recommendIt);
+    public List<Member> getRecommendingMembers(Long boardId) {
+        List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
+        return byBoardId.stream().map(r -> r.getMember()).collect(Collectors.toList());
     }
 
-    @Override
-    public void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList) {
-        for (QuestionSummaryDto questionViewDto : questionViewDtoList) {
-            Member signInMember = utilService.getSignInMember();
-            boolean recommendIt = false;
-            //(login user == board writer) checking
-            if (!signInMember.getUsername()
-                    .equals(questionViewDto.getUsername())) {
-                recommendIt = recommendRepository
-                        .existsByMemberIdAndBoardId(signInMember.getId(), questionViewDto.getId());
-            }
-            int count = recommendRepository.countByBoardId(questionViewDto.getId());
-            questionViewDto.linkRecommend(count, recommendIt);
-        }
-    }
-
-    @Override
-    public void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList) {
-        for (AnswerDetailDto answerDetailDto : answerDetailDtoList) {
-            checkRecommend(answerDetailDto);
-        }
-    }
-
-    @Override
-    public void checkRecommendStories(List<StorySummaryDto> storyViewDtoList) {
-        for (StorySummaryDto storyViewDto : storyViewDtoList) {
-            Member signInMember = utilService.getSignInMember();
-            boolean recommendIt = false;
-            //(login user == board writer) checking
-            if (!signInMember.getUsername()
-                    .equals(storyViewDto.getUsername())) {
-                recommendIt = recommendRepository
-                        .existsByMemberIdAndBoardId(signInMember.getId(), storyViewDto.getId());
-            }
-            int count = recommendRepository.countByBoardId(storyViewDto.getId());
-            storyViewDto.linkRecommend(count, recommendIt);
-        }
-    }
+//    @Override
+//    public void checkRecommend(AnswerDetailDto answerDetailDto) {
+//        Member signInMember = utilService.getSignInMember();
+//        boolean recommendIt = false;
+//        //(login user == board writer) checking
+//        if (!signInMember.getUsername()
+//                .equals(answerDetailDto.getUsername())) {
+//            recommendIt = recommendRepository
+//                    .existsByMemberIdAndBoardId(signInMember.getId(), answerDetailDto.getId());
+//        }
+//
+//        int count = recommendRepository.countByBoardId(answerDetailDto.getId());
+//        answerDetailDto.linkRecommend(count, recommendIt);
+//    }
+//
+//    @Override
+//    public void checkRecommend(StoryDetailDto storyDetailDto) {
+//        Member signInMember = utilService.getSignInMember();
+//        boolean recommendIt = false;
+//        //(login user == board writer) checking
+//        if (!signInMember.getUsername().equals(storyDetailDto.getUsername())) {
+//            recommendIt = recommendRepository.existsByMemberIdAndBoardId(signInMember.getId(), storyDetailDto.getId());
+//        }
+//
+//        int count = recommendRepository.countByBoardId(storyDetailDto.getId());
+//        storyDetailDto.linkRecommend(count, recommendIt);
+//    }
+//
+//    @Override
+//    public void checkRecommendQuestions(List<QuestionSummaryDto> questionViewDtoList) {
+//        for (QuestionSummaryDto questionViewDto : questionViewDtoList) {
+//            Member signInMember = utilService.getSignInMember();
+//            boolean recommendIt = false;
+//            //(login user == board writer) checking
+//            if (!signInMember.getUsername()
+//                    .equals(questionViewDto.getUsername())) {
+//                recommendIt = recommendRepository
+//                        .existsByMemberIdAndBoardId(signInMember.getId(), questionViewDto.getId());
+//            }
+//            int count = recommendRepository.countByBoardId(questionViewDto.getId());
+//            questionViewDto.linkRecommend(count, recommendIt);
+//        }
+//    }
+//
+//    @Override
+//    public void checkRecommendAnswers(List<AnswerDetailDto> answerDetailDtoList) {
+//        for (AnswerDetailDto answerDetailDto : answerDetailDtoList) {
+//            checkRecommend(answerDetailDto);
+//        }
+//    }
+//
+//    @Override
+//    public void checkRecommendStories(List<StorySummaryDto> storyViewDtoList) {
+//        for (StorySummaryDto storyViewDto : storyViewDtoList) {
+//            Member signInMember = utilService.getSignInMember();
+//            boolean recommendIt = false;
+//            //(login user == board writer) checking
+//            if (!signInMember.getUsername()
+//                    .equals(storyViewDto.getUsername())) {
+//                recommendIt = recommendRepository
+//                        .existsByMemberIdAndBoardId(signInMember.getId(), storyViewDto.getId());
+//            }
+//            int count = recommendRepository.countByBoardId(storyViewDto.getId());
+//            storyViewDto.linkRecommend(count, recommendIt);
+//        }
+//    }
 }
