@@ -11,10 +11,8 @@ import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.schedule.TeamRequest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 class TeamCommandServiceTest {
 
-    @Autowired
-    DatabaseCleanUp databaseCleanUp;
     @Autowired
     TeamCommandService teamCommandService;
     @Autowired
@@ -76,16 +72,8 @@ class TeamCommandServiceTest {
         teamRepository.save(team);
 
         // Setup teamMember
-        TeamMember teamMember = TeamMember.builder()
-                .member(member1)
-                .team(team)
-                .build();
+        TeamMember teamMember = TeamMember.builder().build();
         teamMember.addTeamMember(team, member1);
-    }
-
-    @AfterEach
-    void clean() {
-        databaseCleanUp.truncateAllEntity();
     }
 
 

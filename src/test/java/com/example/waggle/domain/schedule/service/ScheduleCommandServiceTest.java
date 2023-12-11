@@ -8,13 +8,12 @@ import com.example.waggle.domain.schedule.domain.Schedule;
 import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
-import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 class ScheduleCommandServiceTest {
 
     @Autowired
-    DatabaseCleanUp databaseCleanUp;
-    @Autowired
     ScheduleCommandService scheduleCommandService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
     @Autowired
-    TeamMemberRepository teamMemberRepository;
-    @Autowired
     ScheduleRepository scheduleRepository;
+    @PersistenceContext
+    EntityManager em;
 
     private Member member1;
     private Member member2;
@@ -70,10 +67,7 @@ class ScheduleCommandServiceTest {
         teamRepository.save(team);
 
         // Setup teamMember
-        TeamMember teamMember = TeamMember.builder()
-                .member(member1)
-                .team(team)
-                .build();
+        TeamMember teamMember = TeamMember.builder().build();
         teamMember.addTeamMember(team, member1);
 
         // Setup Schedule
@@ -82,14 +76,9 @@ class ScheduleCommandServiceTest {
                 .content("schedule1 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
-                .team(team)
                 .build();
         scheduleRepository.save(schedule);
-    }
-
-    @AfterEach
-    void clean() {
-        databaseCleanUp.truncateAllEntity();
+        team.addSchedule(schedule);
     }
 
 
@@ -113,8 +102,8 @@ class ScheduleCommandServiceTest {
         assertThat(createdSchedule.getStartTime()).isEqualTo(createRequest.getStartTime());
         assertThat(createdSchedule.getEndTime()).isEqualTo(createRequest.getEndTime());
         assertThat(createdSchedule.getTeam().getName()).isEqualTo(team.getName());
-        assertThat(team.getSchedules().size()).isEqualTo(1);
-        assertThat(team.getSchedules().get(0).getTitle()).isEqualTo(createRequest.getTitle());
+        assertThat(team.getSchedules().size()).isEqualTo(2);
+        assertThat(team.getSchedules().get(1).getTitle()).isEqualTo(createRequest.getTitle());
     }
 
     @Test
