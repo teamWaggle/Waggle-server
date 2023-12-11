@@ -1,6 +1,7 @@
 package com.example.waggle.domain.member.entity;
 
 
+import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
 import com.example.waggle.web.dto.member.MemberRequest;
 import jakarta.persistence.*;
@@ -52,6 +53,12 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member")
+    private List<Pet> pets = new ArrayList<>();
+
+    //TODO RoomMemeber List
 
 
 //    public void setPets(List<Pet> pets) {
