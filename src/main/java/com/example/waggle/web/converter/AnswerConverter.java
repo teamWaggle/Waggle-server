@@ -1,8 +1,7 @@
 package com.example.waggle.web.converter;
 
-import com.example.waggle.domain.board.question.entity.Answer;
+import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.web.dto.answer.AnswerResponse;
-import com.example.waggle.web.dto.comment.CommentViewDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -18,10 +17,6 @@ public class AnswerConverter {
                 .createDate(answer.getCreatedDate())
                 .hashtags(answer.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
-                .medias(answer.getMedias().stream()
-                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
-                .comments(answer.getComments().stream()
-                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
                 .build();
     }
 

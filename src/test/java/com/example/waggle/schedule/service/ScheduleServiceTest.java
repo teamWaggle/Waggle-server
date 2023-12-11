@@ -1,6 +1,5 @@
 package com.example.waggle.schedule.service;
 
-import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
@@ -62,8 +61,8 @@ class ScheduleServiceTest {
                 .password("12345678")
                 .build();
 
-        Member member = memberService.signUp(signUpDto1, null);
-        Member member1 = memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         // team 생성
         TeamDto team = TeamDto.builder()
