@@ -13,7 +13,7 @@ import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.web.dto.schedule.TeamRequest.Post;
+import com.example.waggle.web.dto.schedule.TeamRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,17 +50,20 @@ class TeamCommandServiceTest {
         // Setup member
         member1 = Member.builder()
                 .username("member1")
-                .password("12345678").build();
+                .password("12345678")
+                .build();
         memberRepository.save(member1);
 
         member2 = Member.builder()
                 .username("member2")
-                .password("12345678").build();
+                .password("12345678")
+                .build();
         memberRepository.save(member2);
 
         member3 = Member.builder()
                 .username("member3")
-                .password("12345678").build();
+                .password("12345678")
+                .build();
         memberRepository.save(member3);
 
         // Setup team
@@ -68,15 +71,15 @@ class TeamCommandServiceTest {
                 .name("team1")
                 .description("team1 description")
                 .leader(member1)
-                .maxTeamSize(4).build();
+                .maxTeamSize(4)
+                .build();
         teamRepository.save(team);
-
-
 
         // Setup teamMember
         TeamMember teamMember = TeamMember.builder()
                 .member(member1)
-                .team(team).build();
+                .team(team)
+                .build();
         teamMember.addTeamMember(team, member1);
     }
 
@@ -89,10 +92,11 @@ class TeamCommandServiceTest {
     @Test
     void createTeam() {
         // given
-        Post createRequest = Post.builder()
+        TeamRequest.Post createRequest = TeamRequest.Post.builder()
                 .name("test name")
                 .description("test description")
-                .maxTeamSize(10).build();
+                .maxTeamSize(10)
+                .build();
 
         // when
         Long createdTeamId = teamCommandService.createTeam(createRequest);
@@ -110,10 +114,11 @@ class TeamCommandServiceTest {
     @Test
     void updateTeam() {
         // given
-        Post updateRequest = Post.builder()
+        TeamRequest.Post updateRequest = TeamRequest.Post.builder()
                 .name("updated name")
                 .description("updated description")
-                .maxTeamSize(15).build();
+                .maxTeamSize(15)
+                .build();
 
         // when
         Long updatedTeamId = teamCommandService.updateTeam(team.getId(), updateRequest);

@@ -29,6 +29,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
         Schedule createdSchedule = Schedule.builder()
                 .team(team)
                 .title(request.getTitle())
+                .content(request.getContent())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .build();
