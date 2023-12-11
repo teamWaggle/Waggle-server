@@ -21,7 +21,3 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
-
-file:
-  dir: ${user.dir}/src/main/resources/static/files/
-
