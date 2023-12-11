@@ -1,11 +1,7 @@
 package com.example.waggle.domain.board.help.entity;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.domain.hashtag.entity.BoardHashtag;
-import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.member.entity.Gender;
-import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.help.HelpRequest;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -17,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Entity
@@ -28,48 +23,45 @@ import java.util.List;
 public class Help extends Board {
 
     private String title;
-
-    private String petName;
     private String petKind;
     private int petAge;
-
     @Enumerated
     private Gender petGender;
-
+    @Enumerated
+    private Category category;
     private LocalDateTime lostDate;
+    private String lostLocate;
     private String contact;
     private String thumbnail;
 
-    public Help(Long id, Member member,
-                String content, List<BoardHashtag> boardHashtags,
-                List<Media> medias, List<Comment> comments,
-                String title, String petName, String petKind,
-                int petAge, Gender petGender,
-                LocalDateTime lostDate, String contact, String thumbnail) {
-        super(id, member, content, boardHashtags, medias, comments);
-        this.title = title;
-        this.petName = petName;
-        this.petKind = petKind;
-        this.petAge = petAge;
-        this.petGender = petGender;
-        this.lostDate = lostDate;
-        this.contact = contact;
-        this.thumbnail = thumbnail;
-    }
+//    public Help(Long id, Member member,
+//                String content, List<BoardHashtag> boardHashtags,
+//                List<Media> medias, String title, String petKind,
+//                int petAge, Gender petGender, Category category,
+//                LocalDateTime lostDate, String lostLocate,String contact, String thumbnail) {
+//        super(id, member, content, boardHashtags, medias);
+//        this.title = title;
+//        this.petKind = petKind;
+//        this.petAge = petAge;
+//        this.petGender = petGender;
+//        this.category = category;
+//        this.lostDate = lostDate;
+//        this.lostLocate = lostLocate;
+//        this.contact = contact;
+//        this.thumbnail = thumbnail;
+//    }
 
     public void changeHelp(HelpRequest.Post helpUWriteDto) {
         this.title = helpUWriteDto.getTitle();
-        this.petName = helpUWriteDto.getPetName();
         this.petKind = helpUWriteDto.getPetKind();
         this.petAge = helpUWriteDto.getPetAge();
         this.petGender = helpUWriteDto.getPetGender();
         this.lostDate = helpUWriteDto.getLostDate();
+        this.lostLocate = helpUWriteDto.getLostLocate();
         this.contact = helpUWriteDto.getContact();
-        //this.thumbnail = helpUWriteDto.getThumbnail();
-    }
-
-    public void changeThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
+        this.content = helpUWriteDto.getContent();
+        this.thumbnail = helpUWriteDto.getThumbnail();
+        this.category = helpUWriteDto.getCategory();
     }
 
 }

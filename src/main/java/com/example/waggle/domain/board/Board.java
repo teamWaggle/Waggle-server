@@ -1,10 +1,9 @@
 package com.example.waggle.domain.board;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
-import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
-import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.media.entity.Media;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,19 +41,14 @@ public abstract class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     protected List<Media> medias = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "board", orphanRemoval = true)
-    protected List<Comment> comments = new ArrayList<>();
-
 
     public Board(Long id, Member member, String content, List<BoardHashtag> boardHashtags,
-                 List<Media> medias, List<Comment> comments) {
+                 List<Media> medias) {
         this.id = id;
         this.member = member;
         this.content = content;
         this.boardHashtags = boardHashtags;
         this.medias = medias;
-        this.comments = comments;
     }
 
 }

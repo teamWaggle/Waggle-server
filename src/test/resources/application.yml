@@ -3,3 +3,20 @@ jwt:
 
 file:
   dir: ${user.dir}/src/main/resources/static/files/
+
+cloud:
+  aws:
+    credentials:
+      accessKey: asdf
+      secretKey: asdf
+    s3:
+      bucket: waggle-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+spring:
+  redis:
+    host: localhost
+    port: 6379

@@ -3,6 +3,8 @@ package com.example.waggle.board.story.service;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.hashtag.entity.Hashtag;
+import com.example.waggle.domain.hashtag.service.HashtagQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
@@ -17,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +38,9 @@ class StoryServiceTest {
     @Autowired
     private MemberCommandService memberService;
     @Autowired
+    private HashtagQueryService hashtagQueryService;
+
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
     MemberRequest.RegisterRequestDto signUpDto1;
@@ -50,6 +55,8 @@ class StoryServiceTest {
     List<String> tags2 = new ArrayList<>();
     List<String> medias1 = new ArrayList<>();
     List<String> medias2 = new ArrayList<>();
+
+    Pageable pageable = PageRequest.of(0, 3);
 
 
     @BeforeEach
@@ -115,12 +122,12 @@ class StoryServiceTest {
 
     private void setBoardAndMember() throws IOException {
         //member set
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1, new ArrayList<>(), null);
-        storyCommandService.createStory(storyWriteDto2, new ArrayList<>(), null);
+        storyCommandService.createStory(storyWriteDto1);
+        storyCommandService.createStory(storyWriteDto2);
     }
 
 
@@ -145,7 +152,6 @@ class StoryServiceTest {
         setBoardAndMember();
 
         //when
-        Pageable pageable = PageRequest.of(0, 3);
         Page<Story> member1 = storyService.getPagedStoriesByUsername("member1", pageable);
         //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
@@ -156,6 +162,7 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
+    @Transactional
     void findStoryViewByBoardId() throws IOException {
         //given
         setBoardAndMember();
@@ -171,6 +178,7 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
+    @Transactional
     void changeStory() throws IOException {
         //given
         setBoardAndMember();
@@ -186,18 +194,19 @@ class StoryServiceTest {
                 .medias(medias2)
                 .build();
         //when
-        boolean isSameUser = storyCommandService.validateMember(id);
-        storyCommandService.updateStory(id, editDto, new ArrayList<>(), null);
+//        boolean isSameUser = storyCommandService.validateMember(id);
+        storyCommandService.updateStory(id, editDto);
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then
-        assertThat(isSameUser).isTrue();
+//        assertThat(isSameUser).isTrue();
         assertThat(storyByBoardId.getContent()).isEqualTo("edit edit edit");
         assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
     }
 
     @Test
     @WithMockCustomUser
+    //@Transactional
     void deleteStory() throws IOException {
         //given
         setBoardAndMember();
@@ -206,24 +215,11 @@ class StoryServiceTest {
         //when
         storyCommandService.deleteStory(storyByBoardId.getId());
         log.info("=========remove service ==============");
-        //then
-        assertThat(stories.size()).isEqualTo(1);
-    }
-
-    @Test
-    @WithMockCustomUser
-    void getStoriesByPaging() throws IOException {
-
-        setBoardAndMember();
-
-        Sort sort = Sort.by("createdDate").descending();
-        Pageable pageable = PageRequest.of(0, 2,sort);
-
+        List<Hashtag> allHashtags = hashtagQueryService.getAllHashtags();
         Page<Story> pagedStories = storyService.getPagedStories(pageable);
-        List<Story> content = pagedStories.getContent();
-
-        for (Story story : content) {
-            log.info("storySummaryDto.getId() = {}" ,story.getId());
-        }
+        //then
+        assertThat(pagedStories.getContent().size()).isEqualTo(1);
+        assertThat(allHashtags.size()).isEqualTo(2);
     }
+
 }

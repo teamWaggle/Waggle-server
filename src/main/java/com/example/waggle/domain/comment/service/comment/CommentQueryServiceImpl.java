@@ -8,6 +8,8 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +24,12 @@ public class CommentQueryServiceImpl implements CommentQueryService{
     private final UtilService utilService;
     @Override
     public List<Comment> getComments(Long boardId) {
-        List<Comment> comments = commentRepository.findByBoardId(boardId);
-        return comments;
+        return commentRepository.findByBoardId(boardId);
+    }
+
+    @Override
+    public Page<Comment> getPagedComments(Long boardId, Pageable pageable) {
+        return commentRepository.findPagedCommentsByBoardId(boardId, pageable);
     }
 
     @Override
@@ -33,4 +39,6 @@ public class CommentQueryServiceImpl implements CommentQueryService{
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         return comment.getMember().equals(signInMember);
     }
+
+
 }

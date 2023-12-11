@@ -1,6 +1,5 @@
 package com.example.waggle.web.dto.comment;
 
-import com.example.waggle.web.dto.reply.ReplyViewDto;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -15,8 +14,8 @@ public class CommentResponse {
         private Long id;
         private String content;
         private String username;
-        @Builder.Default
-        private List<ReplyViewDto> replies = new ArrayList<>();
+//        @Builder.Default
+//        private List<ReplyViewDto> replies = new ArrayList<>();
     }
 
     @Builder

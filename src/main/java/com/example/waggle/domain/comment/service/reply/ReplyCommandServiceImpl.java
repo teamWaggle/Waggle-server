@@ -7,7 +7,9 @@ import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.mention.entity.Mention;
+import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.exception.handler.CommentHandler;
+import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
@@ -26,29 +28,28 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private final MemberRepository memberRepository;
     private final UtilService utilService;
-    private final ReplyQueryService replyQueryService;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final MentionRepository mentionRepository;
 
     @Override
     public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto) {
         Member member = utilService.getSignInMember();
-
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        Reply build = Reply.builder().member(member).content(replyWriteDto.getContent()).build();
+        Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
+        replyRepository.save(reply);
 
-        comment.addReply(build);
-        //replyRepository.save(reply);
-
-        addMentionsToReply(build, replyWriteDto.getMentions());
-
-        return build.getId();
+        addMentionsToReply(reply, replyWriteDto.getMentions());
+        return reply.getId();
     }
 
     @Override
     public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
+        if (!validateMember(replyId)) {
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
+        }
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
         reply.getMentions().clear();
@@ -58,10 +59,10 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     @Override
     public void deleteReply(Long replyId) {
-        Reply reply = getReplyById(replyId);
-        if (!replyQueryService.validateMember(replyId)) {
+        if (!validateMember(replyId)) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
+        Reply reply = getReplyById(replyId);
         replyRepository.delete(reply);
     }
 
@@ -71,13 +72,18 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     }
 
     private void addMentionsToReply(Reply reply, List<String> mentions) {
-        for (String mention : mentions) {
-            if (memberRepository.existsByUsername(mention)) {
-                reply.addMention(Mention.builder()
-                        .username(mention)
-                        .build()
-                );
-            }
+        mentions.stream().forEach(m -> {
+            Member member = memberRepository.findByUsername(m)
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));        //TODO 하나라도 not found -> error?
+            Mention build = Mention.builder().reply(reply).member(member).build();
+            reply.addMention(build);    //save -> cascade.persist
         }
+        );
+    }
+
+    public boolean validateMember(Long replyId) {
+        Member member = utilService.getSignInMember();
+        Reply reply = getReplyById(replyId);
+        return reply.getMember().equals(member);
     }
 }
