@@ -13,7 +13,7 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.mention.entity.Mention;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -162,8 +162,8 @@ class ReplyServiceTest {
         memberService.signUp(signUpDto5);
 
         //story set
-        storyService.createStory(storyWriteDto1);
-        storyService.createStory(storyWriteDto2);
+        storyService.createStory(storyWriteDto1, null);
+        storyService.createStory(storyWriteDto2, null);
 
         Story story = storyQueryService.getStories().get(0);
 

@@ -43,11 +43,8 @@ public class HelpApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createHelp(@RequestPart HelpRequest.Post helpWriteDto,
-                                     @RequestPart List<MultipartFile> multipartFiles,
-                                     @RequestPart MultipartFile thumbnail) throws IOException {
-        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        String uploadThumbnail = awsS3Service.uploadFile(thumbnail);
-        Long boardId = helpCommandService.createHelp(helpWriteDto);
+                                     @RequestPart List<MultipartFile> multipartFiles) throws IOException {
+        Long boardId = helpCommandService.createHelp(helpWriteDto,multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -58,10 +55,8 @@ public class HelpApiController {
     public ApiResponseDto<Long> updateHelp(@PathVariable Long boardId,
                                             @ModelAttribute HelpRequest.Post helpWriteDto,
                                             @RequestPart List<MultipartFile> multipartFiles,
-                                            @RequestPart MultipartFile thumbnail) throws IOException {
-        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        String uploadThumbnail = awsS3Service.uploadFile(thumbnail);
-        helpCommandService.updateHelp(boardId, helpWriteDto);
+                                            @RequestPart List<String> deleteFiles) throws IOException {
+        helpCommandService.updateHelp(boardId, helpWriteDto,multipartFiles, deleteFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

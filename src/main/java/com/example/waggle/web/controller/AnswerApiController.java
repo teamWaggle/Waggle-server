@@ -44,8 +44,7 @@ public class AnswerApiController {
     public ApiResponseDto<Long> createAnswer(@RequestPart AnswerRequest.Post request,
                                              @RequestPart List<MultipartFile> multipartFiles,
                                              @PathVariable Long questionId) throws IOException {
-        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        Long answer = answerCommandService.createAnswer(questionId, request);
+        Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
     }
 
@@ -55,9 +54,9 @@ public class AnswerApiController {
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
                                                @RequestPart List<MultipartFile> multipartFiles,
+                                               @RequestPart List<String> deleteFiles,
                                                @RequestPart AnswerRequest.Post request) throws IOException{
-        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        answerCommandService.updateAnswer(boardId, request);
+        answerCommandService.updateAnswer(boardId, request, multipartFiles, deleteFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

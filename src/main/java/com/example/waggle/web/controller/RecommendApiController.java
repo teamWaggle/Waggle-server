@@ -4,7 +4,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;

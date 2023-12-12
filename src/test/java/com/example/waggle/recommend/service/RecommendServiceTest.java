@@ -13,7 +13,7 @@ import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -128,7 +128,7 @@ class RecommendServiceTest {
         storyRepository.save(iiii);
 
         //story set
-        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto1, null);
         //storyService.saveStory(storyWriteDto2);
     }
 
@@ -172,7 +172,7 @@ class RecommendServiceTest {
     void cannot_recommend_Mine() throws IOException {
         //given
         memberService.signUp(signUpDto1);
-        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto1, null);
         Story story = storyQueryService.getStories().get(0);
         //then
         try {
@@ -194,7 +194,7 @@ class RecommendServiceTest {
         StoryRequest.Post request = StoryRequest.Post.builder()
                 .content("hi")
                 .build();
-        storyService.createStory(request);
+        storyService.createStory(request, null);
         Story story = storyQueryService.getStories().get(0);
         Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
         recommendRepository.save(build);

@@ -6,19 +6,20 @@ import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.mention.entity.Mention;
-import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.reply.ReplyRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,14 +28,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private final MemberRepository memberRepository;
-    private final UtilService utilService;
+
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final MentionRepository mentionRepository;
+    private final MemberQueryService memberQueryService;
 
     @Override
     public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto) {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
@@ -82,8 +83,8 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     }
 
     public boolean validateMember(Long replyId) {
-        Member member = utilService.getSignInMember();
         Reply reply = getReplyById(replyId);
-        return reply.getMember().equals(member);
+        return reply.getMember().getUsername()
+                .equals(SecurityUtil.getCurrentUsername());
     }
 }
