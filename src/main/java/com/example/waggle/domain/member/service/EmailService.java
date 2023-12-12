@@ -3,7 +3,9 @@ package com.example.waggle.domain.member.service;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +37,15 @@ public class EmailService {
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(email); // 메일 수신자
+            mimeMessageHelper.setFrom(new InternetAddress("teamwagglewaggle@gmail.com", "Waggle"));
             mimeMessageHelper.setSubject("[와글] 회원가입을 위해 메일을 인증해 주세요."); // 메일 제목
             mimeMessageHelper.setText(setContext(authNum, type), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
             redisService.setValueWithExpiration(AUTH_CODE_PREFIX + email, authNum, expire_period);
         } catch (MessagingException e) {
             throw new MemberHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
