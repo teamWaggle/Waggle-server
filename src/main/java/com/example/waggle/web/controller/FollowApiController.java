@@ -49,10 +49,10 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/following")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getfollowingMemberList() {
+    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowingMemberList() {
         List<Follow> followings = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         List<MemberResponse.MemberSummaryDto> collect = followings.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getToUser())).collect(Collectors.toList());
+                .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
     @Operation(summary = "멤버 팔로잉 목록 조회", description = "조회한 멤버의 팔로잉 목록을 보여줍니다.")
@@ -62,7 +62,7 @@ public class FollowApiController {
     public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowingMemberListByUsername(@PathVariable String username) {
         List<Follow> followings = followQueryService.getFollowings(username);
         List<MemberResponse.MemberSummaryDto> collect = followings.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getToUser())).collect(Collectors.toList());
+                .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
 
@@ -73,7 +73,7 @@ public class FollowApiController {
     public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowerMemberList() {
         List<Follow> followers = followQueryService.getFollowers(SecurityUtil.getCurrentUsername());
         List<MemberResponse.MemberSummaryDto> collect = followers.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getFromUser())).collect(Collectors.toList());
+                .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
 
@@ -84,7 +84,7 @@ public class FollowApiController {
     public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowerMemberListByUsername(@PathVariable String username) {
         List<Follow> followers = followQueryService.getFollowers(username);
         List<MemberResponse.MemberSummaryDto> collect = followers.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getFromUser())).collect(Collectors.toList());
+                .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
 }

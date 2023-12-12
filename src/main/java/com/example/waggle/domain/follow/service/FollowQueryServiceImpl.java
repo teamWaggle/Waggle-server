@@ -19,12 +19,12 @@ public class FollowQueryServiceImpl implements FollowQueryService{
 
     @Override
     public List<Follow> getFollowings(String username) {
-        return followRepository.findByFromUser_Username(username);
+        return followRepository.findByFromMember_Username(username);
     }
 
     @Override
     public List<Follow> getFollowers(String username) {
-        return followRepository.findByToUser_Username(username);
+        return followRepository.findByToMember_Username(username);
     }
 
 }

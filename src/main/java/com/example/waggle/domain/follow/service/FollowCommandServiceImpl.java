@@ -35,12 +35,12 @@ public class FollowCommandServiceImpl implements FollowCommandService{
     @Override
     public void unFollow(String username) {
         Follow follow = followRepository
-                .findByToUser_UsernameAndFromUser_Username(username, SecurityUtil.getCurrentUsername())
+                .findByToMember_UsernameAndFromMember_Username(username, SecurityUtil.getCurrentUsername())
                 .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
         followRepository.delete(follow);
     }
     private void validateFollowing(Member member, Member followee) {
-        boolean isFollowExists = followRepository.existsFollowByFromUserAndToUser(member, followee);
+        boolean isFollowExists = followRepository.existsFollowByFromMemberAndToMember(member, followee);
         if (isFollowExists) {
             throw new FollowHandler(ErrorStatus.FOLLOW_ALREADY_EXIST);
         }

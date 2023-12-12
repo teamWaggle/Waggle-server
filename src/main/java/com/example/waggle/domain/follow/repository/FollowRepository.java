@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-    List<Follow> findByFromUser_Username(String username);
+    List<Follow> findByFromMember_Username(String username);
 
-    List<Follow> findByToUser_Username(String username);
+    List<Follow> findByToMember_Username(String username);
 
-    Optional<Follow> findByToUser_UsernameAndFromUser_Username(String toUser_username, String fromUser_username);
+    Optional<Follow> findByToMember_UsernameAndFromMember_Username(String toUser_username, String fromUser_username);
 
-    boolean existsFollowByFromUserAndToUser(Member fromUser, Member toUser);
+    boolean existsFollowByFromMemberAndToMember(Member fromUser, Member toUser);
 }
