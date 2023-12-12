@@ -16,4 +16,8 @@ public interface TeamCommandService {
 
     void changeTeamLeader(Long teamId, String username);
 
+    void requestParticipation(Long teamId, String username);
+
+    void respondToParticipation(Long teamId, String username, boolean accept);
+
 }

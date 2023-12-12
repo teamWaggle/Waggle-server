@@ -32,6 +32,8 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_NOT_FOUND(NOT_FOUND, 4102, "해당 사용자 정보를 찾을 수 없습니다."),
     MEMBER_REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, 4103, "로그아웃 된 사용자입니다."),
     MEMBER_SIGN_IN_INFO_REQUIRED(BAD_REQUEST, 4104, "아이디나 비밀번호를 확인해주세요."),
+    MEMBER_DUPLICATE_EMAIL(CONFLICT, 4105, "이미 사용중인 이메일입니다."),
+    MEMBER_DUPLICATE_NICKNAME(CONFLICT, 4106, "이미 사용중인 닉네임입니다."),
 
 
 
@@ -43,16 +45,18 @@ public enum ErrorStatus implements BaseCode {
     RECOMMEND_NOT_FOUND(NOT_FOUND,4154,"존재하지 않는 추천입니다"),
     COMMENT_NOT_FOUND(NOT_FOUND, 4155,"존재하지 않는 댓글입니다"),
     COMMENT_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4156, "다른 사용자의 댓글을 수정하거나 삭제할 수 없습니다."),
-    REPLY_NOT_FOUND(NOT_FOUND, 4157,"존재하지 않는 대댓글입니다"),
+    REPLY_NOT_FOUND(NOT_FOUND, 4157,"존재하지 않는 대댓글입니다."),
     REPLY_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4158, "다른 사용자의 대댓글을 수정하거나 삭제할 수 없습니다."),
 
 
     // 스케줄 관련 오류 (4200 ~ 4249)
-    TEAM_NOT_FOUND(NOT_FOUND, 4200,"팀 정보가 존재하지 않습니다"),
-    SCHEDULE_NOT_FOUND(NOT_FOUND,4201,"스케줄 정보가 존재하지 않습니다"),
-    TEAM_MEMBER_ALREADY_EXISTS(CONFLICT, 4202, "이미 팀에 속해 있는 멤버입니다"),
-    TEAM_LEADER_UNAUTHORIZED(BAD_REQUEST, 4203, "팀 리더만 리더를 변경할 수 있습니다"),
-    TEAM_MEMBER_NOT_IN_TEAM(NOT_FOUND, 4204, "멤버가 이 팀에 속해 있지 않습니다"),
+    TEAM_NOT_FOUND(NOT_FOUND, 4200,"팀 정보가 존재하지 않습니다."),
+    SCHEDULE_NOT_FOUND(NOT_FOUND,4201,"스케줄 정보가 존재하지 않습니다."),
+    TEAM_MEMBER_ALREADY_EXISTS(CONFLICT, 4202, "이미 팀에 속해 있는 멤버입니다."),
+    TEAM_LEADER_UNAUTHORIZED(BAD_REQUEST, 4203, "팀 리더만 리더를 변경할 수 있습니다."),
+    TEAM_MEMBER_NOT_IN_TEAM(NOT_FOUND, 4204, "멤버가 이 팀에 속해 있지 않습니다."),
+    TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS(CONFLICT, 4205, "이미 팀 참여 요청이 존재합니다."),
+    TEAM_PARTICIPATION_NOT_FOUND(NOT_FOUND, 4206, "참여 요청 정보가 존재하지 않습니다."),
 
 
 
@@ -68,6 +72,7 @@ public enum ErrorStatus implements BaseCode {
     // 미디어 관련 오류(4350 ~ 4399)
     MEDIA_NOT_FOUND(NOT_FOUND, 4350, "존재하지 않는 미디어입니다."),
     MEDIA_REQUEST_IS_EMPTY(BAD_REQUEST, 4351, "request 미디어 파일이 존재하지 않습니다.");
+
 
 
     private final HttpStatus httpStatus;

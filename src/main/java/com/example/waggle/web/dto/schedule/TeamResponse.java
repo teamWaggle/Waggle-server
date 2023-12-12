@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +33,26 @@ public class TeamResponse {
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class ListDto {
-        List<DetailDto> teams;
+    public static class SummaryDto {
+        private String name;
+        private String description;
+        private String coverImageUrl;
+        private String colorScheme;
+        private Integer maxTeamSize;
+    }
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class SummaryListDto {
+        @Builder.Default
+        private List<SummaryDto> teams = new ArrayList<>();
+        private long totalQuestions;
+        private boolean isFirst;
+        private boolean isLast;
     }
 }

@@ -2,8 +2,11 @@ package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.schedule.domain.Participation;
+import com.example.waggle.domain.schedule.domain.Participation.ParticipationStatus;
 import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
@@ -25,7 +28,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final MemberQueryService memberQueryService;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final BoardService utilService;
+    private final BoardService boardService;
+    private final ParticipationRepository participationRepository;
+
 
     @Override
     public Long createTeam(Post request) {
@@ -69,13 +74,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberQueryService.getMemberByUsername(username);
 
-        if (!validateMemberDuplication(team, member)) {
-            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
-        }
+        validateMemberDuplication(team, member);
 
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, member);
-        teamMemberRepository.save(teamMember);
+        addMemberToTeam(team, member);
 
         return team.getId();
     }
@@ -93,30 +94,81 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberQueryService.getMemberByUsername(username);
 
-        checkIfCallerIsLeader(team);
-        checkIfMemberBelongsToTeam(team, member);
+        validateCallerIsLeader(team);
+        validateMemberBelongsToTeam(team, member);
 
         team.updateLeader(member);
     }
 
-    private boolean validateMemberDuplication(Team team, Member member) {
-        return team.getTeamMembers().stream()
-                .noneMatch(teamMember -> teamMember.getMember().equals(member));
+    @Override
+    public void requestParticipation(Long teamId, String username) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        validateNonExistenceOfParticipationRequest(team, member);
+
+        Participation participation = Participation.builder()
+                .teamId(teamId)
+                .username(username)
+                .status(ParticipationStatus.PENDING)
+                .build();
+
+        participationRepository.save(participation);
+    }
+    @Override
+    public void respondToParticipation(Long teamId, String username, boolean accept) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        validateCallerIsLeader(team);
+
+        Participation participation = participationRepository.findByTeamIdAndUsername(teamId, username)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND));
+
+        if (accept) {
+            participation.setStatus(Participation.ParticipationStatus.ACCEPTED);
+            addMemberToTeam(team, member);
+        } else {
+            participation.setStatus(Participation.ParticipationStatus.REJECTED);
+        }
+        participationRepository.save(participation);
     }
 
-    private void checkIfCallerIsLeader(Team team) {
+
+    private void validateMemberDuplication(Team team, Member member) {
+        boolean isValid = team.getTeamMembers().stream()
+                .noneMatch(teamMember -> teamMember.getMember().equals(member));
+        if (!isValid) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
+        }
+    }
+
+    private void validateCallerIsLeader(Team team) {
         if (!team.getLeader().getUsername().equals(SecurityUtil.getCurrentUsername())) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
     }
 
-
-    private void checkIfMemberBelongsToTeam(Team team, Member member) {
+    private void validateMemberBelongsToTeam(Team team, Member member) {
         boolean isMember = team.getTeamMembers().stream()
                 .anyMatch(tm -> tm.getMember().equals(member));
         if (!isMember) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM);
         }
+    }
+
+    private void validateNonExistenceOfParticipationRequest(Team team, Member member) {
+        if (participationRepository.existsByTeamIdAndUsername(team.getId(), member.getUsername())) {
+            throw new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS);
+        }
+    }
+
+    private void addMemberToTeam(Team team, Member member) {
+        TeamMember teamMember = TeamMember.builder().build();
+        teamMember.addTeamMember(team, member);
+        teamMemberRepository.save(teamMember);
     }
 
 }

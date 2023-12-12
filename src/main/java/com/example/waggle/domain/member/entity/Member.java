@@ -27,7 +27,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
-  
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @Column(unique = true, nullable = false)
     private String username;
 

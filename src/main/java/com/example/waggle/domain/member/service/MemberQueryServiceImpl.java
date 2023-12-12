@@ -39,4 +39,24 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         }
         return true;
     }
+
+    public void validateEmailDuplication(String email) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_EMAIL);
+        }
+    }
+
+    @Override
+    public void validateUsernameDuplication(String username) {
+        if (memberRepository.existsByUsername(username)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
+        }
+    }
+
+    @Override
+    public void validateNicknameDuplication(String nickname) {
+        if (memberRepository.existsByUsername(nickname)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_NICKNAME);
+        }
+    }
 }

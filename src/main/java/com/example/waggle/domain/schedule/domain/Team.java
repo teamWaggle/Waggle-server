@@ -45,6 +45,11 @@ public class Team extends BaseEntity {
         schedule.setTeam(this);
     }
 
+    public void removeSchedule(Schedule schedule) {
+        this.schedules.remove(schedule);
+        schedule.setTeam(null);
+    }
+
     public void update(Post request) {
         this.name = request.getName();
         this.description = request.getDescription();
