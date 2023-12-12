@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,4 +95,30 @@ public class MemberApiController {
         memberCommandService.verifyMail(verifyMailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
+
+    @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @GetMapping("/check-email")
+    public ApiResponseDto<Boolean> checkEmail(@RequestParam String email) {
+        memberQueryService.validateEmailDuplication(email);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "유저네임 중복 검사", description = "제공된 유저네임이 이미 사용 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @GetMapping("/check-username")
+    public ApiResponseDto<Boolean> checkUsername(@RequestParam String username) {
+        memberQueryService.validateUsernameDuplication(username);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "닉네임 중복 검사", description = "제공된 닉네임이 이미 사용 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @GetMapping("/check-nickname")
+    public ApiResponseDto<Boolean> checkNickname(@RequestParam String nickname) {
+        memberQueryService.validateNicknameDuplication(nickname);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+
 }
