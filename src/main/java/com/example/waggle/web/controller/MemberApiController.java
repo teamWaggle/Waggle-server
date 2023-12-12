@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,15 +78,47 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 
-    @PostMapping("/send-mail")
+    @Operation(summary = "이메일 전송", description = "사용자에게 인증 메일을 전송합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 전송 성공.")
+    @ApiResponse(responseCode = "400", description = "이메일 전송 실패. 잘못된 이메일 형식 등.")
+    @PostMapping("/email/send")
     public ApiResponseDto<Boolean> sendMail(@RequestBody @Valid String email) {
         emailService.sendMail(email, "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @PostMapping("/verify/mail")
+    @Operation(summary = "이메일 인증", description = "받은 이메일을 통해 사용자의 이메일 인증을 진행합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
+    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @PostMapping("/email/verify")
     public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest verifyMailRequest) {
         memberCommandService.verifyMail(verifyMailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
+
+    @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @GetMapping("/check-email")
+    public ApiResponseDto<Boolean> checkEmail(@RequestParam String email) {
+        memberQueryService.validateEmailDuplication(email);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "유저네임 중복 검사", description = "제공된 유저네임이 이미 사용 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @GetMapping("/check-username")
+    public ApiResponseDto<Boolean> checkUsername(@RequestParam String username) {
+        memberQueryService.validateUsernameDuplication(username);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "닉네임 중복 검사", description = "제공된 닉네임이 이미 사용 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @GetMapping("/check-nickname")
+    public ApiResponseDto<Boolean> checkNickname(@RequestParam String nickname) {
+        memberQueryService.validateNicknameDuplication(nickname);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+
 }
