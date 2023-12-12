@@ -77,13 +77,19 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 
-    @PostMapping("/send-mail")
+    @Operation(summary = "이메일 전송", description = "사용자에게 인증 메일을 전송합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 전송 성공.")
+    @ApiResponse(responseCode = "400", description = "이메일 전송 실패. 잘못된 이메일 형식 등.")
+    @PostMapping("/email/send")
     public ApiResponseDto<Boolean> sendMail(@RequestBody @Valid String email) {
         emailService.sendMail(email, "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @PostMapping("/verify/mail")
+    @Operation(summary = "이메일 인증", description = "받은 이메일을 통해 사용자의 이메일 인증을 진행합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
+    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @PostMapping("/email/verify")
     public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest verifyMailRequest) {
         memberCommandService.verifyMail(verifyMailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
