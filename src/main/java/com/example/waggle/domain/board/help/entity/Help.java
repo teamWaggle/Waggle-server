@@ -22,7 +22,7 @@ public class Help extends Board {
     private String title;
     private String petKind;
     private int petAge;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Gender petGender;
     private LocalDateTime lostDate;
     private String lostLocate;

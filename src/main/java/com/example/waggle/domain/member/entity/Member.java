@@ -55,13 +55,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-//    @Builder.Default
-//    @OneToMany(mappedBy = "toUser")
-//    private List<Follow> followingList = new ArrayList<>();
-//
-//    @Builder.Default
-//    @OneToMany(mappedBy = "fromUser")
-//    private List<Follow> followerList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "member")

@@ -20,11 +20,11 @@ public class Follow extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "to_user_id")
-    private Member toUser;
+    @JoinColumn(name = "to_member_id")
+    private Member toMember;
 
     @ManyToOne
-    @JoinColumn(name = "from_user_id")
-    private Member fromUser;
+    @JoinColumn(name = "from_member_id")
+    private Member fromMember;
 
 }
