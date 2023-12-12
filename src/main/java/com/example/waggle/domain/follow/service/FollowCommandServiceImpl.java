@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.exception.handler.FollowHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,23 +33,16 @@ public class FollowCommandServiceImpl implements FollowCommandService{
     }
 
     @Override
-    public void unFollow(Long followId) {
-        Member member = memberQueryService.getSignInMember();
-        Follow follow = followRepository.findById(followId)
+    public void unFollow(String username) {
+        Follow follow = followRepository
+                .findByToUser_UsernameAndFromUser_Username(username, SecurityUtil.getCurrentUsername())
                 .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
-        validateUnfollowing(member, follow);
         followRepository.delete(follow);
     }
     private void validateFollowing(Member user, Member follower) {
         boolean isFollowExists = followRepository.existsFollowByFromUserAndToUser(user, follower);
         if (isFollowExists) {
             throw new FollowHandler(ErrorStatus.FOLLOW_ALREADY_EXIST);
-        }
-    }
-
-    private static void validateUnfollowing(Member member, Follow follow) {
-        if (!follow.getFromUser().equals(member)) {
-            throw new FollowHandler(ErrorStatus.FOLLOW_NOT_AUTHENTICATED_UNFOLLOW);
         }
     }
 }

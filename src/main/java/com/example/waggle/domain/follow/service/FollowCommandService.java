@@ -4,6 +4,6 @@ public interface FollowCommandService {
 
     Long follow(String username);
 
-    void unFollow(Long followId);
+    void unFollow(String username);
 
 }

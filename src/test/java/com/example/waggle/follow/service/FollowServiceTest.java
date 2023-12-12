@@ -94,7 +94,7 @@ public class FollowServiceTest {
         //when
         Long followId = followCommandService.follow("member2");
         followCommandService.follow("member3");
-        followCommandService.unFollow(followId);
+        followCommandService.unFollow("member2");
         List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         //then
         assertThat(followingsByUser.get(0).getFromUser().getUsername()).isEqualTo("member1");
@@ -122,8 +122,8 @@ public class FollowServiceTest {
         //when
         Long followId = followCommandService.follow("member2");
         followCommandService.follow("member3");
-        followCommandService.unFollow(followId);
+        followCommandService.unFollow("member2");
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow(followId));
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow("member2"));
     }
 }
