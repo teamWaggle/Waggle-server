@@ -10,6 +10,8 @@ import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.domain.comment.service.reply.ReplyCommandService;
 import com.example.waggle.domain.comment.service.reply.ReplyQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.mention.entity.Mention;
+import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentRequest;
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +51,8 @@ class ReplyServiceTest {
     private ReplyCommandService replyService;
     @Autowired
     private ReplyQueryService replyQueryService;
+    @Autowired
+    private MentionRepository mentionRepository;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
@@ -150,15 +155,15 @@ class ReplyServiceTest {
 
     private void setAll() throws IOException {
         //member set
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
-        memberService.signUp(signUpDto3, null);
-        memberService.signUp(signUpDto4, null);
-        memberService.signUp(signUpDto5, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+        memberService.signUp(signUpDto3);
+        memberService.signUp(signUpDto4);
+        memberService.signUp(signUpDto5);
 
         //story set
-        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
-        storyService.createStory(storyWriteDto2, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto1);
+        storyService.createStory(storyWriteDto2);
 
         Story story = storyQueryService.getStories().get(0);
 
@@ -167,12 +172,14 @@ class ReplyServiceTest {
         //reply set
         List<Comment> comments = commentQueryService.getComments(story.getId());
         replyService.createReply(comments.get(0).getId(), replyWriteDto1);
+        replyService.createReply(comments.get(0).getId(), replyWriteDto2);
 
     }
 
 
     @Test
     @WithMockCustomUser
+    @Transactional
     void findReplies() throws IOException {
         //given
         setAll();
@@ -181,7 +188,7 @@ class ReplyServiceTest {
         //when
         List<Reply> replies = replyQueryService.getReplies(comments.get(0).getId());
         //then
-        assertThat(replies.size()).isEqualTo(1);
+        assertThat(replies.size()).isEqualTo(2);
         assertThat(replies.get(0).getMentions().size()).isEqualTo(2);
     }
 
@@ -196,14 +203,16 @@ class ReplyServiceTest {
         List<Reply> replies = replyQueryService.getReplies(comments.get(0).getId());
         //when
         replyService.updateReply(replies.get(0).getId(), replyWriteDto2);
+        List<Reply> replyList = replyQueryService.getReplies(comments.get(0).getId());
         //then
-        assertThat(replies.get(0).getContent()).isEqualTo("reply2");
+        assertThat(replyList.get(0).getContent()).isEqualTo("reply2");
 //        assertThat(replies.get(0).getMentionMembers().get(0)).isEqualTo("user3");
 
     }
 
     @Test
     @WithMockCustomUser
+    @Transactional
     void deleteReply() throws IOException {
         //given
         setAll();
@@ -213,9 +222,10 @@ class ReplyServiceTest {
 
         //when
         replyService.deleteReply(replies.get(0).getId());
-
+        List<Reply> replyList = replyQueryService.getReplies(comments.get(0).getId());
+        List<Mention> all = mentionRepository.findAll();
         //then
-
-        assertThat(replies.size()).isEqualTo(0);
+        assertThat(replyList.size()).isEqualTo(1);
+        assertThat(all.size()).isEqualTo(2);
     }
 }

@@ -1,7 +1,8 @@
 package com.example.waggle.domain.mention.entity;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.comment.entity.Reply;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,10 +23,11 @@ public class Mention extends BaseEntity {
     @JoinColumn(name = "reply_id")
     private Reply reply;
 
-    private String username;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    public void setReply(Reply reply) {
+    public void changeReply(Reply reply) {
         this.reply = reply;
     }
-
 }

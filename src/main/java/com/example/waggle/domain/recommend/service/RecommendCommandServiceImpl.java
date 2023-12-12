@@ -13,9 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class RecommendCommandServiceImpl implements RecommendCommandService {
     private final UtilService utilService;
@@ -25,14 +27,19 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     public void handleRecommendation(Long boardId, BoardType boardType) {
         Board board = utilService.getBoard(boardId, boardType);
         Member member = utilService.getSignInMember();
+        //boardWriter.equals(user)
+        if (board.getMember().equals(member)) {
+            log.info("can't recommend mine");
+            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
+        }
+
         boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
         if (isRecommended) {
+            log.info("cancel recommend");
             cancelRecommendation(member.getId(), boardId);
         }
         else{
-            if (board.getMember().equals(member)) {
-                throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
-            }
+            log.info("click recommend");
             createRecommendation(board, member);
         }
     }
@@ -47,5 +54,11 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     private void createRecommendation(Board board, Member member) {
         Recommend recommend = Recommend.builder().board(board).member(member).build();
         recommendRepository.save(recommend);
+    }
+
+    @Override
+    public void deleteRecommendByBoard(Long boardId) {
+        List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
+        byBoardId.stream().forEach(r -> recommendRepository.delete(r));
     }
 }

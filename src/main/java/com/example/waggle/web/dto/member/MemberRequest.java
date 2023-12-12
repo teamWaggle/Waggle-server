@@ -1,17 +1,12 @@
 package com.example.waggle.web.dto.member;
 
 import com.example.waggle.global.validation.ValidationGroups;
-import com.example.waggle.web.dto.pet.PetDto;
 import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
+
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.validator.constraints.Length;
 
 public class MemberRequest {
 
@@ -49,8 +44,30 @@ public class MemberRequest {
         @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
         private String phone;
 
+//        @Builder.Default
+//        private List<PetDto> pets = new ArrayList<>();
+
         @Builder.Default
-        private List<PetDto> pets = new ArrayList<>();
+        private List<String> roles = new ArrayList<>();
+
+    }
+
+    @Builder
+    @Setter
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PutDto {
+
+        @NotBlank(message = "비밀번호를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
+        @Length(min = 10, message = "비밀번호는 최소 10자입니다.", groups = ValidationGroups.LimitCount.class)
+        private String password;
+        private String nickname;
+        private String address;
+        @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
+        private String phone;
+        private String profileImgUrl;
 
         @Builder.Default
         private List<String> roles = new ArrayList<>();
