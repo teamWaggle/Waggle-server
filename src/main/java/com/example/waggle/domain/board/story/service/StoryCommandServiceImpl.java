@@ -8,12 +8,11 @@ import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.exception.handler.MemberHandler;
 
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.domain.board.service.BoardType;
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.web.dto.story.StoryRequest;
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +31,7 @@ public class StoryCommandServiceImpl implements StoryCommandService{
     private final RecommendRepository recommendRepository;
     private final CommentRepository commentRepository;
     private final CommentCommandService commentCommandService;
-    private final UtilService utilService;
+    private final BoardService utilService;
 
     @Override
     public Long createStory(StoryRequest.Post request) throws IOException {

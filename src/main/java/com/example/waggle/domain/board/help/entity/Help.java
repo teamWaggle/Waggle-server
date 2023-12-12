@@ -1,12 +1,9 @@
 package com.example.waggle.domain.board.help.entity;
 
-import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.entity.Board;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.help.HelpRequest;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,12 +24,13 @@ public class Help extends Board {
     private int petAge;
     @Enumerated
     private Gender petGender;
-    @Enumerated
-    private Category category;
     private LocalDateTime lostDate;
     private String lostLocate;
     private String contact;
     private String thumbnail;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
 
 //    public Help(Long id, Member member,
 //                String content, List<BoardHashtag> boardHashtags,

@@ -4,7 +4,6 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.member.MemberRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UtilService utilService;
+    private final MemberQueryService memberQueryService;
 
     @Override
     public Long signUp(MemberRequest.RegisterRequestDto request) {
@@ -53,14 +52,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public Long updateMemberInfo(MemberRequest.PutDto request) {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         member.updateInfo(request);
         return member.getId();
     }
 
     @Override
     public void deleteMember() {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         //TODO member relation all data removing
     }
 

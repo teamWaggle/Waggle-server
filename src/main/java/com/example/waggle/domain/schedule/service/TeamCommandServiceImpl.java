@@ -9,7 +9,8 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final MemberQueryService memberQueryService;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final UtilService utilService;
+    private final BoardService utilService;
 
     @Override
     public Long createTeam(Post request) {
-        Member loginMember = utilService.getSignInMember();
+        Member loginMember = memberQueryService.getSignInMember();
 
         Team createdTeam = Team.builder()
                 .name(request.getName())
@@ -104,8 +105,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void checkIfCallerIsLeader(Team team) {
-        String currentUsername = utilService.getSignInMember().getUsername();
-        if (!team.getLeader().getUsername().equals(currentUsername)) {
+        if (!team.getLeader().getUsername().equals(SecurityUtil.getCurrentUsername())) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
     }

@@ -6,12 +6,13 @@ import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.domain.board.service.BoardType;
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +30,15 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final RecommendRepository recommendRepository;
-    private final UtilService utilService;
+    private final MemberQueryService memberQueryService;
     private final AnswerCommandService answerCommandService;
+    private final BoardService boardService;
 
 
 
     @Override
     public Long createQuestion(QuestionRequest.QuestionWriteDto request) {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
 
         Question createdQuestion = Question.builder()
                 .title(request.getTitle())
@@ -46,7 +48,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question question = questionRepository.save(createdQuestion);
 
         for (String hashtag : request.getHashtags()) {
-            utilService.saveHashtag(question, hashtag);
+            boardService.saveHashtag(question, hashtag);
         }
 
 //        mediaService.createMedias(question.getId(), multipartFiles, QUESTION);
@@ -65,14 +67,14 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         question.getBoardHashtags().clear();
         for (String hashtag : request.getHashtags()) {
-            utilService.saveHashtag(question, hashtag);
+            boardService.saveHashtag(question, hashtag);
         }
         return question.getId();
     }
 
     @Override
     public void deleteQuestion(Long boardId) {
-        if (!utilService.validateMemberUseBoard(boardId, BoardType.QUESTION)) {
+        if (!boardService.validateMemberUseBoard(boardId, BoardType.QUESTION)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)

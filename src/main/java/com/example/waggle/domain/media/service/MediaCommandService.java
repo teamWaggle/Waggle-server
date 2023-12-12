@@ -1,6 +1,6 @@
 package com.example.waggle.domain.media.service;
 
-import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.entity.Board;
 
 import java.util.List;
 

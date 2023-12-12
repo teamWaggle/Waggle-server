@@ -13,7 +13,7 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.mention.entity.Mention;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;

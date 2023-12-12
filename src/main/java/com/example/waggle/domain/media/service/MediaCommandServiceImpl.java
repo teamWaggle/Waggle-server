@@ -1,10 +1,9 @@
 package com.example.waggle.domain.media.service;
 
-import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.entity.Board;
 import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.media.repository.MediaRepository;
-import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +15,7 @@ import java.util.List;
 @Service
 public class MediaCommandServiceImpl implements MediaCommandService{
 
-    private final UtilService utilService;
+    private final BoardService utilService;
     private final MediaRepository mediaRepository;
     @Override
     public void createMedia(List<String> uploadFiles, Board board) {

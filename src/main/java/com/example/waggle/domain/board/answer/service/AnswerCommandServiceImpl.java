@@ -8,12 +8,13 @@ import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-import static com.example.waggle.global.util.service.BoardType.ANSWER;
+import static com.example.waggle.domain.board.service.BoardType.ANSWER;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,14 +37,15 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
     private final QuestionRepository questionRepository;
     private final CommentRepository commentRepository;
     private final RecommendRepository recommendRepository;
-    private final UtilService utilService;
+    private final MemberQueryService memberQueryService;
     private final CommentCommandService commentCommandService;
+    private final BoardService boardService;
 
 
     @Override
     public Long createAnswer(Long questionId,
                              AnswerRequest.Post answerWriteDto) throws IOException {
-        Member signInMember = utilService.getSignInMember();
+        Member signInMember = memberQueryService.getSignInMember();
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
         Answer answer = Answer.builder()
@@ -69,7 +71,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
         answer.getMedias().clear();
         answer.getBoardHashtags().clear();
         for (String hashtag : answerWriteDto.getHashtags()) {
-            utilService.saveHashtag(answer, hashtag);
+            boardService.saveHashtag(answer, hashtag);
         }
 
         return answer.getId();
@@ -77,7 +79,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
 
     @Override
     public void deleteAnswer(Long boardId) {
-        if (!utilService.validateMemberUseBoard(boardId, ANSWER)) {
+        if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)

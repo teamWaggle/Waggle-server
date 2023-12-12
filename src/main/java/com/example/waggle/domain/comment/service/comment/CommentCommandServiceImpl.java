@@ -1,15 +1,16 @@
 package com.example.waggle.domain.comment.service.comment;
 
-import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.entity.Board;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.domain.board.service.BoardType;
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,12 @@ public class CommentCommandServiceImpl implements CommentCommandService{
 
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final UtilService utilService;
+    private final MemberQueryService memberQueryService;
+    private final BoardService boardService;
     @Override
     public Long createComment(Long boardId, CommentRequest.Post commentWriteDto, BoardType boardType) {
-        Member signInMember = utilService.getSignInMember();
-        Board board = utilService.getBoard(boardId, boardType);
+        Member signInMember = memberQueryService.getSignInMember();
+        Board board = boardService.getBoard(boardId, boardType);
         Comment build = Comment.builder()
                 .content(commentWriteDto.getContent())
                 .board(board)
@@ -67,7 +69,7 @@ public class CommentCommandServiceImpl implements CommentCommandService{
     }
 
     public boolean validateMember(Long commentId) {
-        Member signInMember = utilService.getSignInMember();
+        Member signInMember = memberQueryService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         return comment.getMember().equals(signInMember);
