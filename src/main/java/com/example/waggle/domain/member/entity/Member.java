@@ -55,11 +55,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "following")
+    @OneToMany(mappedBy = "toUser")
     private List<Follow> followingList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "fromUser")
     private List<Follow> followerList = new ArrayList<>();
 
     public void setPets(List<Pet> pets) {
