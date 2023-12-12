@@ -4,7 +4,7 @@ import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.converter.CommentConverter;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.comment.CommentResponse;

@@ -2,12 +2,12 @@ package com.example.waggle.domain.pet.service;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.PetHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.pet.PetRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,11 @@ public class PetCommandServiceImpl implements PetCommandService {
 
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
-    private final UtilService utilService;
+    private final MemberQueryService memberQueryService;
 
     @Override
     public Long createPet(PetRequest.Post petDto) {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         Pet build = buildPet(petDto, member);
         Pet pet = petRepository.save(build);
         return pet.getId();
@@ -57,7 +57,7 @@ public class PetCommandServiceImpl implements PetCommandService {
 
     @Override
     public void deleteAllPetByUser() {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         List<Pet> pets =
                 petRepository.findByMemberUsername(member.getUsername());
         pets.stream().forEach(pet -> petRepository.delete(pet));

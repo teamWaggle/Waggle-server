@@ -134,11 +134,11 @@ class QuestionServiceTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
-        Long question1 = questionService.createQuestion(questionWriteDto1);
-        Long question2 = questionService.createQuestion(questionWriteDto2);
+        Long question1 = questionService.createQuestion(questionWriteDto1, null);
+        Long question2 = questionService.createQuestion(questionWriteDto2, null);
 
-        answerService.createAnswer(question1, answerWriteDto1);
-        answerService.createAnswer(question1, answerWriteDto2);
+        answerService.createAnswer(question1, answerWriteDto1, null);
+        answerService.createAnswer(question1, answerWriteDto2, null);
     }
 
     @Test
@@ -175,7 +175,8 @@ class QuestionServiceTest {
         setQAndA();
         //when
         Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
-        Long aLong = questionService.updateQuestion(pagedQuestions.getContent().get(0).getId(), questionEditDto1);
+        Long aLong = questionService
+                .updateQuestion(pagedQuestions.getContent().get(0).getId(), questionEditDto1, null, null);
         //then
         Question question = questionQueryService.getQuestionByBoardId(aLong);
         assertThat(question.getTitle()).isEqualTo("EditQuestion");
@@ -190,7 +191,7 @@ class QuestionServiceTest {
         Question question = pagedQuestions.getContent().get(0);
         //when
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(question.getId(), pageable);
-        Long aLong = answerService.updateAnswer(pagedAnswers.getContent().get(0).getId(), answerEditDto1);
+        Long aLong = answerService.updateAnswer(pagedAnswers.getContent().get(0).getId(), answerEditDto1, null, null);
         Answer answerByBoardId = answerQueryService.getAnswerByBoardId(aLong);
         //then
         assertThat(answerByBoardId.getContent()).isEqualTo("EditAnswer");

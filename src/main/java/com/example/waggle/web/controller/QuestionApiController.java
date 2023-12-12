@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -41,9 +42,8 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createQuestion(@RequestPart QuestionRequest.QuestionWriteDto request,
-                                               @RequestPart(required = false) List<MultipartFile> multipartFiles) {
-        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        Long boardId = questionCommandService.createQuestion(request);
+                                               @RequestPart(required = false) List<MultipartFile> multipartFiles) throws IOException {
+        Long boardId = questionCommandService.createQuestion(request,multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -53,10 +53,10 @@ public class QuestionApiController {
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
                                                @RequestPart QuestionRequest.QuestionWriteDto request,
-                                               @RequestPart List<MultipartFile> multipartFiles) {
+                                               @RequestPart List<MultipartFile> multipartFiles,
+                                               @RequestPart List<String> deleteFiles) throws IOException {
         //TODO awsS3Service에서 update하는 board의 이전 files들을 지우는 과정 필요
-        List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-        questionCommandService.updateQuestion(boardId, request);
+        questionCommandService.updateQuestion(boardId, request, multipartFiles, deleteFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

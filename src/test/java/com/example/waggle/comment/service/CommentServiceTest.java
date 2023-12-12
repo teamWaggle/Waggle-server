@@ -8,7 +8,7 @@ import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.global.util.service.BoardType;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -122,8 +122,8 @@ class CommentServiceTest {
         memberService.signUp(signUpDto2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1);
-        storyCommandService.createStory(storyWriteDto2);
+        storyCommandService.createStory(storyWriteDto1, null);
+        storyCommandService.createStory(storyWriteDto2, null);
     }
 
     @Test
