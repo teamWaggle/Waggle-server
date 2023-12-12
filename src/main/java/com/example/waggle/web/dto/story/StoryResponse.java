@@ -1,7 +1,6 @@
 package com.example.waggle.web.dto.story;
 
 import com.example.waggle.global.component.file.UploadFile;
-import com.example.waggle.web.dto.comment.CommentViewDto;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -27,13 +26,14 @@ public class StoryResponse {
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-        @Builder.Default
-        private List<String> medias = new ArrayList<>();
-        @Builder.Default
-        private List<CommentViewDto> comments = new ArrayList<>();
+//        @Builder.Default
+//        private List<String> medias = new ArrayList<>();
+//        @Builder.Default
+//        private List<CommentViewDto> comments = new ArrayList<>();
     }
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

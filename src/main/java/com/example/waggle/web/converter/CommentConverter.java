@@ -2,7 +2,6 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.web.dto.comment.CommentResponse;
-import com.example.waggle.web.dto.reply.ReplyViewDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -15,8 +14,6 @@ public class CommentConverter {
                 .id(comment.getId())
                 .content(comment.getContent())
                 .username(comment.getMember().getUsername())
-                .replies(comment.getReplies().stream()
-                        .map(r -> ReplyViewDto.toDto(r)).collect(Collectors.toList()))
                 .build();
     }
 

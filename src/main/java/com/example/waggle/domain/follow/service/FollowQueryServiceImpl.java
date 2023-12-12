@@ -1,8 +1,7 @@
 package com.example.waggle.domain.follow.service;
 
 import com.example.waggle.domain.follow.entity.Follow;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.follow.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,27 +15,16 @@ import java.util.List;
 @Service
 public class FollowQueryServiceImpl implements FollowQueryService{
 
-    private final MemberQueryService memberQueryService;
+    private final FollowRepository followRepository;
 
     @Override
     public List<Follow> getFollowings(String username) {
-        return memberQueryService.getMemberByUsername(username).getFollowingList();
+        return followRepository.findByFromUser_Username(username);
     }
 
     @Override
     public List<Follow> getFollowers(String username) {
-        return memberQueryService.getMemberByUsername(username).getFollowerList();
+        return followRepository.findByToUser_Username(username);
     }
 
-    @Override
-    public List<Follow> getFollowingsByUser() {
-        Member member = memberQueryService.getSignInMember();
-        return member.getFollowingList();
-    }
-
-    @Override
-    public List<Follow> getFollowersByUser() {
-        Member member = memberQueryService.getSignInMember();
-        return member.getFollowerList();
-    }
 }

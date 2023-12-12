@@ -22,6 +22,7 @@ public class FollowCommandServiceImpl implements FollowCommandService{
     public Long follow(String username) {
         Member user = memberQueryService.getSignInMember();
         Member follower = memberQueryService.getMemberByUsername(username);
+        validateFollowing(user, follower);
         Follow follow = Follow.builder()
                 .fromUser(user)
                 .toUser(follower)
@@ -35,11 +36,17 @@ public class FollowCommandServiceImpl implements FollowCommandService{
         Member member = memberQueryService.getSignInMember();
         Follow follow = followRepository.findById(followId)
                 .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
-        validateFollowing(member, follow);
+        validateUnfollowing(member, follow);
         followRepository.delete(follow);
     }
+    private void validateFollowing(Member user, Member follower) {
+        boolean isFollowExists = followRepository.existsFollowByFromUserAndToUser(user, follower);
+        if (isFollowExists) {
+            throw new FollowHandler(ErrorStatus.FOLLOW_ALREADY_EXIST);
+        }
+    }
 
-    private static void validateFollowing(Member member, Follow follow) {
+    private static void validateUnfollowing(Member member, Follow follow) {
         if (!follow.getFromUser().equals(member)) {
             throw new FollowHandler(ErrorStatus.FOLLOW_NOT_AUTHENTICATED_UNFOLLOW);
         }

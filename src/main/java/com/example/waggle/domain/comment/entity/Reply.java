@@ -38,18 +38,13 @@ public class Reply extends BaseEntity {
     @OneToMany(mappedBy = "reply",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Mention> mentions = new ArrayList<>();
 
-    public void setComment(Comment comment) {
-        this.comment = comment;
+    public void changeContent(String content) {
+        this.content = content;
     }
 
     public void addMention(Mention mention) {
-        mentions.add(mention);
-        mention.setReply(this);
-    }
-
-
-    public void changeContent(String content) {
-        this.content = content;
+        this.getMentions().add(mention);
+        mention.changeReply(this);
     }
 
 }

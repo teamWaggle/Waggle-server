@@ -8,6 +8,4 @@ public interface FollowQueryService {
     List<Follow> getFollowings(String username);
 
     List<Follow> getFollowers(String username);
-    List<Follow> getFollowingsByUser();
-    List<Follow> getFollowersByUser();
 }

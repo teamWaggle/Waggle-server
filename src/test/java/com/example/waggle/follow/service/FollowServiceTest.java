@@ -3,9 +3,12 @@ package com.example.waggle.follow.service;
 import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.global.exception.handler.FollowHandler;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.member.MemberRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,31 +25,105 @@ public class FollowServiceTest {
     @Autowired
     FollowCommandService followCommandService;
     @Autowired
-    MemberRepository memberRepository;
+    MemberCommandService memberCommandService;
+
+    MemberRequest.RegisterRequestDto signUpDto1;
+    MemberRequest.RegisterRequestDto signUpDto2;
+    MemberRequest.RegisterRequestDto signUpDto3;
+    MemberRequest.RegisterRequestDto signUpDto4;
 
     void setUp() {
-        Member member1 = Member.builder().nickname("1").password("12345678").username("member1").build();
-        Member member2 = Member.builder().nickname("2").password("12345678").username("member2").build();
-        Member member3 = Member.builder().nickname("3").password("12345678").username("member3").build();
-        Member member4 = Member.builder().nickname("4").password("12345678").username("member4").build();
-        memberRepository.save(member1);
-        memberRepository.save(member2);
-        memberRepository.save(member3);
-        memberRepository.save(member4);
+        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+                .username("member1")
+                .password("12345678")
+                .nickname("닉네임1")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+
+        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+                .username("member2")
+                .password("12345678")
+                .nickname("닉네임2")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+
+        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
+                .username("member3")
+                .password("12345678")
+                .nickname("닉네임3")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+
+        signUpDto4 = MemberRequest.RegisterRequestDto.builder()
+                .username("member4")
+                .password("12345678")
+                .nickname("닉네임4")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+
+        memberCommandService.signUp(signUpDto1);
+        memberCommandService.signUp(signUpDto2);
+        memberCommandService.signUp(signUpDto3);
+        memberCommandService.signUp(signUpDto4);
+
     }
 
     @Test
-    @Transactional
     @WithMockCustomUser
+    @Transactional
     void follow() {
         //given
         setUp();
         //when
         followCommandService.follow("member2");
-        List<Follow> followingsByUser = followQueryService.getFollowingsByUser();
+        List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         //then
         assertThat(followingsByUser.get(0).getFromUser().getUsername()).isEqualTo("member1");
         assertThat(followingsByUser.get(0).getToUser().getUsername()).isEqualTo("member2");
     }
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void unfollow() {
+        //given
+        setUp();
+        //when
+        Long followId = followCommandService.follow("member2");
+        followCommandService.follow("member3");
+        followCommandService.unFollow(followId);
+        List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
+        //then
+        assertThat(followingsByUser.get(0).getFromUser().getUsername()).isEqualTo("member1");
+        assertThat(followingsByUser.get(0).getToUser().getUsername()).isEqualTo("member3");
+    }
 
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void follow_exception() {
+        //given
+        setUp();
+        //when
+        followCommandService.follow("member2");
+        //then
+        Assertions.assertThrows(FollowHandler.class ,()->followCommandService.follow("member2"));
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void unfollow_exception() {
+        //given
+        setUp();
+        //when
+        Long followId = followCommandService.follow("member2");
+        followCommandService.follow("member3");
+        followCommandService.unFollow(followId);
+        //then
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow(followId));
+    }
 }

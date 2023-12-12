@@ -62,7 +62,8 @@ public enum ErrorStatus implements BaseCode {
 
     // 팔로우 관련 오류 (4300 ~ 4349)
     FOLLOW_NOT_FOUND(NOT_FOUND,4300,"해당 팔로우가 목록에 존재하지 않습니다"),
-    FOLLOW_NOT_AUTHENTICATED_UNFOLLOW(BAD_REQUEST,4301,"팔로우를 신청한 사람이 아닙니다. 따라서 팔로우 취소가 불가능합니다");
+    FOLLOW_NOT_AUTHENTICATED_UNFOLLOW(BAD_REQUEST,4301,"팔로우를 신청한 사람이 아닙니다. 따라서 팔로우 취소가 불가능합니다"),
+    FOLLOW_ALREADY_EXIST(BAD_REQUEST,4302, "이미 존재하는 팔로우입니다.");
 
 
     private final HttpStatus httpStatus;

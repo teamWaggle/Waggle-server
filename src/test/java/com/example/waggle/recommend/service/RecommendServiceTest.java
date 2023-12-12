@@ -7,16 +7,17 @@ import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.recommend.entity.Recommend;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.util.service.BoardType;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.story.StoryDetailDto;
 import com.example.waggle.web.dto.story.StoryRequest;
-import com.example.waggle.web.dto.story.StorySummaryDto;
-import com.example.waggle.web.dto.story.StoryWriteDto;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,10 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Slf4j
 class RecommendServiceTest {
 
     @Autowired
@@ -43,6 +46,8 @@ class RecommendServiceTest {
     private RecommendCommandService recommendService;
     @Autowired
     private RecommendQueryService recommendQueryService;
+    @Autowired
+    private RecommendRepository recommendRepository;
     @Autowired
     private StoryRepository storyRepository;
     @Autowired
@@ -93,14 +98,12 @@ class RecommendServiceTest {
         storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
-                .medias(medias1)
                 .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
-                .medias(medias2)
                 .thumbnail("www.waggle")
                 .build();
 
@@ -112,12 +115,11 @@ class RecommendServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    @Transactional
     void setBoardAndMember() throws IOException {
 
         //member set
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         Member build = Member.builder().username("user1").password("password").build();
         memberRepository.save(build);
@@ -126,12 +128,13 @@ class RecommendServiceTest {
         storyRepository.save(iiii);
 
         //story set
-        storyService.createStory(storyWriteDto1, new ArrayList<>(), null);
+        storyService.createStory(storyWriteDto1);
         //storyService.saveStory(storyWriteDto2);
     }
 
     @Test
     @WithMockCustomUser
+    @Transactional
     void recommendBoard() throws IOException {
         //given
         setBoardAndMember();
@@ -139,14 +142,15 @@ class RecommendServiceTest {
 
         //when
         recommendService.handleRecommendation(story.getId(), BoardType.STORY);
-        StoryDetailDto storyViewByBoardId = storyQueryService.getStoryByBoardId(story.getId());
-        recommendQueryService.checkRecommend(storyViewByBoardId);
+        Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
+        int count = recommendQueryService.countRecommend(storyByBoardId.getId());
 
         //then
-        assertThat(storyViewByBoardId.getRecommendCount()).isEqualTo(1);
+        assertThat(count).isEqualTo(1);
     }
     @Test
     @WithMockCustomUser
+    @Transactional
     void cancelRecommendBoard() throws IOException {
         //given
         setBoardAndMember();
@@ -156,10 +160,48 @@ class RecommendServiceTest {
 
         //when
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
-        StoryDetailDto dto = StoryDetailDto.toDto(story);
-        recommendQueryService.checkRecommend(dto);
+        boolean recommend = recommendQueryService.checkRecommend(storyByBoardId.getId(), storyByBoardId.getMember().getUsername());
 
         //then
-        assertThat(dto).isEqualTo(0);
+        assertThat(recommend).isFalse();
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void cannot_recommend_Mine() throws IOException {
+        //given
+        memberService.signUp(signUpDto1);
+        storyService.createStory(storyWriteDto1);
+        Story story = storyQueryService.getStories().get(0);
+        //then
+        try {
+            recommendService.handleRecommendation(story.getId(), BoardType.STORY);
+        } catch (GeneralException ge) {
+            log.info("ge = {}", ge);
+        }
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void story_remove_result_recommendEntity() throws IOException {
+        //given
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto1.getUsername());
+
+        StoryRequest.Post request = StoryRequest.Post.builder()
+                .content("hi")
+                .build();
+        storyService.createStory(request);
+        Story story = storyQueryService.getStories().get(0);
+        Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
+        recommendRepository.save(build);
+        //when
+        storyService.deleteStory(story.getId());
+        List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(story.getId());
+        //then
+        assertThat(recommendingMembers.size()).isEqualTo(0);
     }
 }

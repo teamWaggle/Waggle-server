@@ -5,6 +5,7 @@ import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
+import com.example.waggle.web.dto.member.MemberRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -34,6 +35,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true)
     private String nickname;
 
     private String address;
@@ -42,9 +44,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String profileImgUrl;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Pet> pets = new ArrayList<>();
+//    @Builder.Default
+//    @OneToMany(mappedBy = "member")
+//    private List<Pet> pets = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -54,17 +56,24 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "toUser")
-    private List<Follow> followingList = new ArrayList<>();
+//    @Builder.Default
+//    @OneToMany(mappedBy = "toUser")
+//    private List<Follow> followingList = new ArrayList<>();
+//
+//    @Builder.Default
+//    @OneToMany(mappedBy = "fromUser")
+//    private List<Follow> followerList = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "fromUser")
-    private List<Follow> followerList = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Pet> pets = new ArrayList<>();
 
-    public void setPets(List<Pet> pets) {
-        this.pets = pets;
-    }
+
+    //TODO RoomMemeber List
+
+
+//    public void setPets(List<Pet> pets) {
+//        this.pets = pets;
+//    }
 
 
     @Override
@@ -92,5 +101,13 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void updateInfo(MemberRequest.PutDto request) {
+        this.password = request.getPassword();
+        this.address = request.getAddress();
+        this.nickname = request.getNickname();
+        this.phone = request.getPhone();
+        this.profileImgUrl = request.getProfileImgUrl();
     }
 }

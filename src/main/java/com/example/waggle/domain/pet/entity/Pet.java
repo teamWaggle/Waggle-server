@@ -1,9 +1,9 @@
 package com.example.waggle.domain.pet.entity;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.web.dto.pet.PetDto;
+import com.example.waggle.global.component.auditing.BaseEntity;
+import com.example.waggle.web.dto.pet.PetRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -36,7 +36,7 @@ public class Pet extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void update(PetDto petDto) {
+    public void update(PetRequest.Post petDto) {
         this.name = petDto.getName();
         this.breed = petDto.getBreed();
         this.gender = petDto.getGender();

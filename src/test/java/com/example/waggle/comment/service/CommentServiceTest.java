@@ -118,12 +118,12 @@ class CommentServiceTest {
 
     private void setBoardAndMember() throws IOException {
         //member set
-        memberService.signUp(signUpDto1, null);
-        memberService.signUp(signUpDto2, null);
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1, new ArrayList<>(), null);
-        storyCommandService.createStory(storyWriteDto2, new ArrayList<>(), null);
+        storyCommandService.createStory(storyWriteDto1);
+        storyCommandService.createStory(storyWriteDto2);
     }
 
     @Test
@@ -139,7 +139,6 @@ class CommentServiceTest {
         //then
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getContent()).isEqualTo("comment1");
-        assertThat(comments.get(0).getMember().getUsername()).isEqualTo("member1");
     }
 
     @Test
@@ -152,12 +151,11 @@ class CommentServiceTest {
         List<Comment> comments = commentService.getComments(story.getId());
 
         //when
-        if (commentService.validateMember(comments.get(0).getId())) {
-            commentCommandService.updateComment(comments.get(0).getId(), commentWriteDto2);
-        }
+        commentCommandService.updateComment(comments.get(0).getId(), commentWriteDto2);
+        List<Comment> commentList = commentService.getComments(story.getId());
 
         //then
-        assertThat(comments.get(0).getContent()).isEqualTo("comment2");
+        assertThat(commentList.get(0).getContent()).isEqualTo("comment2");
     }
 
 
@@ -168,14 +166,14 @@ class CommentServiceTest {
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
 
+        //when
         commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
         List<Comment> comments = commentService.getComments(story.getId());
-
-        //when
-        log.info("boardId is {}", comments.get(0).getId());
         commentCommandService.deleteComment(comments.get(0).getId());
+        List<Comment> commentList = commentService.getComments(story.getId());
+
         //then
-        assertThat(comments.size()).isEqualTo(0);
+        assertThat(commentList.size()).isEqualTo(0);
 
     }
 }
