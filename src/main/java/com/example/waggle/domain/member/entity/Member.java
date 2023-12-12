@@ -1,7 +1,6 @@
 package com.example.waggle.domain.member.entity;
 
 
-import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
@@ -64,6 +63,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 //    @OneToMany(mappedBy = "fromUser")
 //    private List<Follow> followerList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<Pet> pets = new ArrayList<>();
 

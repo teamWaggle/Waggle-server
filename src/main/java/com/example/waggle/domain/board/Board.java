@@ -1,4 +1,4 @@
-package com.example.waggle.domain.board.entity;
+package com.example.waggle.domain.board;
 
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.media.entity.Media;

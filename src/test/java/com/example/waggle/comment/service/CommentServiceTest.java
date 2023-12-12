@@ -122,8 +122,8 @@ class CommentServiceTest {
         memberService.signUp(signUpDto2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1);
-        storyCommandService.createStory(storyWriteDto2);
+        storyCommandService.createStory(storyWriteDto1, null);
+        storyCommandService.createStory(storyWriteDto2, null);
     }
 
     @Test

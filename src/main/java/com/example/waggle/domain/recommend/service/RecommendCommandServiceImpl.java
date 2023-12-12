@@ -1,6 +1,6 @@
 package com.example.waggle.domain.recommend.service;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;

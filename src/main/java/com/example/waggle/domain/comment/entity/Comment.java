@@ -1,6 +1,6 @@
 package com.example.waggle.domain.comment.entity;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;

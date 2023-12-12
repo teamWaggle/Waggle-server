@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.global;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.entity.Hashtag;

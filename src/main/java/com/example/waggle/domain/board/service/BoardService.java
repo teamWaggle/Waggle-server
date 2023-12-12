@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board.service;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.hashtag.entity.Hashtag;
 
 public interface BoardService {

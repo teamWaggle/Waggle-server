@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.domain;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

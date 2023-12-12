@@ -1,6 +1,6 @@
 package com.example.waggle.domain.board.help.entity;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.help.HelpRequest;
 import jakarta.persistence.*;

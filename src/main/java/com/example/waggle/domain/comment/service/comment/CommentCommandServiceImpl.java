@@ -1,6 +1,6 @@
 package com.example.waggle.domain.comment.service.comment;
 
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;

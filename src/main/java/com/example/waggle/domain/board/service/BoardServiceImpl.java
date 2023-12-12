@@ -1,7 +1,7 @@
 package com.example.waggle.domain.board.service;
 
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
-import com.example.waggle.domain.board.entity.Board;
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
