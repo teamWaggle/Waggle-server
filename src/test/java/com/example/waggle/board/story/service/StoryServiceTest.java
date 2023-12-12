@@ -126,8 +126,8 @@ class StoryServiceTest {
         memberService.signUp(signUpDto2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1);
-        storyCommandService.createStory(storyWriteDto2);
+        storyCommandService.createStory(storyWriteDto1, null);
+        storyCommandService.createStory(storyWriteDto2, null);
     }
 
 
@@ -195,7 +195,7 @@ class StoryServiceTest {
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
-        storyCommandService.updateStory(id, editDto);
+        storyCommandService.updateStory(id, editDto, null, null);
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then

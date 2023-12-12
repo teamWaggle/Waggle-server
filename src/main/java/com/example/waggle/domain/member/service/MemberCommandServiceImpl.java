@@ -4,7 +4,6 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest;
 import java.util.ArrayList;
@@ -25,9 +24,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UtilService utilService;
+    private final MemberQueryService memberQueryService;
     private static final String AUTH_CODE_PREFIX = "AuthCode ";
     private final RedisService redisService;
+
 
     @Override
     public Long signUp(MemberRequest.RegisterRequestDto request) {
@@ -55,14 +55,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public Long updateMemberInfo(MemberRequest.PutDto request) {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         member.updateInfo(request);
         return member.getId();
     }
 
     @Override
     public void deleteMember() {
-        Member member = utilService.getSignInMember();
+        Member member = memberQueryService.getSignInMember();
         //TODO member relation all data removing
     }
 
