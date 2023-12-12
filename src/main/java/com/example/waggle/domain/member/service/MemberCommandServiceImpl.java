@@ -6,14 +6,14 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.service.UtilService;
 import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.VerifyMailRequest;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +26,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final UtilService utilService;
+    private static final String AUTH_CODE_PREFIX = "AuthCode ";
+    private final RedisService redisService;
 
     @Override
     public Long signUp(MemberRequest.RegisterRequestDto request) {
@@ -62,6 +64,13 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void deleteMember() {
         Member member = utilService.getSignInMember();
         //TODO member relation all data removing
+    }
+
+    @Override
+    public void verifyMail(VerifyMailRequest request) {
+        String authNum = redisService.getValue(AUTH_CODE_PREFIX + request.getEmail());
+        boolean isSuccess = authNum.equals(request.getAuthCode());
+        if (!isSuccess) throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
     }
 
 }
