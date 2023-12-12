@@ -29,6 +29,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
         Schedule createdSchedule = Schedule.builder()
                 .team(team)
                 .title(request.getTitle())
+                .content(request.getContent())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .build();
@@ -52,6 +53,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService{
     public void deleteSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        schedule.getTeam().removeSchedule(schedule);
         scheduleRepository.delete(schedule);
     }
 }

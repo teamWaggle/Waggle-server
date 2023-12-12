@@ -23,7 +23,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
         dialect: org.hibernate.dialect.MySQLDialect
-  #    open-in-view: false
 
   profiles:
     include:
@@ -49,7 +48,6 @@ spring:
             enable: true
 
 
-
 cloud:
   aws:
     credentials:
@@ -66,14 +64,11 @@ logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
 
-file:
-  dir: ${user.dir}/src/main/resources/static/files/
-
 server:
   error:
-    include-exception: false      # Response 에 Exception 을 표시할지
-    include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
-    include-stacktrace: on_param  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
-    whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
+    include-exception: false
+    include-message: always
+    include-stacktrace: on_param
+    whitelabel.enabled: true
 
 
