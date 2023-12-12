@@ -1,11 +1,12 @@
 package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.schedule.domain.Team;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TeamQueryService {
 
-    List<Team> getTeamsByUsername(String username);
+    Page<Team> getTeamsByUsername(String username, Pageable pageable);
 
     Team getTeamById(Long teamId);
 

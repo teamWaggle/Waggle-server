@@ -34,6 +34,7 @@ public class Schedule extends Board {
 
     public void update(Post request) {
         this.title = request.getTitle();
+        this.content = request.getContent();
         this.startTime = request.getStartTime();
         this.endTime = request.getEndTime();
     }
