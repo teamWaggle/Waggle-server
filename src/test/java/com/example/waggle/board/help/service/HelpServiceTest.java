@@ -83,6 +83,7 @@ class HelpServiceTest {
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("wjdgks3264@naver.com")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();

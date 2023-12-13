@@ -6,13 +6,14 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .username(request.getUsername())
                 .password(encodedPassword)
                 .nickname(request.getNickname())
+                .email(request.getEmail())
                 .address(request.getAddress())
                 .phone(request.getPhone())
                 .roles(roles)

@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.domain;
+package com.example.waggle.domain.schedule.entity;
 
 
 import jakarta.persistence.Column;

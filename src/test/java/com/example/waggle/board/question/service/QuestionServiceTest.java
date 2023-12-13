@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuestionServiceTest {
 
     @Autowired
-    private QuestionCommandService questionService;
+    QuestionCommandService questionCommandService;
     @Autowired
     private QuestionQueryService questionQueryService;
     @Autowired
@@ -78,6 +78,7 @@ class QuestionServiceTest {
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
+                .email("a;sldkfj")
                 .phone("010-1234-5678")
                 .build();
 
@@ -86,6 +87,7 @@ class QuestionServiceTest {
                 .password("12345678")
                 .nickname("닉네임2")
                 .address("서울시 광진구")
+                .email("euufhdjhf")
                 .phone("010-1234-5678")
                 .build();
 
@@ -134,8 +136,8 @@ class QuestionServiceTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
-        Long question1 = questionService.createQuestion(questionWriteDto1, null);
-        Long question2 = questionService.createQuestion(questionWriteDto2, null);
+        Long question1 = questionCommandService.createQuestion(questionWriteDto1, null);
+        Long question2 = questionCommandService.createQuestion(questionWriteDto2, null);
 
         answerService.createAnswer(question1, answerWriteDto1, null);
         answerService.createAnswer(question1, answerWriteDto2, null);
@@ -175,7 +177,7 @@ class QuestionServiceTest {
         setQAndA();
         //when
         Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
-        Long aLong = questionService
+        Long aLong = questionCommandService
                 .updateQuestion(pagedQuestions.getContent().get(0).getId(), questionEditDto1, null, null);
         //then
         Question question = questionQueryService.getQuestionByBoardId(aLong);
@@ -205,7 +207,7 @@ class QuestionServiceTest {
         //when
         Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
         Question question = pagedQuestions.getContent().get(0);
-        questionService.deleteQuestion(question.getId());
+        questionCommandService.deleteQuestion(question.getId());
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(question.getId(), pageable);
         List<Question> allQuestion = questionQueryService.getAllQuestion();
         //then

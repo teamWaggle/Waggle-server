@@ -1,13 +1,11 @@
 package com.example.waggle.domain.schedule.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.schedule.domain.Participation;
-import com.example.waggle.domain.schedule.domain.Participation.ParticipationStatus;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
@@ -18,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @WithMockCustomUser
 @Transactional
@@ -47,18 +47,24 @@ class TeamCommandServiceTest {
         member1 = Member.builder()
                 .username("member1")
                 .password("12345678")
+                .email("dasfk")
+                .nickname("lksadfjklj")
                 .build();
         memberRepository.save(member1);
 
         member2 = Member.builder()
                 .username("member2")
                 .password("12345678")
+                .email("aksdfhsafa")
+                .nickname("sadlfkdsfjkw")
                 .build();
         memberRepository.save(member2);
 
         member3 = Member.builder()
                 .username("member3")
                 .password("12345678")
+                .email("wldkfjk")
+                .nickname("jdhskjfhac")
                 .build();
         memberRepository.save(member3);
 
@@ -72,8 +78,16 @@ class TeamCommandServiceTest {
         teamRepository.save(team);
 
         // Setup teamMember
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, member1);
+        addMemberToTeam(team, member1);
+    }
+
+    private void addMemberToTeam(Team team, Member member) {
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
+        teamMember.addTeamMember(team, member);
+        teamMemberRepository.save(teamMember);
     }
 
 

@@ -1,24 +1,27 @@
 package com.example.waggle.domain.schedule.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.schedule.domain.Schedule;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.time.LocalDateTime;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @WithMockCustomUser
 @Transactional
@@ -27,6 +30,8 @@ class ScheduleCommandServiceTest {
 
     @Autowired
     ScheduleCommandService scheduleCommandService;
+    @Autowired
+    ScheduleQueryService scheduleQueryService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -131,8 +136,7 @@ class ScheduleCommandServiceTest {
     void deleteSchedule() {
         // when
         scheduleCommandService.deleteSchedule(schedule.getId());
-
-        // then
-        assertThat(scheduleRepository.existsById(schedule.getId())).isEqualTo(false);
+        //then
+        Assertions.assertThrows(ScheduleHandler.class, () -> scheduleQueryService.getScheduleById(schedule.getId()));
     }
 }

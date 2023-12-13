@@ -50,7 +50,10 @@ class QuestionRepositoryTest {
         // given
         Member member = Member.builder()
                 .username("username")
-                .password("password").build();
+                .password("password")
+                .nickname("nickname")
+                .email("email")
+                .build();
         Member savedMember = memberRepository.save(member);
 
         Question question1 = Question.builder()
