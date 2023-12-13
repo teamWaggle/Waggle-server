@@ -4,7 +4,6 @@ import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse;
@@ -73,8 +72,8 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/follower")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowerMemberList() {
-        List<Follow> followers = followQueryService.getFollowers(SecurityUtil.getCurrentUsername());
+    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowerMemberList(@AuthUser UserDetails userDetails) {
+        List<Follow> followers = followQueryService.getFollowers(userDetails.getUsername());
         List<MemberResponse.MemberSummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
