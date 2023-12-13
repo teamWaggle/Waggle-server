@@ -67,6 +67,7 @@ class ScheduleQueryServiceTest {
                 .description("team1 description")
                 .leader(member1)
                 .maxTeamSize(4)
+                .colorScheme("red")
                 .build();
         teamRepository.save(team1);
 
@@ -75,6 +76,7 @@ class ScheduleQueryServiceTest {
                 .description("team2 description")
                 .leader(member1)
                 .maxTeamSize(4)
+                .colorScheme("orange")
                 .build();
         teamRepository.save(team2);
 

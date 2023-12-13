@@ -26,7 +26,7 @@ public class Participation {
     @Column(nullable = false, updatable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Long teamId;
 
     @Setter

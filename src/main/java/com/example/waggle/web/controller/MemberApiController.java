@@ -45,12 +45,13 @@ public class MemberApiController {
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping
     public ApiResponseDto<Long> register(
-            @RequestPart MemberRequest.RegisterRequestDto request,
-            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
-        String profileImgUrl = null;
-        if (profileImg != null) {
-            profileImgUrl = awsS3Service.uploadFile(profileImg);
-        }
+            @RequestBody MemberRequest.RegisterRequestDto request
+//            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
+    ) {
+//        String profileImgUrl = null;
+//        if (profileImg != null) {
+//            profileImgUrl = awsS3Service.uploadFile(profileImg);
+//        }
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }

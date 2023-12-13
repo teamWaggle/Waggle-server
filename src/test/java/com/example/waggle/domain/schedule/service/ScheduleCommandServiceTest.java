@@ -68,6 +68,7 @@ class ScheduleCommandServiceTest {
                 .description("team1 description")
                 .leader(member1)
                 .maxTeamSize(4)
+                .colorScheme("red")
                 .build();
         teamRepository.save(team);
 

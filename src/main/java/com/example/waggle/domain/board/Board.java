@@ -31,6 +31,7 @@ public abstract class Board extends BaseEntity {
     protected Member member;
 
     @Lob
+    @Column(nullable = false)
     protected String content;
 
     @Builder.Default
