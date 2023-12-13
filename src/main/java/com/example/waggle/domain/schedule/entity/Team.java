@@ -24,6 +24,7 @@ public class Team extends BaseEntity {
     private String name;
     private String description;
     private String coverImageUrl;
+//    @Column(nullable=false)
     private String colorScheme;
     private Integer maxTeamSize;
 

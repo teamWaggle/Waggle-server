@@ -35,9 +35,12 @@ class QuestionRepositoryTest {
     @Test
     @Transactional
     void test() {
-        Question question = Question.builder().title("question").content("i have a question sir.").build();
+        Question question = Question.builder()
+                .title("question")
+                .content("i have a question sir.")
+                .status(Question.Status.UNRESOLVED)
+                .build();
         questionRepository.save(question);
-
 
 
         Optional<Question> byBoardId = questionRepository.findById(question.getId());
@@ -60,6 +63,7 @@ class QuestionRepositoryTest {
                 .title("question1")
                 .content("i have a question sir.")
                 .member(member)
+                .status(Question.Status.UNRESOLVED)
                 .createdDate(LocalDateTime.now())
                 .createdBy("username").build();
 
@@ -67,6 +71,7 @@ class QuestionRepositoryTest {
                 .title("question2")
                 .content("i have a question sir.")
                 .member(member)
+                .status(Question.Status.UNRESOLVED)
                 .createdDate(LocalDateTime.now())
                 .createdBy("username").build();
 

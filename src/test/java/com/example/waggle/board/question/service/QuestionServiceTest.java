@@ -46,9 +46,9 @@ class QuestionServiceTest {
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
 
-    QuestionRequest.QuestionWriteDto questionWriteDto1;
-    QuestionRequest.QuestionWriteDto questionWriteDto2;
-    QuestionRequest.QuestionWriteDto questionEditDto1;
+    QuestionRequest.Post questionWriteDto1;
+    QuestionRequest.Post questionWriteDto2;
+    QuestionRequest.Post questionEditDto1;
     AnswerRequest.Post answerWriteDto1;
     AnswerRequest.Post answerWriteDto2;
     AnswerRequest.Post answerEditDto1;
@@ -91,26 +91,29 @@ class QuestionServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        questionWriteDto1 = QuestionRequest.QuestionWriteDto.builder()
+        questionWriteDto1 = QuestionRequest.Post.builder()
                 .title("question1")
                 .content("I have a question")
                 .medias(medias1)
                 .hashtags(tags1)
+                .status(Question.Status.UNRESOLVED)
                 .build();
 
 
-        questionWriteDto2 = QuestionRequest.QuestionWriteDto.builder()
+        questionWriteDto2 = QuestionRequest.Post.builder()
                 .title("question2")
                 .content("I have a question!")
                 .medias(medias2)
                 .hashtags(tags2)
+                .status(Question.Status.UNRESOLVED)
                 .build();
 
-        questionEditDto1 = QuestionRequest.QuestionWriteDto.builder()
+        questionEditDto1 = QuestionRequest.Post.builder()
                 .title("EditQuestion")
                 .content("I wanna know that what it is")
                 .medias(medias2)
                 .hashtags(tags2)
+                .status(Question.Status.UNRESOLVED)
                 .build();
 
         answerWriteDto1 = AnswerRequest.Post.builder()

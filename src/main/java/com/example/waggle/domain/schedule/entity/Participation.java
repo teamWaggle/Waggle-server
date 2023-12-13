@@ -23,7 +23,7 @@ public class Participation {
     @Id @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String username;
 
     @Column(nullable = false)
