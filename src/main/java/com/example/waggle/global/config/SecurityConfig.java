@@ -1,5 +1,6 @@
 package com.example.waggle.global.config;
 
+import com.example.waggle.global.security.JwtAuthenticationFilter;
 import com.example.waggle.global.security.TokenService;
 import com.example.waggle.global.security.oauth2.CustomOAuth2UserService;
 import com.example.waggle.global.security.oauth2.cookie.CookieAuthorizationRequestRepository;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +27,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,10 +40,13 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests()
                 // 해당 API에 대해서는 모든 요청을 허가
-                .requestMatchers("/**").permitAll()
-                .requestMatchers("/images/**").permitAll()
+//                .requestMatchers("/**").permitAll()
+//                .requestMatchers("/images/**").permitAll()
 
-//                .requestMatchers("/", "/member/**", "/story", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
+                .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
+                .requestMatchers("/api/members/**").permitAll() //putMapping은 제외해야함
+                .requestMatchers("/api/tokens").permitAll()
+                .requestMatchers("/api/follows").authenticated()    //for test
                 // USER 권한이 있어야 요청할 수 있음
 //                .requestMatchers("/member/test", "/story/write", "/story/edit").hasRole("USER")
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
@@ -59,9 +65,12 @@ public class SecurityConfig {
                     .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler);
+        //order : jwtFilter -> usernamePasswordAuthentication
+        //username&password를 통한 검증 로직보다 jwt를 우선시하겠다는 의미
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         return httpSecurity.build();
-
     }
 
     @Bean
@@ -74,6 +83,5 @@ public class SecurityConfig {
     public CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository(){
         return new CookieAuthorizationRequestRepository();
     }
-
 
 }
