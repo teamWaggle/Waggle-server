@@ -1,6 +1,7 @@
 package com.example.waggle.domain.member.service;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -12,16 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class MemberCommandServiceImpl implements MemberCommandService {
 
-    private static final String DEFAULT_ROLE = "USER";
+//    private static final String DEFAULT_ROLE = "USER";
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,8 +35,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
-        List<String> roles = new ArrayList<>();
-        roles.add(DEFAULT_ROLE);
+//        List<String> roles = new ArrayList<>();
+//        roles.add(DEFAULT_ROLE);
 
         Member createdMember = Member.builder()
                 .username(request.getUsername())
@@ -47,7 +45,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .email(request.getEmail())
                 .address(request.getAddress())
                 .phone(request.getPhone())
-                .roles(roles)
+                .role(Role.USER)
                 .build();
 
         Member member = memberRepository.save(createdMember);
