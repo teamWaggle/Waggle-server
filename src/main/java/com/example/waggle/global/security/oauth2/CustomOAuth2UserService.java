@@ -1,9 +1,12 @@
 package com.example.waggle.global.security.oauth2;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.global.security.oauth2.info.OAuth2UserInfo;
+import com.example.waggle.global.util.NameUtil;
+import com.example.waggle.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -12,11 +15,12 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
-import java.util.UUID;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -53,15 +57,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private Member registerMember(AuthProvider authProvider, OAuth2UserInfo oAuth2UserInfo) {
-        String randomPW = UUID.randomUUID().toString()
-                .replaceAll("-", "")
-                .substring(0, 10);
         Member register = Member.builder()
                 .email(oAuth2UserInfo.getEmail())
-                .name(oAuth2UserInfo.getName())
                 .username(oAuth2UserInfo.getOAuth2Id())
-                .password(randomPW)
+                .password(PasswordUtil.generateRandomPassword(10))
+                .nickname(NameUtil.generateAutoNickname())
                 .authProvider(authProvider)
+                .role(Role.GUEST)           //회원가입시에만 guest로 두고 이후 사용에는 user로 돌린다
                 .build();
 
         return memberRepository.save(register);

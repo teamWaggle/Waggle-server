@@ -79,9 +79,4 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Bean
-    public CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository(){
-        return new CookieAuthorizationRequestRepository();
-    }
-
 }

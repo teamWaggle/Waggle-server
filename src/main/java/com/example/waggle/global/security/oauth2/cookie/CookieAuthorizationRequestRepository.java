@@ -7,14 +7,6 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 
-/**
- * flow
- * provider와 authorization 과정
- * 1. client request auth and save in cookie
- * 2. provider check auth and save redirect URL in cookie
- * 3. server check redirect URL in cookie with redirect URL in application.yml
- * 4. end of checking, data remove in cookie
- */
 @Component
 public class CookieAuthorizationRequestRepository implements AuthorizationRequestRepository {
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";

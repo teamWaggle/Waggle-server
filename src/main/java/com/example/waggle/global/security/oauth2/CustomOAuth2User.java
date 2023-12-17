@@ -2,7 +2,6 @@ package com.example.waggle.global.security.oauth2;
 
 import com.example.waggle.domain.member.entity.Role;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
@@ -10,7 +9,6 @@ import java.util.Collection;
 import java.util.Map;
 
 @Getter
-@SuperBuilder
 public class CustomOAuth2User extends DefaultOAuth2User {
 
     private String email;

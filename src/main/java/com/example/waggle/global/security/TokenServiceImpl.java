@@ -34,7 +34,7 @@ public class TokenServiceImpl implements TokenService {
     private final RedisService redisService;
     private final MemberQueryService memberQueryService;
 
-    public TokenServiceImpl(@Value("${jwt.secret}") String key,
+    public TokenServiceImpl(@Value("${app.jwt.secret}") String key,
                             AuthenticationManagerBuilder authenticationManagerBuilder,
                             RedisService redisService,
                             MemberQueryService memberQueryService) {
