@@ -30,8 +30,8 @@ class BoardRepositoryTest {
 
         Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
 
-        Hashtag hashtag1 = Hashtag.builder().tag("trip").build();
-        Hashtag hashtag2 = Hashtag.builder().tag("vacation").build();
+        Hashtag hashtag1 = Hashtag.builder().content("trip").build();
+        Hashtag hashtag2 = Hashtag.builder().content("vacation").build();
 
         List<Hashtag> hashtags = new ArrayList<>();
         hashtags.add(hashtag1);
@@ -60,8 +60,8 @@ class BoardRepositoryTest {
         storyRepository.save(testStory);
 
 
-        Hashtag hashtag1 = Hashtag.builder().tag("trip").build();
-        Hashtag hashtag2 = Hashtag.builder().tag("vacation").build();
+        Hashtag hashtag1 = Hashtag.builder().content("trip").build();
+        Hashtag hashtag2 = Hashtag.builder().content("vacation").build();
 
 
         List<Hashtag> hashtags = new ArrayList<>();

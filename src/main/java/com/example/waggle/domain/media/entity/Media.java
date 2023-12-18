@@ -16,6 +16,7 @@ public class Media extends BaseTimeEntity {
     @Id @GeneratedValue
     @Column(name = "media_id")
     private Long id;
+    @Column(nullable = false)
     private String uploadFile;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")

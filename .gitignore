@@ -41,3 +41,6 @@ application-security.yml
 
 ### DB ###
 application-real-db.yml
+
+##mac
+.DS_Store

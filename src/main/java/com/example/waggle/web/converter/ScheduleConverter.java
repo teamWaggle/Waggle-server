@@ -1,6 +1,6 @@
 package com.example.waggle.web.converter;
 
-import com.example.waggle.domain.schedule.domain.Schedule;
+import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import java.util.List;
 import java.util.stream.Collectors;

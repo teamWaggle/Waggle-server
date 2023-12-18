@@ -20,7 +20,8 @@ public class Hashtag extends BaseEntity {
     @Column(name = "hashtag_id")
     private Long id;
 
-    private String tag;
+    @Column(nullable = false)
+    private String content;
 
     @OneToMany(mappedBy = "hashtag",cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Builder.Default

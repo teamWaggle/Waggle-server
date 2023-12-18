@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.domain;
+package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
@@ -37,8 +37,6 @@ public class TeamMember extends BaseEntity {
 
     // 연관관계 편의 메서드
     public void addTeamMember(Team team, Member member) {
-        this.team = team;
-        this.member = member;
         team.getTeamMembers().add(this);
         member.getTeamMembers().add(this);
     }

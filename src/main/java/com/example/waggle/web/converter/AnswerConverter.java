@@ -16,7 +16,7 @@ public class AnswerConverter {
                 .username(answer.getMember().getUsername())
                 .createDate(answer.getCreatedDate())
                 .hashtags(answer.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
+                        .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
     }
 

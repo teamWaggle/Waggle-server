@@ -6,6 +6,8 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,8 @@ class RecommendRepositoryTest {
     private RecommendRepository recommendRepository;
     @Autowired
     private StoryRepository storyRepository;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
 
     Story story1;
     //who write board
@@ -37,13 +41,22 @@ class RecommendRepositoryTest {
     void setting() {
         member = Member.builder()
                 .username("username")
-                .password("password").build();
+                .password("password")
+                .nickname("nickname")
+                .email("email")
+                .build();
         member1 = Member.builder()
                 .username("username1")
-                .password("password1").build();
+                .password("password1")
+                .nickname("nickname1")
+                .email("email1")
+                .build();
         member2 = Member.builder()
                 .username("username2")
-                .password("password2").build();
+                .password("password2")
+                .nickname("nickname2")
+                .email("email2")
+                .build();
         memberRepository.save(member);
         memberRepository.save(member1);
         memberRepository.save(member2);
@@ -56,6 +69,11 @@ class RecommendRepositoryTest {
 
         recommendRepository.save(recommend1);
         recommendRepository.save(recommend2);
+    }
+
+    @AfterEach
+    void clean() {
+        databaseCleanUp.truncateAllEntity();
     }
     @Test
     @Transactional
