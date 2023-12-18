@@ -1,0 +1,3 @@
+mongodb:
+  client: mongodb://localhost:27017
+  name: waggle
