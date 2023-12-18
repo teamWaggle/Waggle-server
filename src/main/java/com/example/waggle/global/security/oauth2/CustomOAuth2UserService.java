@@ -3,12 +3,13 @@ package com.example.waggle.global.security.oauth2;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.global.security.CustomUserDetails;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.global.security.oauth2.info.OAuth2UserInfo;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -18,8 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
+import java.util.Optional;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -44,19 +46,17 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             throw new RuntimeException("Email not found from OAuth2 provider");
         }
 
-        Member member = memberRepository.findByEmail(oAuth2UserInfo.getEmail())
-                .orElse(registerMember(authProvider, oAuth2UserInfo));
+        log.info("member save!");
+        Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
+        Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
         //이미 가입된 경우
         //많은 프로젝트 대부분이 플랫폼의 정보를 업데이트 했지만 우리 프로젝트에서는 단순히 '권한'만 발급받을 것
 
-        return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().getKey())),
-                oAuth2UserInfo.getAttributes(),
-                oAuth2UserInfo.getOAuth2Id(),
-                member.getEmail(),
-                member.getRole());
+        return CustomUserDetails.create(member);
     }
 
     private Member registerMember(AuthProvider authProvider, OAuth2UserInfo oAuth2UserInfo) {
+        log.info("register Member using OAuth2");
         Member register = Member.builder()
                 .email(oAuth2UserInfo.getEmail())
                 .username(oAuth2UserInfo.getOAuth2Id())
