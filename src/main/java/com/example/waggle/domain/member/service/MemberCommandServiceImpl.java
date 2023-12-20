@@ -44,6 +44,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .password(encodedPassword)
                 .nickname(request.getNickname())
                 .address(request.getAddress())
+                .email(request.getEmail())
                 .phone(request.getPhone())
                 .roles(roles)
                 .build();
@@ -70,7 +71,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void verifyMail(VerifyMailRequest request) {
         String authNum = redisService.getValue(AUTH_CODE_PREFIX + request.getEmail());
         boolean isSuccess = authNum.equals(request.getAuthCode());
-        if (!isSuccess) throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
+        if (!isSuccess) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
+        }
     }
 
 }
