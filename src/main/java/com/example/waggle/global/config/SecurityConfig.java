@@ -9,6 +9,7 @@ import com.example.waggle.global.security.oauth2.handler.OAuth2AuthenticationSuc
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,20 +40,54 @@ public class SecurityConfig {
                 .formLogin().disable()
                 // JWT를 사용하기 때문에 세션을 사용하지 않음
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         httpSecurity
                 .authorizeHttpRequests()
-                // 해당 API에 대해서는 모든 요청을 허가
-                .requestMatchers("/**").permitAll()
-                .requestMatchers("/login/**").permitAll()
+                // MEMBER
+                .requestMatchers(HttpMethod.PUT,"/api/members").authenticated()
+                .requestMatchers("/api/members/**").permitAll()
+                // TEAM
+                .requestMatchers("/api/teams/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/teams/**").permitAll()
+                // REPLY
+                .requestMatchers("/api/replies/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/replies/**").permitAll()
+                // COMMENT
+                .requestMatchers("/api/comments/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                // SCHEDULE -> need to custom
+                .requestMatchers("/api/schedules/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/schedules/**").permitAll()
+                // PET
+                .requestMatchers("/api/pets/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/pets/**").authenticated()
+                // STORY
+                .requestMatchers("/api/stories/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/stories/**").permitAll()
+                // QUESTION
+                .requestMatchers("/api/questions/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/questions/**").permitAll()
+                // HELP
+                .requestMatchers("/api/help-us/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/help-us/**").permitAll()
+                // TOKEN
+                .requestMatchers("/api/tokens/**").authenticated()
+                // RECOMMEND
+                .requestMatchers("/api/recommends/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/recommends/**").permitAll()
+                // ANSWER
+                .requestMatchers("/api/answers/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/answers/**").permitAll()
+                // FOLLOW
+                .requestMatchers("/api/follows/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/follows/**").permitAll()
+                // OAUTH2
                 .requestMatchers("/oauth2/**").permitAll()
+                // ELSE
                 .requestMatchers("/images/**").permitAll()
 
                 //정적 페이지 허가
-                .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
-                // USER 권한이 있어야 요청할 수 있음
-//                .requestMatchers("/member/test", "/story/write", "/story/edit").hasRole("USER")
-                // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
-                .anyRequest().authenticated();
+                .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll(); // 임시로 모든 API 허용
 
                 // JWT 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
 //                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
