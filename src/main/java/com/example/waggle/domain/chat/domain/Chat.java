@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat;
+package com.example.waggle.domain.chat.domain;
 
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;

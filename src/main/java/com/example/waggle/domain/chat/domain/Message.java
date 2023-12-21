@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat;
+package com.example.waggle.domain.chat.domain;
 
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
