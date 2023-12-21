@@ -1,3 +1,4 @@
 mongodb:
-  client: mongodb://localhost:27017
+  client: mongodb://admin:12345678@host:27017/waggle
   name: waggle
+

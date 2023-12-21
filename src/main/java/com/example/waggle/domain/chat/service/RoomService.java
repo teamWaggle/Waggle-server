@@ -1,11 +1,13 @@
 package com.example.waggle.domain.chat.service;
 
-import com.example.waggle.domain.chat.domain.Room;
-import com.example.waggle.domain.chat.domain.RoomMember;
-import com.example.waggle.domain.chat.domain.RoomMemberRepository;
-import com.example.waggle.domain.chat.domain.RoomRepository;
+import com.example.waggle.domain.chat.entity.Room;
+import com.example.waggle.domain.chat.entity.RoomMember;
+import com.example.waggle.domain.chat.repository.RoomMemberRepository;
+import com.example.waggle.domain.chat.repository.RoomRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,4 +50,16 @@ public class RoomService {
         roomMemberRepository.save(roomMember);
     }
 
+    public Set<Member> getMembersExceptSender(String chatRoomId, Long senderId) {
+        Room room = roomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방이 존재하지 않습니다."));
+
+        // 채팅방의 모든 RoomMember를 가져온다
+        Set<RoomMember> roomMembers = room.getRoomMembers();
+
+        return roomMembers.stream()
+                .map(RoomMember::getMember)
+                .filter(member -> !member.getId().equals(senderId))
+                .collect(Collectors.toSet());
+    }
 }

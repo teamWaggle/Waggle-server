@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @RequiredArgsConstructor
-@EnableMongoRepositories(basePackages = "com.example.waggle.global.config")
+@EnableMongoRepositories(basePackages = "com.example.waggle.domain.chat")
 @Configuration
 public class MongoConfig {
 

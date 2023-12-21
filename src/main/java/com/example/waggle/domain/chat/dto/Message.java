@@ -1,5 +1,6 @@
-package com.example.waggle.domain.chat.domain;
+package com.example.waggle.domain.chat.dto;
 
+import com.example.waggle.domain.chat.entity.Chat;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Message implements Serializable {
     private String id;
     @NotNull
-    private Integer chatRoomId;
+    private String chatRoomId;
     @NotNull
     private String contentType;
     @NotNull

@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.domain;
+package com.example.waggle.domain.chat.entity;
 
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ public class Chat {
 
     @Id
     private String id;
-    private Integer chatRoomId;
+    private String chatRoomId;
     private Long senderId;
     private String senderUsername;
     private String contentType;
