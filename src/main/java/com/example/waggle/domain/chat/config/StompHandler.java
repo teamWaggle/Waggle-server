@@ -1,7 +1,6 @@
 package com.example.waggle.domain.chat.config;
 
-import com.example.waggle.domain.chat.service.ChatRoomService;
-import com.example.waggle.domain.chat.service.ChatService;
+import com.example.waggle.domain.chat.service.RoomService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.TokenService;
@@ -24,8 +23,7 @@ import org.springframework.stereotype.Component;
 public class StompHandler implements ChannelInterceptor {
 
     private final TokenService tokenService;
-    private final ChatRoomService chatRoomService;
-    private final ChatService chatService;
+    private final RoomService roomService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -53,19 +51,23 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void connectToChatRoom(StompHeaderAccessor accessor, String username) {
-        // 채팅방 번호를 가져온다.
-        Integer chatRoomNo = getChatRoomNo(accessor);
+        // 채팅방 ID를 가져온다.
+        String chatRoomId = getChatRoomId(accessor);
 
-        // 채팅방 입장 처리 -> Redis에 입장 내역 저장
-        chatRoomService.connectChatRoom(chatRoomNo, username);
+        // 채팅방에 사용자를 추가하는 처리
+        roomService.connectChatRoom(chatRoomId, username);
+
         // 읽지 않은 채팅을 전부 읽음 처리
-        chatService.updateCountAllZero(chatRoomNo, username);
-        // 현재 채팅방에 접속중인 인원이 있는지 확인한다.
-        boolean isConnected = chatRoomService.isConnected(chatRoomNo);
+        // TODO chatService.updateCountAllZero(chatRoomId, username);
 
-        if (isConnected) {
-            chatService.updateMessage(username, chatRoomNo);
-        }
+        // 채팅방에 접속중인 사용자에게 메시지를 보내기 위한 로직
+        // 예를 들어, 새로운 사용자가 채팅방에 들어왔다는 알림 메시지를 보내거나,
+        // 채팅방의 현재 상태를 업데이트하는 등의 처리
+        broadcastNewMember(chatRoomId, username);
+    }
+
+    private void broadcastNewMember(String chatRoomId, String username) {
+        // TODO 채팅방에 있는 모든 사용자에게 새로운 사용자가 들어왔다는 메시지를 전송하는 로직
     }
 
     private String verifyAccessToken(String accessToken) {
@@ -76,9 +78,9 @@ public class StompHandler implements ChannelInterceptor {
         return tokenService.getAuthentication(accessToken).getName();
     }
 
-    private Integer getChatRoomNo(StompHeaderAccessor accessor) {
+    private String getChatRoomId(StompHeaderAccessor accessor) {
         return
-                Integer.valueOf(
+                String.valueOf(
                         Objects.requireNonNull(
                                 accessor.getFirstNativeHeader("chatRoomId")
                         ));
