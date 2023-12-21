@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.domain;
+package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;

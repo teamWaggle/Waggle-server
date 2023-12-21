@@ -31,7 +31,7 @@ public class LazyLoadingTest {
                 .build();
 
         Hashtag hashtag = Hashtag.builder()
-                .tag("hashtag").build();
+                .content("hashtag").build();
 
         BoardHashtag boardHashtag = BoardHashtag.builder()
                 .board(board)
@@ -56,7 +56,7 @@ public class LazyLoadingTest {
         // 실제 데이터 로딩
         log.info("boardHashtag = {}", boardHashtags.get(0).getClass().getName());   // boardHashtag = com.example.waggle.hashtag.domain.BoardHashtag
 
-        log.info("hashtag = {}", hashtag.getTag());
+        log.info("hashtag = {}", hashtag.getContent());
 
     }
 

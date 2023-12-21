@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.schedule.domain.Schedule;
+import com.example.waggle.domain.schedule.entity.Schedule;
 import java.util.List;
 
 public interface ScheduleQueryService {

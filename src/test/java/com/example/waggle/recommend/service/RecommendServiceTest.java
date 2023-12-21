@@ -83,6 +83,7 @@ class RecommendServiceTest {
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("hi")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -91,6 +92,7 @@ class RecommendServiceTest {
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
+                .email("hoe")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -121,7 +123,12 @@ class RecommendServiceTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
-        Member build = Member.builder().username("user1").password("password").build();
+        Member build = Member.builder()
+                .username("user1")
+                .password("password")
+                .email("email")
+                .nickname("nickname")
+                .build();
         memberRepository.save(build);
 
         Story iiii = Story.builder().member(build).content("iiii").build();
