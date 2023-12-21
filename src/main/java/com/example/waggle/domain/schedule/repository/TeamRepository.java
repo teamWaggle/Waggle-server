@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.repository;
 
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

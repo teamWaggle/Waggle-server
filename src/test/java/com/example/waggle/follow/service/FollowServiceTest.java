@@ -4,10 +4,12 @@ import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.FollowHandler;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +28,19 @@ public class FollowServiceTest {
     FollowCommandService followCommandService;
     @Autowired
     MemberCommandService memberCommandService;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
 
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
     MemberRequest.RegisterRequestDto signUpDto3;
     MemberRequest.RegisterRequestDto signUpDto4;
+
+
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
 
     void setUp() {
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
@@ -39,6 +49,7 @@ public class FollowServiceTest {
                 .nickname("닉네임1")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
+                .email("wjdgks3264@naver.com")
                 .build();
 
         signUpDto2 = MemberRequest.RegisterRequestDto.builder()
@@ -47,6 +58,7 @@ public class FollowServiceTest {
                 .nickname("닉네임2")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
+                .email("wjdgks2972@naver.com")
                 .build();
 
         signUpDto3 = MemberRequest.RegisterRequestDto.builder()
@@ -54,6 +66,7 @@ public class FollowServiceTest {
                 .password("12345678")
                 .nickname("닉네임3")
                 .address("서울시 광진구")
+                .email("wjdgks@naver.com")
                 .phone("010-1234-5678")
                 .build();
 
@@ -62,6 +75,7 @@ public class FollowServiceTest {
                 .password("12345678")
                 .nickname("닉네임4")
                 .address("서울시 광진구")
+                .email("hi@naver.com")
                 .phone("010-1234-5678")
                 .build();
 
@@ -82,8 +96,7 @@ public class FollowServiceTest {
         followCommandService.follow("member2");
         List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         //then
-        assertThat(followingsByUser.get(0).getFromUser().getUsername()).isEqualTo("member1");
-        assertThat(followingsByUser.get(0).getToUser().getUsername()).isEqualTo("member2");
+        assertThat(followingsByUser.get(0).getToMember().getUsername()).isEqualTo("member2");
     }
     @Test
     @WithMockCustomUser
@@ -97,8 +110,8 @@ public class FollowServiceTest {
         followCommandService.unFollow("member2");
         List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         //then
-        assertThat(followingsByUser.get(0).getFromUser().getUsername()).isEqualTo("member1");
-        assertThat(followingsByUser.get(0).getToUser().getUsername()).isEqualTo("member3");
+        assertThat(followingsByUser.get(0).getFromMember().getUsername()).isEqualTo("member1");
+        assertThat(followingsByUser.get(0).getToMember().getUsername()).isEqualTo("member3");
     }
 
     @Test

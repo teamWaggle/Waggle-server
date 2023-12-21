@@ -74,6 +74,7 @@ class StoryServiceTest {
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("fjkjk")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -82,6 +83,7 @@ class StoryServiceTest {
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
+                .email("wdfcgh")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();

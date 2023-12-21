@@ -2,7 +2,7 @@ package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.schedule.domain.Team;
+import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;

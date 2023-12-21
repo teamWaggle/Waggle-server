@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.repository;
 
-import com.example.waggle.domain.schedule.domain.Participation;
+import com.example.waggle.domain.schedule.entity.Participation;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

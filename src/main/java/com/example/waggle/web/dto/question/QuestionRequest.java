@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.question;
 
+import com.example.waggle.domain.board.question.entity.Question;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -17,7 +18,7 @@ public class QuestionRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class QuestionWriteDto {
+    public static class Post {
 
         @NotEmpty(message = "질문 내용을 작성해주세요.")
         @Max(1500)
@@ -32,6 +33,8 @@ public class QuestionRequest {
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
+
+        private Question.Status status;
 
     }
 }

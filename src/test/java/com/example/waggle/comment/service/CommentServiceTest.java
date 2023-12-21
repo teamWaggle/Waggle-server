@@ -75,6 +75,7 @@ class CommentServiceTest {
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("ertyuio")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -83,6 +84,7 @@ class CommentServiceTest {
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
+                .email("78347dj")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();

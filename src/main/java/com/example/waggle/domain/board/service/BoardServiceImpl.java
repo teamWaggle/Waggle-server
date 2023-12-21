@@ -107,14 +107,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Hashtag getHashtag(String tag) {
-        Optional<Hashtag> byTag = hashtagRepository.findByTag(tag);
-        if (byTag.isEmpty()) {
+        Optional<Hashtag> byContent = hashtagRepository.findByContent(tag);
+        if (byContent.isEmpty()) {
             log.info("not exist hashtag!");
-            Hashtag build = Hashtag.builder().tag(tag).build();
+            Hashtag build = Hashtag.builder().content(tag).build();
             hashtagRepository.save(build);
             return build;
         }
         log.info("already exist hashtag...");
-        return byTag.get();
+        return byContent.get();
     }
 }
