@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers("/images/**").permitAll()
 
+                //정적 페이지 허가
                 .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
                 // USER 권한이 있어야 요청할 수 있음
 //                .requestMatchers("/member/test", "/story/write", "/story/edit").hasRole("USER")
