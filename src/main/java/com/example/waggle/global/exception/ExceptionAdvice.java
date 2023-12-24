@@ -5,9 +5,6 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.payload.code.Reason;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -19,6 +16,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
@@ -58,6 +59,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 ErrorStatus._INTERNAL_SERVER_ERROR.getHttpStatus(), request, e.getMessage());
     }
 
+
     @ExceptionHandler
     public ResponseEntity onThrowException(GeneralException generalException, HttpServletRequest request) {
         Reason errorReasonHttpStatus = generalException.getErrorReasonHttpStatus();
@@ -93,6 +95,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 request
         );
     }
+
 
     private ResponseEntity<Object> handleExceptionInternalArgs(Exception e, HttpHeaders headers,
                                                                ErrorStatus errorCommonStatus,

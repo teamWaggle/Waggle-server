@@ -32,7 +32,7 @@ public class MemberRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RegisterRequestDto {
-
+        @NotBlank
         private String email;
 
         @NotBlank(message = "아이디를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
@@ -43,8 +43,6 @@ public class MemberRequest {
         private String password;
         @NotBlank
         private String nickname;
-        @NotBlank
-        private String email;
         private String address;
         @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
         private String phone;

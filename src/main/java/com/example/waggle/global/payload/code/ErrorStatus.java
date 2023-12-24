@@ -25,7 +25,9 @@ public enum ErrorStatus implements BaseCode {
     AUTH_INVALID_TOKEN(UNAUTHORIZED, 4052, "유효하지 않은 인증 토큰입니다."),
     AUTH_UNAUTHORIZED_MEMBER(UNAUTHORIZED, 4053, "계정 정보를 찾을 수 없습니다."),
     AUTH_TOKEN_NO_AUTHORITY(UNAUTHORIZED, 4054, "권한 정보가 없는 토큰입니다."),
-    AUTH_REDIRECT_NOT_MATCHING(BAD_REQUEST,4055,"redirect uri가 서버 내 설정과 매칭되지 않습니다"),
+    AUTH_REDIRECT_NOT_MATCHING(BAD_REQUEST,4055,"redirect uri가 서버 내 설정과 매칭되지 않습니다."),
+    AUTH_ROLE_CANNOT_EXECUTE_URI(BAD_REQUEST,4056,"사용자는 해당 로직을 수행할 수 없는 역할군입니다."),
+    AUTH_MUST_AUTHORIZED_URI(UNAUTHORIZED,4057,"해당 uri는 권한 인증이 필수입니다. 만료된 토큰이거나 인증 정보가 없습니다."),
 
 
     // 회원 관련 오류 (4100 ~ 4149)

@@ -1,7 +1,8 @@
 package com.example.waggle.global.config;
 
+import com.example.waggle.global.security.exception.JwtAccessDeniedHandler;
+import com.example.waggle.global.security.exception.JwtAuthenticationEntryPoint;
 import com.example.waggle.global.security.JwtAuthenticationFilter;
-import com.example.waggle.global.security.TokenService;
 import com.example.waggle.global.security.oauth2.CustomOAuth2UserService;
 import com.example.waggle.global.security.oauth2.cookie.CookieAuthorizationRequestRepository;
 import com.example.waggle.global.security.oauth2.handler.OAuth2AuthenticationFailureHandler;
@@ -10,24 +11,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final TokenService tokenService;
     private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -46,52 +51,49 @@ public class SecurityConfig {
                 // MEMBER
                 .requestMatchers(HttpMethod.PUT,"/api/members").authenticated()
                 .requestMatchers("/api/members/**").permitAll()
-                // TEAM
-                .requestMatchers("/api/teams/**").authenticated()
+//                // TEAM
+//                .requestMatchers("/api/teams/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/teams/**").permitAll()
-                // REPLY
-                .requestMatchers("/api/replies/**").authenticated()
+//                // REPLY
+//                .requestMatchers("/api/replies/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/replies/**").permitAll()
-                // COMMENT
-                .requestMatchers("/api/comments/**").authenticated()
+//                // COMMENT
+//                .requestMatchers("/api/comments/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
-                // SCHEDULE -> need to custom
-                .requestMatchers("/api/schedules/**").authenticated()
+//                // SCHEDULE -> need to custom
+//                .requestMatchers("/api/schedules/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/schedules/**").permitAll()
-                // PET
-                .requestMatchers("/api/pets/**").authenticated()
-                .requestMatchers(HttpMethod.GET,"/api/pets/**").authenticated()
-                // STORY
-                .requestMatchers("/api/stories/**").authenticated()
+//                // PET
+//                .requestMatchers("/api/pets/**").authenticated()
+//                .requestMatchers(HttpMethod.GET,"/api/pets/**").authenticated()
+//                // STORY
+//                .requestMatchers("/api/stories/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/stories/**").permitAll()
-                // QUESTION
-                .requestMatchers("/api/questions/**").authenticated()
+//                // QUESTION
+//                .requestMatchers("/api/questions/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/questions/**").permitAll()
-                // HELP
-                .requestMatchers("/api/help-us/**").authenticated()
+//                // HELP
+//                .requestMatchers("/api/help-us/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/help-us/**").permitAll()
-                // TOKEN
-                .requestMatchers("/api/tokens/**").authenticated()
-                // RECOMMEND
-                .requestMatchers("/api/recommends/**").authenticated()
+//                // TOKEN
+//                .requestMatchers("/api/tokens/**").authenticated()
+//                // RECOMMEND
+//                .requestMatchers("/api/recommends/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/recommends/**").permitAll()
-                // ANSWER
-                .requestMatchers("/api/answers/**").authenticated()
+//                // ANSWER
+//                .requestMatchers("/api/answers/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/answers/**").permitAll()
-                // FOLLOW
-                .requestMatchers("/api/follows/**").authenticated()
+//                // FOLLOW
+//                .requestMatchers("/api/follows/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/follows/**").permitAll()
                 // OAUTH2
-                .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/oauth2/**","/login/**").permitAll()
                 // ELSE
-                .requestMatchers("/images/**").permitAll()
-
                 //정적 페이지 허가
-                .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll(); // 임시로 모든 API 허용
+                .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
+                .anyRequest().authenticated();
 
-                // JWT 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-
+        //OAUTH2
         httpSecurity
                 .oauth2Login()
                     .authorizationEndpoint().baseUri("/oauth2/authorize")  // 소셜 로그인 url
@@ -103,8 +105,13 @@ public class SecurityConfig {
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler);
         //order : jwtFilter -> usernamePasswordAuthentication
-        //username&password를 통한 검증 로직보다 jwt를 우선시하겠다는 의미
-//        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//        username&password를 통한 검증 로직보다 jwt를 우선시하겠다는 의미
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity.exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)	// 401
+                .accessDeniedHandler(jwtAccessDeniedHandler);		// 403
+
 
 
         return httpSecurity.build();
