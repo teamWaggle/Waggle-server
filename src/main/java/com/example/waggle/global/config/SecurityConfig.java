@@ -104,10 +104,11 @@ public class SecurityConfig {
                     .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler);
+
         //order : jwtFilter -> usernamePasswordAuthentication
-//        username&password를 통한 검증 로직보다 jwt를 우선시하겠다는 의미
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        //authentication/authorization
         httpSecurity.exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)	// 401
                 .accessDeniedHandler(jwtAccessDeniedHandler);		// 403

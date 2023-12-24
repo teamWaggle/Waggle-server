@@ -1,8 +1,6 @@
 package com.example.waggle.global.security.exception;
 
-import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,11 +19,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         log.info("denied");
 //        response.sendError(HttpServletResponse.SC_FORBIDDEN);
         ErrorStatus errorStatus = ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI;
-        ApiResponseDto<Object> apiResponseEntity = ApiResponseDto.onFailure(errorStatus.getCode(), errorStatus.getMessage(), accessDeniedException.getMessage());
-
-        response.setStatus(errorStatus.getHttpStatus().value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(apiResponseEntity));
+        CustomErrorSend.handleException(response,errorStatus, accessDeniedException.getMessage());
     }
 }
