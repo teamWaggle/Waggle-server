@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MemberRequest {
 
     @Builder
@@ -47,11 +44,14 @@ public class MemberRequest {
         @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
         private String phone;
 
+        private String profileImg;
+
 //        @Builder.Default
 //        private List<PetDto> pets = new ArrayList<>();
 
-        @Builder.Default
-        private List<String> roles = new ArrayList<>();
+        public void setProfile(String url) {
+            this.profileImg = url;
+        }
 
     }
 
@@ -70,10 +70,11 @@ public class MemberRequest {
         private String address;
         @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
         private String phone;
-        private String profileImgUrl;
+        private String profileImg;
 
-        @Builder.Default
-        private List<String> roles = new ArrayList<>();
+        public void setProfile(String url) {
+            this.profileImg = url;
+        }
 
     }
 }

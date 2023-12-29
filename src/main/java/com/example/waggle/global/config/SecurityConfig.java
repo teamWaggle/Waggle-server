@@ -88,6 +88,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/api/follows/**").permitAll()
                 // OAUTH2
                 .requestMatchers("/oauth2/**","/login/**").permitAll()
+                // TOKEN
+                .requestMatchers(HttpMethod.POST,"/api/tokens").permitAll()
                 // ELSE
                 //정적 페이지 허가
                 .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용

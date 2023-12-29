@@ -10,7 +10,7 @@ public interface StoryCommandService {
     Long createStory(StoryRequest.Post request, List<MultipartFile> multipartFiles) throws IOException;
 
     Long updateStory(Long boardId,
-                     StoryRequest.Post storyWriteDto,
+                     StoryRequest.Put storyWriteDto,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles) throws IOException;
 

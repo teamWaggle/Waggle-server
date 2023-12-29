@@ -41,7 +41,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
-                                            @RequestPart List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false) List<MultipartFile> multipartFiles) throws IOException {
         Long boardId = storyCommandService.createStory(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -51,10 +51,10 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다.")
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateStory(@PathVariable Long boardId,
-                                            @ModelAttribute StoryRequest.Post storyWriteDto,
-                                            @RequestPart List<MultipartFile> multipartFiles,
-                                            @RequestPart List<String> deleteFiles) throws IOException {
-        storyCommandService.updateStory(boardId, storyWriteDto, multipartFiles, deleteFiles);
+                                            @RequestPart StoryRequest.Put storyUpdateDto,
+                                            @RequestPart(required = false) List<MultipartFile> multipartFiles,
+                                            @RequestPart(required = false) List<String> deleteFiles) throws IOException {
+        storyCommandService.updateStory(boardId, storyUpdateDto, multipartFiles, deleteFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

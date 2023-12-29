@@ -92,27 +92,23 @@ class StoryServiceTest {
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto3 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
         storyWriteDto4 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
 
@@ -188,10 +184,9 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
-        StoryRequest.Post editDto = StoryRequest.Post.builder()
+        StoryRequest.Put editDto = StoryRequest.Put.builder()
                 .id(id)
                 .content("edit edit edit")
-                .thumbnail("www.choco")
                 .hashtags(tags)
                 .medias(medias2)
                 .build();

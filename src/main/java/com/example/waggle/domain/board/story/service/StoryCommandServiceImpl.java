@@ -14,6 +14,7 @@ import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,8 @@ public class StoryCommandServiceImpl implements StoryCommandService{
         if (!request.getHashtags().isEmpty()) {
             request.getHashtags().stream().forEach(h -> boardService.saveHashtag(story,h));
         }
-        mediaCommandService.createMedia(multipartFiles,createdStory);
+        boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
+        log.info("media exist : {}", media);
         return story.getId();
     }
 
@@ -57,20 +59,24 @@ public class StoryCommandServiceImpl implements StoryCommandService{
         Story createdStory = Story.builder()
                 .member(member)
                 .content(request.getContent())
-                .thumbnail(request.getThumbnail())
                 .build();
         return createdStory;
     }
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryRequest.Post storyWriteDto,
+                            StoryRequest.Put storyWriteDto,
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFile) throws IOException {
+        if (!SecurityUtil.getCurrentUsername().equals(storyWriteDto.getUsername())) {
+            log.info("current user {}",SecurityUtil.getCurrentUsername());
+            log.info("story user {}",storyWriteDto.getUsername());
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        if(storyWriteDto.getThumbnail() != null)story.changeThumbnail(storyWriteDto.getThumbnail());
+
         story.changeContent(storyWriteDto.getContent());
 
         mediaCommandService.updateMedia(multipartFiles,deleteFile,story);

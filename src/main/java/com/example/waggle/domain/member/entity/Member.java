@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,9 +79,12 @@ public class Member extends BaseTimeEntity implements UserDetails {
 //    }
 
 
+    public void saveProfileImg(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role.getKey()));
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.getKey()));
     }
 
     @Override
@@ -103,11 +107,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
         return true;
     }
 
-    public void updateInfo(MemberRequest.PutDto request) {
-        this.password = request.getPassword();
+    public void updateInfo(MemberRequest.PutDto request,String encodedPassword) {
+        this.password = encodedPassword;
         this.address = request.getAddress();
         this.nickname = request.getNickname();
         this.phone = request.getPhone();
-        this.profileImgUrl = request.getProfileImgUrl();
+        this.profileImgUrl = request.getProfileImg();
     }
 }

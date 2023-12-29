@@ -7,6 +7,8 @@ public interface MemberQueryService {
     Member getMemberByUsername(String username);
     Member getSignInMember();
 
+    boolean isAuthenticated();
+
     void validateEmailDuplication(String email);
 
     void validateUsernameDuplication(String username);

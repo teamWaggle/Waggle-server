@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +39,8 @@ public class MemberApiController {
     private final MemberQueryService memberQueryService;
     private final AwsS3Service awsS3Service;
     private final EmailService emailService;
+    @Value("${app.server.uri}")
+    private String SERVER_URI;
 
 
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다.")
@@ -45,13 +48,10 @@ public class MemberApiController {
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping
     public ApiResponseDto<Long> register(
-            @RequestBody MemberRequest.RegisterRequestDto request
-//            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
+            @RequestPart MemberRequest.RegisterRequestDto request,
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
-//        String profileImgUrl = null;
-//        if (profileImg != null) {
-//            profileImgUrl = awsS3Service.uploadFile(profileImg);
-//        }
+        request.setProfile(saveProfileImg(profileImg));
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -62,10 +62,7 @@ public class MemberApiController {
     public ApiResponseDto<Long> updateInfo(
             @RequestPart MemberRequest.PutDto request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
-        String profileImgUrl = null;
-        if (profileImg != null) {
-            profileImgUrl = awsS3Service.uploadFile(profileImg);
-        }
+        request.setProfile(saveProfileImg(profileImg));
         Long memberId = memberCommandService.updateMemberInfo(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -122,4 +119,14 @@ public class MemberApiController {
     }
 
 
+    private String saveProfileImg(MultipartFile file) {
+        String url = null;
+        if (!file.isEmpty()) {
+            String profileImg = awsS3Service.uploadFile(file);
+            StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
+            StringBuffer save = stringBuffer.append("/").append(profileImg);
+            url = save.toString();
+        }
+        return url;
+    }
 }
