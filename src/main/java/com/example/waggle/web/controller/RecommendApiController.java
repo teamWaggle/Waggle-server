@@ -40,9 +40,9 @@ public class RecommendApiController {
     @ApiResponse(responseCode = "200", description = "게시글 좋아요 활성화 멤버 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청.")
     @GetMapping("{boardId}")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> findRecommendingMembers(@PathVariable Long boardId) {
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> findRecommendingMembers(@PathVariable Long boardId) {
         List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(boardId);
-        List<MemberResponse.MemberSummaryDto> collect = recommendingMembers.stream()
+        List<MemberResponse.SummaryDto> collect = recommendingMembers.stream()
                 .map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }

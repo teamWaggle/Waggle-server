@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.story.service;
 
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,11 @@ public interface StoryCommandService {
                      StoryRequest.Put storyWriteDto,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles) throws IOException;
+
+    Long updateStoryV2(Long boardId,
+                       StoryRequest.Put storyWriteDto,
+                       MediaRequest.Put mediaListDto,
+                       List<MultipartFile> multipartFiles)throws IOException;
 
     void deleteStory(Long boardId);
 }

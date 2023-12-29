@@ -15,6 +15,7 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +70,6 @@ public class StoryCommandServiceImpl implements StoryCommandService{
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFile) throws IOException {
         if (!SecurityUtil.getCurrentUsername().equals(storyWriteDto.getUsername())) {
-            log.info("current user {}",SecurityUtil.getCurrentUsername());
-            log.info("story user {}",storyWriteDto.getUsername());
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
@@ -80,6 +79,28 @@ public class StoryCommandServiceImpl implements StoryCommandService{
         story.changeContent(storyWriteDto.getContent());
 
         mediaCommandService.updateMedia(multipartFiles,deleteFile,story);
+
+        story.getBoardHashtags().clear();
+        for (String hashtag : storyWriteDto.getHashtags()) {
+            boardService.saveHashtag(story, hashtag);
+        }
+        return story.getId();
+    }
+
+    @Override
+    public Long updateStoryV2(Long boardId,
+                              StoryRequest.Put storyWriteDto,
+                              MediaRequest.Put mediaListDto,
+                              List<MultipartFile> multipartFiles) throws IOException {
+        if (!SecurityUtil.getCurrentUsername().equals(storyWriteDto.getUsername())) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        story.changeContent(storyWriteDto.getContent());
+
+        mediaCommandService.updateMediaV2(mediaListDto,multipartFiles,story);
 
         story.getBoardHashtags().clear();
         for (String hashtag : storyWriteDto.getHashtags()) {

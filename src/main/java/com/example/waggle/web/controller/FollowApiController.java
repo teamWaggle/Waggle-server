@@ -51,9 +51,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/following")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowingMemberList(@AuthUser UserDetails userDetails) {
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowingMemberList(@AuthUser UserDetails userDetails) {
         List<Follow> followings = followQueryService.getFollowings(userDetails.getUsername());
-        List<MemberResponse.MemberSummaryDto> collect = followings.stream()
+        List<MemberResponse.SummaryDto> collect = followings.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
@@ -61,9 +61,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/following/{username}")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowingMemberListByUsername(@PathVariable String username) {
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowingMemberListByUsername(@PathVariable String username) {
         List<Follow> followings = followQueryService.getFollowings(username);
-        List<MemberResponse.MemberSummaryDto> collect = followings.stream()
+        List<MemberResponse.SummaryDto> collect = followings.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
@@ -72,9 +72,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/follower")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowerMemberList(@AuthUser UserDetails userDetails) {
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowerMemberList(@AuthUser UserDetails userDetails) {
         List<Follow> followers = followQueryService.getFollowers(userDetails.getUsername());
-        List<MemberResponse.MemberSummaryDto> collect = followers.stream()
+        List<MemberResponse.SummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
@@ -83,9 +83,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/follower/{username}")
-    public ApiResponseDto<List<MemberResponse.MemberSummaryDto>> getFollowerMemberListByUsername(@PathVariable String username) {
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowerMemberListByUsername(@PathVariable String username) {
         List<Follow> followers = followQueryService.getFollowers(username);
-        List<MemberResponse.MemberSummaryDto> collect = followers.stream()
+        List<MemberResponse.SummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }

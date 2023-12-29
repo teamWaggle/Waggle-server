@@ -5,6 +5,7 @@ import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.media.repository.MediaRepository;
 import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.media.MediaRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -60,5 +61,31 @@ public class MediaCommandServiceImpl implements MediaCommandService{
         }
         //second step. add file
         createMedia(uploadFiles,board);
+    }
+
+    @Override
+    public void updateMediaV2(MediaRequest.Put request, List<MultipartFile> uploadFiles, Board board) {
+        board.getMedias().clear();
+
+        request.getMediaList().forEach(media -> {
+            if (media.allowUpload) {
+                if (uploadFiles.isEmpty()) {
+                    throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_IS_EMPTY);
+                }
+                String url = awsS3Service.uploadFile(uploadFiles.get(0));
+                media.setImageUrl(url);
+                uploadFiles.remove(0);
+            }
+            mediaRepository.save(Media.builder()
+                    .uploadFile(media.getImageUrl())
+                    .board(board)
+                    .build());
+        });
+        if (!uploadFiles.isEmpty()) {
+            throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_STILL_EXIST);
+        }
+
+        request.getDeleteMediaList().forEach(dto -> mediaRepository.deleteById(dto.getId()));
+
     }
 }

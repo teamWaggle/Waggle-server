@@ -7,6 +7,7 @@ import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.StoryConverter;
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +42,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
-                                            @RequestPart(required = false) List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         Long boardId = storyCommandService.createStory(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -52,9 +53,9 @@ public class StoryApiController {
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateStory(@PathVariable Long boardId,
                                             @RequestPart StoryRequest.Put storyUpdateDto,
-                                            @RequestPart(required = false) List<MultipartFile> multipartFiles,
-                                            @RequestPart(required = false) List<String> deleteFiles) throws IOException {
-        storyCommandService.updateStory(boardId, storyUpdateDto, multipartFiles, deleteFiles);
+                                            @RequestPart MediaRequest.Put mediaUpdateDto,
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        storyCommandService.updateStoryV2(boardId, storyUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

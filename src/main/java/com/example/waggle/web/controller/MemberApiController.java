@@ -48,7 +48,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping
     public ApiResponseDto<Long> register(
-            @RequestPart MemberRequest.RegisterRequestDto request,
+            @RequestPart MemberRequest.RegisterDto request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
         request.setProfile(saveProfileImg(profileImg));
@@ -60,7 +60,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "400", description = "회원정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping
     public ApiResponseDto<Long> updateInfo(
-            @RequestPart MemberRequest.PutDto request,
+            @RequestPart MemberRequest.Put request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
         request.setProfile(saveProfileImg(profileImg));
         Long memberId = memberCommandService.updateMemberInfo(request);
@@ -71,7 +71,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
     @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
     @GetMapping("/{username}")
-    public ApiResponseDto<MemberResponse.MemberDetailDto> getMemberInfo(@PathVariable String username) {
+    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }

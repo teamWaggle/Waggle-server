@@ -28,7 +28,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(MemberRequest.RegisterRequestDto request) {
+    public Long signUp(MemberRequest.RegisterDto request) {
         if (memberRepository.existsByUsername(request.getUsername())) {
             throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
         }
@@ -53,7 +53,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberInfo(MemberRequest.PutDto request) {
+    public Long updateMemberInfo(MemberRequest.Put request) {
         Member member = memberQueryService.getSignInMember();
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         member.updateInfo(request, encodedPassword);

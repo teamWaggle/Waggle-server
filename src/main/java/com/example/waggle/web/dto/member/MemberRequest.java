@@ -13,7 +13,7 @@ public class MemberRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LoginRequestDto {
+    public static class LoginDto {
 
         @NotBlank(message = "아이디를 작성해주세요.")
         private String username;
@@ -28,7 +28,7 @@ public class MemberRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RegisterRequestDto {
+    public static class RegisterDto {
         @NotBlank
         private String email;
 
@@ -61,7 +61,7 @@ public class MemberRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PutDto {
+    public static class Put {
 
         @NotBlank(message = "비밀번호를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
         @Length(min = 10, message = "비밀번호는 최소 10자입니다.", groups = ValidationGroups.LimitCount.class)

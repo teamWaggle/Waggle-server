@@ -30,7 +30,7 @@ public class TokenApiController {
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.LoginRequestDto request) {
+    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.LoginDto request) {
         JwtToken jwtToken = tokenService.login(request);
         return ApiResponseDto.onSuccess(jwtToken);
     }

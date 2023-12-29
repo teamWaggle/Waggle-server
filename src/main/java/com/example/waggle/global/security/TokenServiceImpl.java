@@ -2,7 +2,7 @@ package com.example.waggle.global.security;
 
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
-import com.example.waggle.web.dto.member.MemberRequest.LoginRequestDto;
+import com.example.waggle.web.dto.member.MemberRequest;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -46,7 +46,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public JwtToken login(LoginRequestDto request) {
+    public JwtToken login(MemberRequest.LoginDto request) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 request.getUsername(), request.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
