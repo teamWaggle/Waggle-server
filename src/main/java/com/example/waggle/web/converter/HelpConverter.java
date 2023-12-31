@@ -10,12 +10,18 @@ import java.util.stream.Collectors;
 public class HelpConverter {
 
     public static HelpResponse.SummaryDto toSummaryDto(Help help) {
+        String thumbnail = null;
+        if (!help.getMedias().isEmpty()) {
+            thumbnail = help.getMedias().get(0).getUploadFile();
+        }
         return HelpResponse.SummaryDto.builder()
-                .thumbnail(help.getThumbnail())
+                .id(help.getId())
+                .thumbnail(thumbnail)
                 .lostLocate(help.getLostLocate())
                 .lostDate(help.getLostDate())
                 .category(help.getCategory())
                 .username(help.getMember().getUsername())
+                .profileImg(help.getMember().getProfileImgUrl())
                 .title(help.getTitle())
                 .build();
     }
@@ -39,12 +45,12 @@ public class HelpConverter {
                 .petAge(help.getPetAge())
                 .petGender(help.getPetGender())
                 .contact(help.getContact())
-                .thumbnail(help.getThumbnail())
                 .category(help.getCategory())
                 .lostLocate(help.getLostLocate())
                 .lostDate(help.getLostDate())
                 .content(help.getContent())
                 .username(help.getMember().getUsername())
+                .profileImg(help.getMember().getProfileImgUrl())
                 .build();
     }
 }

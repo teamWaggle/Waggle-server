@@ -7,7 +7,6 @@ import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,21 +21,18 @@ public class MediaCommandServiceImpl implements MediaCommandService{
 
     private final MediaRepository mediaRepository;
     private final AwsS3Service awsS3Service;
-    @Value("${app.server.uri}")
-    private String SERVER_URI;
     @Override
     public boolean createMedia(List<MultipartFile> multipartFiles, Board board) {
         if (multipartFiles == null) {
             return false;
         }else{
             List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
-            StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
-            uploadedFiles.stream().forEach(file -> {
-                StringBuffer appendURI = stringBuffer.append("/").append(file);
-                mediaRepository.save(
-                        Media.builder().board(board).uploadFile(String.valueOf(appendURI)).build()
-                );
-            });
+            uploadedFiles.forEach(file -> mediaRepository.save(
+                    Media.builder()
+                            .uploadFile(file)
+                            .board(board)
+                            .build()
+            ));
             return true;
         }
     }
@@ -69,7 +65,7 @@ public class MediaCommandServiceImpl implements MediaCommandService{
 
         request.getMediaList().forEach(media -> {
             if (media.allowUpload) {
-                if (uploadFiles.isEmpty()) {
+                if (uploadFiles.isEmpty() || uploadFiles == null) {
                     throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_IS_EMPTY);
                 }
                 String url = awsS3Service.uploadFile(uploadFiles.get(0));
@@ -81,11 +77,21 @@ public class MediaCommandServiceImpl implements MediaCommandService{
                     .board(board)
                     .build());
         });
-        if (!uploadFiles.isEmpty()) {
-            throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_STILL_EXIST);
+        if (uploadFiles != null) {
+            if (!uploadFiles.isEmpty()) {
+                throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_STILL_EXIST);
+            }
         }
+        request.getDeleteMediaList().forEach(dto -> {
+            awsS3Service.deleteFile(dto.getImageUrl());
+            mediaRepository.deleteById(dto.getId());
+        });
 
-        request.getDeleteMediaList().forEach(dto -> mediaRepository.deleteById(dto.getId()));
+    }
 
+    @Override
+    public void deleteMedia(Board board) {
+        board.getMedias().forEach(media -> awsS3Service.deleteFile(media.getUploadFile()));
+        mediaRepository.deleteMediaByBoardId(board.getId());
     }
 }

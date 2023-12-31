@@ -26,8 +26,7 @@ public class StoryResponse {
         private List<String> hashtags = new ArrayList<>();
         @Builder.Default
         private List<String> medias = new ArrayList<>();
-//        @Builder.Default
-//        private List<CommentViewDto> comments = new ArrayList<>();
+
     }
 
     @Getter
@@ -41,6 +40,7 @@ public class StoryResponse {
         private String username;
         private String profileImg;
         private String createdDate;
+        private String thumbnail;
         private int recommendCount;
         private boolean recommendIt;
         @Builder.Default

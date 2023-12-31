@@ -28,23 +28,21 @@ public class Help extends Board {
     private LocalDateTime lostDate;
     private String lostLocate;
     private String contact;
-    private String thumbnail;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
 
 
-    public void changeHelp(HelpRequest.Post helpUWriteDto) {
-        this.title = helpUWriteDto.getTitle();
-        this.petKind = helpUWriteDto.getPetKind();
-        this.petAge = helpUWriteDto.getPetAge();
-        this.petGender = helpUWriteDto.getPetGender();
-        this.lostDate = helpUWriteDto.getLostDate();
-        this.lostLocate = helpUWriteDto.getLostLocate();
-        this.contact = helpUWriteDto.getContact();
-        this.content = helpUWriteDto.getContent();
-        this.thumbnail = helpUWriteDto.getThumbnail();
-        this.category = helpUWriteDto.getCategory();
+    public void changeHelp(HelpRequest.Put helpUpdateDto) {
+        this.title = helpUpdateDto.getTitle();
+        this.petKind = helpUpdateDto.getPetKind();
+        this.petAge = helpUpdateDto.getPetAge();
+        this.petGender = helpUpdateDto.getPetGender();
+        this.lostDate = helpUpdateDto.getLostDate();
+        this.lostLocate = helpUpdateDto.getLostLocate();
+        this.contact = helpUpdateDto.getContact();
+        this.content = helpUpdateDto.getContent();
+        this.category = helpUpdateDto.getCategory();
     }
 
     public enum Category {

@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/api/questions/**").permitAll()
 //                // HELP
 //                .requestMatchers("/api/help-us/**").authenticated()
-                .requestMatchers(HttpMethod.GET,"/api/help-us/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/helps/**").permitAll()
 //                // TOKEN
 //                .requestMatchers("/api/tokens/**").authenticated()
 //                // RECOMMEND

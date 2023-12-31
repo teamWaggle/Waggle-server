@@ -2,6 +2,7 @@ package com.example.waggle.domain.board.help.service;
 
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.repository.HelpRepository;
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
@@ -11,9 +12,11 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.HelpHandler;
+import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.help.HelpRequest;
+import com.example.waggle.web.dto.media.MediaRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,7 +53,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
 
     @Override
     public Long updateHelp(Long boardId,
-                           HelpRequest.Post helpWriteDto,
+                           HelpRequest.Put helpWriteDto,
                            List<MultipartFile> multipartFiles,
                            List<String> deleteFiles)throws IOException {
         if (!boardService.validateMemberUseBoard(boardId, HELP)) {
@@ -61,6 +64,24 @@ public class HelpCommandServiceImpl implements HelpCommandService{
 
         help.changeHelp(helpWriteDto);
         mediaCommandService.updateMedia(multipartFiles,deleteFiles,help);
+        return help.getId();
+    }
+
+    @Override
+    public Long updateHelpV2(Long boardId,
+                             HelpRequest.Put helpUpdateDto,
+                             MediaRequest.Put mediaUpdateDto,
+                             List<MultipartFile> multipartFiles) throws IOException {
+        if (!SecurityUtil.getCurrentUsername().equals(helpUpdateDto.getUsername())) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Help help = helpRepository.findById(boardId)
+                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        help.changeHelp(helpUpdateDto);
+
+        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, help);
+
         return help.getId();
     }
 
@@ -92,7 +113,6 @@ public class HelpCommandServiceImpl implements HelpCommandService{
                 .lostDate(helpWriteDto.getLostDate())
                 .lostLocate(helpWriteDto.getLostLocate())
                 .category(helpWriteDto.getCategory())
-                .thumbnail(helpWriteDto.getThumbnail())
                 .member(signInMember)
                 .build();
         return build;

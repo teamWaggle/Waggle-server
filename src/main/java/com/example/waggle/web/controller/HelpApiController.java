@@ -9,6 +9,7 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.HelpConverter;
 import com.example.waggle.web.dto.help.HelpRequest;
 import com.example.waggle.web.dto.help.HelpResponse;
+import com.example.waggle.web.dto.media.MediaRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +28,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/help-us")
+@RequestMapping("/api/helps")
 @RestController
 @Tag(name = "help API", description = "헬퓨 API")
 public class HelpApiController {
@@ -43,7 +44,7 @@ public class HelpApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createHelp(@RequestPart HelpRequest.Post helpWriteDto,
-                                     @RequestPart List<MultipartFile> multipartFiles) throws IOException {
+                                     @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         Long boardId = helpCommandService.createHelp(helpWriteDto,multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -53,10 +54,11 @@ public class HelpApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateHelp(@PathVariable Long boardId,
-                                            @ModelAttribute HelpRequest.Post helpWriteDto,
-                                            @RequestPart List<MultipartFile> multipartFiles,
-                                            @RequestPart List<String> deleteFiles) throws IOException {
-        helpCommandService.updateHelp(boardId, helpWriteDto,multipartFiles, deleteFiles);
+                                            @RequestPart HelpRequest.Put helpUpdateDto,
+                                           @RequestPart MediaRequest.Put mediaUpdateDto,
+                                           @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        log.info("multipartFiles {}", multipartFiles);
+        helpCommandService.updateHelpV2(boardId, helpUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

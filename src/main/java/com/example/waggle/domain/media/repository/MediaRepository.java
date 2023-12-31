@@ -10,4 +10,6 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     List<Media> findByBoardId(Long boardId);
 
     Optional<Media> findByUploadFile(String uploadFile);
+
+    void deleteMediaByBoardId(Long boardId);
 }
