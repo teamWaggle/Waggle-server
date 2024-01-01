@@ -13,16 +13,16 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 public class MongoConfig {
 
-    private final MongoProperties mongoProperties;
+    private final MongoWaggleProperties mongoWaggleProperties;
 
     @Bean
     public MongoClient mongoClient() {
-        return MongoClients.create(mongoProperties.getClient());
+        return MongoClients.create(mongoWaggleProperties.getClient());
     }
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), mongoProperties.getName());
+        return new MongoTemplate(mongoClient(), mongoWaggleProperties.getName());
     }
 
 }

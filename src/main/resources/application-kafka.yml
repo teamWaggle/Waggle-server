@@ -1,0 +1,5 @@
+kafka:
+  waggle:
+    topic: waggle-chat
+    groupId: waggle
+    broker: localhost:9092

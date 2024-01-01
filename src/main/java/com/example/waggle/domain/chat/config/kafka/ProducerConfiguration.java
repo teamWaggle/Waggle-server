@@ -2,8 +2,10 @@ package com.example.waggle.domain.chat.config.kafka;
 
 
 import com.example.waggle.domain.chat.dto.Message;
+import com.example.waggle.global.config.KafkaWaggleProperties;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +16,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+@RequiredArgsConstructor
 @EnableKafka
 @Configuration
 public class ProducerConfiguration {
+
+    private final KafkaWaggleProperties kafkaWaggleProperties;
 
     // Kafka ProducerFactory를 생성하는 Bean 메서드
     @Bean
@@ -28,7 +33,7 @@ public class ProducerConfiguration {
     @Bean
     public Map<String, Object> producerConfigurations() {
         return ImmutableMap.<String, Object>builder()
-                .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+                .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaWaggleProperties.getBroker())
                 .put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class)
                 .put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class)
                 .build();
