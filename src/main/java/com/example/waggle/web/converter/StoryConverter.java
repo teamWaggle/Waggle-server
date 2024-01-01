@@ -12,16 +12,12 @@ import java.util.stream.Collectors;
 public class StoryConverter {
 
     public static StoryResponse.SummaryDto toSummaryDto(Story story) {
-        String thumbnail = null;
-        if (!story.getMedias().isEmpty()) {
-            thumbnail = story.getMedias().get(0).getUploadFile();
-        }
         return StoryResponse.SummaryDto.builder()
                 .id(story.getId())
                 .username(story.getMember().getUsername())
-                .profileImg(story.getMember().getProfileImgUrl())
+                .profileImg(MediaUtil.getProfile(story.getMember()))
                 .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
-                .thumbnail(thumbnail)
+                .thumbnail(MediaUtil.getThumbnail(story))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
@@ -43,12 +39,11 @@ public class StoryConverter {
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
-                .profileImg(story.getMember().getProfileImgUrl())
+                .profileImg(MediaUtil.getProfile(story.getMember()))
                 .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
-                .medias(story.getMedias().stream()
-                        .map(media -> MediaUtil.appendUri(media.getUploadFile())).collect(Collectors.toList()))
+                .medias(MediaUtil.getBoardMedias(story))
                 .build();
     }
 }

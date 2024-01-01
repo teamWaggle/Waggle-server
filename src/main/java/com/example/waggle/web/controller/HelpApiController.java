@@ -3,7 +3,6 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.service.HelpCommandService;
 import com.example.waggle.domain.board.help.service.HelpQueryService;
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.HelpConverter;
@@ -36,7 +35,6 @@ public class HelpApiController {
     private final HelpCommandService helpCommandService;
     private final HelpQueryService helpQueryService;
     private final RecommendQueryService recommendQueryService;
-    private final AwsS3Service awsS3Service;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "사이렌 작성", description = "사용자가 사이렌을 작성합니다. 작성한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")

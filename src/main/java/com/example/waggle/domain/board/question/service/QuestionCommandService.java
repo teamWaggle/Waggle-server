@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.question.service;
 
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,10 @@ public interface QuestionCommandService {
                         List<MultipartFile> multipartFiles,
                         List<String> deleteFiles)throws IOException;
 
+    Long updateQuestionV2(Long boardId,
+                          QuestionRequest.Put questionUpdateDto,
+                          MediaRequest.Put mediaUpdateDto,
+                          List<MultipartFile> multipartFiles) throws IOException;
 
     void deleteQuestion(Long boardId);
 

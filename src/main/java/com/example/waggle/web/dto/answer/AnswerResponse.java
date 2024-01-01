@@ -17,15 +17,16 @@ public class AnswerResponse {
         private Long id;
         private String content;
         private String username;
+        private String profileImg;
         private LocalDateTime createDate;
         private int recommendCount;
         private boolean recommendIt;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
+        @Builder.Default
+        private List<String> medias = new ArrayList<>();
 
-//        @Builder.Default
-//        private List<String> medias = new ArrayList<>();
 //        @Builder.Default
 //        private List<CommentViewDto> comments = new ArrayList<>();
 //        @Builder.Default

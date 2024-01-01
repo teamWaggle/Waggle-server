@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
@@ -15,8 +16,9 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.answer.AnswerRequest;
+import com.example.waggle.web.dto.media.MediaRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,8 +56,6 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
         answerRepository.save(answer);
 
         mediaCommandService.createMedia(multiPartFiles,answer);
-
-        //TODO save media
         return answer.getId();
     }
 
@@ -73,6 +73,29 @@ public class AnswerCommandServiceImpl implements AnswerCommandService{
 
         mediaCommandService.updateMedia(multipartFiles,deleteFiles,answer);
 
+        return answer.getId();
+    }
+
+    @Override
+    public Long updateAnswerV2(Long boardId,
+                               AnswerRequest.Put answerUpdateDto,
+                               MediaRequest.Put mediaUpdateDto,
+                               List<MultipartFile> multipartFiles) throws IOException {
+        if (!SecurityUtil.getCurrentUsername().equals(answerUpdateDto.getUsername())) {
+            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Answer answer = answerRepository.findById(boardId)
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+
+        answer.changeAnswer(answerUpdateDto.getContent());
+
+        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, answer);
+
+        answer.getBoardHashtags().clear();
+        for (String hashtag : answerUpdateDto.getHashtags()) {
+            boardService.saveHashtag(answer, hashtag);
+        }
         return answer.getId();
     }
 

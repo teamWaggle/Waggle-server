@@ -1,7 +1,13 @@
 package com.example.waggle.web.converter;
 
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.media.entity.Media;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.media.MediaRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MediaConverter {
 
@@ -11,5 +17,7 @@ public class MediaConverter {
                 .imageUrl(media.getUploadFile())
                 .build();
     }
+
+
 
 }

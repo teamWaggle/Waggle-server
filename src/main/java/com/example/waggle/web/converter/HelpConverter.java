@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.help.entity.Help;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.help.HelpResponse;
 import org.springframework.data.domain.Page;
 
@@ -10,18 +11,14 @@ import java.util.stream.Collectors;
 public class HelpConverter {
 
     public static HelpResponse.SummaryDto toSummaryDto(Help help) {
-        String thumbnail = null;
-        if (!help.getMedias().isEmpty()) {
-            thumbnail = help.getMedias().get(0).getUploadFile();
-        }
         return HelpResponse.SummaryDto.builder()
                 .id(help.getId())
-                .thumbnail(thumbnail)
+                .thumbnail(MediaUtil.getThumbnail(help))
                 .lostLocate(help.getLostLocate())
                 .lostDate(help.getLostDate())
                 .category(help.getCategory())
                 .username(help.getMember().getUsername())
-                .profileImg(help.getMember().getProfileImgUrl())
+                .profileImg(MediaUtil.getProfile(help.getMember()))
                 .title(help.getTitle())
                 .build();
     }
@@ -50,7 +47,8 @@ public class HelpConverter {
                 .lostDate(help.getLostDate())
                 .content(help.getContent())
                 .username(help.getMember().getUsername())
-                .profileImg(help.getMember().getProfileImgUrl())
+                .profileImg(MediaUtil.getProfile(help.getMember()))
+                .medias(MediaUtil.getBoardMedias(help))
                 .build();
     }
 }

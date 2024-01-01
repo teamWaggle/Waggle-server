@@ -3,10 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.QuestionConverter;
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +34,6 @@ public class QuestionApiController {
     private final QuestionCommandService questionCommandService;
     private final QuestionQueryService questionQueryService;
     private final RecommendQueryService recommendQueryService;
-    private final AwsS3Service awsS3Service;
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "질문 작성", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
@@ -42,7 +41,7 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
     @PostMapping
     public ApiResponseDto<Long> createQuestion(@RequestPart QuestionRequest.Post request,
-                                               @RequestPart(required = false) List<MultipartFile> multipartFiles) throws IOException {
+                                               @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         Long boardId = questionCommandService.createQuestion(request,multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -52,11 +51,10 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 수정에 실패했습니다.")
     @PutMapping("/{boardId}")
     public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
-                                               @RequestPart QuestionRequest.Post request,
-                                               @RequestPart List<MultipartFile> multipartFiles,
-                                               @RequestPart List<String> deleteFiles) throws IOException {
-        //TODO awsS3Service에서 update하는 board의 이전 files들을 지우는 과정 필요
-        questionCommandService.updateQuestion(boardId, request, multipartFiles, deleteFiles);
+                                               @RequestPart QuestionRequest.Put questionUpdateDto,
+                                               @RequestPart MediaRequest.Put mediaUpdateDto,
+                                               @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        questionCommandService.updateQuestionV2(boardId, questionUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

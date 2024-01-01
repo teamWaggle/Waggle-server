@@ -16,13 +16,15 @@ public class QuestionResponse {
     @AllArgsConstructor
     public static class SummaryDto {
         private Long id;
-        private String username;
         private String title;
         private LocalDateTime createTime;
         private int recommendCount;
         private boolean recommendIt;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
+
+        private String username;
+        private String profileImg;
     }
 
     @Builder
@@ -48,15 +50,16 @@ public class QuestionResponse {
     public static class DetailDto {
         private Long id;
         private String content;
-        private String username;
         private String title;
         private LocalDateTime createDate;
         private int recommendCount;
         private boolean recommendIt;
-
         @Builder.Default
         private List<String> medias = new ArrayList<>();
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
+
+        private String username;
+        private String profileImg;
     }
 }

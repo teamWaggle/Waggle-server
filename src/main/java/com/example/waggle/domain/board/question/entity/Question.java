@@ -30,7 +30,7 @@ public class Question extends Board {
 //        this.title = title;
 //    }
 
-    public void changeQuestion(QuestionRequest.Post request) {
+    public void changeQuestion(QuestionRequest.Put request) {
         this.content = request.getContent();
         this.title = request.getTitle();
         this.status = request.getStatus();
