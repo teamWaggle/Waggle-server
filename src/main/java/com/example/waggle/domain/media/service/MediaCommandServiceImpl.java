@@ -94,4 +94,5 @@ public class MediaCommandServiceImpl implements MediaCommandService{
         board.getMedias().forEach(media -> awsS3Service.deleteFile(media.getUploadFile()));
         mediaRepository.deleteMediaByBoardId(board.getId());
     }
+
 }

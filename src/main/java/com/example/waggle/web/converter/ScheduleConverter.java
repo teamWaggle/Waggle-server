@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 public class ScheduleConverter {
 
-    public static ScheduleResponse.ScheduleResponseDto toScheduleResponseDto(Schedule schedule) {
-        return ScheduleResponse.ScheduleResponseDto.builder()
+    public static ScheduleResponse.DetailDto toScheduleResponseDto(Schedule schedule) {
+        return ScheduleResponse.DetailDto.builder()
                 .scheduleId(schedule.getId())
                 .teamId(schedule.getTeam().getId())
                 .title(schedule.getTitle())

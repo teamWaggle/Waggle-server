@@ -78,7 +78,8 @@ public enum ErrorStatus implements BaseCode {
     // 미디어 관련 오류(4350 ~ 4399)
     MEDIA_NOT_FOUND(NOT_FOUND, 4350, "존재하지 않는 미디어입니다."),
     MEDIA_REQUEST_IS_EMPTY(BAD_REQUEST, 4351, "request 미디어 파일이 존재하지 않습니다."),
-    MEDIA_REQUEST_STILL_EXIST(BAD_REQUEST,4352,"request 할 미디어 파일이 남아있습니다");
+    MEDIA_REQUEST_STILL_EXIST(BAD_REQUEST,4352,"request 할 미디어 파일이 남아있습니다"),
+    MEDIA_COUNT_IS_DIFFERENT(BAD_REQUEST,4353,"새로 업로드 요청한 파일의 개수와 실제 post한 파일의 개수가 일치하지 않습니다");
 
 
 

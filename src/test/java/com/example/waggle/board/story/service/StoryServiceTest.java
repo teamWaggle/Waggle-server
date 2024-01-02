@@ -43,8 +43,8 @@ class StoryServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -70,7 +70,7 @@ class StoryServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -79,7 +79,7 @@ class StoryServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -189,6 +189,7 @@ class StoryServiceTest {
                 .content("edit edit edit")
                 .hashtags(tags)
                 .medias(medias2)
+                .username("member1")
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);

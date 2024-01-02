@@ -40,9 +40,9 @@ class HelpServiceTest {
     HelpRequest.Post hwd1;
     HelpRequest.Post hwd2;
     HelpRequest.Post hwd3;
-    HelpRequest.Post hwd4;
+    HelpRequest.Put hwd4;
 
-    MemberRequest.RegisterRequestDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto1;
 
 
     void setting() {
@@ -73,7 +73,7 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(Help.Category.FIND_PET)
                 .build();
-        hwd4 = HelpRequest.Post.builder()
+        hwd4 = HelpRequest.Put.builder()
                 .title("this is title")
                 .content("help page4. hi")
                 .contact("01025522972")
@@ -82,7 +82,7 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(Help.Category.FIND_PET)
                 .build();
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -115,12 +115,11 @@ class HelpServiceTest {
         Long helpId = helpCommandService.createHelp(hwd1,null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
-        helpCommandService.createHelp(hwd4, null);
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
-        Pageable pageable = PageRequest.of(0, 3);
+        Pageable pageable = PageRequest.of(0, 2);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
-        assertThat(pagedHelpList.getContent().size()).isEqualTo(3);
+        assertThat(pagedHelpList.getContent().size()).isEqualTo(2);
     }
 
     @Test
@@ -131,7 +130,6 @@ class HelpServiceTest {
         Long helpId = helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
-        helpCommandService.createHelp(hwd4, null);
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
@@ -147,7 +145,6 @@ class HelpServiceTest {
         Long helpId = helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
-        helpCommandService.createHelp(hwd4, null);
 
         Help help = helpQueryService.getHelpByBoardId(helpId);
         assertThat(help.getContent()).isEqualTo("help page. hi");

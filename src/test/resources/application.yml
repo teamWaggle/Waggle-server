@@ -1,9 +1,10 @@
-jwt:
-  secret: bf7f3ac2c793abf5957323eb086d2d8150d090eff3a4a1f267d0991a53442563
 
 spring:
   cache:
     type: redis
+  profiles:
+    include:
+      - security
 
   redis:
     host: localhost

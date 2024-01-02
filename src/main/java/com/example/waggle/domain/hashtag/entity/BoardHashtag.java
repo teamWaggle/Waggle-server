@@ -1,9 +1,8 @@
 package com.example.waggle.domain.hashtag.entity;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +17,10 @@ public class BoardHashtag extends BaseEntity{
     @Column(name = "board_hashtag_id")
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_id")
     private Hashtag hashtag;

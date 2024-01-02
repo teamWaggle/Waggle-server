@@ -23,12 +23,6 @@ public class Question extends Board {
     @Column(nullable = false)
     private Status status;
 
-//    public Question(Long id, Member member,
-//                    String content, String title, List<BoardHashtag> boardHashtags,
-//                    List<Media> medias) {
-//        super(id, member, content, boardHashtags,medias);
-//        this.title = title;
-//    }
 
     public void changeQuestion(QuestionRequest.Put request) {
         this.content = request.getContent();

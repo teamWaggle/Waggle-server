@@ -58,11 +58,11 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
-    MemberRequest.RegisterRequestDto signUpDto3;
-    MemberRequest.RegisterRequestDto signUpDto4;
-    MemberRequest.RegisterRequestDto signUpDto5;
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
+    MemberRequest.RegisterDto signUpDto3;
+    MemberRequest.RegisterDto signUpDto4;
+    MemberRequest.RegisterDto signUpDto5;
 
 
     StoryRequest.Post storyWriteDto1;
@@ -85,7 +85,7 @@ class ReplyServiceTest {
         mentions2.add("user3");
         mentions2.add("user4");
 
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -93,7 +93,7 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("user2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -101,7 +101,7 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto3 = MemberRequest.RegisterDto.builder()
                 .username("user3")
                 .password("12345678")
                 .nickname("닉네임3")
@@ -109,7 +109,7 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto4 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto4 = MemberRequest.RegisterDto.builder()
                 .username("user4")
                 .password("12345678")
                 .nickname("닉네임4")
@@ -117,7 +117,7 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-        signUpDto5 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto5 = MemberRequest.RegisterDto.builder()
                 .username("user5")
                 .password("12345678")
                 .nickname("닉네임5")
@@ -130,12 +130,10 @@ class ReplyServiceTest {
 
         storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
-                .thumbnail("www.waggle")
                 .build();
 
         commentWriteDto1 = CommentRequest.Post.builder()

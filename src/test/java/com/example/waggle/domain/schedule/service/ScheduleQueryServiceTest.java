@@ -90,6 +90,7 @@ class ScheduleQueryServiceTest {
                 .content("schedule1 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
+                .member(member1)
                 .build();
         scheduleRepository.save(schedule1);
         team1.addSchedule(schedule1);
@@ -122,6 +123,7 @@ class ScheduleQueryServiceTest {
                 .content("schedule2 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
+                .member(member1)
                 .build();
         scheduleRepository.save(schedule2);
         team1.addSchedule(schedule2);
@@ -142,6 +144,7 @@ class ScheduleQueryServiceTest {
                 .content("schedule2 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
+                .member(member1)
                 .build();
         scheduleRepository.save(schedule2);
         team2.addSchedule(schedule2);
@@ -165,6 +168,7 @@ class ScheduleQueryServiceTest {
                     .content("team1 schedule" + i + " content")
                     .startTime(LocalDateTime.of(2023, i, 12, 9, 30))
                     .endTime(LocalDateTime.of(2023, i + 1, 12, 9, 30))
+                    .member(member1)
                     .build();
             scheduleRepository.save(newSchedule);
             team1.addSchedule(newSchedule);
@@ -177,6 +181,7 @@ class ScheduleQueryServiceTest {
                     .content("team2 schedule" + i + " content")
                     .startTime(LocalDateTime.of(2023, i, 12, 9, 30))
                     .endTime(LocalDateTime.of(2023, i + 1, 12, 9, 30))
+                    .member(member1)
                     .build();
             scheduleRepository.save(newSchedule);
             team2.addSchedule(newSchedule);

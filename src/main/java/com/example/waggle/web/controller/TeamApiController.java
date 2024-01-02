@@ -122,7 +122,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 조회 성공.")
     @ApiResponse(responseCode = "404", description = "사용자 또는 팀을 찾을 수 없습니다.")
     @GetMapping("/user/{username}/teams")
-    public ApiResponseDto<TeamResponse.SummaryListDto> getTeamsByUsername(
+    public ApiResponseDto<TeamResponse.ListDto> getTeamsByUsername(
             @PathVariable String username,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
