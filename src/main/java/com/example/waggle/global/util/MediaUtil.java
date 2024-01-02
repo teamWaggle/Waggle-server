@@ -1,8 +1,10 @@
 package com.example.waggle.global.util;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +31,17 @@ public class MediaUtil {
             return null;
         }
         return appendUri(board.getMedias().get(0).getUploadFile());
+    }
+
+    public static String saveProfileImg(MultipartFile file, AwsS3Service awsS3Service) {
+        String url = null;
+        if (!file.isEmpty()) {
+            String profileImg = awsS3Service.uploadFile(file);
+            StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
+            StringBuffer save = stringBuffer.append("/").append(profileImg);
+            url = save.toString();
+        }
+        return url;
     }
 
     public static List<String> getBoardMedias(Board board) {

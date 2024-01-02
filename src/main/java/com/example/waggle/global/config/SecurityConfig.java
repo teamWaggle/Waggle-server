@@ -90,6 +90,8 @@ public class SecurityConfig {
                 .requestMatchers("/oauth2/**","/login/**").permitAll()
                 // TOKEN
                 .requestMatchers(HttpMethod.POST,"/api/tokens").permitAll()
+                // SWAGGER
+                .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
                 // ELSE
                 //정적 페이지 허가
                 .requestMatchers("/", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용

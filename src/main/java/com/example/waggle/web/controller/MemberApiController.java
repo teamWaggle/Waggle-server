@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.service.EmailService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.MemberResponse;
@@ -51,7 +52,7 @@ public class MemberApiController {
             @RequestPart MemberRequest.RegisterDto request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
-        request.setProfile(saveProfileImg(profileImg));
+        request.setProfile(MediaUtil.saveProfileImg(profileImg, awsS3Service));
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -62,7 +63,7 @@ public class MemberApiController {
     public ApiResponseDto<Long> updateInfo(
             @RequestPart MemberRequest.Put request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
-        request.setProfile(saveProfileImg(profileImg));
+        request.setProfile(MediaUtil.saveProfileImg(profileImg,awsS3Service));
         Long memberId = memberCommandService.updateMemberInfo(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -116,17 +117,5 @@ public class MemberApiController {
     public ApiResponseDto<Boolean> checkNickname(@RequestParam String nickname) {
         memberQueryService.validateNicknameDuplication(nickname);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
-    }
-
-
-    private String saveProfileImg(MultipartFile file) {
-        String url = null;
-        if (!file.isEmpty()) {
-            String profileImg = awsS3Service.uploadFile(file);
-            StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
-            StringBuffer save = stringBuffer.append("/").append(profileImg);
-            url = save.toString();
-        }
-        return url;
     }
 }

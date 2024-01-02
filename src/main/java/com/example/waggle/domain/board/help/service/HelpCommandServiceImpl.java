@@ -12,7 +12,6 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.HelpHandler;
-import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.help.HelpRequest;
@@ -73,7 +72,7 @@ public class HelpCommandServiceImpl implements HelpCommandService{
                              MediaRequest.Put mediaUpdateDto,
                              List<MultipartFile> multipartFiles) throws IOException {
         if (!SecurityUtil.getCurrentUsername().equals(helpUpdateDto.getUsername())) {
-            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+            throw new HelpHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Help help = helpRepository.findById(boardId)
                 .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
