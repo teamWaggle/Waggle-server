@@ -55,7 +55,6 @@ public class HelpApiController {
                                             @RequestPart HelpRequest.Put helpUpdateDto,
                                            @RequestPart MediaRequest.Put mediaUpdateDto,
                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
-        log.info("multipartFiles {}", multipartFiles);
         helpCommandService.updateHelpV2(boardId, helpUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }

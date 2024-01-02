@@ -3,6 +3,7 @@ package com.example.waggle.domain.media.entity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ public class Media extends BaseTimeEntity {
     private Long id;
     @Column(nullable = false)
     private String uploadFile;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;

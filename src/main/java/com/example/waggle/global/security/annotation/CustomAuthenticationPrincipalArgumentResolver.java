@@ -39,7 +39,7 @@ public final class CustomAuthenticationPrincipalArgumentResolver implements Hand
         findMethodAnnotation(AuthUser.class, parameter);
         if (principal != null && !ClassUtils.isAssignable(parameter.getParameterType(), principal.getClass())) {
             if (annotation.errorOnInvalidType()) {
-                throw new ClassCastException(principal + " is not assignable to " + parameter.getParameterType());
+                throw new SecurityHandler(ErrorStatus._ASSIGNABLE_PRINCIPAL);
             }
         }
 

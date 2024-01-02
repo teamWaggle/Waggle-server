@@ -24,7 +24,6 @@ public class HelpQueryServiceImpl implements HelpQueryService{
     @Override
     public List<Help> getAllHelp() {
         List<Help> all = helpRepository.findAll();
-        log.info("all size is ={}",all.size());
         return all;
     }
 

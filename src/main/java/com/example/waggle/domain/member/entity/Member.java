@@ -26,7 +26,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
-    @Column(name = "member_id", unique = true, nullable = false)
+    @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
 
     @Column(unique = true, nullable = false)

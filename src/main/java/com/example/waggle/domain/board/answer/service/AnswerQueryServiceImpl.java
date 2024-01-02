@@ -40,8 +40,5 @@ public class AnswerQueryServiceImpl implements AnswerQueryService{
         return answerRepository.findAnswerByQuestionId(questionId);
     }
 
-//    @Override
-//    public List<Answer> getAnswers(Long questionId) {
-//        return
-//    }
+
 }

@@ -38,9 +38,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public boolean validateMemberUseBoard(Long boardId, BoardType boardType) {
         Member signInMember = memberQueryService.getSignInMember();
-        //board get
-        Board board;
 
+        Board board;
         switch (boardType) {
             case STORY:
                 board = storyRepository.findById(boardId)
@@ -59,7 +58,6 @@ public class BoardServiceImpl implements BoardService {
                         .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
-                // error: Invalid dtype
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board.getMember().equals(signInMember);
@@ -67,7 +65,6 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Board getBoard(Long boardId, BoardType boardType) {
-        //board get
         Board board;
 
         switch (boardType) {
@@ -88,7 +85,6 @@ public class BoardServiceImpl implements BoardService {
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
-                // error: Invalid dtype
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board;
@@ -109,12 +105,10 @@ public class BoardServiceImpl implements BoardService {
     public Hashtag getHashtag(String tag) {
         Optional<Hashtag> byContent = hashtagRepository.findByContent(tag);
         if (byContent.isEmpty()) {
-            log.info("not exist hashtag!");
             Hashtag build = Hashtag.builder().content(tag).build();
             hashtagRepository.save(build);
             return build;
         }
-        log.info("already exist hashtag...");
         return byContent.get();
     }
 }

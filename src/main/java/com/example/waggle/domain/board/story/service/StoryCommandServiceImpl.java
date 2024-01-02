@@ -50,7 +50,6 @@ public class StoryCommandServiceImpl implements StoryCommandService{
             request.getHashtags().stream().forEach(h -> boardService.saveHashtag(story,h));
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
-        log.info("media exist : {}", media);
         return story.getId();
     }
 
