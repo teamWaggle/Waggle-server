@@ -71,4 +71,5 @@ server:
     include-stacktrace: on_param
     whitelabel.enabled: true
 
-
+springdoc:
+  use-fqn: true
