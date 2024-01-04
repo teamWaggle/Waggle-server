@@ -21,6 +21,7 @@ public class Pet extends BaseEntity {
     @Column(name = "pet_id")
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     private String breed;

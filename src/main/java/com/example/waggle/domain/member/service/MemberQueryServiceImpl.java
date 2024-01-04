@@ -6,9 +6,11 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -34,6 +36,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     public boolean isAuthenticated() {
+        log.info("username = {}", SecurityUtil.getCurrentUsername());
         if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
             return false;
         }

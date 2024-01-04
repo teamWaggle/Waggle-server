@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface QuestionCommandService {
 
-    Long createQuestion(QuestionRequest.QuestionWriteDto request,
+    Long createQuestion(QuestionRequest.Post request,
                         List<MultipartFile> multipartFiles)throws IOException;
 
     Long updateQuestion(Long boardId,
-                        QuestionRequest.QuestionWriteDto request,
+                        QuestionRequest.Post request,
                         List<MultipartFile> multipartFiles,
                         List<String> deleteFiles)throws IOException;
 

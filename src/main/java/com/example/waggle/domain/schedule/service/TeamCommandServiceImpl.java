@@ -2,10 +2,10 @@ package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.schedule.domain.Participation;
-import com.example.waggle.domain.schedule.domain.Participation.ParticipationStatus;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
@@ -46,9 +46,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .build();
 
         Team team = teamRepository.save(createdTeam);
-
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, loginMember);
+        addMemberToTeam(team,loginMember);
 
         return team.getId();
     }
@@ -166,7 +164,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void addMemberToTeam(Team team, Member member) {
-        TeamMember teamMember = TeamMember.builder().build();
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
     }

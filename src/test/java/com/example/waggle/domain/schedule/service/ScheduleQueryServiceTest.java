@@ -1,22 +1,24 @@
 package com.example.waggle.domain.schedule.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.schedule.domain.Schedule;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @WithMockCustomUser
 @Transactional
@@ -29,6 +31,8 @@ class ScheduleQueryServiceTest {
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
+    @Autowired
+    TeamMemberRepository teamMemberRepository;
     @Autowired
     ScheduleRepository scheduleRepository;
 
@@ -44,12 +48,16 @@ class ScheduleQueryServiceTest {
         member1 = Member.builder()
                 .username("member1")
                 .password("12345678")
+                .nickname("sdfjsakld")
+                .email("dalsfjk")
                 .build();
         memberRepository.save(member1);
 
         member2 = Member.builder()
                 .username("member2")
                 .password("12345678")
+                .nickname("alsdkfj")
+                .email("23fdfx")
                 .build();
         memberRepository.save(member2);
 
@@ -59,6 +67,7 @@ class ScheduleQueryServiceTest {
                 .description("team1 description")
                 .leader(member1)
                 .maxTeamSize(4)
+                .colorScheme("red")
                 .build();
         teamRepository.save(team1);
 
@@ -67,15 +76,13 @@ class ScheduleQueryServiceTest {
                 .description("team2 description")
                 .leader(member1)
                 .maxTeamSize(4)
+                .colorScheme("orange")
                 .build();
         teamRepository.save(team2);
 
         // Setup teamMember
-        TeamMember teamMember1 = TeamMember.builder().build();
-        teamMember1.addTeamMember(team1, member1);
-
-        TeamMember teamMember2 = TeamMember.builder().build();
-        teamMember2.addTeamMember(team2, member1);
+        addMemberToTeam(team1, member1);
+        addMemberToTeam(team2, member1);
 
         // Setup Schedule
         schedule1 = Schedule.builder()
@@ -86,6 +93,15 @@ class ScheduleQueryServiceTest {
                 .build();
         scheduleRepository.save(schedule1);
         team1.addSchedule(schedule1);
+    }
+
+    private void addMemberToTeam(Team team, Member member) {
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
+        teamMember.addTeamMember(team, member);
+        teamMemberRepository.save(teamMember);
     }
 
 

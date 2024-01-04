@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.domain;
+package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
@@ -24,6 +24,7 @@ public class Team extends BaseEntity {
     private String name;
     private String description;
     private String coverImageUrl;
+    @Column(nullable=false)
     private String colorScheme;
     private Integer maxTeamSize;
 
@@ -33,7 +34,7 @@ public class Team extends BaseEntity {
     private List<Schedule> schedules = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", orphanRemoval = true)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

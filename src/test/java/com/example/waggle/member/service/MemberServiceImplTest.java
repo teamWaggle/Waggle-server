@@ -52,6 +52,7 @@ class MemberServiceImplTest {
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
+                .email("asdklfj")
                 .phone("010-1234-5678")
                 .build();
 
@@ -60,6 +61,7 @@ class MemberServiceImplTest {
                 .password("12345678")
                 .nickname("닉네임2")
                 .address("서울시 광진구")
+                .email("sdlfkjsalkfj")
                 .phone("010-1234-5678")
                 .build();
 
@@ -68,6 +70,7 @@ class MemberServiceImplTest {
                 .password("12345678")
                 .nickname("닉네임3")
                 .address("서울시 광진구")
+                .email("wjdgks")
                 .phone("010-1234-5678")
                 .build();
 

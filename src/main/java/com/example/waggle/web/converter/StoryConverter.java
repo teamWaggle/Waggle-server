@@ -18,7 +18,7 @@ public class StoryConverter {
                 .thumbnail(story.getThumbnail())
                 .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
-                        .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
+                        .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -42,11 +42,7 @@ public class StoryConverter {
                 .thumbnail(story.getThumbnail())
                 .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
-//                .medias(story.getMedias().stream()
-//                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
-//                .comments(story.getComments().stream()
-//                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
+                        .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
     }
 }

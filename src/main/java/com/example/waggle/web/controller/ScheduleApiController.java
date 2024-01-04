@@ -1,6 +1,6 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.schedule.domain.Schedule;
+import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;

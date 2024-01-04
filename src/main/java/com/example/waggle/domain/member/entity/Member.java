@@ -2,8 +2,9 @@ package com.example.waggle.domain.member.entity;
 
 
 import com.example.waggle.domain.pet.entity.Pet;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
+import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.web.dto.member.MemberRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,8 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue
-    @Column(name = "member_id", updatable = false, unique = true, nullable = false)
+    @Column(name = "member_id", unique = true, nullable = false)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -46,13 +47,18 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String profileImgUrl;
 
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
 //    @Builder.Default
 //    @OneToMany(mappedBy = "member")
 //    private List<Pet> pets = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @Builder.Default
+//    private List<String> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Builder.Default
     @OneToMany(mappedBy = "member")
@@ -74,9 +80,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        return Collections.singleton(new SimpleGrantedAuthority(role.getKey()));
     }
 
     @Override

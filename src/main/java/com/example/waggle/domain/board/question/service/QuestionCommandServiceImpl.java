@@ -41,7 +41,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
 
     @Override
-    public Long createQuestion(QuestionRequest.QuestionWriteDto request,
+    public Long createQuestion(QuestionRequest.Post request,
                                List<MultipartFile>multipartFiles)throws IOException {
         Question createdQuestion = buildQuestion(request);
         Question question = questionRepository.save(createdQuestion);
@@ -57,13 +57,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public Long updateQuestion(Long boardId,
-                               QuestionRequest.QuestionWriteDto request,
+                               QuestionRequest.Post request,
                                List<MultipartFile> multipartFiles,
                                List<String> deleteFiles) throws IOException {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        question.changeQuestion(request.getContent(), request.getTitle());
+        question.changeQuestion(request);
 
         mediaCommandService.updateMedia(multipartFiles,deleteFiles,question);
 
@@ -91,12 +91,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         questionRepository.delete(question);
     }
-    private Question buildQuestion(QuestionRequest.QuestionWriteDto request) {
+    private Question buildQuestion(QuestionRequest.Post request) {
         Member member = memberQueryService.getSignInMember();
 
         Question createdQuestion = Question.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
+                .status(request.getStatus())
                 .member(member).build();
         return createdQuestion;
     }

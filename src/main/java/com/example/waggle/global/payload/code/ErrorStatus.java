@@ -11,6 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorStatus implements BaseCode {
     // 서버 오류
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
+    _UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR(INTERNAL_SERVER_ERROR,5001,"서버 에러, 로그인이 필요없는 요청입니다."),
 
     // 일반적인 요청 오류
     _BAD_REQUEST(BAD_REQUEST, 4000, "잘못된 요청입니다."),
@@ -24,6 +25,7 @@ public enum ErrorStatus implements BaseCode {
     AUTH_INVALID_TOKEN(UNAUTHORIZED, 4052, "유효하지 않은 인증 토큰입니다."),
     AUTH_UNAUTHORIZED_MEMBER(UNAUTHORIZED, 4053, "계정 정보를 찾을 수 없습니다."),
     AUTH_TOKEN_NO_AUTHORITY(UNAUTHORIZED, 4054, "권한 정보가 없는 토큰입니다."),
+    AUTH_REDIRECT_NOT_MATCHING(BAD_REQUEST,4055,"redirect uri가 서버 내 설정과 매칭되지 않습니다"),
 
 
     // 회원 관련 오류 (4100 ~ 4149)
