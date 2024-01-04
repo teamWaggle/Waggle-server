@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional
@@ -63,30 +66,29 @@ public class MediaCommandServiceImpl implements MediaCommandService{
     public void updateMediaV2(MediaRequest.Put request, List<MultipartFile> uploadFiles, Board board) {
         board.getMedias().clear();
 
-        request.getMediaList().forEach(media -> {
-            if (media.allowUpload) {
-                if (uploadFiles.isEmpty() || uploadFiles == null) {
-                    throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_IS_EMPTY);
-                }
-                String url = awsS3Service.uploadFile(uploadFiles.get(0));
-                media.setImageUrl(url);
-                uploadFiles.remove(0);
-            }
-            mediaRepository.save(Media.builder()
-                    .uploadFile(media.getImageUrl())
-                    .board(board)
-                    .build());
-        });
-        if (uploadFiles != null) {
-            if (!uploadFiles.isEmpty()) {
-                throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_STILL_EXIST);
-            }
+        if (validateUpdateMedia(uploadFiles, request)) {
+            Optional.ofNullable(request.getMediaList())
+                    .map(Collection::stream)
+                    .orElseGet(Stream::empty)
+                    .forEach(media -> {
+                        if (media.allowUpload) {
+                            String url = awsS3Service.uploadFile(uploadFiles.get(0));
+                            media.setImageUrl(url);
+                            uploadFiles.remove(0);
+                        }
+                        mediaRepository.save(Media.builder()
+                                .uploadFile(media.getImageUrl())
+                                .board(board)
+                                .build());
+                    });
         }
-        request.getDeleteMediaList().forEach(dto -> {
-            awsS3Service.deleteFile(dto.getImageUrl());
-            mediaRepository.deleteById(dto.getId());
-        });
-
+        Optional.ofNullable(request.getDeleteMediaList())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .forEach(deleteFileDto -> {
+                    awsS3Service.deleteFile(deleteFileDto.getImageUrl());
+                    mediaRepository.deleteById(deleteFileDto.getId());
+                });
     }
 
     @Override
@@ -95,4 +97,23 @@ public class MediaCommandServiceImpl implements MediaCommandService{
         mediaRepository.deleteMediaByBoardId(board.getId());
     }
 
+    private boolean validateUpdateMedia(List<MultipartFile> multipartFiles, MediaRequest.Put request) {
+        if (request.getMediaList() != null) {
+            long count = request.getMediaList().stream().filter(media -> media.allowUpload).count();
+            if (multipartFiles != null) {
+                if (count == multipartFiles.size()) {
+                    return true;
+                }else{
+                    throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
+                }
+            }else{
+                if (count == 0) {
+                    return true;
+                }
+            }
+        }else{
+            if(multipartFiles.size() == 0 || multipartFiles == null) return true;
+        }
+        return false;
+    }
 }
