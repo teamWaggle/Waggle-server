@@ -38,6 +38,7 @@ out/
 
 ### Security ###
 application-security.yml
+application-s3.yml
 
 ### DB ###
 application-real-db.yml
