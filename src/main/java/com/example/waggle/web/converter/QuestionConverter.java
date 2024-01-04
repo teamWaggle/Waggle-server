@@ -15,7 +15,7 @@ public class QuestionConverter {
                 .title(question.getTitle())
                 .createTime(question.getCreatedDate())
                 .hashtags(question.getBoardHashtags().stream()
-                        .map(h->h.getHashtag().getTag()).collect(Collectors.toList()))
+                        .map(h->h.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -40,7 +40,7 @@ public class QuestionConverter {
                     .title(question.getTitle())
                     .createDate(question.getCreatedDate())
                     .hashtags(question.getBoardHashtags().stream()
-                            .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
+                            .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();
     }
 }

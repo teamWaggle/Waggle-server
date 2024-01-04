@@ -24,6 +24,7 @@ public class Comment extends BaseEntity {
     private Member member;
 
     @Lob
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne

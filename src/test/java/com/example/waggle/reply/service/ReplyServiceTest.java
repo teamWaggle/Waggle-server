@@ -34,6 +34,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@WithMockCustomUser
 @Slf4j
 class ReplyServiceTest {
 
@@ -79,7 +80,7 @@ class ReplyServiceTest {
     @BeforeEach
     void setDto() {
 
-        mentions1.add("user1");
+        mentions1.add("member1");
         mentions1.add("user2");
         mentions2.add("user3");
         mentions2.add("user4");
@@ -88,34 +89,39 @@ class ReplyServiceTest {
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("hi")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
         signUpDto2 = MemberRequest.RegisterRequestDto.builder()
-                .username("user1")
+                .username("user2")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임2")
+                .email("hoe")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
         signUpDto3 = MemberRequest.RegisterRequestDto.builder()
-                .username("user2")
+                .username("user3")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임3")
+                .email("zz")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
         signUpDto4 = MemberRequest.RegisterRequestDto.builder()
-                .username("user3")
+                .username("user4")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임4")
+                .email("haha")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
         signUpDto5 = MemberRequest.RegisterRequestDto.builder()
-                .username("user4")
+                .username("user5")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임5")
+                .email("ez")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -178,7 +184,6 @@ class ReplyServiceTest {
 
 
     @Test
-    @WithMockCustomUser
     @Transactional
     void findReplies() throws IOException {
         //given
@@ -194,7 +199,6 @@ class ReplyServiceTest {
 
 
     @Test
-    @WithMockCustomUser
     void changeReply() throws IOException {
         //given
         setAll();

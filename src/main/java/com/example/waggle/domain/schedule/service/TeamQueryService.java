@@ -1,6 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.schedule.domain.Team;
+import com.example.waggle.domain.schedule.entity.Team;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

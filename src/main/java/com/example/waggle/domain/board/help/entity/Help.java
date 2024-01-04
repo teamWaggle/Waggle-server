@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Help extends Board {
 
+    @Column(nullable = false)
     private String title;
     private String petKind;
     private int petAge;
@@ -32,22 +33,6 @@ public class Help extends Board {
     @Column(nullable = false)
     private Category category;
 
-//    public Help(Long id, Member member,
-//                String content, List<BoardHashtag> boardHashtags,
-//                List<Media> medias, String title, String petKind,
-//                int petAge, Gender petGender, Category category,
-//                LocalDateTime lostDate, String lostLocate,String contact, String thumbnail) {
-//        super(id, member, content, boardHashtags, medias);
-//        this.title = title;
-//        this.petKind = petKind;
-//        this.petAge = petAge;
-//        this.petGender = petGender;
-//        this.category = category;
-//        this.lostDate = lostDate;
-//        this.lostLocate = lostLocate;
-//        this.contact = contact;
-//        this.thumbnail = thumbnail;
-//    }
 
     public void changeHelp(HelpRequest.Post helpUWriteDto) {
         this.title = helpUWriteDto.getTitle();
@@ -60,6 +45,10 @@ public class Help extends Board {
         this.content = helpUWriteDto.getContent();
         this.thumbnail = helpUWriteDto.getThumbnail();
         this.category = helpUWriteDto.getCategory();
+    }
+
+    public enum Category {
+        FIND_PET, FIND_OWNER, PROTECT, ETC
     }
 
 }

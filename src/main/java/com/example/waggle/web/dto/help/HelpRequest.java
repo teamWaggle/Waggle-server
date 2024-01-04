@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.help;
 
-import com.example.waggle.domain.board.help.entity.Category;
+import com.example.waggle.domain.board.help.entity.Help.Category;
 import com.example.waggle.domain.member.entity.Gender;
 import lombok.*;
 

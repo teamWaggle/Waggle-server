@@ -1,6 +1,5 @@
 package com.example.waggle.board.help.service;
 
-import com.example.waggle.domain.board.help.entity.Category;
 import com.example.waggle.domain.board.help.entity.Help;
 import com.example.waggle.domain.board.help.service.HelpCommandService;
 import com.example.waggle.domain.board.help.service.HelpQueryService;
@@ -48,41 +47,46 @@ class HelpServiceTest {
 
     void setting() {
         hwd1 = HelpRequest.Post.builder()
+                .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Category.FIND_PET)
+                .category(Help.Category.FIND_PET)
                 .build();
         hwd2 = HelpRequest.Post.builder()
+                .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Category.FIND_PET)
+                .category(Help.Category.FIND_PET)
                 .build();
         hwd3 = HelpRequest.Post.builder()
+                .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Category.FIND_PET)
+                .category(Help.Category.FIND_PET)
                 .build();
         hwd4 = HelpRequest.Post.builder()
+                .title("this is title")
                 .content("help page4. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023,1,1,1,1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Category.FIND_PET)
+                .category(Help.Category.FIND_PET)
                 .build();
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("wjdgks3264@naver.com")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
