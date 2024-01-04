@@ -25,7 +25,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private final TokenService tokenService;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         // HttpServletRequest에서 JWT 토큰 추출
         HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
 
@@ -37,6 +38,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     .findFirst().map(Cookie::getValue)
                     .orElse(null);
         }
+        log.info("token = {}", token);
 
         // 2. validateToken으로 토큰 유효성 검사
         if (token != null && tokenService.validateToken(token)) {
@@ -44,7 +46,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             Authentication authentication = tokenService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("username", authentication.getName());
-            log.info("set Authentication to security context for '{}', uri: '{}'", authentication.getName(), ((HttpServletRequest) request).getRequestURI());
+            log.info("set Authentication to security context for '{}', uri: '{}'", authentication.getName(),
+                    ((HttpServletRequest) request).getRequestURI());
         } else {
             log.info("no valid JWT token found, uri: {}", ((HttpServletRequest) request).getRequestURI());
         }

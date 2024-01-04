@@ -33,7 +33,6 @@ public class MemberRequest {
     @AllArgsConstructor
     public static class RegisterRequestDto {
 
-        private String email;
 
         @NotBlank(message = "아이디를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
         @Length(min = 2, max = 10, message = "아이디 길이는 최소 2자에서 최대 10자입니다.", groups = ValidationGroups.LimitCount.class)
