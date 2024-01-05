@@ -1,19 +1,10 @@
-package com.example.waggle.domain.schedule.domain;
+package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -21,24 +12,25 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class TeamMember extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "team_member_id")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     // 연관관계 편의 메서드
     public void addTeamMember(Team team, Member member) {
-        this.team = team;
-        this.member = member;
         team.getTeamMembers().add(this);
         member.getTeamMembers().add(this);
     }

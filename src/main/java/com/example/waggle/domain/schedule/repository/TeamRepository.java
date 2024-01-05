@@ -1,14 +1,15 @@
 package com.example.waggle.domain.schedule.repository;
 
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
-import java.util.List;
-import java.util.Optional;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
 

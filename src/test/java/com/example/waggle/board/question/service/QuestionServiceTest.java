@@ -10,6 +10,10 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+<<<<<<< HEAD
+=======
+import com.example.waggle.web.dto.media.MediaRequest;
+>>>>>>> refactor/87
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -31,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuestionServiceTest {
 
     @Autowired
-    private QuestionCommandService questionService;
+    QuestionCommandService questionCommandService;
     @Autowired
     private QuestionQueryService questionQueryService;
     @Autowired
@@ -43,12 +47,21 @@ class QuestionServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
+<<<<<<< HEAD
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
 
     QuestionRequest.QuestionWriteDto questionWriteDto1;
     QuestionRequest.QuestionWriteDto questionWriteDto2;
     QuestionRequest.QuestionWriteDto questionEditDto1;
+=======
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
+
+    QuestionRequest.Post questionWriteDto1;
+    QuestionRequest.Post questionWriteDto2;
+    QuestionRequest.Put questionEditDto1;
+>>>>>>> refactor/87
     AnswerRequest.Post answerWriteDto1;
     AnswerRequest.Post answerWriteDto2;
     AnswerRequest.Post answerEditDto1;
@@ -56,8 +69,8 @@ class QuestionServiceTest {
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
-    List<String> medias1 = new ArrayList<>();
-    List<String> medias2 = new ArrayList<>();
+
+    Pageable pageable = PageRequest.of(0, 2);
 
     Pageable pageable = PageRequest.of(0, 2);
 
@@ -68,47 +81,70 @@ class QuestionServiceTest {
         tags1.add("poodle");
         tags2.add("poodle");
 
+<<<<<<< HEAD
         medias1.add("media1");
         medias1.add("mediamedia1");
         medias2.add("media2");
         medias2.add("mediamedia2");
 
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto1 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
                 .address("서울시 광진구")
+                .email("a;sldkfj")
                 .phone("010-1234-5678")
                 .build();
 
+<<<<<<< HEAD
         signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto2 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
                 .address("서울시 광진구")
+                .email("euufhdjhf")
                 .phone("010-1234-5678")
                 .build();
 
+<<<<<<< HEAD
         questionWriteDto1 = QuestionRequest.QuestionWriteDto.builder()
+=======
+        questionWriteDto1 = QuestionRequest.Post.builder()
+>>>>>>> refactor/87
                 .title("question1")
                 .content("I have a question")
-                .medias(medias1)
                 .hashtags(tags1)
+                .status(Question.Status.UNRESOLVED)
                 .build();
 
 
+<<<<<<< HEAD
         questionWriteDto2 = QuestionRequest.QuestionWriteDto.builder()
+=======
+        questionWriteDto2 = QuestionRequest.Post.builder()
+>>>>>>> refactor/87
                 .title("question2")
                 .content("I have a question!")
-                .medias(medias2)
                 .hashtags(tags2)
+                .status(Question.Status.UNRESOLVED)
                 .build();
 
+<<<<<<< HEAD
         questionEditDto1 = QuestionRequest.QuestionWriteDto.builder()
+=======
+        questionEditDto1 = QuestionRequest.Put.builder()
+>>>>>>> refactor/87
                 .title("EditQuestion")
                 .content("I wanna know that what it is")
-                .medias(medias2)
                 .hashtags(tags2)
+                .username("member1")
+                .status(Question.Status.UNRESOLVED)
                 .build();
 
         answerWriteDto1 = AnswerRequest.Post.builder()
@@ -134,11 +170,19 @@ class QuestionServiceTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
+<<<<<<< HEAD
         Long question1 = questionService.createQuestion(questionWriteDto1);
         Long question2 = questionService.createQuestion(questionWriteDto2);
 
         answerService.createAnswer(question1, answerWriteDto1);
         answerService.createAnswer(question1, answerWriteDto2);
+=======
+        Long question1 = questionCommandService.createQuestion(questionWriteDto1, null);
+        Long question2 = questionCommandService.createQuestion(questionWriteDto2, null);
+
+        answerService.createAnswer(question1, answerWriteDto1, null);
+        answerService.createAnswer(question1, answerWriteDto2, null);
+>>>>>>> refactor/87
     }
 
     @Test
@@ -175,7 +219,12 @@ class QuestionServiceTest {
         setQAndA();
         //when
         Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
+<<<<<<< HEAD
         Long aLong = questionService.updateQuestion(pagedQuestions.getContent().get(0).getId(), questionEditDto1);
+=======
+        Long aLong = questionCommandService
+                .updateQuestionV2(pagedQuestions.getContent().get(0).getId(), questionEditDto1, new MediaRequest.Put(), null);
+>>>>>>> refactor/87
         //then
         Question question = questionQueryService.getQuestionByBoardId(aLong);
         assertThat(question.getTitle()).isEqualTo("EditQuestion");
@@ -190,7 +239,11 @@ class QuestionServiceTest {
         Question question = pagedQuestions.getContent().get(0);
         //when
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(question.getId(), pageable);
+<<<<<<< HEAD
         Long aLong = answerService.updateAnswer(pagedAnswers.getContent().get(0).getId(), answerEditDto1);
+=======
+        Long aLong = answerService.updateAnswer(pagedAnswers.getContent().get(0).getId(), answerEditDto1, null, null);
+>>>>>>> refactor/87
         Answer answerByBoardId = answerQueryService.getAnswerByBoardId(aLong);
         //then
         assertThat(answerByBoardId.getContent()).isEqualTo("EditAnswer");
@@ -204,7 +257,11 @@ class QuestionServiceTest {
         //when
         Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
         Question question = pagedQuestions.getContent().get(0);
+<<<<<<< HEAD
         questionService.deleteQuestion(question.getId());
+=======
+        questionCommandService.deleteQuestion(question.getId());
+>>>>>>> refactor/87
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(question.getId(), pageable);
         List<Question> allQuestion = questionQueryService.getAllQuestion();
         //then

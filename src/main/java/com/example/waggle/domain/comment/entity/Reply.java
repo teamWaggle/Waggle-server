@@ -4,6 +4,7 @@ import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.mention.entity.Mention;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,8 +28,10 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(nullable = false)
     private String content;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;

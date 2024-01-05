@@ -1,10 +1,11 @@
 package com.example.waggle.web.converter;
 
-import com.example.waggle.domain.schedule.domain.Team;
+import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.web.dto.schedule.TeamResponse;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
 
 public class TeamConverter {
 
@@ -30,12 +31,14 @@ public class TeamConverter {
                 .build();
     }
 
-    public static TeamResponse.SummaryListDto toSummaryListDto(Page<Team> teamPage) {
+
+    public static TeamResponse.ListDto toSummaryListDto(Page<Team> teamPage) {
         List<TeamResponse.SummaryDto> teamSummaryDtos = teamPage.stream()
                 .map(TeamConverter::toSummaryDto)
                 .collect(Collectors.toList());
 
-        return TeamResponse.SummaryListDto.builder()
+
+        return TeamResponse.ListDto.builder()
                 .teams(teamSummaryDtos)
                 .totalQuestions(teamPage.getTotalElements())
                 .isFirst(teamPage.isFirst())

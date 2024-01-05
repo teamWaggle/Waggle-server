@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.global.util.DateUtil;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.story.StoryResponse;
 import org.springframework.data.domain.Page;
 
@@ -14,11 +15,11 @@ public class StoryConverter {
         return StoryResponse.SummaryDto.builder()
                 .id(story.getId())
                 .username(story.getMember().getUsername())
-//                .profileImg(story.getMember().getProfileImgUrl()) // TODO 수정 필요
-                .thumbnail(story.getThumbnail())
+                .profileImg(MediaUtil.getProfile(story.getMember()))
                 .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
+                .thumbnail(MediaUtil.getThumbnail(story))
                 .hashtags(story.getBoardHashtags().stream()
-                        .map(h -> h.getHashtag().getTag()).collect(Collectors.toList()))
+                        .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -38,15 +39,11 @@ public class StoryConverter {
                 .id(story.getId())
                 .content(story.getContent())
                 .username(story.getMember().getUsername())
-//                .profileImg(story.getMember().getProfileImg())    // TODO 수정 필요
-                .thumbnail(story.getThumbnail())
+                .profileImg(MediaUtil.getProfile(story.getMember()))
                 .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
-//                .medias(story.getMedias().stream()
-//                        .map(m -> m.getUploadFile().getStoreFileName()).collect(Collectors.toList()))
-//                .comments(story.getComments().stream()
-//                        .map(c -> CommentViewDto.toDto(c)).collect(Collectors.toList()))
+                        .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
+                .medias(MediaUtil.getBoardMedias(story))
                 .build();
     }
 }

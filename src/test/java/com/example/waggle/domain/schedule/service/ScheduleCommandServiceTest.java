@@ -1,5 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
+<<<<<<< HEAD
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.waggle.domain.member.entity.Member;
@@ -9,17 +10,38 @@ import com.example.waggle.domain.schedule.domain.Team;
 import com.example.waggle.domain.schedule.domain.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+=======
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.global.exception.handler.ScheduleHandler;
+>>>>>>> refactor/87
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+<<<<<<< HEAD
 import java.time.LocalDateTime;
+=======
+import org.junit.jupiter.api.Assertions;
+>>>>>>> refactor/87
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+<<<<<<< HEAD
+=======
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+>>>>>>> refactor/87
 @WithMockCustomUser
 @Transactional
 @SpringBootTest
@@ -28,6 +50,11 @@ class ScheduleCommandServiceTest {
     @Autowired
     ScheduleCommandService scheduleCommandService;
     @Autowired
+<<<<<<< HEAD
+=======
+    ScheduleQueryService scheduleQueryService;
+    @Autowired
+>>>>>>> refactor/87
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
@@ -63,6 +90,10 @@ class ScheduleCommandServiceTest {
                 .description("team1 description")
                 .leader(member1)
                 .maxTeamSize(4)
+<<<<<<< HEAD
+=======
+                .colorScheme("red")
+>>>>>>> refactor/87
                 .build();
         teamRepository.save(team);
 
@@ -131,8 +162,13 @@ class ScheduleCommandServiceTest {
     void deleteSchedule() {
         // when
         scheduleCommandService.deleteSchedule(schedule.getId());
+<<<<<<< HEAD
 
         // then
         assertThat(scheduleRepository.existsById(schedule.getId())).isEqualTo(false);
+=======
+        //then
+        Assertions.assertThrows(ScheduleHandler.class, () -> scheduleQueryService.getScheduleById(schedule.getId()));
+>>>>>>> refactor/87
     }
 }

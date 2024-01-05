@@ -1,5 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
+<<<<<<< HEAD
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.waggle.domain.member.entity.Member;
@@ -12,12 +13,31 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import java.time.LocalDateTime;
 import java.util.List;
+=======
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+>>>>>>> refactor/87
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+<<<<<<< HEAD
+=======
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+>>>>>>> refactor/87
 @WithMockCustomUser
 @Transactional
 @SpringBootTest
@@ -30,6 +50,11 @@ class ScheduleQueryServiceTest {
     @Autowired
     TeamRepository teamRepository;
     @Autowired
+<<<<<<< HEAD
+=======
+    TeamMemberRepository teamMemberRepository;
+    @Autowired
+>>>>>>> refactor/87
     ScheduleRepository scheduleRepository;
 
     private Member member1;
@@ -44,12 +69,22 @@ class ScheduleQueryServiceTest {
         member1 = Member.builder()
                 .username("member1")
                 .password("12345678")
+<<<<<<< HEAD
+=======
+                .nickname("sdfjsakld")
+                .email("dalsfjk")
+>>>>>>> refactor/87
                 .build();
         memberRepository.save(member1);
 
         member2 = Member.builder()
                 .username("member2")
                 .password("12345678")
+<<<<<<< HEAD
+=======
+                .nickname("alsdkfj")
+                .email("23fdfx")
+>>>>>>> refactor/87
                 .build();
         memberRepository.save(member2);
 
@@ -59,6 +94,10 @@ class ScheduleQueryServiceTest {
                 .description("team1 description")
                 .leader(member1)
                 .maxTeamSize(4)
+<<<<<<< HEAD
+=======
+                .colorScheme("red")
+>>>>>>> refactor/87
                 .build();
         teamRepository.save(team1);
 
@@ -67,15 +106,24 @@ class ScheduleQueryServiceTest {
                 .description("team2 description")
                 .leader(member1)
                 .maxTeamSize(4)
+<<<<<<< HEAD
+=======
+                .colorScheme("orange")
+>>>>>>> refactor/87
                 .build();
         teamRepository.save(team2);
 
         // Setup teamMember
+<<<<<<< HEAD
         TeamMember teamMember1 = TeamMember.builder().build();
         teamMember1.addTeamMember(team1, member1);
 
         TeamMember teamMember2 = TeamMember.builder().build();
         teamMember2.addTeamMember(team2, member1);
+=======
+        addMemberToTeam(team1, member1);
+        addMemberToTeam(team2, member1);
+>>>>>>> refactor/87
 
         // Setup Schedule
         schedule1 = Schedule.builder()
@@ -83,11 +131,27 @@ class ScheduleQueryServiceTest {
                 .content("schedule1 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
+<<<<<<< HEAD
+=======
+                .member(member1)
+>>>>>>> refactor/87
                 .build();
         scheduleRepository.save(schedule1);
         team1.addSchedule(schedule1);
     }
 
+<<<<<<< HEAD
+=======
+    private void addMemberToTeam(Team team, Member member) {
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
+        teamMember.addTeamMember(team, member);
+        teamMemberRepository.save(teamMember);
+    }
+
+>>>>>>> refactor/87
 
     @Test
     void getScheduleById() {
@@ -106,6 +170,10 @@ class ScheduleQueryServiceTest {
                 .content("schedule2 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
+<<<<<<< HEAD
+=======
+                .member(member1)
+>>>>>>> refactor/87
                 .build();
         scheduleRepository.save(schedule2);
         team1.addSchedule(schedule2);
@@ -126,6 +194,10 @@ class ScheduleQueryServiceTest {
                 .content("schedule2 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
+<<<<<<< HEAD
+=======
+                .member(member1)
+>>>>>>> refactor/87
                 .build();
         scheduleRepository.save(schedule2);
         team2.addSchedule(schedule2);
@@ -149,6 +221,10 @@ class ScheduleQueryServiceTest {
                     .content("team1 schedule" + i + " content")
                     .startTime(LocalDateTime.of(2023, i, 12, 9, 30))
                     .endTime(LocalDateTime.of(2023, i + 1, 12, 9, 30))
+<<<<<<< HEAD
+=======
+                    .member(member1)
+>>>>>>> refactor/87
                     .build();
             scheduleRepository.save(newSchedule);
             team1.addSchedule(newSchedule);
@@ -161,6 +237,10 @@ class ScheduleQueryServiceTest {
                     .content("team2 schedule" + i + " content")
                     .startTime(LocalDateTime.of(2023, i, 12, 9, 30))
                     .endTime(LocalDateTime.of(2023, i + 1, 12, 9, 30))
+<<<<<<< HEAD
+=======
+                    .member(member1)
+>>>>>>> refactor/87
                     .build();
             scheduleRepository.save(newSchedule);
             team2.addSchedule(newSchedule);

@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.question.entity.Question;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.question.QuestionResponse;
 import org.springframework.data.domain.Page;
 
@@ -12,10 +13,11 @@ public class QuestionConverter {
         return QuestionResponse.SummaryDto.builder()
                 .id(question.getId())
                 .username(question.getMember().getUsername())
+                .profileImg(MediaUtil.getProfile(question.getMember()))
                 .title(question.getTitle())
                 .createTime(question.getCreatedDate())
                 .hashtags(question.getBoardHashtags().stream()
-                        .map(h->h.getHashtag().getTag()).collect(Collectors.toList()))
+                        .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -33,14 +35,16 @@ public class QuestionConverter {
     }
 
     public static QuestionResponse.DetailDto toDetailDto(Question question) {
-            return QuestionResponse.DetailDto.builder()
-                    .id(question.getId())
-                    .content(question.getContent())
-                    .username(question.getMember().getUsername())
-                    .title(question.getTitle())
-                    .createDate(question.getCreatedDate())
-                    .hashtags(question.getBoardHashtags().stream()
-                            .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
-                    .build();
+        return QuestionResponse.DetailDto.builder()
+                .id(question.getId())
+                .content(question.getContent())
+                .username(question.getMember().getUsername())
+                .profileImg(MediaUtil.getProfile(question.getMember()))
+                .title(question.getTitle())
+                .createDate(question.getCreatedDate())
+                .hashtags(question.getBoardHashtags().stream()
+                        .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
+                .medias(MediaUtil.getBoardMedias(question))
+                .build();
     }
 }

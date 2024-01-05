@@ -2,7 +2,7 @@ name: CI/CD using Github Actions & AWS CodeDeploy
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 env:  

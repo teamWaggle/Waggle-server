@@ -2,8 +2,9 @@ package com.example.waggle.domain.member.entity;
 
 
 import com.example.waggle.domain.pet.entity.Pet;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
+import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.web.dto.member.MemberRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,17 +15,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
 
@@ -46,13 +48,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String profileImgUrl;
 
-//    @Builder.Default
-//    @OneToMany(mappedBy = "member")
-//    private List<Pet> pets = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Builder.Default
     @OneToMany(mappedBy = "member")
@@ -62,19 +62,19 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<Pet> pets = new ArrayList<>();
 
-    //TODO RoomMemeber List
-
 
 //    public void setPets(List<Pet> pets) {
 //        this.pets = pets;
 //    }
 
 
+    public void saveProfileImg(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.getKey()));
     }
 
     @Override
@@ -97,11 +97,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
         return true;
     }
 
-    public void updateInfo(MemberRequest.PutDto request) {
-        this.password = request.getPassword();
+    public void updateInfo(MemberRequest.Put request, String encodedPassword) {
+        this.password = encodedPassword;
         this.address = request.getAddress();
         this.nickname = request.getNickname();
         this.phone = request.getPhone();
-        this.profileImgUrl = request.getProfileImgUrl();
+        this.profileImgUrl = request.getProfileImg();
     }
 }

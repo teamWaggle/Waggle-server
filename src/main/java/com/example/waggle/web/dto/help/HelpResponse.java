@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.help;
 
-import com.example.waggle.domain.board.help.entity.Category;
+import com.example.waggle.domain.board.help.entity.Help.Category;
 import com.example.waggle.domain.member.entity.Gender;
 import lombok.*;
 
@@ -22,10 +22,13 @@ public class HelpResponse {
         private String thumbnail;
         private LocalDateTime lostDate;
         private String lostLocate;
-        private String username;
         private boolean recommendIt;
         private int recommendCount;
         private Category category;
+
+        private String username;
+        private String profileImg;
+
     }
 
     @Getter
@@ -41,12 +44,17 @@ public class HelpResponse {
         private int petAge;
         private Gender petGender;
         private String contact;
-        private String thumbnail;
+
         private LocalDateTime lostDate;
         private String lostLocate;
         private String content;
-        private String username;
         private Category category;
+        @Builder.Default
+        private List<String> medias = new ArrayList<>();
+
+        private String username;
+        private String profileImg;
+
         private boolean recommendIt;
         private int recommendCount;
     }

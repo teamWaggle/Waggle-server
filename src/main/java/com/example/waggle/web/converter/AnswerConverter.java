@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.answer.entity.Answer;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.answer.AnswerResponse;
 import org.springframework.data.domain.Page;
 
@@ -14,9 +15,11 @@ public class AnswerConverter {
                 .id(answer.getId())
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
+                .profileImg(MediaUtil.getProfile(answer.getMember()))
                 .createDate(answer.getCreatedDate())
                 .hashtags(answer.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getTag()).collect(Collectors.toList()))
+                        .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
+                .medias(MediaUtil.getBoardMedias(answer))
                 .build();
     }
 

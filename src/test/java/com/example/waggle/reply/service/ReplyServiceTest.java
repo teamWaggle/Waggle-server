@@ -13,7 +13,11 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.mention.entity.Mention;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.global.util.service.BoardType;
+=======
+import com.example.waggle.domain.board.service.BoardType;
+>>>>>>> refactor/87
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -34,6 +38,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@WithMockCustomUser
 @Slf4j
 class ReplyServiceTest {
 
@@ -57,11 +62,19 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
     MemberRequest.RegisterRequestDto signUpDto3;
     MemberRequest.RegisterRequestDto signUpDto4;
     MemberRequest.RegisterRequestDto signUpDto5;
+=======
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
+    MemberRequest.RegisterDto signUpDto3;
+    MemberRequest.RegisterDto signUpDto4;
+    MemberRequest.RegisterDto signUpDto5;
+>>>>>>> refactor/87
 
 
     StoryRequest.Post storyWriteDto1;
@@ -79,18 +92,24 @@ class ReplyServiceTest {
     @BeforeEach
     void setDto() {
 
-        mentions1.add("user1");
+        mentions1.add("member1");
         mentions1.add("user2");
         mentions2.add("user3");
         mentions2.add("user4");
 
+<<<<<<< HEAD
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto1 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("hi")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
+<<<<<<< HEAD
         signUpDto2 = MemberRequest.RegisterRequestDto.builder()
                 .username("user1")
                 .password("12345678")
@@ -99,23 +118,45 @@ class ReplyServiceTest {
                 .phone("010-1234-5678")
                 .build();
         signUpDto3 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto2 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("user2")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임2")
+                .email("hoe")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
+<<<<<<< HEAD
         signUpDto4 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto3 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("user3")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임3")
+                .email("zz")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
+<<<<<<< HEAD
         signUpDto5 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto4 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("user4")
                 .password("12345678")
-                .nickname("닉네임1")
+                .nickname("닉네임4")
+                .email("haha")
+                .address("서울시 광진구")
+                .phone("010-1234-5678")
+                .build();
+        signUpDto5 = MemberRequest.RegisterDto.builder()
+                .username("user5")
+                .password("12345678")
+                .nickname("닉네임5")
+                .email("ez")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -124,12 +165,10 @@ class ReplyServiceTest {
 
         storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
-                .thumbnail("www.waggle")
                 .build();
 
         commentWriteDto1 = CommentRequest.Post.builder()
@@ -162,8 +201,13 @@ class ReplyServiceTest {
         memberService.signUp(signUpDto5);
 
         //story set
+<<<<<<< HEAD
         storyService.createStory(storyWriteDto1);
         storyService.createStory(storyWriteDto2);
+=======
+        storyService.createStory(storyWriteDto1, null);
+        storyService.createStory(storyWriteDto2, null);
+>>>>>>> refactor/87
 
         Story story = storyQueryService.getStories().get(0);
 
@@ -178,7 +222,10 @@ class ReplyServiceTest {
 
 
     @Test
+<<<<<<< HEAD
     @WithMockCustomUser
+=======
+>>>>>>> refactor/87
     @Transactional
     void findReplies() throws IOException {
         //given
@@ -194,7 +241,6 @@ class ReplyServiceTest {
 
 
     @Test
-    @WithMockCustomUser
     void changeReply() throws IOException {
         //given
         setAll();

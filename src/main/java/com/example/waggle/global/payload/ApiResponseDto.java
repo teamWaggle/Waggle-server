@@ -25,7 +25,7 @@ public class ApiResponseDto<T> {
     }
 
     public static <T> ApiResponseDto<T> onFailure(Integer code, String message, T data){
-        return new ApiResponseDto<>(true, code, message, data);
+        return new ApiResponseDto<>(false, code, message, data);
     }
 
 }

@@ -1,13 +1,14 @@
 package com.example.waggle.domain.recommend.service;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.BoardType;
-import com.example.waggle.global.util.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,14 @@ import java.util.List;
 @Transactional
 @Service
 public class RecommendCommandServiceImpl implements RecommendCommandService {
-    private final UtilService utilService;
+    private final BoardService boardService;
+    private final MemberQueryService memberQueryService;
     private final RecommendRepository recommendRepository;
 
     @Override
     public void handleRecommendation(Long boardId, BoardType boardType) {
-        Board board = utilService.getBoard(boardId, boardType);
-        Member member = utilService.getSignInMember();
+        Board board = boardService.getBoard(boardId, boardType);
+        Member member = memberQueryService.getSignInMember();
         //boardWriter.equals(user)
         if (board.getMember().equals(member)) {
             log.info("can't recommend mine");
@@ -37,8 +39,7 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
         if (isRecommended) {
             log.info("cancel recommend");
             cancelRecommendation(member.getId(), boardId);
-        }
-        else{
+        } else {
             log.info("click recommend");
             createRecommendation(board, member);
         }

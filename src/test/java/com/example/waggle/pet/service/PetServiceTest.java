@@ -41,16 +41,25 @@ class PetServiceTest {
     @Autowired
     PetQueryService petQueryService;
 
+<<<<<<< HEAD
     private MemberResponse.MemberSummaryDto memberSummaryDto;
+=======
+    private MemberResponse.SummaryDto memberSummaryDto;
+>>>>>>> refactor/87
     private Long savedPetId;
 
     @BeforeEach
     void beforeEach() {
         // member 저장
+<<<<<<< HEAD
         MemberRequest.RegisterRequestDto signUpDto = MemberRequest.RegisterRequestDto.builder()
+=======
+        MemberRequest.RegisterDto signUpDto = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임")
+                .email("dslkajflk")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();

@@ -1,18 +1,19 @@
 package com.example.waggle.domain.schedule.service;
 
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.schedule.domain.Participation;
-import com.example.waggle.domain.schedule.domain.Participation.ParticipationStatus;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
+import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.service.UtilService;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,13 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final MemberQueryService memberQueryService;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final BoardService boardService;
     private final ParticipationRepository participationRepository;
-    private final UtilService utilService;
+
 
     @Override
     public Long createTeam(Post request) {
-        Member loginMember = utilService.getSignInMember();
+        Member loginMember = memberQueryService.getSignInMember();
 
         Team createdTeam = Team.builder()
                 .name(request.getName())
@@ -44,9 +46,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .build();
 
         Team team = teamRepository.save(createdTeam);
-
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, loginMember);
+        addMemberToTeam(team, loginMember);
 
         return team.getId();
     }
@@ -145,8 +145,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void validateCallerIsLeader(Team team) {
-        String currentUsername = utilService.getSignInMember().getUsername();
-        if (!team.getLeader().getUsername().equals(currentUsername)) {
+        if (!team.getLeader().getUsername().equals(SecurityUtil.getCurrentUsername())) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
     }
@@ -166,7 +165,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void addMemberToTeam(Team team, Member member) {
-        TeamMember teamMember = TeamMember.builder().build();
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
     }

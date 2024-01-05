@@ -8,7 +8,11 @@ import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.global.util.service.BoardType;
+=======
+import com.example.waggle.domain.board.service.BoardType;
+>>>>>>> refactor/87
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -44,8 +48,13 @@ class CommentServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
+=======
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
+>>>>>>> refactor/87
 
 
     StoryRequest.Post storyWriteDto1;
@@ -71,18 +80,28 @@ class CommentServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
+<<<<<<< HEAD
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto1 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("ertyuio")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
 
+<<<<<<< HEAD
         signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto2 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
+                .email("78347dj")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -91,14 +110,12 @@ class CommentServiceTest {
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
         commentWriteDto1 = CommentRequest.Post.builder()
@@ -122,8 +139,13 @@ class CommentServiceTest {
         memberService.signUp(signUpDto2);
 
         //story set
+<<<<<<< HEAD
         storyCommandService.createStory(storyWriteDto1);
         storyCommandService.createStory(storyWriteDto2);
+=======
+        storyCommandService.createStory(storyWriteDto1, null);
+        storyCommandService.createStory(storyWriteDto2, null);
+>>>>>>> refactor/87
     }
 
     @Test

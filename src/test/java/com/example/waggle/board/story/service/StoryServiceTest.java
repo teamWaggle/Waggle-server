@@ -43,8 +43,13 @@ class StoryServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
+<<<<<<< HEAD
     MemberRequest.RegisterRequestDto signUpDto1;
     MemberRequest.RegisterRequestDto signUpDto2;
+=======
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
+>>>>>>> refactor/87
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -70,18 +75,28 @@ class StoryServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
+<<<<<<< HEAD
         signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto1 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
+                .email("fjkjk")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
 
+<<<<<<< HEAD
         signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+=======
+        signUpDto2 = MemberRequest.RegisterDto.builder()
+>>>>>>> refactor/87
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
+                .email("wdfcgh")
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -90,27 +105,23 @@ class StoryServiceTest {
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto3 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
         storyWriteDto4 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
 
@@ -126,8 +137,13 @@ class StoryServiceTest {
         memberService.signUp(signUpDto2);
 
         //story set
+<<<<<<< HEAD
         storyCommandService.createStory(storyWriteDto1);
         storyCommandService.createStory(storyWriteDto2);
+=======
+        storyCommandService.createStory(storyWriteDto1, null);
+        storyCommandService.createStory(storyWriteDto2, null);
+>>>>>>> refactor/87
     }
 
 
@@ -186,16 +202,24 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
+<<<<<<< HEAD
         StoryRequest.Post editDto = StoryRequest.Post.builder()
+=======
+        StoryRequest.Put editDto = StoryRequest.Put.builder()
+>>>>>>> refactor/87
                 .id(id)
                 .content("edit edit edit")
-                .thumbnail("www.choco")
                 .hashtags(tags)
                 .medias(medias2)
+                .username("member1")
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
+<<<<<<< HEAD
         storyCommandService.updateStory(id, editDto);
+=======
+        storyCommandService.updateStory(id, editDto, null, null);
+>>>>>>> refactor/87
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then

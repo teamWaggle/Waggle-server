@@ -3,10 +3,7 @@ package com.example.waggle.domain.board.help.entity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.help.HelpRequest;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,46 +19,33 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Help extends Board {
 
+    @Column(nullable = false)
     private String title;
     private String petKind;
     private int petAge;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Gender petGender;
-    @Enumerated
-    private Category category;
     private LocalDateTime lostDate;
     private String lostLocate;
     private String contact;
-    private String thumbnail;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
 
-//    public Help(Long id, Member member,
-//                String content, List<BoardHashtag> boardHashtags,
-//                List<Media> medias, String title, String petKind,
-//                int petAge, Gender petGender, Category category,
-//                LocalDateTime lostDate, String lostLocate,String contact, String thumbnail) {
-//        super(id, member, content, boardHashtags, medias);
-//        this.title = title;
-//        this.petKind = petKind;
-//        this.petAge = petAge;
-//        this.petGender = petGender;
-//        this.category = category;
-//        this.lostDate = lostDate;
-//        this.lostLocate = lostLocate;
-//        this.contact = contact;
-//        this.thumbnail = thumbnail;
-//    }
+    public void changeHelp(HelpRequest.Put helpUpdateDto) {
+        this.title = helpUpdateDto.getTitle();
+        this.petKind = helpUpdateDto.getPetKind();
+        this.petAge = helpUpdateDto.getPetAge();
+        this.petGender = helpUpdateDto.getPetGender();
+        this.lostDate = helpUpdateDto.getLostDate();
+        this.lostLocate = helpUpdateDto.getLostLocate();
+        this.contact = helpUpdateDto.getContact();
+        this.content = helpUpdateDto.getContent();
+        this.category = helpUpdateDto.getCategory();
+    }
 
-    public void changeHelp(HelpRequest.Post helpUWriteDto) {
-        this.title = helpUWriteDto.getTitle();
-        this.petKind = helpUWriteDto.getPetKind();
-        this.petAge = helpUWriteDto.getPetAge();
-        this.petGender = helpUWriteDto.getPetGender();
-        this.lostDate = helpUWriteDto.getLostDate();
-        this.lostLocate = helpUWriteDto.getLostLocate();
-        this.contact = helpUWriteDto.getContact();
-        this.content = helpUWriteDto.getContent();
-        this.thumbnail = helpUWriteDto.getThumbnail();
-        this.category = helpUWriteDto.getCategory();
+    public enum Category {
+        FIND_PET, FIND_OWNER, PROTECT, ETC
     }
 
 }

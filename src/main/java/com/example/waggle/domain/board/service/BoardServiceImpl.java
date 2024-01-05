@@ -1,55 +1,45 @@
-package com.example.waggle.global.util.service;
+package com.example.waggle.domain.board.service;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
+import com.example.waggle.domain.board.help.repository.HelpRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.global.exception.handler.*;
+import com.example.waggle.global.exception.handler.AnswerHandler;
+import com.example.waggle.global.exception.handler.HelpHandler;
+import com.example.waggle.global.exception.handler.QuestionHandler;
+import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UtilServiceImpl implements UtilService {
+public class BoardServiceImpl implements BoardService {
 
-    private final MemberRepository memberRepository;
+    private final MemberQueryService memberQueryService;
     private final StoryRepository storyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final HelpRepository helpURepository;
     private final HashtagRepository hashtagRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public Member getMember(String username) {
-        //member setting
-        Member signInMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        return signInMember;
-    }
 
     @Override
-    @Transactional(readOnly = true)
     public boolean validateMemberUseBoard(Long boardId, BoardType boardType) {
-        Member signInMember = getSignInMember();
-        //board get
-        Board board;
+        Member signInMember = memberQueryService.getSignInMember();
 
+        Board board;
         switch (boardType) {
             case STORY:
                 board = storyRepository.findById(boardId)
@@ -68,36 +58,13 @@ public class UtilServiceImpl implements UtilService {
                         .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
-                // error: Invalid dtype
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board.getMember().equals(signInMember);
     }
 
     @Override
-    public boolean login() {
-        if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Member getSignInMember() {
-        //check login
-        if (login()) {
-            //check exist user
-            Member signInMember = getMember(SecurityUtil.getCurrentUsername());
-            return signInMember;
-        }
-        throw new MemberHandler(ErrorStatus.MEMBER_REFRESH_TOKEN_NOT_FOUND);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Board getBoard(Long boardId, BoardType boardType) {
-        //board get
         Board board;
 
         switch (boardType) {
@@ -118,14 +85,12 @@ public class UtilServiceImpl implements UtilService {
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
-                // error: Invalid dtype
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board;
     }
 
     @Override
-    @Transactional
     public void saveHashtag(Board board, String tag) {
         Hashtag hashtag = getHashtag(tag);
 
@@ -137,16 +102,13 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
-    @Transactional
     public Hashtag getHashtag(String tag) {
-        Optional<Hashtag> byTag = hashtagRepository.findByTag(tag);
-        if (byTag.isEmpty()) {
-            log.info("not exist hashtag!");
-            Hashtag build = Hashtag.builder().tag(tag).build();
+        Optional<Hashtag> byContent = hashtagRepository.findByContent(tag);
+        if (byContent.isEmpty()) {
+            Hashtag build = Hashtag.builder().content(tag).build();
             hashtagRepository.save(build);
             return build;
         }
-        log.info("already exist hashtag...");
-        return byTag.get();
+        return byContent.get();
     }
 }

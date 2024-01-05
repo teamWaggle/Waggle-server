@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.domain;
+package com.example.waggle.domain.schedule.entity;
 
 
 import jakarta.persistence.Column;
@@ -23,10 +23,10 @@ public class Participation {
     @Id @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Long teamId;
 
     @Setter

@@ -1,21 +1,18 @@
 package com.example.waggle.global.payload.code;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
 public enum ErrorStatus implements BaseCode {
     // 서버 오류
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
+    _UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR(INTERNAL_SERVER_ERROR, 5001, "서버 에러, 로그인이 필요없는 요청입니다."),
+    _ASSIGNABLE_PRINCIPAL(BAD_REQUEST, 5002, "인증타입이 잘못되어 할당이 불가능합니다."),
 
     // 일반적인 요청 오류
     _BAD_REQUEST(BAD_REQUEST, 4000, "잘못된 요청입니다."),
@@ -30,6 +27,10 @@ public enum ErrorStatus implements BaseCode {
     AUTH_UNAUTHORIZED_MEMBER(UNAUTHORIZED, 4053, "계정 정보를 찾을 수 없습니다."),
     AUTH_TOKEN_NO_AUTHORITY(UNAUTHORIZED, 4054, "권한 정보가 없는 토큰입니다."),
 
+    AUTH_REDIRECT_NOT_MATCHING(BAD_REQUEST, 4055, "redirect uri가 서버 내 설정과 매칭되지 않습니다."),
+    AUTH_ROLE_CANNOT_EXECUTE_URI(BAD_REQUEST, 4056, "사용자는 해당 로직을 수행할 수 없는 역할군입니다."),
+    AUTH_MUST_AUTHORIZED_URI(UNAUTHORIZED, 4057, "해당 uri는 권한 인증이 필수입니다. 만료된 토큰이거나 인증 정보가 없습니다."),
+
 
     // 회원 관련 오류 (4100 ~ 4149)
     MEMBER_DUPLICATE_USERNAME(CONFLICT, 4100, "이미 존재하는 사용자 이름입니다."),
@@ -41,22 +42,21 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_DUPLICATE_NICKNAME(CONFLICT, 4106, "이미 사용중인 닉네임입니다."),
 
 
-
     // 게시판 관련 오류 (4150 ~ 4199)
     BOARD_CANNOT_RECOMMEND_OWN(BAD_REQUEST, 4150, "자신의 게시물에는 좋아요를 누를 수 없습니다."),
     BOARD_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4151, "다른 사용자의 게시물을 수정하거나 삭제할 수 없습니다."),
-    BOARD_INVALID_TYPE(BAD_REQUEST, 4152,"잘못된 게시글 유형입니다."),
+    BOARD_INVALID_TYPE(BAD_REQUEST, 4152, "잘못된 게시글 유형입니다."),
     BOARD_NOT_FOUND(NOT_FOUND, 4153, "존재하지 않는 게시글입니다."),
-    RECOMMEND_NOT_FOUND(NOT_FOUND,4154,"존재하지 않는 추천입니다"),
-    COMMENT_NOT_FOUND(NOT_FOUND, 4155,"존재하지 않는 댓글입니다"),
+    RECOMMEND_NOT_FOUND(NOT_FOUND, 4154, "존재하지 않는 추천입니다"),
+    COMMENT_NOT_FOUND(NOT_FOUND, 4155, "존재하지 않는 댓글입니다"),
     COMMENT_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4156, "다른 사용자의 댓글을 수정하거나 삭제할 수 없습니다."),
-    REPLY_NOT_FOUND(NOT_FOUND, 4157,"존재하지 않는 대댓글입니다."),
+    REPLY_NOT_FOUND(NOT_FOUND, 4157, "존재하지 않는 대댓글입니다."),
     REPLY_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4158, "다른 사용자의 대댓글을 수정하거나 삭제할 수 없습니다."),
 
 
     // 스케줄 관련 오류 (4200 ~ 4249)
-    TEAM_NOT_FOUND(NOT_FOUND, 4200,"팀 정보가 존재하지 않습니다."),
-    SCHEDULE_NOT_FOUND(NOT_FOUND,4201,"스케줄 정보가 존재하지 않습니다."),
+    TEAM_NOT_FOUND(NOT_FOUND, 4200, "팀 정보가 존재하지 않습니다."),
+    SCHEDULE_NOT_FOUND(NOT_FOUND, 4201, "스케줄 정보가 존재하지 않습니다."),
     TEAM_MEMBER_ALREADY_EXISTS(CONFLICT, 4202, "이미 팀에 속해 있는 멤버입니다."),
     TEAM_LEADER_UNAUTHORIZED(BAD_REQUEST, 4203, "팀 리더만 리더를 변경할 수 있습니다."),
     TEAM_MEMBER_NOT_IN_TEAM(NOT_FOUND, 4204, "멤버가 이 팀에 속해 있지 않습니다."),
@@ -64,10 +64,19 @@ public enum ErrorStatus implements BaseCode {
     TEAM_PARTICIPATION_NOT_FOUND(NOT_FOUND, 4206, "참여 요청 정보가 존재하지 않습니다."),
 
 
-
-
     // 펫 관련 오류 (4250 ~ 4299)
-    PET_NOT_FOUND(NOT_FOUND, 4250,"펫 정보가 존재하지 않습니다.");
+    PET_NOT_FOUND(NOT_FOUND, 4250, "펫 정보가 존재하지 않습니다"),
+
+    // 팔로우 관련 오류 (4300 ~ 4349)
+    FOLLOW_NOT_FOUND(NOT_FOUND, 4300, "해당 팔로우가 목록에 존재하지 않습니다"),
+    FOLLOW_NOT_AUTHENTICATED_UNFOLLOW(BAD_REQUEST, 4301, "팔로우를 신청한 사람이 아닙니다. 따라서 팔로우 취소가 불가능합니다"),
+    FOLLOW_ALREADY_EXIST(BAD_REQUEST, 4302, "이미 존재하는 팔로우입니다."),
+
+    // 미디어 관련 오류(4350 ~ 4399)
+    MEDIA_NOT_FOUND(NOT_FOUND, 4350, "존재하지 않는 미디어입니다."),
+    MEDIA_REQUEST_IS_EMPTY(BAD_REQUEST, 4351, "request 미디어 파일이 존재하지 않습니다."),
+    MEDIA_REQUEST_STILL_EXIST(BAD_REQUEST, 4352, "request 할 미디어 파일이 남아있습니다"),
+    MEDIA_COUNT_IS_DIFFERENT(BAD_REQUEST, 4353, "새로 업로드 요청한 파일의 개수와 실제 post한 파일의 개수가 일치하지 않습니다");
 
 
     private final HttpStatus httpStatus;

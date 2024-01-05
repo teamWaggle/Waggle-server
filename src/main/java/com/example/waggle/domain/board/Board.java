@@ -5,6 +5,7 @@ import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +27,13 @@ public abstract class Board extends BaseEntity {
     @Column(name = "board_id")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     protected Member member;
 
     @Lob
+    @Column(nullable = false)
     protected String content;
 
     @Builder.Default
