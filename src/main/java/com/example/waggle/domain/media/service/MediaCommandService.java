@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface MediaCommandService {
     boolean createMedia(List<MultipartFile> uploadFiles, Board board);
+
     void updateMedia(List<MultipartFile> uploadFiles, List<String> deleteFile, Board board);
 
     void updateMediaV2(MediaRequest.Put request, List<MultipartFile> uploadFiles, Board board);

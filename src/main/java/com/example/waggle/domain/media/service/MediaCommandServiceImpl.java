@@ -20,15 +20,16 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class MediaCommandServiceImpl implements MediaCommandService{
+public class MediaCommandServiceImpl implements MediaCommandService {
 
     private final MediaRepository mediaRepository;
     private final AwsS3Service awsS3Service;
+
     @Override
     public boolean createMedia(List<MultipartFile> multipartFiles, Board board) {
         if (multipartFiles == null) {
             return false;
-        }else{
+        } else {
             List<String> uploadedFiles = awsS3Service.uploadFiles(multipartFiles);
             uploadedFiles.forEach(file -> mediaRepository.save(
                     Media.builder()
@@ -59,7 +60,7 @@ public class MediaCommandServiceImpl implements MediaCommandService{
             });
         }
         //second step. add file
-        createMedia(uploadFiles,board);
+        createMedia(uploadFiles, board);
     }
 
     @Override
@@ -67,20 +68,7 @@ public class MediaCommandServiceImpl implements MediaCommandService{
         board.getMedias().clear();
 
         if (validateUpdateMedia(uploadFiles, request)) {
-            Optional.ofNullable(request.getMediaList())
-                    .map(Collection::stream)
-                    .orElseGet(Stream::empty)
-                    .forEach(media -> {
-                        if (media.allowUpload) {
-                            String url = awsS3Service.uploadFile(uploadFiles.get(0));
-                            media.setImageUrl(url);
-                            uploadFiles.remove(0);
-                        }
-                        mediaRepository.save(Media.builder()
-                                .uploadFile(media.getImageUrl())
-                                .board(board)
-                                .build());
-                    });
+            request.getMediaList().forEach(media -> forEachMediaUpdate(uploadFiles, board, media));
         }
         Optional.ofNullable(request.getDeleteMediaList())
                 .map(Collection::stream)
@@ -91,6 +79,18 @@ public class MediaCommandServiceImpl implements MediaCommandService{
                 });
     }
 
+    private void forEachMediaUpdate(List<MultipartFile> uploadFiles, Board board, MediaRequest.SaveDto media) {
+        if (media.allowUpload) {
+            String url = awsS3Service.uploadFile(uploadFiles.get(0));
+            media.setImageUrl(url);
+            uploadFiles.remove(0);
+        }
+        mediaRepository.save(Media.builder()
+                .uploadFile(media.getImageUrl())
+                .board(board)
+                .build());
+    }
+
     @Override
     public void deleteMedia(Board board) {
         board.getMedias().forEach(media -> awsS3Service.deleteFile(media.getUploadFile()));
@@ -98,22 +98,15 @@ public class MediaCommandServiceImpl implements MediaCommandService{
     }
 
     private boolean validateUpdateMedia(List<MultipartFile> multipartFiles, MediaRequest.Put request) {
-        if (request.getMediaList() != null) {
-            long count = request.getMediaList().stream().filter(media -> media.allowUpload).count();
-            if (multipartFiles != null) {
-                if (count == multipartFiles.size()) {
-                    return true;
-                }else{
-                    throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
-                }
-            }else{
-                if (count == 0) {
-                    return true;
-                }
-            }
-        }else{
-            if(multipartFiles.size() == 0 || multipartFiles == null) return true;
+        long requestCount =
+                (request.getMediaList() != null) ? request.getMediaList().stream().filter(media -> media.allowUpload).count() : 0;
+        long mediaCount = (multipartFiles != null) ? multipartFiles.size() : 0;
+
+        if (requestCount != mediaCount) {
+            throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
         }
-        return false;
+
+        return !(requestCount == 0 && mediaCount == 0);
     }
+
 }
