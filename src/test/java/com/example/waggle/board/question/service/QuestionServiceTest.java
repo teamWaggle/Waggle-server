@@ -278,8 +278,9 @@ class QuestionServiceTest {
         //when
         List<Answer> answers = answerQueryService.getAnswersByQuestion(allQuestion.get(0).getId());
         answerService.deleteAnswer(answers.get(0).getId());
-        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(allQuestion.get(0).getId(),pageable);
+        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(allQuestion.get(0).getId(), pageable);
         //then
         assertThat(pagedAnswers.getContent().size()).isEqualTo(1);
     }
+
 }
