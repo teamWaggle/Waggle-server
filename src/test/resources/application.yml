@@ -1,20 +1,15 @@
-
 spring:
   cache:
     type: redis
-<<<<<<< HEAD
-=======
+
   profiles:
     include:
       - security
->>>>>>> refactor/87
 
   redis:
     host: localhost
     port: 6379
 
-<<<<<<< HEAD
-=======
   mail:
     host: smtp.gmail.com
     port: 587
@@ -27,7 +22,6 @@ spring:
           starttls:
             enable: true
 
->>>>>>> refactor/87
 
 cloud:
   aws:
