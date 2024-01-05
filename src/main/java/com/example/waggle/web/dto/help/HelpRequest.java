@@ -14,13 +14,31 @@ public class HelpRequest {
     @Builder
     @ToString
     public static class Post {
+
+        private String title;
+        private String petKind;
+        private int petAge;
+        private Gender petGender;
+        private String contact;
+        private String lostLocate;
+        private LocalDateTime lostDate;
+        private String content;
+        private Category category;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class Put {
         private Long id;
         private String title;
         private String petKind;
         private int petAge;
         private Gender petGender;
         private String contact;
-        private String thumbnail;
         private String lostLocate;
         private LocalDateTime lostDate;
         private String content;

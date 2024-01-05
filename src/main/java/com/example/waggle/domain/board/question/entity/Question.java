@@ -23,14 +23,7 @@ public class Question extends Board {
     @Column(nullable = false)
     private Status status;
 
-//    public Question(Long id, Member member,
-//                    String content, String title, List<BoardHashtag> boardHashtags,
-//                    List<Media> medias) {
-//        super(id, member, content, boardHashtags,medias);
-//        this.title = title;
-//    }
-
-    public void changeQuestion(QuestionRequest.Post request) {
+    public void changeQuestion(QuestionRequest.Put request) {
         this.content = request.getContent();
         this.title = request.getTitle();
         this.status = request.getStatus();
@@ -40,7 +33,7 @@ public class Question extends Board {
         this.status = status;
     }
 
-    public enum Status{
-        RESOLVED,UNRESOLVED
+    public enum Status {
+        RESOLVED, UNRESOLVED
     }
 }

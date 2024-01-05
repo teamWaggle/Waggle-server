@@ -1,10 +1,13 @@
 package com.example.waggle.domain.media.service;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.waggle.global.exception.handler.MediaHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -64,7 +67,11 @@ public class AwsS3Service {
 
 
     public void deleteFile(String fileName){
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        } catch (SdkClientException e) {
+            throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_IS_EMPTY);
+        }
         System.out.println(bucket);
     }
 }

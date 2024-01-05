@@ -43,8 +43,9 @@ class StoryServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
+
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -70,7 +71,8 @@ class StoryServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -79,7 +81,7 @@ class StoryServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -92,31 +94,28 @@ class StoryServiceTest {
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto3 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
         storyWriteDto4 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
 
     }
+
     @AfterEach
     void clean() {
         databaseCleanUp.truncateAllEntity();
@@ -131,7 +130,6 @@ class StoryServiceTest {
         storyCommandService.createStory(storyWriteDto1, null);
         storyCommandService.createStory(storyWriteDto2, null);
     }
-
 
 
     @Test
@@ -188,15 +186,16 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
-        StoryRequest.Post editDto = StoryRequest.Post.builder()
+        StoryRequest.Put editDto = StoryRequest.Put.builder()
                 .id(id)
                 .content("edit edit edit")
-                .thumbnail("www.choco")
                 .hashtags(tags)
                 .medias(medias2)
+                .username("member1")
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
+
         storyCommandService.updateStory(id, editDto, null, null);
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
@@ -208,7 +207,7 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
-    //@Transactional
+        //@Transactional
     void deleteStory() throws IOException {
         //given
         setBoardAndMember();

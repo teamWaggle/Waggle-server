@@ -1,5 +1,6 @@
 package com.example.waggle.domain.schedule.service;
 
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Participation;
@@ -12,7 +13,6 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .build();
 
         Team team = teamRepository.save(createdTeam);
-        addMemberToTeam(team,loginMember);
+        addMemberToTeam(team, loginMember);
 
         return team.getId();
     }
@@ -114,6 +114,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         participationRepository.save(participation);
     }
+
     @Override
     public void respondToParticipation(Long teamId, String username, boolean accept) {
         Team team = teamRepository.findById(teamId)

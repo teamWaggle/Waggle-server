@@ -5,15 +5,15 @@ import com.example.waggle.web.dto.member.MemberResponse;
 
 public class MemberConverter {
 
-    public static MemberResponse.MemberSummaryDto toMemberSummaryDto(Member member) {
-        return MemberResponse.MemberSummaryDto.builder()
+    public static MemberResponse.SummaryDto toMemberSummaryDto(Member member) {
+        return MemberResponse.SummaryDto.builder()
                 .username(member.getUsername())
                 .nickname(member.getNickname())
                 .profileImgUrl(member.getProfileImgUrl()).build();
     }
 
-    public static MemberResponse.MemberDetailDto toMemberDetailDto(Member member) {
-        return MemberResponse.MemberDetailDto.builder()
+    public static MemberResponse.DetailDto toMemberDetailDto(Member member) {
+        return MemberResponse.DetailDto.builder()
                 .id(member.getId())
                 .username(member.getUsername())
                 .nickname(member.getNickname())

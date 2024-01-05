@@ -1,6 +1,5 @@
 package com.example.waggle.web.dto.story;
 
-import com.example.waggle.global.component.file.UploadFile;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -18,18 +17,16 @@ public class StoryResponse {
         private Long id;
         private String content;
         private String username;
-        private UploadFile profileImg;
-        private String thumbnail;
+        private String profileImg;
         private String createdDate;
         private int recommendCount;
         private boolean recommendIt;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-//        @Builder.Default
-//        private List<String> medias = new ArrayList<>();
-//        @Builder.Default
-//        private List<CommentViewDto> comments = new ArrayList<>();
+        @Builder.Default
+        private List<String> medias = new ArrayList<>();
+
     }
 
     @Getter
@@ -41,15 +38,16 @@ public class StoryResponse {
 
         private Long id;
         private String username;
-        private UploadFile profileImg;
-        private String thumbnail;
+        private String profileImg;
         private String createdDate;
+        private String thumbnail;
         private int recommendCount;
         private boolean recommendIt;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
     }
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor

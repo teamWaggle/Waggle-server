@@ -29,6 +29,27 @@ public class QuestionRequest {
         private String title;
 
         @Builder.Default
+        private List<String> hashtags = new ArrayList<>();
+
+        private Question.Status status;
+    }
+    @Builder
+    @Setter
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Put {
+
+        @NotEmpty(message = "질문 내용을 작성해주세요.")
+        @Max(1500)
+        private String content;
+
+        @NotBlank(message = "질문 제목을 작성해주세요.")
+        @Length(min = 5, max = 30)
+        private String title;
+
+        @Builder.Default
         private List<String> medias = new ArrayList<>();
 
         @Builder.Default
@@ -36,5 +57,6 @@ public class QuestionRequest {
 
         private Question.Status status;
 
+        private String username;
     }
 }

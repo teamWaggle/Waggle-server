@@ -25,8 +25,9 @@ import java.util.List;
 @SuperBuilder
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
-    @Id @GeneratedValue
-    @Column(name = "member_id", unique = true, nullable = false)
+    @Id
+    @GeneratedValue
+    @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -49,14 +50,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
-
-//    @Builder.Default
-//    @OneToMany(mappedBy = "member")
-//    private List<Pet> pets = new ArrayList<>();
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @Builder.Default
-//    private List<String> roles = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -64,13 +57,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<TeamMember> teamMembers = new ArrayList<>();
 
-
     @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<Pet> pets = new ArrayList<>();
-
-
-    //TODO RoomMemeber List
 
 
 //    public void setPets(List<Pet> pets) {
@@ -78,9 +67,13 @@ public class Member extends BaseTimeEntity implements UserDetails {
 //    }
 
 
+    public void saveProfileImg(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role.getKey()));
+        return Collections.singleton(new SimpleGrantedAuthority(this.role.getKey()));
     }
 
     @Override
@@ -103,11 +96,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
         return true;
     }
 
-    public void updateInfo(MemberRequest.PutDto request) {
-        this.password = request.getPassword();
+    public void updateInfo(MemberRequest.Put request, String encodedPassword) {
+        this.password = encodedPassword;
         this.address = request.getAddress();
         this.nickname = request.getNickname();
         this.phone = request.getPhone();
-        this.profileImgUrl = request.getProfileImgUrl();
+        this.profileImgUrl = request.getProfileImg();
     }
 }

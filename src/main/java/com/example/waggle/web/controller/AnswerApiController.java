@@ -3,12 +3,12 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.answer.service.AnswerQueryService;
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.answer.AnswerResponse;
+import com.example.waggle.web.dto.media.MediaRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,15 +35,15 @@ public class AnswerApiController {
     private final AnswerCommandService answerCommandService;
     private final AnswerQueryService answerQueryService;
     private final RecommendQueryService recommendQueryService;
-    private final AwsS3Service awsS3Service;
+
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "대답 작성", description = "사용자가 대답 작성합니다. 작성한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대답 작성 성공. 작성한 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
-    @PostMapping("/{questionId}")
+    @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@RequestPart AnswerRequest.Post request,
-                                             @RequestPart List<MultipartFile> multipartFiles,
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                              @PathVariable Long questionId) throws IOException {
         Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
@@ -51,12 +52,12 @@ public class AnswerApiController {
     @Operation(summary = "대답 수정", description = "사용자가 대답을 수정합니다. 수정한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대답 수정 성공. 수정한 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 대답 수정에 실패했습니다.")
-    @PutMapping("/{boardId}")
+    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
-                                               @RequestPart List<MultipartFile> multipartFiles,
-                                               @RequestPart List<String> deleteFiles,
-                                               @RequestPart AnswerRequest.Post request) throws IOException{
-        answerCommandService.updateAnswer(boardId, request, multipartFiles, deleteFiles);
+                                             @RequestPart AnswerRequest.Put answerUpdateDto,
+                                             @RequestPart MediaRequest.Put mediaUpdateDto,
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        answerCommandService.updateAnswerV2(boardId, answerUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -71,8 +72,8 @@ public class AnswerApiController {
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswers);
         //recommend relation field
         listDto.getAnswerList().stream()
-                .forEach(a->{
-                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(),a.getUsername()));
+                .forEach(a -> {
+                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -89,8 +90,8 @@ public class AnswerApiController {
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswerByUsername);
 
         listDto.getAnswerList().stream()
-                .forEach(a->{
-                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(),a.getUsername()));
+                .forEach(a -> {
+                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);

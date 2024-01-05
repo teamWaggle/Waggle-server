@@ -1,13 +1,9 @@
 package com.example.waggle.web.dto.schedule;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 public class ScheduleResponse {
 
@@ -17,7 +13,7 @@ public class ScheduleResponse {
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class ScheduleResponseDto {
+    public static class DetailDto {
         private Long scheduleId;
         private Long teamId;
         private String title;
@@ -33,7 +29,7 @@ public class ScheduleResponse {
     @Builder
     @ToString
     public static class ListDto {
-        List<ScheduleResponseDto> schedules;
+        List<DetailDto> schedules;
     }
 
 }

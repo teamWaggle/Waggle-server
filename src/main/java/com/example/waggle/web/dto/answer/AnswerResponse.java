@@ -17,6 +17,7 @@ public class AnswerResponse {
         private Long id;
         private String content;
         private String username;
+        private String profileImg;
         private LocalDateTime createDate;
         private int recommendCount;
         private boolean recommendIt;
@@ -24,12 +25,8 @@ public class AnswerResponse {
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
-//        @Builder.Default
-//        private List<String> medias = new ArrayList<>();
-//        @Builder.Default
-//        private List<CommentViewDto> comments = new ArrayList<>();
-//        @Builder.Default
-//        private List<ReplyViewDto> replies = new ArrayList<>();
+        @Builder.Default
+        private List<String> medias = new ArrayList<>();
 
     }
 
