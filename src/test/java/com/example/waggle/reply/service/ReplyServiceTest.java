@@ -1,5 +1,6 @@
 package com.example.waggle.reply.service;
 
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
@@ -13,11 +14,6 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.mention.entity.Mention;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
-<<<<<<< HEAD
-import com.example.waggle.global.util.service.BoardType;
-=======
-import com.example.waggle.domain.board.service.BoardType;
->>>>>>> refactor/87
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -62,19 +58,11 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-<<<<<<< HEAD
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
-    MemberRequest.RegisterRequestDto signUpDto3;
-    MemberRequest.RegisterRequestDto signUpDto4;
-    MemberRequest.RegisterRequestDto signUpDto5;
-=======
     MemberRequest.RegisterDto signUpDto1;
     MemberRequest.RegisterDto signUpDto2;
     MemberRequest.RegisterDto signUpDto3;
     MemberRequest.RegisterDto signUpDto4;
     MemberRequest.RegisterDto signUpDto5;
->>>>>>> refactor/87
 
 
     StoryRequest.Post storyWriteDto1;
@@ -88,7 +76,6 @@ class ReplyServiceTest {
     List<String> mentions2 = new ArrayList<>();
 
 
-
     @BeforeEach
     void setDto() {
 
@@ -97,11 +84,7 @@ class ReplyServiceTest {
         mentions2.add("user3");
         mentions2.add("user4");
 
-<<<<<<< HEAD
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
-=======
         signUpDto1 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -109,18 +92,7 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-<<<<<<< HEAD
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
-                .username("user1")
-                .password("12345678")
-                .nickname("닉네임1")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
-                .build();
-        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
-=======
         signUpDto2 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("user2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -128,11 +100,7 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-<<<<<<< HEAD
-        signUpDto4 = MemberRequest.RegisterRequestDto.builder()
-=======
         signUpDto3 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("user3")
                 .password("12345678")
                 .nickname("닉네임3")
@@ -140,11 +108,8 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-<<<<<<< HEAD
-        signUpDto5 = MemberRequest.RegisterRequestDto.builder()
-=======
+
         signUpDto4 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("user4")
                 .password("12345678")
                 .nickname("닉네임4")
@@ -160,7 +125,6 @@ class ReplyServiceTest {
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
-
 
 
         storyWriteDto1 = StoryRequest.Post.builder()
@@ -187,6 +151,7 @@ class ReplyServiceTest {
 
 
     }
+
     @AfterEach
     void clean() {
         databaseCleanUp.truncateAllEntity();
@@ -201,13 +166,8 @@ class ReplyServiceTest {
         memberService.signUp(signUpDto5);
 
         //story set
-<<<<<<< HEAD
-        storyService.createStory(storyWriteDto1);
-        storyService.createStory(storyWriteDto2);
-=======
         storyService.createStory(storyWriteDto1, null);
         storyService.createStory(storyWriteDto2, null);
->>>>>>> refactor/87
 
         Story story = storyQueryService.getStories().get(0);
 
@@ -222,10 +182,6 @@ class ReplyServiceTest {
 
 
     @Test
-<<<<<<< HEAD
-    @WithMockCustomUser
-=======
->>>>>>> refactor/87
     @Transactional
     void findReplies() throws IOException {
         //given

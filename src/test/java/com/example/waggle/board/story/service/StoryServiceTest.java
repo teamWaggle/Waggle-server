@@ -43,13 +43,9 @@ class StoryServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-<<<<<<< HEAD
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
-=======
+
     MemberRequest.RegisterDto signUpDto1;
     MemberRequest.RegisterDto signUpDto2;
->>>>>>> refactor/87
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -75,11 +71,8 @@ class StoryServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-<<<<<<< HEAD
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
-=======
+
         signUpDto1 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -88,11 +81,7 @@ class StoryServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-<<<<<<< HEAD
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
-=======
         signUpDto2 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -126,6 +115,7 @@ class StoryServiceTest {
 
 
     }
+
     @AfterEach
     void clean() {
         databaseCleanUp.truncateAllEntity();
@@ -137,15 +127,9 @@ class StoryServiceTest {
         memberService.signUp(signUpDto2);
 
         //story set
-<<<<<<< HEAD
-        storyCommandService.createStory(storyWriteDto1);
-        storyCommandService.createStory(storyWriteDto2);
-=======
         storyCommandService.createStory(storyWriteDto1, null);
         storyCommandService.createStory(storyWriteDto2, null);
->>>>>>> refactor/87
     }
-
 
 
     @Test
@@ -202,11 +186,7 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
-<<<<<<< HEAD
-        StoryRequest.Post editDto = StoryRequest.Post.builder()
-=======
         StoryRequest.Put editDto = StoryRequest.Put.builder()
->>>>>>> refactor/87
                 .id(id)
                 .content("edit edit edit")
                 .hashtags(tags)
@@ -215,11 +195,8 @@ class StoryServiceTest {
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
-<<<<<<< HEAD
-        storyCommandService.updateStory(id, editDto);
-=======
+
         storyCommandService.updateStory(id, editDto, null, null);
->>>>>>> refactor/87
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then
@@ -230,7 +207,7 @@ class StoryServiceTest {
 
     @Test
     @WithMockCustomUser
-    //@Transactional
+        //@Transactional
     void deleteStory() throws IOException {
         //given
         setBoardAndMember();

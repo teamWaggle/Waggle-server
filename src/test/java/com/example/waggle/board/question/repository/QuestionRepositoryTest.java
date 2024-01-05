@@ -42,10 +42,6 @@ class QuestionRepositoryTest {
                 .build();
         questionRepository.save(question);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> refactor/87
 
         Optional<Question> byBoardId = questionRepository.findById(question.getId());
 
@@ -105,7 +101,6 @@ class QuestionRepositoryTest {
         answerRepository.save(answer1);
         answerRepository.save(answer2);
         answerRepository.save(answer3);
-
 
 
         // then

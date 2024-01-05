@@ -1,5 +1,6 @@
 package com.example.waggle.recommend.service;
 
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
@@ -13,11 +14,6 @@ import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.GeneralException;
-<<<<<<< HEAD
-import com.example.waggle.global.util.service.BoardType;
-=======
-import com.example.waggle.domain.board.service.BoardType;
->>>>>>> refactor/87
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -60,13 +56,8 @@ class RecommendServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-<<<<<<< HEAD
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
-=======
     MemberRequest.RegisterDto signUpDto1;
     MemberRequest.RegisterDto signUpDto2;
->>>>>>> refactor/87
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -88,11 +79,7 @@ class RecommendServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-<<<<<<< HEAD
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
-=======
         signUpDto1 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -101,11 +88,7 @@ class RecommendServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-<<<<<<< HEAD
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
-=======
         signUpDto2 = MemberRequest.RegisterDto.builder()
->>>>>>> refactor/87
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -117,24 +100,16 @@ class RecommendServiceTest {
         storyWriteDto1 = StoryRequest.Post.builder()
                 .content("i love my choco")
                 .hashtags(tags1)
-<<<<<<< HEAD
-                .thumbnail("www.waggle")
-=======
->>>>>>> refactor/87
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
-<<<<<<< HEAD
-                .thumbnail("www.waggle")
-=======
->>>>>>> refactor/87
                 .build();
 
 
-
     }
+
     @AfterEach
     void clean() {
         databaseCleanUp.truncateAllEntity();
@@ -158,11 +133,7 @@ class RecommendServiceTest {
         storyRepository.save(iiii);
 
         //story set
-<<<<<<< HEAD
-        storyService.createStory(storyWriteDto1);
-=======
         storyService.createStory(storyWriteDto1, null);
->>>>>>> refactor/87
         //storyService.saveStory(storyWriteDto2);
     }
 
@@ -182,6 +153,7 @@ class RecommendServiceTest {
         //then
         assertThat(count).isEqualTo(1);
     }
+
     @Test
     @WithMockCustomUser
     @Transactional
@@ -189,8 +161,8 @@ class RecommendServiceTest {
         //given
         setBoardAndMember();
         Story story = storyQueryService.getStories().get(0);
-        recommendService.handleRecommendation(story.getId(),BoardType.STORY);
-        recommendService.handleRecommendation(story.getId(),BoardType.STORY);
+        recommendService.handleRecommendation(story.getId(), BoardType.STORY);
+        recommendService.handleRecommendation(story.getId(), BoardType.STORY);
 
         //when
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
@@ -206,11 +178,8 @@ class RecommendServiceTest {
     void cannot_recommend_Mine() throws IOException {
         //given
         memberService.signUp(signUpDto1);
-<<<<<<< HEAD
-        storyService.createStory(storyWriteDto1);
-=======
+
         storyService.createStory(storyWriteDto1, null);
->>>>>>> refactor/87
         Story story = storyQueryService.getStories().get(0);
         //then
         try {
@@ -232,11 +201,8 @@ class RecommendServiceTest {
         StoryRequest.Post request = StoryRequest.Post.builder()
                 .content("hi")
                 .build();
-<<<<<<< HEAD
-        storyService.createStory(request);
-=======
+
         storyService.createStory(request, null);
->>>>>>> refactor/87
         Story story = storyQueryService.getStories().get(0);
         Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
         recommendRepository.save(build);

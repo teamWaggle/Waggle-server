@@ -40,77 +40,46 @@ class HelpServiceTest {
     HelpRequest.Post hwd1;
     HelpRequest.Post hwd2;
     HelpRequest.Post hwd3;
-<<<<<<< HEAD
-    HelpRequest.Post hwd4;
-
-    MemberRequest.RegisterRequestDto signUpDto1;
-=======
     HelpRequest.Put hwd4;
 
     MemberRequest.RegisterDto signUpDto1;
->>>>>>> refactor/87
 
 
     void setting() {
         hwd1 = HelpRequest.Post.builder()
-<<<<<<< HEAD
-=======
                 .title("this is title")
->>>>>>> refactor/87
                 .content("help page. hi")
                 .contact("01025522972")
-                .lostDate(LocalDateTime.of(2023,1,1,1,1))
+                .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-<<<<<<< HEAD
-                .build();
-        hwd2 = HelpRequest.Post.builder()
-=======
                 .category(Help.Category.FIND_PET)
                 .build();
         hwd2 = HelpRequest.Post.builder()
                 .title("this is title")
->>>>>>> refactor/87
                 .content("help page. hi")
                 .contact("01025522972")
-                .lostDate(LocalDateTime.of(2023,1,1,1,1))
+                .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-<<<<<<< HEAD
-                .build();
-        hwd3 = HelpRequest.Post.builder()
-=======
                 .category(Help.Category.FIND_PET)
                 .build();
         hwd3 = HelpRequest.Post.builder()
                 .title("this is title")
->>>>>>> refactor/87
                 .content("help page. hi")
                 .contact("01025522972")
-                .lostDate(LocalDateTime.of(2023,1,1,1,1))
+                .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-<<<<<<< HEAD
-                .build();
-        hwd4 = HelpRequest.Post.builder()
-=======
                 .category(Help.Category.FIND_PET)
                 .build();
         hwd4 = HelpRequest.Put.builder()
                 .title("this is title")
->>>>>>> refactor/87
                 .content("help page4. hi")
                 .contact("01025522972")
-                .lostDate(LocalDateTime.of(2023,1,1,1,1))
+                .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-<<<<<<< HEAD
-                .build();
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
-                .username("member1")
-                .password("12345678")
-                .nickname("닉네임1")
-=======
                 .category(Help.Category.FIND_PET)
                 .build();
         signUpDto1 = MemberRequest.RegisterDto.builder()
@@ -118,7 +87,6 @@ class HelpServiceTest {
                 .password("12345678")
                 .nickname("닉네임1")
                 .email("wjdgks3264@naver.com")
->>>>>>> refactor/87
                 .address("서울시 광진구")
                 .phone("010-1234-5678")
                 .build();
@@ -131,35 +99,22 @@ class HelpServiceTest {
 
     @Test
     @WithMockCustomUser
-    void help_create_service() throws IOException{
+    void help_create_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-<<<<<<< HEAD
-        Long helpId = helpCommandService.createHelp(hwd1);
-=======
+
         Long helpId = helpCommandService.createHelp(hwd1, null);
->>>>>>> refactor/87
 
         List<Help> allHelp = helpQueryService.getAllHelp();
         assertThat(allHelp.size()).isEqualTo(1);
     }
+
     @Test
     @WithMockCustomUser
     void help_read_All_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-<<<<<<< HEAD
-        Long helpId = helpCommandService.createHelp(hwd1);
-        helpCommandService.createHelp(hwd2);
-        helpCommandService.createHelp(hwd3);
-        helpCommandService.createHelp(hwd4);
-
-        //List<helpSummaryDto> allhelp = helpService.getAllhelp();
-        Pageable pageable = PageRequest.of(0, 3);
-        Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
-        assertThat(pagedHelpList.getContent().size()).isEqualTo(3);
-=======
-        Long helpId = helpCommandService.createHelp(hwd1,null);
+        Long helpId = helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
 
@@ -167,7 +122,6 @@ class HelpServiceTest {
         Pageable pageable = PageRequest.of(0, 2);
         Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
         assertThat(pagedHelpList.getContent().size()).isEqualTo(2);
->>>>>>> refactor/87
     }
 
     @Test
@@ -175,16 +129,10 @@ class HelpServiceTest {
     void help_read_Mine_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-<<<<<<< HEAD
-        Long helpId = helpCommandService.createHelp(hwd1);
-        helpCommandService.createHelp(hwd2);
-        helpCommandService.createHelp(hwd3);
-        helpCommandService.createHelp(hwd4);
-=======
+
         Long helpId = helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
->>>>>>> refactor/87
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
@@ -194,58 +142,39 @@ class HelpServiceTest {
 
     @Test
     @WithMockCustomUser
-    void help_read_One_service() throws IOException{
+    void help_read_One_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-<<<<<<< HEAD
-        Long helpId = helpCommandService.createHelp(hwd1);
-        helpCommandService.createHelp(hwd2);
-        helpCommandService.createHelp(hwd3);
-        helpCommandService.createHelp(hwd4);
-=======
         Long helpId = helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
->>>>>>> refactor/87
 
         Help help = helpQueryService.getHelpByBoardId(helpId);
         assertThat(help.getContent()).isEqualTo("help page. hi");
     }
+
     @Test
     @WithMockCustomUser
-    void help_update_One_service() throws IOException{
+    void help_update_One_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-<<<<<<< HEAD
-        Long helpId = helpCommandService.createHelp(hwd1);
-        helpCommandService.createHelp(hwd2);
-        helpCommandService.createHelp(hwd3);
-
-        Long aLong = helpCommandService.updateHelp(helpId, hwd4);
-=======
         Long helpId = helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         helpCommandService.createHelp(hwd3, null);
 
         Long aLong = helpCommandService.updateHelp(helpId, hwd4, null, null);
->>>>>>> refactor/87
         Help help = helpQueryService.getHelpByBoardId(aLong);
         assertThat(help.getContent()).isEqualTo("help page4. hi");
     }
+
     @Test
     @WithMockCustomUser
-    void help_delete_One_service() throws IOException{
+    void help_delete_One_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-<<<<<<< HEAD
-        helpCommandService.createHelp(hwd1);
-        helpCommandService.createHelp(hwd2);
-        Long help = helpCommandService.createHelp(hwd3);
-=======
         helpCommandService.createHelp(hwd1, null);
         helpCommandService.createHelp(hwd2, null);
         Long help = helpCommandService.createHelp(hwd3, null);
->>>>>>> refactor/87
         helpCommandService.deleteHelp(help);
         List<Help> allHelp = helpQueryService.getAllHelp();
         assertThat(allHelp.size()).isEqualTo(2);

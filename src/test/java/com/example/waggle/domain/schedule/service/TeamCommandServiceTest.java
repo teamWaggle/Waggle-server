@@ -1,22 +1,12 @@
 package com.example.waggle.domain.schedule.service;
 
-<<<<<<< HEAD
-import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.schedule.domain.Participation;
-import com.example.waggle.domain.schedule.domain.Participation.ParticipationStatus;
-import com.example.waggle.domain.schedule.domain.Team;
-import com.example.waggle.domain.schedule.domain.TeamMember;
-=======
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
->>>>>>> refactor/87
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
@@ -28,11 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< HEAD
-=======
 import static org.assertj.core.api.Assertions.assertThat;
 
->>>>>>> refactor/87
 @WithMockCustomUser
 @Transactional
 @SpringBootTest
@@ -61,33 +48,24 @@ class TeamCommandServiceTest {
         member1 = Member.builder()
                 .username("member1")
                 .password("12345678")
-<<<<<<< HEAD
-=======
                 .email("dasfk")
                 .nickname("lksadfjklj")
->>>>>>> refactor/87
                 .build();
         memberRepository.save(member1);
 
         member2 = Member.builder()
                 .username("member2")
                 .password("12345678")
-<<<<<<< HEAD
-=======
                 .email("aksdfhsafa")
                 .nickname("sadlfkdsfjkw")
->>>>>>> refactor/87
                 .build();
         memberRepository.save(member2);
 
         member3 = Member.builder()
                 .username("member3")
                 .password("12345678")
-<<<<<<< HEAD
-=======
                 .email("wldkfjk")
                 .nickname("jdhskjfhac")
->>>>>>> refactor/87
                 .build();
         memberRepository.save(member3);
 
@@ -97,18 +75,11 @@ class TeamCommandServiceTest {
                 .description("team1 description")
                 .leader(member1)
                 .maxTeamSize(4)
-<<<<<<< HEAD
-=======
                 .colorScheme("red")
->>>>>>> refactor/87
                 .build();
         teamRepository.save(team);
 
         // Setup teamMember
-<<<<<<< HEAD
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, member1);
-=======
         addMemberToTeam(team, member1);
     }
 
@@ -119,7 +90,6 @@ class TeamCommandServiceTest {
                 .build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
->>>>>>> refactor/87
     }
 
 
