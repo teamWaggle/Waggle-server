@@ -1,6 +1,5 @@
 package com.example.waggle.domain.schedule.repository;
 
-
 import com.example.waggle.domain.schedule.entity.Schedule;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;

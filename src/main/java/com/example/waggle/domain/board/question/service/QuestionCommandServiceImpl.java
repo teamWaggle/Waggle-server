@@ -113,7 +113,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         questionRepository.delete(question);
     }
-
     private Question buildQuestion(QuestionRequest.Post request) {
         Member member = memberQueryService.getSignInMember();
 

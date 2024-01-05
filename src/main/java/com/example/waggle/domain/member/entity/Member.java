@@ -50,7 +50,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 

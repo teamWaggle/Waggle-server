@@ -2548,6 +2548,7 @@
 1702468955893|0|statement|connection 254|url jdbc:h2:mem:595783ca-457e-43bc-8279-e013462ba74b|drop sequence if exists reply_seq|drop sequence if exists reply_seq
 1702468955893|0|statement|connection 254|url jdbc:h2:mem:595783ca-457e-43bc-8279-e013462ba74b|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
 1702468955894|0|statement|connection 254|url jdbc:h2:mem:595783ca-457e-43bc-8279-e013462ba74b|drop sequence if exists team_seq|drop sequence if exists team_seq
+<<<<<<< HEAD
 1704197758442|0|statement|connection 251|url jdbc:h2:mem:c12ec953-867d-4394-a70a-f192b1111a9c|drop table if exists answer cascade |drop table if exists answer cascade 
 1704197758444|1|statement|connection 251|url jdbc:h2:mem:c12ec953-867d-4394-a70a-f192b1111a9c|drop table if exists board cascade |drop table if exists board cascade 
 1704197758445|0|statement|connection 251|url jdbc:h2:mem:c12ec953-867d-4394-a70a-f192b1111a9c|drop table if exists board_hashtag cascade |drop table if exists board_hashtag cascade 
@@ -2680,3 +2681,5 @@
 1704472250289|0|statement|connection 251|url jdbc:h2:mem:01c4e850-0150-4e17-b9fc-875654c9e477|drop sequence if exists reply_seq|drop sequence if exists reply_seq
 1704472250289|0|statement|connection 251|url jdbc:h2:mem:01c4e850-0150-4e17-b9fc-875654c9e477|drop sequence if exists team_member_seq|drop sequence if exists team_member_seq
 1704472250289|0|statement|connection 251|url jdbc:h2:mem:01c4e850-0150-4e17-b9fc-875654c9e477|drop sequence if exists team_seq|drop sequence if exists team_seq
+=======
+>>>>>>> develop

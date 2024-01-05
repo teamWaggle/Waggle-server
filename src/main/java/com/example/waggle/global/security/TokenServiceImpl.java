@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-
 @Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -34,7 +33,6 @@ public class TokenServiceImpl implements TokenService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisService redisService;
     private final MemberQueryService memberQueryService;
-
 
     public TokenServiceImpl(@Value("${app.jwt.secret}") String key,
                             AuthenticationManagerBuilder authenticationManagerBuilder,
@@ -91,6 +89,7 @@ public class TokenServiceImpl implements TokenService {
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + 1800000);   // 30분
+        log.info("date = {}", accessTokenExpiresIn);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)

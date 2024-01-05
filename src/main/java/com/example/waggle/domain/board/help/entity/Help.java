@@ -47,5 +47,4 @@ public class Help extends Board {
     public enum Category {
         FIND_PET, FIND_OWNER, PROTECT, ETC
     }
-
 }

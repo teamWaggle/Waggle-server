@@ -44,6 +44,7 @@ public class StoryConverter {
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(story))
+
                 .build();
     }
 }

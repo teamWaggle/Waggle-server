@@ -37,6 +37,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     public boolean isAuthenticated() {
+        log.info("username = {}", SecurityUtil.getCurrentUsername());
         if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
             return false;
         }

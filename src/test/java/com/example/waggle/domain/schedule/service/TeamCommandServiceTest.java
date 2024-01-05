@@ -1,6 +1,5 @@
 package com.example.waggle.domain.schedule.service;
 
-
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.Participation;

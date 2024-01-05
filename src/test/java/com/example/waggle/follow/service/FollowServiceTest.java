@@ -42,6 +42,12 @@ public class FollowServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
+
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
+
     void setUp() {
         signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
