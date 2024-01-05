@@ -3,6 +3,7 @@ spring:
     include:
       - security
       - real-db
+      - s3
   jpa:
     properties:
       hibernate:

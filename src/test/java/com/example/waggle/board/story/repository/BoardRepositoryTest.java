@@ -5,6 +5,8 @@ import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,13 +24,17 @@ class BoardRepositoryTest {
     HashtagRepository hashtagRepository;
     @Autowired
     StoryRepository storyRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
 
     @Test
     @Transactional
     void test() {
+        Member member = Member.builder().email("34567").nickname("234289").username("238387384").password("78y93284").build();
+        memberRepository.save(member);
 
-        Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
+        Story testStory = Story.builder().content("Board test Repository").member(member).build();
 
         Hashtag hashtag1 = Hashtag.builder().content("trip").build();
         Hashtag hashtag2 = Hashtag.builder().content("vacation").build();
@@ -56,7 +62,7 @@ class BoardRepositoryTest {
     @Transactional
     void testFindByHashtag() {
 
-        Story testStory = Story.builder().thumbnail("@hann").content("Board test Repository").build();
+        Story testStory = Story.builder().content("Board test Repository").build();
         storyRepository.save(testStory);
 
 

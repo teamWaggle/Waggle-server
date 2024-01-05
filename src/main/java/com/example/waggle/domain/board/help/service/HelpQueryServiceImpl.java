@@ -17,14 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class HelpQueryServiceImpl implements HelpQueryService{
+public class HelpQueryServiceImpl implements HelpQueryService {
 
     private final HelpRepository helpRepository;
 
     @Override
     public List<Help> getAllHelp() {
         List<Help> all = helpRepository.findAll();
-        log.info("all size is ={}",all.size());
         return all;
     }
 

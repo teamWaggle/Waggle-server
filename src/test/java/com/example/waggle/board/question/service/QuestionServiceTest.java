@@ -10,6 +10,7 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -43,12 +44,12 @@ class QuestionServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
 
     QuestionRequest.Post questionWriteDto1;
     QuestionRequest.Post questionWriteDto2;
-    QuestionRequest.Post questionEditDto1;
+    QuestionRequest.Put questionEditDto1;
     AnswerRequest.Post answerWriteDto1;
     AnswerRequest.Post answerWriteDto2;
     AnswerRequest.Post answerEditDto1;
@@ -56,8 +57,6 @@ class QuestionServiceTest {
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
-    List<String> medias1 = new ArrayList<>();
-    List<String> medias2 = new ArrayList<>();
 
     Pageable pageable = PageRequest.of(0, 2);
 
@@ -68,12 +67,7 @@ class QuestionServiceTest {
         tags1.add("poodle");
         tags2.add("poodle");
 
-        medias1.add("media1");
-        medias1.add("mediamedia1");
-        medias2.add("media2");
-        medias2.add("mediamedia2");
-
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -82,7 +76,7 @@ class QuestionServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -94,7 +88,6 @@ class QuestionServiceTest {
         questionWriteDto1 = QuestionRequest.Post.builder()
                 .title("question1")
                 .content("I have a question")
-                .medias(medias1)
                 .hashtags(tags1)
                 .status(Question.Status.UNRESOLVED)
                 .build();
@@ -103,16 +96,16 @@ class QuestionServiceTest {
         questionWriteDto2 = QuestionRequest.Post.builder()
                 .title("question2")
                 .content("I have a question!")
-                .medias(medias2)
                 .hashtags(tags2)
                 .status(Question.Status.UNRESOLVED)
                 .build();
 
-        questionEditDto1 = QuestionRequest.Post.builder()
+
+        questionEditDto1 = QuestionRequest.Put.builder()
                 .title("EditQuestion")
                 .content("I wanna know that what it is")
-                .medias(medias2)
                 .hashtags(tags2)
+                .username("member1")
                 .status(Question.Status.UNRESOLVED)
                 .build();
 
@@ -181,7 +174,7 @@ class QuestionServiceTest {
         //when
         Page<Question> pagedQuestions = questionQueryService.getPagedQuestions(pageable);
         Long aLong = questionCommandService
-                .updateQuestion(pagedQuestions.getContent().get(0).getId(), questionEditDto1, null, null);
+                .updateQuestionV2(pagedQuestions.getContent().get(0).getId(), questionEditDto1, new MediaRequest.Put(), null);
         //then
         Question question = questionQueryService.getQuestionByBoardId(aLong);
         assertThat(question.getTitle()).isEqualTo("EditQuestion");
@@ -227,8 +220,9 @@ class QuestionServiceTest {
         //when
         List<Answer> answers = answerQueryService.getAnswersByQuestion(allQuestion.get(0).getId());
         answerService.deleteAnswer(answers.get(0).getId());
-        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(allQuestion.get(0).getId(),pageable);
+        Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(allQuestion.get(0).getId(), pageable);
         //then
         assertThat(pagedAnswers.getContent().size()).isEqualTo(1);
     }
+
 }

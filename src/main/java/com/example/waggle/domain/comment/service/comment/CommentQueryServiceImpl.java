@@ -18,8 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class CommentQueryServiceImpl implements CommentQueryService{
+public class CommentQueryServiceImpl implements CommentQueryService {
     private final CommentRepository commentRepository;
+
     @Override
     public List<Comment> getComments(Long boardId) {
         return commentRepository.findByBoardId(boardId);

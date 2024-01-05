@@ -37,7 +37,7 @@ public class PetCommandServiceImpl implements PetCommandService {
     public void createPets(List<PetRequest.Post> petList, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        petList.stream().forEach(pet -> petRepository.save(buildPet(pet,member)));
+        petList.stream().forEach(pet -> petRepository.save(buildPet(pet, member)));
     }
 
     @Override

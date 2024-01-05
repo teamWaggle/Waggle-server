@@ -46,7 +46,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             throw new RuntimeException("Email not found from OAuth2 provider");
         }
 
-        log.info("member save!");
         Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
         Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
         //이미 가입된 경우
@@ -56,7 +55,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private Member registerMember(AuthProvider authProvider, OAuth2UserInfo oAuth2UserInfo) {
-        log.info("register Member using OAuth2");
         Member register = Member.builder()
                 .email(oAuth2UserInfo.getEmail())
                 .username(oAuth2UserInfo.getOAuth2Id())

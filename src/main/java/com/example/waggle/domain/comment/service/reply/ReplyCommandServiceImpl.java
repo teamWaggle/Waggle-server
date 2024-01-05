@@ -28,7 +28,6 @@ import java.util.List;
 public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private final MemberRepository memberRepository;
-
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final MemberQueryService memberQueryService;
@@ -74,11 +73,11 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private void addMentionsToReply(Reply reply, List<String> mentions) {
         mentions.stream().forEach(m -> {
-            Member member = memberRepository.findByUsername(m)
-                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));        //TODO 하나라도 not found -> error?
-            Mention build = Mention.builder().reply(reply).member(member).build();
-            reply.addMention(build);    //save -> cascade.persist
-        }
+                    Member member = memberRepository.findByUsername(m)
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));        //TODO 하나라도 not found -> error?
+                    Mention build = Mention.builder().reply(reply).member(member).build();
+                    reply.addMention(build);    //save -> cascade.persist
+                }
         );
     }
 

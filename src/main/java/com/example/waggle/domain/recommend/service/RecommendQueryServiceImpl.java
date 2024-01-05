@@ -1,10 +1,11 @@
 package com.example.waggle.domain.recommend.service;
 
+import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.global.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class RecommendQueryServiceImpl implements RecommendQueryService{
+public class RecommendQueryServiceImpl implements RecommendQueryService {
 
     private final BoardService boardService;
     private final RecommendRepository recommendRepository;
@@ -25,7 +26,11 @@ public class RecommendQueryServiceImpl implements RecommendQueryService{
 
     @Override
     public boolean checkRecommend(Long boardId, String boardWriter) {
-        Member signInMember = memberQueryService.getSignInMember();
+        if (!memberQueryService.isAuthenticated()) {
+            return false;
+        }
+        Member signInMember = memberQueryService.getMemberByUsername(SecurityUtil.getCurrentUsername());
+
         boolean recommendIt = false;
         //(login user == board writer) checking
         if (!signInMember.getUsername()
@@ -46,5 +51,4 @@ public class RecommendQueryServiceImpl implements RecommendQueryService{
         List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
         return byBoardId.stream().map(r -> r.getMember()).collect(Collectors.toList());
     }
-
 }

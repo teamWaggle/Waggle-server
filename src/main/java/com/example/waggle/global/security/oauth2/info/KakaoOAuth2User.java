@@ -20,8 +20,4 @@ public class KakaoOAuth2User extends OAuth2UserInfo{
         return (String) attributes.get("email");
     }
 
-    @Override
-    public String getName() {
-        return (String) ((Map<String, Object>) attributes.get("profile")).get("nickname");
-    }
 }

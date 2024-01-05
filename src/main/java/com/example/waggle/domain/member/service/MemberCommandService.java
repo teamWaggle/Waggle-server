@@ -5,9 +5,9 @@ import com.example.waggle.web.dto.member.VerifyMailRequest;
 
 public interface MemberCommandService {
 
-    Long signUp(MemberRequest.RegisterRequestDto request);
+    Long signUp(MemberRequest.RegisterDto request);
 
-    Long updateMemberInfo(MemberRequest.PutDto request);
+    Long updateMemberInfo(MemberRequest.Put request);
 
     void deleteMember();
 

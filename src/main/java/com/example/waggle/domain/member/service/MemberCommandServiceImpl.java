@@ -22,8 +22,6 @@ import java.util.List;
 @Service
 public class MemberCommandServiceImpl implements MemberCommandService {
 
-//    private static final String DEFAULT_ROLE = "USER";
-
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberQueryService memberQueryService;
@@ -32,14 +30,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(MemberRequest.RegisterRequestDto request) {
+    public Long signUp(MemberRequest.RegisterDto request) {
         if (memberRepository.existsByUsername(request.getUsername())) {
             throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
         }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-
-//        List<String> roles = new ArrayList<>();
-//        roles.add(DEFAULT_ROLE);
 
         Member createdMember = Member.builder()
                 .username(request.getUsername())
@@ -49,6 +44,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .address(request.getAddress())
                 .email(request.getEmail())
                 .phone(request.getPhone())
+                .profileImgUrl(request.getProfileImg())
                 .role(Role.USER)
                 .build();
 
@@ -57,10 +53,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return member.getId();
     }
 
+
     @Override
-    public Long updateMemberInfo(MemberRequest.PutDto request) {
+    public Long updateMemberInfo(MemberRequest.Put request) {
         Member member = memberQueryService.getSignInMember();
-        member.updateInfo(request);
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        member.updateInfo(request, encodedPassword);
         return member.getId();
     }
 
@@ -78,5 +76,4 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
         }
     }
-
 }

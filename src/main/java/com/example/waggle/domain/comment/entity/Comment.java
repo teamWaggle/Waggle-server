@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;

@@ -1,5 +1,6 @@
 package com.example.waggle.comment.service;
 
+import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
@@ -8,7 +9,6 @@ import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.comment.service.comment.CommentQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -44,8 +44,8 @@ class CommentServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
 
 
     StoryRequest.Post storyWriteDto1;
@@ -71,7 +71,7 @@ class CommentServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -80,7 +80,7 @@ class CommentServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -93,14 +93,12 @@ class CommentServiceTest {
                 .content("i love my choco")
                 .hashtags(tags1)
                 .medias(medias1)
-                .thumbnail("www.waggle")
                 .build();
 
         storyWriteDto2 = StoryRequest.Post.builder()
                 .content("how can i do make he is happy?")
                 .hashtags(tags2)
                 .medias(medias2)
-                .thumbnail("www.waggle")
                 .build();
 
         commentWriteDto1 = CommentRequest.Post.builder()
@@ -113,6 +111,7 @@ class CommentServiceTest {
 
 
     }
+
     @AfterEach
     void clean() {
         databaseCleanUp.truncateAllEntity();
