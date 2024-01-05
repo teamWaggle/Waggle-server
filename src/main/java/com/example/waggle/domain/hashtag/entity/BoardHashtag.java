@@ -1,7 +1,7 @@
 package com.example.waggle.domain.hashtag.entity;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -31,10 +31,16 @@ public class FollowServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    MemberRequest.RegisterRequestDto signUpDto1;
-    MemberRequest.RegisterRequestDto signUpDto2;
-    MemberRequest.RegisterRequestDto signUpDto3;
-    MemberRequest.RegisterRequestDto signUpDto4;
+    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.RegisterDto signUpDto2;
+    MemberRequest.RegisterDto signUpDto3;
+    MemberRequest.RegisterDto signUpDto4;
+
+
+    @AfterEach
+    void afterEach() {
+        databaseCleanUp.truncateAllEntity();
+    }
 
 
     @AfterEach
@@ -43,7 +49,7 @@ public class FollowServiceTest {
     }
 
     void setUp() {
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -52,7 +58,7 @@ public class FollowServiceTest {
                 .email("wjdgks3264@naver.com")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -61,7 +67,7 @@ public class FollowServiceTest {
                 .email("wjdgks2972@naver.com")
                 .build();
 
-        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto3 = MemberRequest.RegisterDto.builder()
                 .username("member3")
                 .password("12345678")
                 .nickname("닉네임3")
@@ -70,7 +76,7 @@ public class FollowServiceTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto4 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto4 = MemberRequest.RegisterDto.builder()
                 .username("member4")
                 .password("12345678")
                 .nickname("닉네임4")

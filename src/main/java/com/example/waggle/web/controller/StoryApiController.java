@@ -3,10 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.StoryConverter;
+import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,15 +34,14 @@ public class StoryApiController {
     private final StoryCommandService storyCommandService;
     private final StoryQueryService storyQueryService;
     private final RecommendQueryService recommendQueryService;
-    private final AwsS3Service awsS3Service;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "스토리 작성", description = "사용자가 스토리를 작성합니다. 작성한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "스토리 작성 성공. 작성한 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
-                                            @RequestPart List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         Long boardId = storyCommandService.createStory(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -49,12 +49,12 @@ public class StoryApiController {
     @Operation(summary = "스토리 수정", description = "사용자가 스토리를 수정합니다. 수정한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "스토리 수정 성공. 수정한 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다.")
-    @PutMapping("/{boardId}")
+    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateStory(@PathVariable Long boardId,
-                                            @ModelAttribute StoryRequest.Post storyWriteDto,
-                                            @RequestPart List<MultipartFile> multipartFiles,
-                                            @RequestPart List<String> deleteFiles) throws IOException {
-        storyCommandService.updateStory(boardId, storyWriteDto, multipartFiles, deleteFiles);
+                                            @RequestPart StoryRequest.Put storyUpdateDto,
+                                            @RequestPart MediaRequest.Put mediaUpdateDto,
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        storyCommandService.updateStoryV2(boardId, storyUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -67,8 +67,8 @@ public class StoryApiController {
         Page<Story> pagedStories = storyQueryService.getPagedStories(pageable);
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
         listDto.getStoryList().stream()
-                .forEach(s->{
-                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(),s.getUsername()));
+                .forEach(s -> {
+                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
                     s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -84,8 +84,8 @@ public class StoryApiController {
         Page<Story> pagedStories = storyQueryService.getPagedStoriesByUsername(username, pageable);
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
         listDto.getStoryList().stream()
-                .forEach(s->{
-                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(),s.getUsername()));
+                .forEach(s -> {
+                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
                     s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);

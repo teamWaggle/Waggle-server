@@ -40,6 +40,9 @@ out/
 application-security.yml
 application-s3.yml
 
+### S3 ###
+application-s3.yml
+
 ### DB ###
 application-real-db.yml
 

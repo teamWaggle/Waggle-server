@@ -4,6 +4,7 @@ import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Member;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,12 @@ public class Recommend extends BaseEntity {
     @Column(name = "like_id")
     private Long id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;

@@ -12,13 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class AnswerQueryServiceImpl implements AnswerQueryService{
+public class AnswerQueryServiceImpl implements AnswerQueryService {
 
     private final AnswerRepository answerRepository;
+
     @Override
     public Page<Answer> getPagedAnswerByUsername(String username, Pageable pageable) {
         return answerRepository.findPagedAnswerByMemberUsername(username, pageable);
@@ -27,12 +29,12 @@ public class AnswerQueryServiceImpl implements AnswerQueryService{
     @Override
     public Answer getAnswerByBoardId(Long boardId) {
         return answerRepository.findById(boardId)
-                .orElseThrow(()->new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
 
     @Override
     public Page<Answer> getPagedAnswers(Long questionId, Pageable pageable) {
-        return answerRepository.findByQuestionId(questionId,pageable);
+        return answerRepository.findByQuestionId(questionId, pageable);
     }
 
     @Override
@@ -40,8 +42,4 @@ public class AnswerQueryServiceImpl implements AnswerQueryService{
         return answerRepository.findAnswerByQuestionId(questionId);
     }
 
-//    @Override
-//    public List<Answer> getAnswers(Long questionId) {
-//        return
-//    }
 }

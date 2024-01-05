@@ -37,17 +37,18 @@ class MemberServiceImplTest {
     @LocalServerPort
     int randomServerPort;
 
-    private MemberRequest.RegisterRequestDto signUpDto1;
-    private MemberRequest.RegisterRequestDto signUpDto2;
-    private MemberRequest.RegisterRequestDto signUpDto3;
 
-    private MemberRequest.PutDto updateDto;
+    private MemberRequest.RegisterDto signUpDto1;
+    private MemberRequest.RegisterDto signUpDto2;
+    private MemberRequest.RegisterDto signUpDto3;
+
+    private MemberRequest.Put updateDto;
 
 
     @BeforeEach
     void beforeEach() {
         // Member 회원가입
-        signUpDto1 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임1")
@@ -56,7 +57,8 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterRequestDto.builder()
+
+        signUpDto2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .nickname("닉네임2")
@@ -65,7 +67,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        signUpDto3 = MemberRequest.RegisterRequestDto.builder()
+        signUpDto3 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임3")
@@ -74,7 +76,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        updateDto = MemberRequest.PutDto.builder()
+        updateDto = MemberRequest.Put.builder()
                 .password("34567898765")
                 .nickname("hann.o_i")
                 .build();
@@ -108,7 +110,7 @@ class MemberServiceImplTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
-        MemberRequest.LoginRequestDto signInDto = MemberRequest.LoginRequestDto.builder()
+        MemberRequest.LoginDto signInDto = MemberRequest.LoginDto.builder()
                 .username("member1")
                 .password("12345678").build();
 

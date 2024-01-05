@@ -35,6 +35,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         throw new MemberHandler(ErrorStatus.MEMBER_REFRESH_TOKEN_NOT_FOUND);
     }
 
+    @Override
     public boolean isAuthenticated() {
         log.info("username = {}", SecurityUtil.getCurrentUsername());
         if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {

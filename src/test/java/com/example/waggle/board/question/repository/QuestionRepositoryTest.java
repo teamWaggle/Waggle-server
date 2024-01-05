@@ -103,7 +103,6 @@ class QuestionRepositoryTest {
         answerRepository.save(answer3);
 
 
-
         // then
         Pageable pageable = PageRequest.of(0, 3);
         Page<Question> questionByUsername = questionRepository

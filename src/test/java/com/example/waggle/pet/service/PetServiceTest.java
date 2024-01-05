@@ -29,8 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Slf4j
 class PetServiceTest {
-    @Autowired DatabaseCleanUp databaseCleanUp;
-    @Autowired PetRepository petRepository;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
+    @Autowired
+    PetRepository petRepository;
 
     @Autowired
     MemberCommandService memberCommandService;
@@ -41,13 +43,14 @@ class PetServiceTest {
     @Autowired
     PetQueryService petQueryService;
 
-    private MemberResponse.MemberSummaryDto memberSummaryDto;
+
+    private MemberResponse.SummaryDto memberSummaryDto;
     private Long savedPetId;
 
     @BeforeEach
     void beforeEach() {
         // member 저장
-        MemberRequest.RegisterRequestDto signUpDto = MemberRequest.RegisterRequestDto.builder()
+        MemberRequest.RegisterDto signUpDto = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .nickname("닉네임")

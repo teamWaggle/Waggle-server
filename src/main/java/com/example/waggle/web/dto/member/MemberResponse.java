@@ -15,7 +15,7 @@ public class MemberResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberSummaryDto {
+    public static class SummaryDto {
         private String username;
         private String nickname;
         private String profileImgUrl;
@@ -27,7 +27,7 @@ public class MemberResponse {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberDetailDto {
+    public static class DetailDto {
         private Long id;
         private String username;
         private String nickname;

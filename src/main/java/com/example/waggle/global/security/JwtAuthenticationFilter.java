@@ -2,17 +2,16 @@ package com.example.waggle.global.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,13 +19,12 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         // HttpServletRequest에서 JWT 토큰 추출
         HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
 
@@ -46,8 +44,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             Authentication authentication = tokenService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("username", authentication.getName());
-            log.info("set Authentication to security context for '{}', uri: '{}'", authentication.getName(),
-                    ((HttpServletRequest) request).getRequestURI());
+            log.info("set Authentication to security context for '{}', uri: '{}', Role '{}'",
+                    authentication.getName(), ((HttpServletRequest) request).getRequestURI(), authentication.getAuthorities());
         } else {
             log.info("no valid JWT token found, uri: {}", ((HttpServletRequest) request).getRequestURI());
         }
