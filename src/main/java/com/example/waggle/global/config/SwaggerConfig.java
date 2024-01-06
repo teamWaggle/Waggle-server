@@ -29,15 +29,15 @@ public class SwaggerConfig {
                 .description("API Description");
 
         // SecuritySecheme명
-        String jwtSchemeName = "jwtAuth";
+        String jwtSchemeName = "access_token";
         // API 요청헤더에 인증정보 포함
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         // SecuritySchemes 등록
         Components components = new Components()
                 .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
                         .name(jwtSchemeName)
-                        .type(SecurityScheme.Type.HTTP) // HTTP 방식
-                        .scheme("bearer")
+                        .type(SecurityScheme.Type.APIKEY) // HTTP 방식
+//                        .scheme("bearer")
                         .in(SecurityScheme.In.COOKIE)
                         .bearerFormat("JWT")); // 토큰 형식을 지정하는 임의의 문자(Optional)
 
