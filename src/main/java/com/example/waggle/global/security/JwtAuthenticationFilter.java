@@ -30,13 +30,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = httpServletRequest.getRequestURI();
         String token = null;
-        if (httpServletRequest.getCookies() != null) {
-            token = Arrays.stream(httpServletRequest.getCookies())
-                    .filter(cookie -> cookie.getName().equals("access_token"))
-                    .findFirst().map(Cookie::getValue)
-                    .orElse(null);
-        }
-        log.info("token = {}", token);
+//        if (httpServletRequest.getCookies() != null) {
+//            token = Arrays.stream(httpServletRequest.getCookies())
+//                    .filter(cookie -> cookie.getName().equals("access_token"))
+//                    .findFirst().map(Cookie::getValue)
+//                    .orElse(null);
+//        }
+//        log.info("token = {}", token);
+        token = resolveToken(request);
 
         // 2. validateToken으로 토큰 유효성 검사
         if (token != null && tokenService.validateToken(token)) {
