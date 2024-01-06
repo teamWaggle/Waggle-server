@@ -41,3 +41,4 @@ server:
     whitelabel.enabled: true
 
 springdoc:
+  use-fqn: true
