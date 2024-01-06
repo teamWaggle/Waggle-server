@@ -29,7 +29,7 @@ public class SwaggerConfig {
                 .description("API Description");
 
         // SecuritySecheme명
-        String jwtSchemeName = "jwtAuth";
+        String jwtSchemeName = "access_token";
         // API 요청헤더에 인증정보 포함
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         // SecuritySchemes 등록
