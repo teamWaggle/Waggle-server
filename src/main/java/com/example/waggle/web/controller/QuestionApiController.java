@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +40,7 @@ public class QuestionApiController {
     @Operation(summary = "질문 작성", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "질문 작성 성공. 작성한 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createQuestion(@RequestPart QuestionRequest.Post request,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         Long boardId = questionCommandService.createQuestion(request, multipartFiles);
@@ -49,7 +50,7 @@ public class QuestionApiController {
     @Operation(summary = "질문 수정", description = "사용자가 질문 수정합니다. 수정한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "질문 수정 성공. 수정한 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 수정에 실패했습니다.")
-    @PutMapping("/{boardId}")
+    @PutMapping(value = "/{boardId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
                                                @RequestPart QuestionRequest.Put questionUpdateDto,
                                                @RequestPart MediaRequest.Put mediaUpdateDto,
