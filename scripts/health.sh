@@ -19,7 +19,7 @@ do
   # 현재 문제 없이 잘 실행되고 있는 요청을 보내봅니다.
   RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
   # 해당 결과의 줄 수를 숫자로 리턴합니다.
-  UP_COUNT=$(echo ${RESPONSE} | grep 'set' | wc -l)
+  UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
   then # $up_count >= 1 ("set" 문자열이 있는지 검증)
