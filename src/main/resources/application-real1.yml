@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    include:
+      - security
+      - real-db
+      - s3
+      - real

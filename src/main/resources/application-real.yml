@@ -1,9 +1,9 @@
 spring:
-  profiles:
-    include:
-      - security
-      - real-db
-      - s3
+#  profiles:
+#    include:
+#      - security
+#      - real-db
+#      - s3
   jpa:
     properties:
       hibernate:
