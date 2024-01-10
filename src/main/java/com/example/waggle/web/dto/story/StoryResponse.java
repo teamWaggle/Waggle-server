@@ -20,7 +20,7 @@ public class StoryResponse {
         private String profileImg;
         private String createdDate;
         private int recommendCount;
-        private boolean recommendIt;
+        private boolean isRecommend;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
@@ -42,7 +42,7 @@ public class StoryResponse {
         private String createdDate;
         private String thumbnail;
         private int recommendCount;
-        private boolean recommendIt;
+        private boolean isRecommend;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 

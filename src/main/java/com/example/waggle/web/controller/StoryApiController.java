@@ -68,7 +68,7 @@ public class StoryApiController {
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
         listDto.getStoryList().stream()
                 .forEach(s -> {
-                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
+                    s.setRecommend(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
                     s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -85,7 +85,7 @@ public class StoryApiController {
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
         listDto.getStoryList().stream()
                 .forEach(s -> {
-                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
+                    s.setRecommend(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
                     s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -98,7 +98,7 @@ public class StoryApiController {
     public ApiResponseDto<StoryResponse.DetailDto> getStoryByBoardId(@PathVariable Long boardId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
         StoryResponse.DetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
-        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

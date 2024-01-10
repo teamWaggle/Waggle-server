@@ -70,7 +70,7 @@ public class HelpApiController {
         HelpResponse.ListDto listDto = HelpConverter.toListDto(pagedHelpList);
         listDto.getHelpList().stream()
                 .forEach(h -> {
-                    h.setRecommendIt(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
+                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -87,7 +87,7 @@ public class HelpApiController {
         HelpResponse.ListDto listDto = HelpConverter.toListDto(pagedHelpList);
         listDto.getHelpList().stream()
                 .forEach(h -> {
-                    h.setRecommendIt(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
+                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -100,7 +100,7 @@ public class HelpApiController {
     public ApiResponseDto<HelpResponse.DetailDto> getHelpByBoardId(@PathVariable Long boardId) {
         Help help = helpQueryService.getHelpByBoardId(boardId);
         HelpResponse.DetailDto detailDto = HelpConverter.toDetailDto(help);
-        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

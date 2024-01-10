@@ -20,7 +20,7 @@ public class AnswerResponse {
         private String profileImg;
         private LocalDateTime createDate;
         private int recommendCount;
-        private boolean recommendIt;
+        private boolean isRecommend;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();

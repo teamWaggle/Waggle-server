@@ -73,7 +73,7 @@ public class AnswerApiController {
         //recommend relation field
         listDto.getAnswerList().stream()
                 .forEach(a -> {
-                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
+                    a.setRecommend(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -91,7 +91,7 @@ public class AnswerApiController {
 
         listDto.getAnswerList().stream()
                 .forEach(a -> {
-                    a.setRecommendIt(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
+                    a.setRecommend(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);

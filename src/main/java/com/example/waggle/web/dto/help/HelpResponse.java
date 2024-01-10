@@ -22,7 +22,7 @@ public class HelpResponse {
         private String thumbnail;
         private LocalDateTime lostDate;
         private String lostLocate;
-        private boolean recommendIt;
+        private boolean isRecommend;
         private int recommendCount;
         private Category category;
 
@@ -55,7 +55,7 @@ public class HelpResponse {
         private String username;
         private String profileImg;
 
-        private boolean recommendIt;
+        private boolean isRecommend;
         private int recommendCount;
     }
 
