@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
@@ -55,6 +56,7 @@ public class QuestionApiController {
                                                @RequestPart QuestionRequest.Put questionUpdateDto,
                                                @RequestPart MediaRequest.Put mediaUpdateDto,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        mediaUpdateDto.getMediaList().forEach(media -> MediaUtil.removePrefix(media.getImageUrl()));
         questionCommandService.updateQuestionV2(boardId, questionUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }

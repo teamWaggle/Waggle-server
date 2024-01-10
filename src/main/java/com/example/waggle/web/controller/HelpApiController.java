@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.help.service.HelpCommandService;
 import com.example.waggle.domain.board.help.service.HelpQueryService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.HelpConverter;
 import com.example.waggle.web.dto.help.HelpRequest;
 import com.example.waggle.web.dto.help.HelpResponse;
@@ -56,6 +57,7 @@ public class HelpApiController {
                                            @RequestPart HelpRequest.Put helpUpdateDto,
                                            @RequestPart MediaRequest.Put mediaUpdateDto,
                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        mediaUpdateDto.getMediaList().forEach(media -> MediaUtil.removePrefix(media.getImageUrl()));
         helpCommandService.updateHelpV2(boardId, helpUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }

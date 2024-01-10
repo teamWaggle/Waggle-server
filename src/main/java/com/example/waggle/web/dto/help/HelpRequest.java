@@ -5,6 +5,8 @@ import com.example.waggle.domain.member.entity.Gender;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HelpRequest {
     @Getter
@@ -44,5 +46,8 @@ public class HelpRequest {
         private String content;
         private String username;
         private Category category;
+
+        @Builder.Default
+        private List<String> medias = new ArrayList<>();
     }
 }

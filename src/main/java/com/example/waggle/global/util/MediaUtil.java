@@ -3,6 +3,8 @@ package com.example.waggle.global.util;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.exception.handler.MediaHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,11 +14,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MediaUtil {
 
-    private static String SERVER_URI = "https://waggle-bucket.s3.ap-northeast-2.amazonaws.com";
+    private static String SERVER_URI = "https://waggle-bucket.s3.ap-northeast-2.amazonaws.com/";
 
     public static String appendUri(String s3URI) {
         StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
-        return stringBuffer.append("/").append(s3URI).toString();
+        return stringBuffer.append(s3URI).toString();
     }
 
     public static String getProfile(Member member) {
@@ -45,4 +47,13 @@ public class MediaUtil {
                 .map(media -> appendUri(media.getUploadFile())).collect(Collectors.toList());
     }
 
+    public static void removePrefix(String url) {
+        if (url != null) {
+            if (url.startsWith(SERVER_URI)) {
+                url.substring(SERVER_URI.length());
+            }else{
+                throw new MediaHandler(ErrorStatus.MEDIA_PREFIX_IS_WRONG);
+            }
+        }
+    }
 }
