@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .address(request.getAddress())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .profileImgUrl(request.getProfileImg())
-                .role(Role.USER)
+                .role(Role.GUEST)
                 .build();
 
         Member member = memberRepository.save(createdMember);
@@ -57,10 +57,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Long updateMemberInfo(MemberRequest.Put request) {
         Member member = memberQueryService.getSignInMember();
+        //첫 회원가입 후에 나올 수정 페이지에서 guest -> user로 변경
+        if (member.getRole().getKey() == "GUEST") {
+            member.changeRole(Role.USER);
+        }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         member.updateInfo(request, encodedPassword);
         return member.getId();
     }
+
 
     @Override
     public void deleteMember() {

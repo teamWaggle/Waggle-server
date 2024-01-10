@@ -34,14 +34,7 @@ public class MediaUtil {
     }
 
     public static String saveProfileImg(MultipartFile file, AwsS3Service awsS3Service) {
-        String url = null;
-        if (!file.isEmpty()) {
-            String profileImg = awsS3Service.uploadFile(file);
-            StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
-            StringBuffer save = stringBuffer.append("/").append(profileImg);
-            url = save.toString();
-        }
-        return url;
+        return (file != null && !file.isEmpty())? awsS3Service.uploadFile(file) : null;
     }
 
     public static List<String> getBoardMedias(Board board) {
