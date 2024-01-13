@@ -39,7 +39,7 @@ public class AnswerResponse {
     public static class ListDto {
         @Builder.Default
         private List<AnswerResponse.ViewDto> AnswerList = new ArrayList<>();
-        private long totalAnswer;
+        private long totalAnswers;
         private boolean isFirst;
         private boolean isLast;
     }

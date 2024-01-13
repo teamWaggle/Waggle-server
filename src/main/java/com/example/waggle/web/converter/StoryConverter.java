@@ -28,7 +28,7 @@ public class StoryConverter {
                 .map(StoryConverter::toSummaryDto).collect(Collectors.toList());
         return StoryResponse.ListDto.builder()
                 .storyList(stories)
-                .totalQuestions(storyPage.getTotalElements())
+                .totalStories(storyPage.getTotalElements())
                 .isFirst(storyPage.isFirst())
                 .isLast(storyPage.isLast())
                 .build();

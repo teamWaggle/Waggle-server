@@ -47,6 +47,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .address(request.getAddress())
                 .email(request.getEmail())
                 .phone(request.getPhone())
+                .profileImgUrl(request.getProfileImgUrl())
                 .role(Role.GUEST)
                 .build();
 

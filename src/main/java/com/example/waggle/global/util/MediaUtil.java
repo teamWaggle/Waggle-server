@@ -47,13 +47,15 @@ public class MediaUtil {
                 .map(media -> appendUri(media.getUploadFile())).collect(Collectors.toList());
     }
 
-    public static void removePrefix(String url) {
+    public static String removePrefix(String url) {
+        String subPrefixUrl = null;
         if (url != null) {
             if (url.startsWith(SERVER_URI)) {
-                url.substring(SERVER_URI.length());
+                subPrefixUrl = url.substring(SERVER_URI.length());
             }else{
                 throw new MediaHandler(ErrorStatus.MEDIA_PREFIX_IS_WRONG);
             }
         }
+        return subPrefixUrl;
     }
 }

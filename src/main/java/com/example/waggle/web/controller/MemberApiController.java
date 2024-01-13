@@ -38,8 +38,10 @@ public class MemberApiController {
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
-    @PostMapping
-    public ApiResponseDto<Long> register(@RequestBody MemberRequest.RegisterDto request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> register(@RequestPart MemberRequest.RegisterDto request,
+                                         @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile,awsS3Service));
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }

@@ -45,6 +45,7 @@ public class MemberRequest {
         private String address;
         @NotBlank(message = "전화번호를 입력해주세요", groups = ValidationGroups.NotEmpty.class)
         private String phone;
+        private String profileImgUrl;
 
 //        @Builder.Default
 //        private List<PetDto> pets = new ArrayList<>();

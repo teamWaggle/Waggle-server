@@ -55,7 +55,7 @@ public class StoryResponse {
     public static class ListDto {
         @Builder.Default
         private List<StoryResponse.SummaryDto> storyList = new ArrayList<>();
-        private long totalQuestions;
+        private long totalStories;
         private boolean isFirst;
         private boolean isLast;
 

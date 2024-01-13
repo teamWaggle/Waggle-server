@@ -59,7 +59,7 @@ public class AnswerApiController {
                                              @RequestPart AnswerRequest.Put answerUpdateDto,
                                              @RequestPart MediaRequest.Put mediaUpdateDto,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
-        mediaUpdateDto.getMediaList().forEach(media -> MediaUtil.removePrefix(media.getImageUrl()));
+        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         answerCommandService.updateAnswerV2(boardId, answerUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
