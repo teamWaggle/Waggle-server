@@ -70,7 +70,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedHelpList = helpQueryService.getPagedSirenList(pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedHelpList);
-        listDto.getHelpList().stream()
+        listDto.getSirenList().stream()
                 .forEach(h -> {
                     h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
@@ -87,7 +87,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedHelpList = helpQueryService.getPagedSirenListByUsername(username, pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedHelpList);
-        listDto.getHelpList().stream()
+        listDto.getSirenList().stream()
                 .forEach(h -> {
                     h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));

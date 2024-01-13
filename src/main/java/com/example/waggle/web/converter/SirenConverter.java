@@ -27,10 +27,10 @@ public class SirenConverter {
         List<SirenResponse.SummaryDto> collect = pagedSiren.stream()
                 .map(SirenConverter::toSummaryDto).collect(Collectors.toList());
         return SirenResponse.ListDto.builder()
-                .helpList(collect)
+                .sirenList(collect)
                 .isFirst(pagedSiren.isFirst())
                 .isLast(pagedSiren.isLast())
-                .totalHelps(pagedSiren.getTotalElements())
+                .totalSirens(pagedSiren.getTotalElements())
                 .build();
     }
 
