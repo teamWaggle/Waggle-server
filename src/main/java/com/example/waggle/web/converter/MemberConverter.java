@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.member.MemberResponse;
 
 public class MemberConverter {
@@ -9,7 +10,7 @@ public class MemberConverter {
         return MemberResponse.SummaryDto.builder()
                 .username(member.getUsername())
                 .nickname(member.getNickname())
-                .profileImgUrl(member.getProfileImgUrl()).build();
+                .profileImgUrl(MediaUtil.getProfile(member)).build();
     }
 
     public static MemberResponse.DetailDto toMemberDetailDto(Member member) {
@@ -19,7 +20,7 @@ public class MemberConverter {
                 .nickname(member.getNickname())
                 .address(member.getAddress())
                 .phone(member.getPhone())
-                .profileImgUrl(member.getProfileImgUrl()).build();
+                .profileImgUrl(MediaUtil.getProfile(member)).build();
     }
 
 }
