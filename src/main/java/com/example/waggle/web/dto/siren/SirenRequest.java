@@ -1,6 +1,6 @@
-package com.example.waggle.web.dto.help;
+package com.example.waggle.web.dto.siren;
 
-import com.example.waggle.domain.board.help.entity.Help.Category;
+import com.example.waggle.domain.board.siren.entity.Siren.Category;
 import com.example.waggle.domain.member.entity.Gender;
 import lombok.*;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpRequest {
+public class SirenRequest {
     @Getter
     @Setter
     @NoArgsConstructor
