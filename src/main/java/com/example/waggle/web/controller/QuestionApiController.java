@@ -57,6 +57,7 @@ public class QuestionApiController {
                                                @RequestPart MediaRequest.Put mediaUpdateDto,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         questionCommandService.updateQuestionV2(boardId, questionUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }

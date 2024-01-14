@@ -56,6 +56,7 @@ public class StoryApiController {
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         storyCommandService.updateStoryV2(boardId, storyUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }

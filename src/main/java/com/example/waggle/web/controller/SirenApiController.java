@@ -58,6 +58,8 @@ public class SirenApiController {
                                            @RequestPart MediaRequest.Put mediaUpdateDto,
                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+
         helpCommandService.updateSirenV2(boardId, helpUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
