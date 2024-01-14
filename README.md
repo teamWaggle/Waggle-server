@@ -11,7 +11,9 @@
 
 ### Notion
 
-[record](https://enchanted-list-750.notion.site/Waggle-0692c520c3f44a76be82aa300c98a75e) 
+[introduce](https://enchanted-list-750.notion.site/Waggle-INTRODUCE-03875625e889458a80b2fea04b106f6b)
+
+[back-record](https://enchanted-list-750.notion.site/6f25ccb2b90e4bafaff7f5f732fb14be?v=c879c201b7cf448aa3624b0f41062d76)
 ## 📚 STACKS
 <br>
 <br>
