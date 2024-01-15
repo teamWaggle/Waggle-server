@@ -1,6 +1,6 @@
-package com.example.waggle.web.dto.help;
+package com.example.waggle.web.dto.siren;
 
-import com.example.waggle.domain.board.help.entity.Help.Category;
+import com.example.waggle.domain.board.siren.entity.Siren.Category;
 import com.example.waggle.domain.member.entity.Gender;
 import lombok.*;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpResponse {
+public class SirenResponse {
     @Getter
     @Setter
     @NoArgsConstructor
@@ -22,7 +22,7 @@ public class HelpResponse {
         private String thumbnail;
         private LocalDateTime lostDate;
         private String lostLocate;
-        private boolean recommendIt;
+        private boolean isRecommend;
         private int recommendCount;
         private Category category;
 
@@ -55,7 +55,7 @@ public class HelpResponse {
         private String username;
         private String profileImg;
 
-        private boolean recommendIt;
+        private boolean isRecommend;
         private int recommendCount;
     }
 
@@ -67,8 +67,8 @@ public class HelpResponse {
     @AllArgsConstructor
     public static class ListDto {
         @Builder.Default
-        private List<HelpResponse.SummaryDto> helpList = new ArrayList<>();
-        private long totalHelps;
+        private List<SirenResponse.SummaryDto> sirenList = new ArrayList<>();
+        private long totalSirens;
         private boolean isFirst;
         private boolean isLast;
     }

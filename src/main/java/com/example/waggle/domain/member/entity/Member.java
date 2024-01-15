@@ -103,4 +103,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.phone = request.getPhone();
         this.profileImgUrl = request.getProfileImg();
     }
+
+    public void changeRole(Role role) {
+        this.role = role;
+    }
 }
