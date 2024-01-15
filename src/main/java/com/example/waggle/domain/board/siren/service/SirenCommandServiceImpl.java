@@ -52,7 +52,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public Long updateSiren(Long boardId,
-                            SirenRequest.Put sirenWriteDto,
+                            SirenRequest.Put sirenUpdateDto,
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFiles) throws IOException {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
@@ -61,7 +61,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        siren.changeSiren(sirenWriteDto);
+        siren.changeSiren(sirenUpdateDto);
 
         mediaCommandService.updateMedia(multipartFiles, deleteFiles, siren);
         return siren.getId();

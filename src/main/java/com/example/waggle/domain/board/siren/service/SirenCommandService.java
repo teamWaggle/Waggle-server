@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SirenCommandService {
-    Long createSiren(SirenRequest.Post sirenUWriteDto,
+    Long createSiren(SirenRequest.Post sirenWriteDto,
                      List<MultipartFile> multipartFiles) throws IOException;
 
     Long updateSiren(Long boardId,
-                     SirenRequest.Put sirenUWriteDto,
+                     SirenRequest.Put sirenUpdateDto,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles) throws IOException;
 
