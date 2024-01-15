@@ -1,13 +1,13 @@
 package com.example.waggle.board.help.service;
 
-import com.example.waggle.domain.board.help.entity.Help;
-import com.example.waggle.domain.board.help.service.HelpCommandService;
-import com.example.waggle.domain.board.help.service.HelpQueryService;
+import com.example.waggle.domain.board.siren.entity.Siren;
+import com.example.waggle.domain.board.siren.service.SirenCommandService;
+import com.example.waggle.domain.board.siren.service.SirenQueryService;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.web.dto.help.HelpRequest;
+import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.member.MemberRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -29,58 +29,58 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HelpServiceTest {
 
     @Autowired
-    private HelpCommandService helpCommandService;
+    private SirenCommandService sirenCommandService;
     @Autowired
-    private HelpQueryService helpQueryService;
+    private SirenQueryService sirenQueryService;
     @Autowired
     private MemberCommandService memberCommandService;
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    HelpRequest.Post hwd1;
-    HelpRequest.Post hwd2;
-    HelpRequest.Post hwd3;
-    HelpRequest.Put hwd4;
+    SirenRequest.Post hwd1;
+    SirenRequest.Post hwd2;
+    SirenRequest.Post hwd3;
+    SirenRequest.Put hwd4;
 
     MemberRequest.RegisterDto signUpDto1;
 
 
     void setting() {
-        hwd1 = HelpRequest.Post.builder()
+        hwd1 = SirenRequest.Post.builder()
                 .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Help.Category.FIND_PET)
+                .category(Siren.Category.FIND_PET)
                 .build();
-        hwd2 = HelpRequest.Post.builder()
+        hwd2 = SirenRequest.Post.builder()
                 .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Help.Category.FIND_PET)
+                .category(Siren.Category.FIND_PET)
                 .build();
-        hwd3 = HelpRequest.Post.builder()
+        hwd3 = SirenRequest.Post.builder()
                 .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Help.Category.FIND_PET)
+                .category(Siren.Category.FIND_PET)
                 .build();
-        hwd4 = HelpRequest.Put.builder()
+        hwd4 = SirenRequest.Put.builder()
                 .title("this is title")
                 .content("help page4. hi")
                 .contact("01025522972")
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Help.Category.FIND_PET)
+                .category(Siren.Category.FIND_PET)
                 .build();
         signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
@@ -103,9 +103,9 @@ class HelpServiceTest {
         setting();
         memberCommandService.signUp(signUpDto1);
 
-        Long helpId = helpCommandService.createHelp(hwd1, null);
+        Long helpId = sirenCommandService.createSiren(hwd1, null);
 
-        List<Help> allHelp = helpQueryService.getAllHelp();
+        List<Siren> allHelp = sirenQueryService.getAllSiren();
         assertThat(allHelp.size()).isEqualTo(1);
     }
 
@@ -114,13 +114,13 @@ class HelpServiceTest {
     void help_read_All_ByPaging_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-        Long helpId = helpCommandService.createHelp(hwd1, null);
-        helpCommandService.createHelp(hwd2, null);
-        helpCommandService.createHelp(hwd3, null);
+        Long helpId = sirenCommandService.createSiren(hwd1, null);
+        sirenCommandService.createSiren(hwd2, null);
+        sirenCommandService.createSiren(hwd3, null);
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
-        Page<Help> pagedHelpList = helpQueryService.getPagedHelpList(pageable);
+        Page<Siren> pagedHelpList = sirenQueryService.getPagedSirenList(pageable);
         assertThat(pagedHelpList.getContent().size()).isEqualTo(2);
     }
 
@@ -130,13 +130,13 @@ class HelpServiceTest {
         setting();
         memberCommandService.signUp(signUpDto1);
 
-        Long helpId = helpCommandService.createHelp(hwd1, null);
-        helpCommandService.createHelp(hwd2, null);
-        helpCommandService.createHelp(hwd3, null);
+        Long helpId = sirenCommandService.createSiren(hwd1, null);
+        sirenCommandService.createSiren(hwd2, null);
+        sirenCommandService.createSiren(hwd3, null);
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
-        Page<Help> member1 = helpQueryService.getPagedHelpListByUsername("member1", pageable);
+        Page<Siren> member1 = sirenQueryService.getPagedSirenListByUsername("member1", pageable);
         assertThat(member1.getContent().size()).isEqualTo(2);
     }
 
@@ -145,12 +145,12 @@ class HelpServiceTest {
     void help_read_One_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-        Long helpId = helpCommandService.createHelp(hwd1, null);
-        helpCommandService.createHelp(hwd2, null);
-        helpCommandService.createHelp(hwd3, null);
+        Long helpId = sirenCommandService.createSiren(hwd1, null);
+        sirenCommandService.createSiren(hwd2, null);
+        sirenCommandService.createSiren(hwd3, null);
 
-        Help help = helpQueryService.getHelpByBoardId(helpId);
-        assertThat(help.getContent()).isEqualTo("help page. hi");
+        Siren siren = sirenQueryService.getSirenByBoardId(helpId);
+        assertThat(siren.getContent()).isEqualTo("help page. hi");
     }
 
     @Test
@@ -158,12 +158,12 @@ class HelpServiceTest {
     void help_update_One_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-        Long helpId = helpCommandService.createHelp(hwd1, null);
-        helpCommandService.createHelp(hwd2, null);
-        helpCommandService.createHelp(hwd3, null);
+        Long helpId = sirenCommandService.createSiren(hwd1, null);
+        sirenCommandService.createSiren(hwd2, null);
+        sirenCommandService.createSiren(hwd3, null);
 
-        Long aLong = helpCommandService.updateHelp(helpId, hwd4, null, null);
-        Help help = helpQueryService.getHelpByBoardId(aLong);
+        Long aLong = sirenCommandService.updateSiren(helpId, hwd4, null, null);
+        Siren help = sirenQueryService.getSirenByBoardId(aLong);
         assertThat(help.getContent()).isEqualTo("help page4. hi");
     }
 
@@ -172,11 +172,11 @@ class HelpServiceTest {
     void help_delete_One_service() throws IOException {
         setting();
         memberCommandService.signUp(signUpDto1);
-        helpCommandService.createHelp(hwd1, null);
-        helpCommandService.createHelp(hwd2, null);
-        Long help = helpCommandService.createHelp(hwd3, null);
-        helpCommandService.deleteHelp(help);
-        List<Help> allHelp = helpQueryService.getAllHelp();
+        sirenCommandService.createSiren(hwd1, null);
+        sirenCommandService.createSiren(hwd2, null);
+        Long help = sirenCommandService.createSiren(hwd3, null);
+        sirenCommandService.deleteSiren(help);
+        List<Siren> allHelp = sirenQueryService.getAllSiren();
         assertThat(allHelp.size()).isEqualTo(2);
     }
 }

@@ -28,7 +28,7 @@ public class AnswerConverter {
                 .map(AnswerConverter::toViewDto).collect(Collectors.toList());
         return AnswerResponse.ListDto.builder()
                 .AnswerList(collect)
-                .totalAnswer(pagedAnswer.getTotalElements())
+                .totalAnswers(pagedAnswer.getTotalElements())
                 .isFirst(pagedAnswer.isFirst())
                 .isLast(pagedAnswer.isLast())
                 .build();

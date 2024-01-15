@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AwsS3Service {
@@ -72,6 +74,5 @@ public class AwsS3Service {
         } catch (SdkClientException e) {
             throw new MediaHandler(ErrorStatus.MEDIA_REQUEST_IS_EMPTY);
         }
-        System.out.println(bucket);
     }
 }
