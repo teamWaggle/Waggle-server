@@ -98,7 +98,7 @@ public class SecurityConfig {
                 .requestMatchers("/profile").permitAll()
                 // ELSE
                 //정적 페이지 허가
-                .requestMatchers("/", "/static/**", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
+                .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
                 .anyRequest().authenticated();
 
         //OAUTH2
