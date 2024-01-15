@@ -12,8 +12,8 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.AnswerHandler;
-import com.example.waggle.global.exception.handler.HelpHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
+import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
                 break;
             case SIREN:
                 board = sirenRepository.findById(boardId)
-                        .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
+                        .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             default:
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);

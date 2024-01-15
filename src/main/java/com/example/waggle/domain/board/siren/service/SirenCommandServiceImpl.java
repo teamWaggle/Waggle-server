@@ -1,7 +1,7 @@
 package com.example.waggle.domain.board.siren.service;
 
-import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
 import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
@@ -11,11 +11,11 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.exception.handler.HelpHandler;
+import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.SecurityUtil;
-import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.media.MediaRequest;
+import com.example.waggle.web.dto.siren.SirenRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,9 +41,9 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     private final MediaCommandService mediaCommandService;
 
     @Override
-    public Long createSiren(SirenRequest.Post helpWriteDto,
+    public Long createSiren(SirenRequest.Post sirenWriteDto,
                             List<MultipartFile> multipartFiles) throws IOException {
-        Siren build = buildSiren(helpWriteDto);
+        Siren build = buildSiren(sirenWriteDto);
         sirenRepository.save(build);
         mediaCommandService.createMedia(multipartFiles, build);
         return build.getId();
@@ -52,53 +52,53 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public Long updateSiren(Long boardId,
-                           SirenRequest.Put helpWriteDto,
-                           List<MultipartFile> multipartFiles,
-                           List<String> deleteFiles) throws IOException {
+                            SirenRequest.Put sirenWriteDto,
+                            List<MultipartFile> multipartFiles,
+                            List<String> deleteFiles) throws IOException {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
-            throw new HelpHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        Siren help = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        help.changeSiren(helpWriteDto);
+        siren.changeSiren(sirenWriteDto);
 
-        mediaCommandService.updateMedia(multipartFiles, deleteFiles, help);
-        return help.getId();
+        mediaCommandService.updateMedia(multipartFiles, deleteFiles, siren);
+        return siren.getId();
     }
 
     @Override
     public Long updateSirenV2(Long boardId,
-                             SirenRequest.Put helpUpdateDto,
-                             MediaRequest.Put mediaUpdateDto,
-                             List<MultipartFile> multipartFiles) throws IOException {
-        if (!SecurityUtil.getCurrentUsername().equals(helpUpdateDto.getUsername())) {
-            throw new HelpHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+                              SirenRequest.Put sirenUpdateDto,
+                              MediaRequest.Put mediaUpdateDto,
+                              List<MultipartFile> multipartFiles) throws IOException {
+        if (!SecurityUtil.getCurrentUsername().equals(sirenUpdateDto.getUsername())) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        Siren help = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        help.changeSiren(helpUpdateDto);
+        siren.changeSiren(sirenUpdateDto);
 
-        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, help);
+        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, siren);
 
-        return help.getId();
+        return siren.getId();
     }
 
     @Override
     public void deleteSiren(Long boardId) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
-            throw new HelpHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        Siren help = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new HelpHandler(ErrorStatus.BOARD_NOT_FOUND));
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        List<Comment> comments = commentRepository.findByBoardId(help.getId());
+        List<Comment> comments = commentRepository.findByBoardId(siren.getId());
         comments.stream().forEach(c -> commentCommandService.deleteComment(c.getId()));
 
-        List<Recommend> recommends = recommendRepository.findByBoardId(help.getId());
+        List<Recommend> recommends = recommendRepository.findByBoardId(siren.getId());
         recommends.stream().forEach(r -> recommendRepository.delete(r));
-        sirenRepository.delete(help);
+        sirenRepository.delete(siren);
     }
 
     private Siren buildSiren(SirenRequest.Post sirenWriteDto) {

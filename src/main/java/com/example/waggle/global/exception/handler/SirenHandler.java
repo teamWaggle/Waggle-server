@@ -3,8 +3,8 @@ package com.example.waggle.global.exception.handler;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.payload.code.BaseCode;
 
-public class HelpHandler extends GeneralException {
-    public HelpHandler(BaseCode code) {
+public class SirenHandler extends GeneralException {
+    public SirenHandler(BaseCode code) {
         super(code);
     }
 }
