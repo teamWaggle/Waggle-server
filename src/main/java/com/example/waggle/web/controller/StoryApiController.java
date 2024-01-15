@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.StoryConverter;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -54,6 +55,8 @@ public class StoryApiController {
                                             @RequestPart StoryRequest.Put storyUpdateDto,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         storyCommandService.updateStoryV2(boardId, storyUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -68,7 +71,7 @@ public class StoryApiController {
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
         listDto.getStoryList().stream()
                 .forEach(s -> {
-                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
+                    s.setRecommend(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
                     s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -85,7 +88,7 @@ public class StoryApiController {
         StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
         listDto.getStoryList().stream()
                 .forEach(s -> {
-                    s.setRecommendIt(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
+                    s.setRecommend(recommendQueryService.checkRecommend(s.getId(), s.getUsername()));
                     s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -98,7 +101,7 @@ public class StoryApiController {
     public ApiResponseDto<StoryResponse.DetailDto> getStoryByBoardId(@PathVariable Long boardId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
         StoryResponse.DetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
-        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

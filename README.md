@@ -1,9 +1,10 @@
 <h1>Waggle</h1>
 
-> **반려견에 대한 모든 것을 공유하고 소통하는 공간 🐾** 
+> **반려견에 대한 모든 것을 공유하고 소통하는 공간 🐾**
 <br>
 
 ## 🧑🏻‍💻 Server Developer
+
 <table>
   <tr>
      <td align="center"><a href="https://github.com/ahnsugyeong"><img src="https://github.com/ahnsugyeong.png" width="100px;" alt=""/><br/><sub><b>안수경</b></sub></a><br/></td>
@@ -12,7 +13,14 @@
 </table>
 <br>
 
-## 📚 Tech Stack
+### Notion
+
+[introduce](https://enchanted-list-750.notion.site/Waggle-INTRODUCE-03875625e889458a80b2fea04b106f6b)
+
+[back-record](https://enchanted-list-750.notion.site/6f25ccb2b90e4bafaff7f5f732fb14be?v=c879c201b7cf448aa3624b0f41062d76)
+
+## 📚 STACKS
+
 <br>
 <br>
 <div align=center>
@@ -37,13 +45,14 @@
 <br>
 <br>
 
-| Archictecture | Spring MVC                                                |
-|:--------------|:----------------------------------------------------------|
-| Language      | Java 17                                                   |
-| Framework     | Spring Boot 3.0.6, React JS                               |
-| Database      | MySQL , AWS RDS, Spring Data JPA                          |
-| CI/CD         | AWS EC2, AWS S3, CodeDeploy, Github Actions               |
-| ETC           | Notion                                                    |
+| Archictecture | Spring MVC                                  |
+|:--------------|:--------------------------------------------|
+| Language      | Java 17                                     |
+| Framework     | Spring Boot 3.0.6, React JS                 |
+| Database      | MySQL , AWS RDS, Spring Data JPA            |
+| CI/CD         | AWS EC2, AWS S3, CodeDeploy, Github Actions |
+| ETC           | Notion                                      |
+
 <br>
 
 ## 🕶️ Server Architecture
