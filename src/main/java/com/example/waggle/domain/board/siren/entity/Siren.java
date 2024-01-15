@@ -1,8 +1,8 @@
-package com.example.waggle.domain.board.help.entity;
+package com.example.waggle.domain.board.siren.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.member.entity.Gender;
-import com.example.waggle.web.dto.help.HelpRequest;
+import com.example.waggle.web.dto.siren.SirenRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name = "help")
+@Table(name = "siren")
 @SuperBuilder
-@DiscriminatorValue("type_help")
+@DiscriminatorValue("type_siren")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Help extends Board {
+public class Siren extends Board {
 
     @Column(nullable = false)
     private String title;
@@ -32,16 +32,16 @@ public class Help extends Board {
     @Column(nullable = false)
     private Category category;
 
-    public void changeHelp(HelpRequest.Put helpUpdateDto) {
-        this.title = helpUpdateDto.getTitle();
-        this.petKind = helpUpdateDto.getPetKind();
-        this.petAge = helpUpdateDto.getPetAge();
-        this.petGender = helpUpdateDto.getPetGender();
-        this.lostDate = helpUpdateDto.getLostDate();
-        this.lostLocate = helpUpdateDto.getLostLocate();
-        this.contact = helpUpdateDto.getContact();
-        this.content = helpUpdateDto.getContent();
-        this.category = helpUpdateDto.getCategory();
+    public void changeSiren(SirenRequest.Put sirenUpdateDto) {
+        this.title = sirenUpdateDto.getTitle();
+        this.petKind = sirenUpdateDto.getPetKind();
+        this.petAge = sirenUpdateDto.getPetAge();
+        this.petGender = sirenUpdateDto.getPetGender();
+        this.lostDate = sirenUpdateDto.getLostDate();
+        this.lostLocate = sirenUpdateDto.getLostLocate();
+        this.contact = sirenUpdateDto.getContact();
+        this.content = sirenUpdateDto.getContent();
+        this.category = sirenUpdateDto.getCategory();
     }
 
     public enum Category {

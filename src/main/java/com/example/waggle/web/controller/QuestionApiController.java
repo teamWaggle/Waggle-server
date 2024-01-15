@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
@@ -55,6 +56,8 @@ public class QuestionApiController {
                                                @RequestPart QuestionRequest.Put questionUpdateDto,
                                                @RequestPart MediaRequest.Put mediaUpdateDto,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         questionCommandService.updateQuestionV2(boardId, questionUpdateDto, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -69,7 +72,7 @@ public class QuestionApiController {
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommendIt(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
+                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -87,7 +90,7 @@ public class QuestionApiController {
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommendIt(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
+                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -100,7 +103,7 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionResponse.DetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         QuestionResponse.DetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        detailDto.setRecommendIt(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

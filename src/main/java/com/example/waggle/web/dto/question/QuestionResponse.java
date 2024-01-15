@@ -19,7 +19,7 @@ public class QuestionResponse {
         private String title;
         private LocalDateTime createTime;
         private int recommendCount;
-        private boolean recommendIt;
+        private boolean isRecommend;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class QuestionResponse {
         private String title;
         private LocalDateTime createDate;
         private int recommendCount;
-        private boolean recommendIt;
+        private boolean isRecommend;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
         @Builder.Default
