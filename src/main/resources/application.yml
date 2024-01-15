@@ -73,4 +73,6 @@ server:
     include-stacktrace: on_param
     whitelabel.enabled: true
 
-
+jwt:
+  secret:
+    cabc18da72dbf0d0f876b183bee075c1abdd3819d99b8db110e75bd04e0a3d10

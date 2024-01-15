@@ -7,6 +7,7 @@ import com.example.waggle.domain.chat.repository.RoomRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.web.dto.chat.RoomRequest;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -55,12 +56,15 @@ public class RoomService {
         Room room = roomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("채팅방이 존재하지 않습니다."));
 
-        // 채팅방의 모든 RoomMember를 가져온다
         Set<RoomMember> roomMembers = room.getRoomMembers();
 
         return roomMembers.stream()
                 .map(RoomMember::getMember)
                 .filter(member -> !member.getId().equals(senderId))
                 .collect(Collectors.toSet());
+    }
+
+    public List<Room> getRoomList() {
+        return roomRepository.findAll();
     }
 }
