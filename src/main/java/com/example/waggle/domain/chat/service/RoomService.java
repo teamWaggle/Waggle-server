@@ -6,6 +6,7 @@ import com.example.waggle.domain.chat.repository.RoomMemberRepository;
 import com.example.waggle.domain.chat.repository.RoomRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.web.dto.chat.RoomRequest;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,32 +23,32 @@ public class RoomService {
     private final MemberQueryService memberQueryService;
 
     @Transactional
-    public String createChatRoom(String chatRoomName, String username) {
-        Member host = memberQueryService.getMemberByUsername(username);
+    public String createChatRoom(RoomRequest.Post request) {
+//        TODO Member host = memberQueryService.getSignInMember();
+        Member host = memberQueryService.getMemberByUsername("member10");
 
         Room createdRoom = Room.builder()
                 .id(Room.createRoomId())
-                .name(chatRoomName)
+                .name(request.getName())
                 .host(host)
                 .build();
+        Room room = roomRepository.save(createdRoom);
+        addMemberToRoom(room, host);
 
-        addMemberToRoom(createdRoom, host);
-
-        return roomRepository.save(createdRoom).getId();
-    }
-
-    public void connectChatRoom(String chatRoomId, String username) {
-        Room room = roomRepository.findById(chatRoomId).get();    // TODO 예외 처리
-        Member member = memberQueryService.getMemberByUsername(username);
-        addMemberToRoom(room, member);
+        return room.getId();
     }
 
     private void addMemberToRoom(Room room, Member member) {
         RoomMember roomMember = RoomMember.builder()
                 .room(room)
                 .member(member).build();
-        roomMember.addRoomMember(room, member);
-        roomMemberRepository.save(roomMember);
+        room.getRoomMembers().add(roomMember);
+    }
+
+    public void connectChatRoom(String chatRoomId, String username) {
+        Room room = roomRepository.findById(chatRoomId).get();    // TODO 예외 처리
+        Member member = memberQueryService.getMemberByUsername(username);
+        addMemberToRoom(room, member);
     }
 
     public Set<Member> getMembersExceptSender(String chatRoomId, Long senderId) {

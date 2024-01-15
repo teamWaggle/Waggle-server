@@ -36,7 +36,4 @@ public class RoomMember extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void addRoomMember(Room room, Member member) {
-        room.getRoomMembers().add(this);
-    }
 }
