@@ -1,18 +1,18 @@
-<h1>:feet: Waggle</h1>
+<h1>Waggle</h1>
 
-## :star:Introduction
-프로젝트 [Waggle]은 반려견 전용 sns 웹페이지입니다. 반려견에 관한 게시물, Q&A, sos(실종 등록 등)의 서비스를 제공하고자 합니다.
+> **반려견에 대한 모든 것을 공유하고 소통하는 공간 🐾** 
+<br>
 
-## Developers
-|                      <img src="https://avatars.githubusercontent.com/u/88311377?v=4" width=150px>                       |      <img src="https://lh3.googleusercontent.com/a/ACg8ocKJwvf2paS6MyND9cLJnQULHpHhjNa9lD2O7KBnizFCNyU=s288-c-no" width=150px>      |
-| :---------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------: |
-|                                        [안수경](https://github.com/suddiyo)                                        |                          [이정한](https://github.com/Han-Jeong)                           |
-|                                 [tistory address](https://suddiyo.tistory.com/)                                |                   [velog address](https://velog.io/@hann1233)                   |
+## 🧑🏻‍💻 Server Developer
+<table>
+  <tr>
+     <td align="center"><a href="https://github.com/ahnsugyeong"><img src="https://github.com/ahnsugyeong.png" width="100px;" alt=""/><br/><sub><b>안수경</b></sub></a><br/></td>
+     <td align="center"><a href="https://github.com/Han-Jeong"><img src="https://github.com/Han-Jeong.png" width="100px;" alt=""/><br/><sub><b>이정한</b></sub></a><br/></td>
+  </tr>
+</table>
+<br>
 
-### Notion
-
-[record](https://enchanted-list-750.notion.site/Waggle-0692c520c3f44a76be82aa300c98a75e) 
-## 📚 STACKS
+## 📚 Tech Stack
 <br>
 <br>
 <div align=center>
@@ -44,34 +44,9 @@
 | Database      | MySQL , AWS RDS, Spring Data JPA                          |
 | CI/CD         | AWS EC2, AWS S3, CodeDeploy, Github Actions               |
 | ETC           | Notion                                                    |
+<br>
 
-
-## Software Architecture
+## 🕶️ Server Architecture
 
 ![sft architecture](https://github.com/suddiyo/Waggle/assets/69452755/c3e03d65-48f4-4984-bc3e-64ffc30bc900)
-
-## Package Structure
-### domain 
-```bash
-└── src
-    ├── main
-    │   ├── java
-    │   │   └── com
-    │   │       └── example
-    │   │           └── waggle
-    │   │               ├── board
-    │   │               ├── comment
-    │   │               ├── commons
-    │   │               ├── hashtag
-    │   │               ├── media
-    │   │               ├── mention
-    │   │               ├── recommend
-    │   │               └── schedule
-    └───└── resources
-            └── application.yml
-            ├── application-real.yml
-            ├── static
-            └── templates
-
-```
 
