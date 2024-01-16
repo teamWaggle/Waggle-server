@@ -7,16 +7,13 @@ import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.TokenService;
 import com.example.waggle.global.security.oauth2.cookie.CookieUtil;
 import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.oauth.OAuthToken;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -41,14 +38,12 @@ public class TokenApiController {
     @Operation(summary = "oauth2 로그인", description = "oauth2를 통해 리다이렉트 된 페이지 입니다. 정상적으로 호출 되었을 시 쿠키의 리프레시 토큰을 통해 jwt Token을 재발급합니다")
     @ApiResponse(responseCode = "200", description = "로그인 성공. 토큰을 반환합니다")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
-    @GetMapping ("/oauth2")
+    @GetMapping("/oauth2")
     public ApiResponseDto<JwtToken> loginByOAuth2(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = CookieUtil.getCookie(request, "refresh_token")
-                .map(cookie -> cookie.getValue())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_REFRESH_NOT_EXIST_IN_COOKIE));
-        CookieUtil.deleteCookie(request, response, "refresh_token");
+        String refreshToken = getRefreshInCookie(request);
+        removeRefresh(request, response, refreshToken);
         JwtToken jwtToken = tokenService.issueTokens(refreshToken);
-        CookieUtil.addCookie(response,"refresh_token",jwtToken.getRefreshToken(),1800);
+        CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), 1800);
         return ApiResponseDto.onSuccess(jwtToken);
     }
 
@@ -56,7 +51,9 @@ public class TokenApiController {
     @ApiResponse(responseCode = "200", description = "토큰 재발급 성공. 새로운 토큰들 반환.")
     @ApiResponse(responseCode = "401", description = "인증 실패. 리프레시 토큰이 유효하지 않음.")
     @PostMapping("/refresh")
-    public ApiResponseDto<JwtToken> refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken) {
+    public ApiResponseDto<JwtToken> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = getRefreshInCookie(request);
+        removeRefresh(request, response, refreshToken);
         JwtToken newTokens = tokenService.issueTokens(refreshToken);
         return ApiResponseDto.onSuccess(newTokens);
     }
@@ -65,9 +62,26 @@ public class TokenApiController {
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다.")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공. 'success' 반환.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> logout(@RequestHeader("X-Refresh-Token") String refreshToken) {
+    public ApiResponseDto<Boolean> logout(HttpServletRequest request) {
+        String refreshToken = getRefreshInCookie(request);
         tokenService.logout(refreshToken);
         return ApiResponseDto.onSuccess(true);
+    }
+
+    private static String getRefreshInCookie(HttpServletRequest request) {
+        String refreshToken = CookieUtil.getCookie(request, "refresh_token")
+                .map(cookie -> cookie.getValue())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_REFRESH_NOT_EXIST_IN_COOKIE));
+        return refreshToken;
+    }
+
+    private void removeRefresh(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
+        if (!tokenService.existsRefreshToken(refreshToken)) {
+            throw new GeneralException(ErrorStatus.AUTH_REFRESH_NOT_EXIST_IN_COOKIE);
+        } else {
+            tokenService.logout(refreshToken);      //refresh delete in redis
+        }
+        CookieUtil.deleteCookie(request, response, "refresh_token");
     }
 
 }

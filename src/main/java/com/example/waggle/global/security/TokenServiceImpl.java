@@ -160,6 +160,7 @@ public class TokenServiceImpl implements TokenService {
         return true;
     }
 
+
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()
@@ -173,7 +174,8 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // RefreshToken 존재유무 확인
-    private boolean existsRefreshToken(String refreshToken) {
+    @Override
+    public boolean existsRefreshToken(String refreshToken) {
         return redisService.getValue(refreshToken) != null;
     }
 }
