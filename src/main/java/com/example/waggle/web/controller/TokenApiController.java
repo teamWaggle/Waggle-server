@@ -24,14 +24,16 @@ import org.springframework.web.bind.annotation.*;
 public class TokenApiController {
 
     private final TokenService tokenService;
+    private static int week = 604800;
 
 
     @Operation(summary = "로그인", description = "아이디와 비밀번호를 통해 로그인을 진행합니다. 성공 시 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.LoginDto request) {
+    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.LoginDto request, HttpServletResponse response) {
         JwtToken jwtToken = tokenService.login(request);
+        CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         return ApiResponseDto.onSuccess(jwtToken);
     }
 
@@ -40,10 +42,9 @@ public class TokenApiController {
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @GetMapping("/oauth2")
     public ApiResponseDto<JwtToken> loginByOAuth2(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = getRefreshInCookie(request);
-        removeRefresh(request, response, refreshToken);
+        String refreshToken = getRefreshInCookie(request, response);
         JwtToken jwtToken = tokenService.issueTokens(refreshToken);
-        CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), 1800);
+        CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         return ApiResponseDto.onSuccess(jwtToken);
     }
 
@@ -52,9 +53,9 @@ public class TokenApiController {
     @ApiResponse(responseCode = "401", description = "인증 실패. 리프레시 토큰이 유효하지 않음.")
     @PostMapping("/refresh")
     public ApiResponseDto<JwtToken> refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = getRefreshInCookie(request);
-        removeRefresh(request, response, refreshToken);
+        String refreshToken = getRefreshInCookie(request, response);
         JwtToken newTokens = tokenService.issueTokens(refreshToken);
+
         return ApiResponseDto.onSuccess(newTokens);
     }
 
@@ -62,26 +63,26 @@ public class TokenApiController {
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다.")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공. 'success' 반환.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> logout(HttpServletRequest request) {
-        String refreshToken = getRefreshInCookie(request);
-        tokenService.logout(refreshToken);
+    public ApiResponseDto<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = getRefreshInCookie(request, response);
+        removeRefreshInRedis(request, response, refreshToken);
         return ApiResponseDto.onSuccess(true);
     }
 
-    private static String getRefreshInCookie(HttpServletRequest request) {
+    private static String getRefreshInCookie(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = CookieUtil.getCookie(request, "refresh_token")
                 .map(cookie -> cookie.getValue())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_REFRESH_NOT_EXIST_IN_COOKIE));
+        CookieUtil.deleteCookie(request, response, refreshToken);
         return refreshToken;
     }
 
-    private void removeRefresh(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
+    private void removeRefreshInRedis(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
         if (!tokenService.existsRefreshToken(refreshToken)) {
-            throw new GeneralException(ErrorStatus.AUTH_REFRESH_NOT_EXIST_IN_COOKIE);
+            throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         } else {
             tokenService.logout(refreshToken);      //refresh delete in redis
         }
         CookieUtil.deleteCookie(request, response, "refresh_token");
     }
-
 }

@@ -2,6 +2,8 @@ package com.example.waggle.global.security;
 
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
+import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -59,7 +61,7 @@ public class TokenServiceImpl implements TokenService {
     public JwtToken issueTokens(String refreshToken) {
         // Refresh Token 유효성 검사
         if (!validateToken(refreshToken) || !existsRefreshToken(refreshToken)) {
-            throw new RuntimeException("유효하지 않거나 만료된 리프레시 토큰입니다.");
+            throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         }
 
         // 이전 리프레시 토큰 삭제
