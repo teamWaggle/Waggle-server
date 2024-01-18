@@ -16,4 +16,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Page<Question> findByMemberUsername(String username, Pageable pageable);
 
+    void deleteAllByMemberUsername(String username);
+
 }

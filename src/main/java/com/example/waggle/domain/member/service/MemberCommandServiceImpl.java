@@ -1,9 +1,14 @@
 package com.example.waggle.domain.member.service;
 
+import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.comment.repository.ReplyRepository;
+import com.example.waggle.domain.follow.repository.FollowRepository;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -13,10 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +31,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final AwsS3Service awsS3Service;
     private static final String AUTH_CODE_PREFIX = "AuthCode ";
     private final RedisService redisService;
+
+    private final BoardService boardService;
+    private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
+    private final RecommendRepository recommendRepository;
+    private final FollowRepository followRepository;
 
 
     @Override
@@ -76,8 +83,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public void deleteMember() {
-        Member member = memberQueryService.getSignInMember();
-        //TODO member relation all data removing
+        String username = memberQueryService.getSignInMember().getUsername();
+
+        //TODO MemberMention DeleteAll
+        replyRepository.deleteAllByMemberUsername(username);
+        commentRepository.deleteAllByMemberUsername(username);
+        followRepository.deleteAllByFromMemberUsername(username);
+        followRepository.deleteAllByToMemberUsername(username);
+        recommendRepository.deleteAllByMemberUsername(username);
+        boardService.deleteAllBoardByMember(username);
+
     }
 
     @Override

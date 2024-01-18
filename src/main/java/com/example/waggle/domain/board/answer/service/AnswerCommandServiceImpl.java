@@ -5,7 +5,6 @@ import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.service.BoardService;
-import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
@@ -103,9 +102,6 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        List<Comment> comments = commentRepository.findByBoardId(answer.getId());
-        comments.stream().forEach(c -> commentCommandService.deleteComment(c.getId()));
 
         List<Recommend> recommends = recommendRepository.findByBoardId(answer.getId());
         recommends.stream().forEach(r -> recommendRepository.delete(r));

@@ -46,6 +46,19 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     }
 
     @Override
+    public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
+        replyRepository.save(reply);
+
+        addMentionsToReply(reply, replyWriteDto.getMentions());
+        return reply.getId();
+    }
+
+    @Override
     public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
         if (!validateMember(replyId)) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);

@@ -6,9 +6,13 @@ import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,6 +36,10 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "comment", orphanRemoval = true)
+    private List<Reply> replies = new ArrayList<>();
 
 
     public void changeContent(String content) {

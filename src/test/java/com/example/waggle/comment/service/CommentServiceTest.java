@@ -177,4 +177,21 @@ class CommentServiceTest {
         assertThat(commentList.size()).isEqualTo(0);
 
     }
+
+    @Test
+    @WithMockCustomUser
+    void deleteStory() throws IOException {
+        //given
+        setBoardAndMember();
+        Story story = storyService.getStories().get(0);
+
+        //when
+        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        storyCommandService.deleteStory(story.getId());
+
+        List<Comment> comments = commentService.getComments(story.getId());
+        //then
+        assertThat(comments.size()).isEqualTo(0);
+
+    }
 }

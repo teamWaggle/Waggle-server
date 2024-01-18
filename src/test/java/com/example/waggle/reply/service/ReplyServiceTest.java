@@ -230,4 +230,41 @@ class ReplyServiceTest {
         assertThat(replyList.size()).isEqualTo(1);
         assertThat(all.size()).isEqualTo(2);
     }
+
+    @Test
+    @WithMockCustomUser
+    void deleteComments() throws IOException {
+        //given
+        setAll();
+        Story story = storyQueryService.getStories().get(0);
+        List<Comment> comments = commentQueryService.getComments(story.getId());
+        Long id = comments.get(0).getId();
+
+        //when
+        commentService.deleteComment(id);
+        List<Reply> replies = replyQueryService.getReplies(id);
+
+        //then
+        assertThat(replies.size()).isEqualTo(0);
+
+    }
+
+    @Test
+    @WithMockCustomUser
+    void deleteBoards() throws IOException {
+        //given
+        setAll();
+        Story story = storyQueryService.getStories().get(0);
+        List<Comment> comments = commentQueryService.getComments(story.getId());
+        Long id = comments.get(0).getId();
+
+        //when
+        storyService.deleteStory(story.getId());
+        List<Reply> replies = replyQueryService.getReplies(id);
+
+        //then
+        assertThat(replies.size()).isEqualTo(0);
+
+
+    }
 }

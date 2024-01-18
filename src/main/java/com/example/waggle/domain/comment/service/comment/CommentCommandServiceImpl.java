@@ -45,6 +45,19 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
+    public Long createCommentByUsername(Long boardId, CommentRequest.Post commentWriteDto, String username, BoardType boardType) {
+        Member memberByUsername = memberQueryService.getMemberByUsername(username);
+        Board board = boardService.getBoard(boardId, boardType);
+        Comment build = Comment.builder()
+                .content(commentWriteDto.getContent())
+                .board(board)
+                .member(memberByUsername)
+                .build();
+        commentRepository.save(build);
+        return build.getId();
+    }
+
+    @Override
     public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
         if (!validateMember(commentId)) {
             throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);

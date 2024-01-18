@@ -105,14 +105,18 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
-        answers.stream().forEach(a -> answerCommandService.deleteAnswer(a.getId()));
+        answers.stream().forEach(answer -> {
+            List<Recommend> recommends = recommendRepository.findByBoardId(answer.getId());
+            recommends.stream().forEach(recommend -> recommendRepository.delete(recommend));
+            answerCommandService.deleteAnswer(answer.getId());
+        });
 
         List<Recommend> recommends = recommendRepository.findByBoardId(question.getId());
         recommends.stream().forEach(r -> recommendRepository.delete(r));
 
-
         questionRepository.delete(question);
     }
+
     private Question buildQuestion(QuestionRequest.Post request) {
         Member member = memberQueryService.getSignInMember();
 

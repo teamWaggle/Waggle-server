@@ -3,7 +3,6 @@ package com.example.waggle.domain.board.siren.service;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
-import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
@@ -93,11 +92,9 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        List<Comment> comments = commentRepository.findByBoardId(siren.getId());
-        comments.stream().forEach(c -> commentCommandService.deleteComment(c.getId()));
-
         List<Recommend> recommends = recommendRepository.findByBoardId(siren.getId());
         recommends.stream().forEach(r -> recommendRepository.delete(r));
+
         sirenRepository.delete(siren);
     }
 

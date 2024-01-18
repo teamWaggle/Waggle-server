@@ -10,11 +10,9 @@ import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.global.exception.handler.AnswerHandler;
-import com.example.waggle.global.exception.handler.QuestionHandler;
-import com.example.waggle.global.exception.handler.SirenHandler;
-import com.example.waggle.global.exception.handler.StoryHandler;
+import com.example.waggle.global.exception.handler.*;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +30,7 @@ public class BoardServiceImpl implements BoardService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final SirenRepository sirenRepository;
+    private final ScheduleRepository scheduleRepository;
     private final HashtagRepository hashtagRepository;
 
 
@@ -57,10 +56,22 @@ public class BoardServiceImpl implements BoardService {
                 board = sirenRepository.findById(boardId)
                         .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
+            case SCHEDULE:
+                board = scheduleRepository.findById(boardId)
+                        .orElseThrow(() -> new ScheduleHandler(ErrorStatus.BOARD_NOT_FOUND));
             default:
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
         return board.getMember().equals(signInMember);
+    }
+
+    @Override
+    public void deleteAllBoardByMember(String username) {
+        storyRepository.deleteAllByMemberUsername(username);
+        questionRepository.deleteAllByMemberUsername(username);
+        answerRepository.deleteAllByMemberUsername(username);
+        sirenRepository.deleteAllByMemberUsername(username);
+        scheduleRepository.deleteAllByMemberUsername(username);
     }
 
     @Override
@@ -84,6 +95,9 @@ public class BoardServiceImpl implements BoardService {
                 board = sirenRepository.findById(boardId)
                         .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
                 break;
+            case SCHEDULE:
+                board = scheduleRepository.findById(boardId)
+                        .orElseThrow(() -> new ScheduleHandler(ErrorStatus.BOARD_NOT_FOUND));
             default:
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }

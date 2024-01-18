@@ -196,7 +196,7 @@ class RecommendServiceTest {
         //given
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
-        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto1.getUsername());
+        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto2.getUsername());
 
         StoryRequest.Post request = StoryRequest.Post.builder()
                 .content("hi")
@@ -208,8 +208,32 @@ class RecommendServiceTest {
         recommendRepository.save(build);
         //when
         storyService.deleteStory(story.getId());
-        List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(story.getId());
+        List<Recommend> all = recommendRepository.findAll();
         //then
-        assertThat(recommendingMembers.size()).isEqualTo(0);
+        assertThat(all.size()).isEqualTo(0);
+    }
+
+    @Test
+    @WithMockCustomUser
+    @Transactional
+    void member_remove_result_recommendEntity() throws IOException {
+        //given
+        memberService.signUp(signUpDto1);
+        memberService.signUp(signUpDto2);
+        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto2.getUsername());
+
+        StoryRequest.Post request = StoryRequest.Post.builder()
+                .content("hi")
+                .build();
+
+        storyService.createStory(request, null);
+        Story story = storyQueryService.getStories().get(0);
+        Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
+        recommendRepository.save(build);
+        //when
+        memberService.deleteMember();
+        List<Recommend> all = recommendRepository.findAll();
+        //then
+        assertThat(all.size()).isEqualTo(0);
     }
 }
