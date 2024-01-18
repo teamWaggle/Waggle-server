@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    //List<Question> findByMemberUsername(String username);
+    List<Question> findListByMemberUsername(String username);
+
     List<Question> findAllByOrderByCreatedDateDesc();
 
     Page<Question> findAll(Pageable pageable);

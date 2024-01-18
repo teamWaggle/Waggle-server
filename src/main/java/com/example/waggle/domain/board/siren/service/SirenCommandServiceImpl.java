@@ -8,7 +8,6 @@ import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -92,8 +91,8 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        List<Recommend> recommends = recommendRepository.findByBoardId(siren.getId());
-        recommends.stream().forEach(r -> recommendRepository.delete(r));
+        siren.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
+        recommendRepository.deleteAllByBoardId(boardId);
 
         sirenRepository.delete(siren);
     }

@@ -5,9 +5,11 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
+import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
@@ -19,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +32,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final MemberQueryService memberQueryService;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ScheduleCommandService scheduleCommandService;
     private final BoardService boardService;
     private final ParticipationRepository participationRepository;
 
@@ -63,6 +69,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
+        allByTeamId.stream().forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
         teamRepository.delete(team);
     }
 

@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
@@ -33,6 +34,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     private final MemberQueryService memberQueryService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
+    private final CommentCommandService commentCommandService;
 
     @Override
     public Long createStory(StoryRequest.Post request, List<MultipartFile> multipartFiles) throws IOException {
@@ -113,9 +115,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-//        List<Recommend> recommends = recommendRepository.findByBoardId(story.getId());
-//        recommends.stream().forEach(r -> recommendRepository.delete(r));
+        story.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
         recommendRepository.deleteAllByBoardId(story.getId());
 
         storyRepository.delete(story);

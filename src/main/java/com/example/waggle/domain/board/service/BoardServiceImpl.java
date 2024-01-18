@@ -1,16 +1,26 @@
 package com.example.waggle.domain.board.service;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
+import com.example.waggle.domain.board.answer.service.AnswerCommandService;
+import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.board.question.service.QuestionCommandService;
+import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
+import com.example.waggle.domain.board.siren.service.SirenCommandService;
+import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.*;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -18,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -32,6 +43,11 @@ public class BoardServiceImpl implements BoardService {
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
     private final HashtagRepository hashtagRepository;
+    private final StoryCommandService storyCommandService;
+    private final QuestionCommandService questionCommandService;
+    private final AnswerCommandService answerCommandService;
+    private final SirenCommandService sirenCommandService;
+    private final ScheduleCommandService scheduleCommandService;
 
 
     @Override
@@ -67,11 +83,17 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void deleteAllBoardByMember(String username) {
-        storyRepository.deleteAllByMemberUsername(username);
-        questionRepository.deleteAllByMemberUsername(username);
-        answerRepository.deleteAllByMemberUsername(username);
-        sirenRepository.deleteAllByMemberUsername(username);
-        scheduleRepository.deleteAllByMemberUsername(username);
+        List<Story> stories = storyRepository.findListByMemberUsername(username);
+        List<Question> questions = questionRepository.findListByMemberUsername(username);
+        List<Answer> answers = answerRepository.findListByMemberUsername(username);
+        List<Siren> sirens = sirenRepository.findListByMemberUsername(username);
+        List<Schedule> schedules = scheduleRepository.findListByMemberUsername(username);
+
+        stories.forEach(story -> storyCommandService.deleteStory(story.getId()));
+        questions.forEach(question -> questionCommandService.deleteQuestion(question.getId()));
+        answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
+        sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
+        schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
     }
 
     @Override

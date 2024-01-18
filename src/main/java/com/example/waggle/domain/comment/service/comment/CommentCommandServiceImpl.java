@@ -4,7 +4,6 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
@@ -16,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 @Slf4j
@@ -76,9 +73,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        List<Reply> replies = replyRepository.findByCommentId(commentId);
-        replies.stream().forEach(r -> replyRepository.delete(r));
-
+        replyRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
     }
 

@@ -10,6 +10,8 @@ import java.util.List;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     Page<Answer> findByQuestionId(Long questionId, Pageable pageable);
 
+    List<Answer> findListByMemberUsername(String username);
+
     Page<Answer> findAll(Pageable pageable);
 
     List<Answer> findAnswerByQuestionId(Long questionId);

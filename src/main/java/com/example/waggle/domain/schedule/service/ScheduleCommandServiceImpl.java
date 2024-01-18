@@ -1,5 +1,7 @@
 package com.example.waggle.domain.schedule.service;
 
+import com.example.waggle.domain.board.service.BoardService;
+import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
@@ -12,13 +14,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.waggle.domain.board.service.BoardType.SCHEDULE;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     private final ScheduleRepository scheduleRepository;
+    private final CommentCommandService commentCommandService;
     private final TeamRepository teamRepository;
+    private final BoardService boardService;
 
 
     @Override
@@ -51,9 +57,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public void deleteSchedule(Long scheduleId) {
+        if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE)) {
+            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.getTeam().removeSchedule(schedule);
+        schedule.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
         scheduleRepository.delete(schedule);
     }
 }

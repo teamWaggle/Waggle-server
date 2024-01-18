@@ -13,4 +13,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     Page<Reply> findPagedReplyByCommentId(Long CommentId, Pageable pageable);
 
     void deleteAllByMemberUsername(String username);
+
+    void deleteAllByCommentId(Long commentId);
 }

@@ -17,7 +17,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
                                                          @Param("startOfMonth") LocalDateTime startOfMonth,
                                                          @Param("endOfMonth") LocalDateTime endOfMonth);
 
+    List<Schedule> findListByMemberUsername(String username);
+
     void deleteAllByMemberUsername(String username);
+
+    void deleteAllByTeamId(Long teamId);
 
 
 }

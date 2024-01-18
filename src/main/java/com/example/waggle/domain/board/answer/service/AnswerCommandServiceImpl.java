@@ -10,7 +10,6 @@ import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
@@ -103,8 +102,8 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        List<Recommend> recommends = recommendRepository.findByBoardId(answer.getId());
-        recommends.stream().forEach(r -> recommendRepository.delete(r));
+        answer.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
+        recommendRepository.deleteAllByBoardId(boardId);
 
         answerRepository.delete(answer);
     }

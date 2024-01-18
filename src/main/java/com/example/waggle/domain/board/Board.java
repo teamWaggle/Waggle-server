@@ -46,9 +46,8 @@ public abstract class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     protected List<Media> medias = new ArrayList<>();
 
-    //just for delete
     @Builder.Default
-    @OneToMany(mappedBy = "board", orphanRemoval = true)
+    @OneToMany(mappedBy = "board")
     protected List<Comment> comments = new ArrayList<>();
 
 
