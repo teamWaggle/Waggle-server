@@ -120,7 +120,7 @@ public class TeamApiController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Team> teams = teamQueryService.getTeamsByUsername(username, pageable);
+        Page<Team> teams = teamQueryService.getPagingTeamByUsername(username, pageable);
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teams));
     }
 

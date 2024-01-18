@@ -4,6 +4,7 @@ import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
@@ -31,7 +32,7 @@ public class ScheduleApiController {
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@PathVariable Long teamId,
                                                @RequestBody Post request) {
-        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request);
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request, SecurityUtil.getCurrentUsername());
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 

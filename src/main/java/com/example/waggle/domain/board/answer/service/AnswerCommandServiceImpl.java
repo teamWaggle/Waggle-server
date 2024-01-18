@@ -5,7 +5,6 @@ import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.service.BoardService;
-import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
@@ -35,11 +34,13 @@ import static com.example.waggle.domain.board.service.BoardType.ANSWER;
 public class AnswerCommandServiceImpl implements AnswerCommandService {
     //TODO user는 question 내에 하나의 answer만 사용할 수 있도록 제어
 
+    //REPOSITORY
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
-    private final CommentRepository commentRepository;
     private final RecommendRepository recommendRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final CommentCommandService commentCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
@@ -102,7 +103,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        answer.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
+        answer.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(boardId);
 
         answerRepository.delete(answer);

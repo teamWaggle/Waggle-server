@@ -1,17 +1,16 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.domain.schedule.entity.TeamMember;
-import com.example.waggle.domain.schedule.repository.ScheduleRepository;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,8 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @WithMockCustomUser
-@Transactional
 @SpringBootTest
 class ScheduleCommandServiceTest {
 
@@ -33,62 +32,64 @@ class ScheduleCommandServiceTest {
     @Autowired
     ScheduleQueryService scheduleQueryService;
     @Autowired
-    MemberRepository memberRepository;
+    MemberCommandService memberCommandService;
     @Autowired
-    TeamRepository teamRepository;
+    TeamCommandService teamCommandService;
     @Autowired
-    ScheduleRepository scheduleRepository;
+    TeamQueryService teamQueryService;
     @PersistenceContext
     EntityManager em;
 
-    private Member member1;
-    private Member member2;
-    private Team team;
-    private Schedule schedule;
+    private MemberRequest.RegisterDto member1;
+    private MemberRequest.RegisterDto member2;
+    private TeamRequest.Post team;
+    private ScheduleRequest.Post schedule;
+
+    private Long teamId;
+    private Long scheduleId;
 
 
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = Member.builder()
+        member1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
+                .nickname("nickname1")
+                .email("email1")
                 .build();
-        memberRepository.save(member1);
 
-        member2 = Member.builder()
+        member2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
+                .nickname("nickname2")
+                .email("email2")
                 .build();
-        memberRepository.save(member2);
+        memberCommandService.signUp(member1);
+        memberCommandService.signUp(member2);
 
         // Setup team
-        team = Team.builder()
+        team = TeamRequest.Post.builder()
                 .name("team1")
                 .description("team1 description")
-                .leader(member1)
                 .maxTeamSize(4)
                 .colorScheme("red")
                 .build();
-        teamRepository.save(team);
-
-        // Setup teamMember
-        TeamMember teamMember = TeamMember.builder().build();
-        teamMember.addTeamMember(team, member1);
+        teamId = teamCommandService.createTeam(team, "member1");
 
         // Setup Schedule
-        schedule = Schedule.builder()
+        schedule = ScheduleRequest.Post.builder()
                 .title("schedule1")
                 .content("schedule1 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
                 .build();
-        scheduleRepository.save(schedule);
-        team.addSchedule(schedule);
+        scheduleId = scheduleCommandService.createSchedule(teamId, schedule, "member1");
     }
 
 
     @Test
+    @Transactional
     void createSchedule() {
         // given
         ScheduleRequest.Post createRequest = ScheduleRequest.Post.builder()
@@ -99,17 +100,18 @@ class ScheduleCommandServiceTest {
                 .build();
 
         // when
-        Long createdScheduleId = scheduleCommandService.createSchedule(team.getId(), createRequest);
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createRequest, "member1");
 
         // then
-        Schedule createdSchedule = scheduleRepository.findById(createdScheduleId).get();
+        Schedule createdSchedule = scheduleQueryService.getScheduleById(createdScheduleId);
+        Team teamById = teamQueryService.getTeamById(teamId);
         assertThat(createdSchedule.getTitle()).isEqualTo(createRequest.getTitle());
         assertThat(createdSchedule.getContent()).isEqualTo(createRequest.getContent());
         assertThat(createdSchedule.getStartTime()).isEqualTo(createRequest.getStartTime());
         assertThat(createdSchedule.getEndTime()).isEqualTo(createRequest.getEndTime());
         assertThat(createdSchedule.getTeam().getName()).isEqualTo(team.getName());
-        assertThat(team.getSchedules().size()).isEqualTo(2);
-        assertThat(team.getSchedules().get(1).getTitle()).isEqualTo(createRequest.getTitle());
+        assertThat(teamById.getSchedules().size()).isEqualTo(2);
+        assertThat(teamById.getSchedules().get(1).getTitle()).isEqualTo(createRequest.getTitle());
     }
 
     @Test
@@ -123,10 +125,10 @@ class ScheduleCommandServiceTest {
                 .build();
 
         // when
-        Long updatedScheduleId = scheduleCommandService.updateSchedule(schedule.getId(), updateRequest);
+        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, updateRequest);
 
         // then
-        Schedule updatedSchedule = scheduleRepository.findById(updatedScheduleId).get();
+        Schedule updatedSchedule = scheduleQueryService.getScheduleById(updatedScheduleId);
         assertThat(updatedSchedule.getTitle()).isEqualTo(updateRequest.getTitle());
         assertThat(updatedSchedule.getContent()).isEqualTo(updateRequest.getContent());
         assertThat(updatedSchedule.getStartTime()).isEqualTo(updateRequest.getStartTime());
@@ -136,8 +138,8 @@ class ScheduleCommandServiceTest {
     @Test
     void deleteSchedule() {
         // when
-        scheduleCommandService.deleteSchedule(schedule.getId());
+        scheduleCommandService.deleteSchedule(scheduleId);
         //then
-        Assertions.assertThrows(ScheduleHandler.class, () -> scheduleQueryService.getScheduleById(schedule.getId()));
+        Assertions.assertThrows(ScheduleHandler.class, () -> scheduleQueryService.getScheduleById(scheduleId));
     }
 }

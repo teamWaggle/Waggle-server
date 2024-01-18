@@ -23,9 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CommentCommandServiceImpl implements CommentCommandService {
 
+    //REPOSITORY
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final BoardService boardService;
 
     @Override
@@ -70,6 +73,15 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         if (!validateMember(commentId)) {
             throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
         }
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        replyRepository.deleteAllByCommentId(commentId);
+        commentRepository.delete(comment);
+    }
+
+    @Override
+    public void deleteCommentForHardReset(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 

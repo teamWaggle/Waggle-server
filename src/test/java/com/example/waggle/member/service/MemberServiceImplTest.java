@@ -219,6 +219,7 @@ class MemberServiceImplTest {
         commentCommandService.createCommentByUsername(story, commentRequest2, "member2", BoardType.STORY);
         followCommandService.follow("member2");
         Long pet = petService.createPet(petRequest);
+        Member member = memberQueryService.getMemberByUsername("member1");
 
         //when
         memberService.deleteMember();

@@ -31,10 +31,13 @@ import java.util.List;
 @Service
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
+    //REPOSITORY
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final RecommendRepository recommendRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final AnswerCommandService answerCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;

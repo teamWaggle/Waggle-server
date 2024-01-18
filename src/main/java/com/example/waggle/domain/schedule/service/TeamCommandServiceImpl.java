@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
@@ -29,14 +29,16 @@ import java.util.List;
 @Service
 public class TeamCommandServiceImpl implements TeamCommandService {
 
-    private final MemberQueryService memberQueryService;
+    //REPOSITORY
+    private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final ScheduleRepository scheduleRepository;
-    private final ScheduleCommandService scheduleCommandService;
-    private final BoardService boardService;
     private final ParticipationRepository participationRepository;
-
+    //QUERY_SERVICE
+    private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
+    private final ScheduleCommandService scheduleCommandService;
 
     @Override
     public Long createTeam(Post request) {
@@ -53,6 +55,26 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Team team = teamRepository.save(createdTeam);
         addMemberToTeam(team, loginMember);
+
+        return team.getId();
+    }
+
+    @Override
+    public Long createTeam(Post request, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Team createdTeam = Team.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+//                .coverImageUrl(request.get)
+                .colorScheme(request.getColorScheme())
+                .maxTeamSize(request.getMaxTeamSize())
+                .leader(member)
+                .build();
+
+        Team team = teamRepository.save(createdTeam);
+        addMemberToTeam(team, member);
 
         return team.getId();
     }

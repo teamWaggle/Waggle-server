@@ -29,9 +29,12 @@ import java.util.List;
 @Service
 public class StoryCommandServiceImpl implements StoryCommandService {
 
+    //REPOSITORY
     private final StoryRepository storyRepository;
     private final RecommendRepository recommendRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
     private final CommentCommandService commentCommandService;
@@ -115,7 +118,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-        story.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
+        story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(story.getId());
 
         storyRepository.delete(story);

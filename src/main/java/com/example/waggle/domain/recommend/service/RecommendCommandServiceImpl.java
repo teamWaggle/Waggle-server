@@ -21,9 +21,12 @@ import java.util.List;
 @Transactional
 @Service
 public class RecommendCommandServiceImpl implements RecommendCommandService {
+    //REPOSITORY
+    private final RecommendRepository recommendRepository;
+    //SERVICE
     private final BoardService boardService;
     private final MemberQueryService memberQueryService;
-    private final RecommendRepository recommendRepository;
+
 
     @Override
     public void handleRecommendation(Long boardId, BoardType boardType) {

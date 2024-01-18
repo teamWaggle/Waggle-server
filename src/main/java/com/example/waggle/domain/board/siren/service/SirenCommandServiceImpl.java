@@ -3,7 +3,6 @@ package com.example.waggle.domain.board.siren.service;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
-import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
@@ -30,11 +29,13 @@ import static com.example.waggle.domain.board.service.BoardType.SIREN;
 @Transactional
 @Service
 public class SirenCommandServiceImpl implements SirenCommandService {
+    //REPOSITORY
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
-    private final CommentRepository commentRepository;
-    private final BoardService boardService;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
+    private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
 
@@ -91,7 +92,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        siren.getComments().forEach(comment -> commentCommandService.deleteComment(comment.getId()));
+        siren.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(boardId);
 
         sirenRepository.delete(siren);

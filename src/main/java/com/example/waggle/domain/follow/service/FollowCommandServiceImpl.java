@@ -16,9 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class FollowCommandServiceImpl implements FollowCommandService{
+public class FollowCommandServiceImpl implements FollowCommandService {
+    //REPOSITORY
     private final FollowRepository followRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+
     @Override
     public Long follow(String username) {
         Member signInMember = memberQueryService.getSignInMember();
@@ -39,6 +42,7 @@ public class FollowCommandServiceImpl implements FollowCommandService{
                 .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
         followRepository.delete(follow);
     }
+
     private void validateFollowing(Member member, Member followee) {
         boolean isFollowExists = followRepository.existsFollowByFromMemberAndToMember(member, followee);
         if (isFollowExists) {

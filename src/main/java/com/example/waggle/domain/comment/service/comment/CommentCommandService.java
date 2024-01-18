@@ -12,4 +12,6 @@ public interface CommentCommandService {
 
     void deleteComment(Long commentId);
 
+    void deleteCommentForHardReset(Long commentId);
+
 }
