@@ -13,6 +13,7 @@ import com.example.waggle.web.dto.story.StoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -106,12 +107,12 @@ public class StoryApiController {
         return ApiResponseDto.onSuccess(detailDto);
     }
 
-    @Operation(summary = "특정 스토리 삭제", description = "인증된 사용자의 특정 스토리와 관련정보를 모두 삭제합니다.")
+    @Operation(summary = "스토리 삭제", description = "특정 스토리를 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "스토리 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "스토리를 찾을 수 없거나 인증 정보가 스토리를 작성한 유저와 일치하지 않습니다.")
-    @DeleteMapping("/{boardId}")
-    public ApiResponseDto<Boolean> deleteStoryById(@PathVariable Long boardId) {
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deleteStory(@PathParam("boardId") Long boardId) {
         storyCommandService.deleteStory(boardId);
-        return ApiResponseDto.onSuccess(true);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

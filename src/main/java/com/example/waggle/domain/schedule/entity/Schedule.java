@@ -2,10 +2,7 @@ package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @SuperBuilder
+@DiscriminatorValue("type_schedule")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Schedule extends Board {

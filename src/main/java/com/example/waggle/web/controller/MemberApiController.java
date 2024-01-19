@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +40,7 @@ public class MemberApiController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> register(@RequestPart MemberRequest.RegisterDto request,
                                          @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile,awsS3Service));
+        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -106,6 +105,14 @@ public class MemberApiController {
     @GetMapping("/check-nickname")
     public ApiResponseDto<Boolean> checkNickname(@RequestParam String nickname) {
         memberQueryService.validateNicknameDuplication(nickname);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "인증 회원 삭제", description = "로그인 된 특정 회원을 삭제합니다. 회원이 작성한 관련된 게시글, 댓글 등이 모두 삭제됩니다.")
+    @ApiResponse(responseCode = "200", description = "멤버 삭제 성공.")
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deleteMember() {
+        memberCommandService.deleteMember();
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

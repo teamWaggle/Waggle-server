@@ -92,6 +92,7 @@ public class BoardServiceImpl implements BoardService {
             case SCHEDULE:
                 board = scheduleRepository.findById(boardId)
                         .orElseThrow(() -> new ScheduleHandler(ErrorStatus.BOARD_NOT_FOUND));
+                break;
             default:
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
         }
