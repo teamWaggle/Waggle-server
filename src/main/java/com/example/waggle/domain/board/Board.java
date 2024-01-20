@@ -47,7 +47,7 @@ public abstract class Board extends BaseEntity {
     protected List<Media> medias = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     protected List<Comment> comments = new ArrayList<>();
 
 

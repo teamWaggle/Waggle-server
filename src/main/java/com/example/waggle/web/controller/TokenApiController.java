@@ -55,6 +55,7 @@ public class TokenApiController {
     public ApiResponseDto<JwtToken> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = getRefreshInCookie(request, response);
         JwtToken newTokens = tokenService.issueTokens(refreshToken);
+        CookieUtil.addCookie(response, "refresh_token", newTokens.getRefreshToken(), week);
 
         return ApiResponseDto.onSuccess(newTokens);
     }
@@ -73,7 +74,7 @@ public class TokenApiController {
         String refreshToken = CookieUtil.getCookie(request, "refresh_token")
                 .map(cookie -> cookie.getValue())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.AUTH_REFRESH_NOT_EXIST_IN_COOKIE));
-        CookieUtil.deleteCookie(request, response, refreshToken);
+        CookieUtil.deleteCookie(request, response, "refresh_token");
         return refreshToken;
     }
 

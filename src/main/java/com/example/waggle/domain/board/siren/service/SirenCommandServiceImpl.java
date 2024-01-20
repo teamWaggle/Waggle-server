@@ -29,12 +29,10 @@ import static com.example.waggle.domain.board.service.BoardType.SIREN;
 @Transactional
 @Service
 public class SirenCommandServiceImpl implements SirenCommandService {
-    //REPOSITORY
+
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
-    //COMMAND_SERVICE
     private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;

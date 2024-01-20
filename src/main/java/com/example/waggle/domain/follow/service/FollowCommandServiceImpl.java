@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class FollowCommandServiceImpl implements FollowCommandService {
-    //REPOSITORY
     private final FollowRepository followRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
 
     @Override
