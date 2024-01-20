@@ -13,6 +13,7 @@ import com.example.waggle.web.dto.question.QuestionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -51,7 +52,7 @@ public class QuestionApiController {
     @Operation(summary = "질문 수정", description = "사용자가 질문 수정합니다. 수정한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "질문 수정 성공. 수정한 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 수정에 실패했습니다.")
-    @PutMapping(value = "/{boardId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
                                                @RequestPart QuestionRequest.Put questionUpdateDto,
                                                @RequestPart MediaRequest.Put mediaUpdateDto,
@@ -106,6 +107,15 @@ public class QuestionApiController {
         detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
+    }
+
+    @Operation(summary = "질문 삭제", description = "특정 질문을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
+    @ApiResponse(responseCode = "200", description = "질문 삭제 성공.")
+    @ApiResponse(responseCode = "404", description = "잘뮨을 찾을 수 없거나 인증 정보가 질문을 작성한 유저와 일치하지 않습니다.")
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deleteQuestion(@PathParam("boardId") Long boardId) {
+        questionCommandService.deleteQuestion(boardId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     //TODO 사용자가 작성한 대답과 관련된 question list 가져오기

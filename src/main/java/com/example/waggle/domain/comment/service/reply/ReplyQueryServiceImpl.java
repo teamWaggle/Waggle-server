@@ -1,6 +1,5 @@
 package com.example.waggle.domain.comment.service.reply;
 
-import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.global.exception.handler.ReplyHandler;
@@ -20,7 +19,6 @@ import java.util.List;
 @Service
 public class ReplyQueryServiceImpl implements ReplyQueryService {
     private final ReplyRepository replyRepository;
-    private final BoardService utilService;
 
     @Override
     public List<Reply> getReplies(Long commentId) {

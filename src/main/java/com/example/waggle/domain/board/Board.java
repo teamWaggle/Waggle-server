@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board;
 
+import com.example.waggle.domain.comment.entity.Comment;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.member.entity.Member;
@@ -23,7 +24,8 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Board extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "board_id")
     private Long id;
 
@@ -43,6 +45,10 @@ public abstract class Board extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     protected List<Media> medias = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "board")
+    protected List<Comment> comments = new ArrayList<>();
 
 
     public Board(Long id, Member member, String content, List<BoardHashtag> boardHashtags,

@@ -4,12 +4,14 @@ import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,7 @@ public class ScheduleApiController {
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@PathVariable Long teamId,
                                                @RequestBody Post request) {
-        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request);
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request, SecurityUtil.getCurrentUsername());
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -54,9 +56,9 @@ public class ScheduleApiController {
 
     @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
-    @DeleteMapping("/{scheduleId}")
-    public ApiResponseDto<Boolean> deleteSchedule(@PathVariable Long scheduleId) {
-        scheduleCommandService.deleteSchedule(scheduleId);
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deleteSchedule(@PathParam("boardId") Long boardId) {
+        scheduleCommandService.deleteSchedule(boardId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

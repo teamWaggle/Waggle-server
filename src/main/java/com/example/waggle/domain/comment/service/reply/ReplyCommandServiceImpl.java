@@ -27,14 +27,29 @@ import java.util.List;
 @Service
 public class ReplyCommandServiceImpl implements ReplyCommandService {
 
+    //REPOSITORY
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
 
     @Override
     public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto) {
         Member member = memberQueryService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
+        replyRepository.save(reply);
+
+        addMentionsToReply(reply, replyWriteDto.getMentions());
+        return reply.getId();
+    }
+
+    @Override
+    public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 

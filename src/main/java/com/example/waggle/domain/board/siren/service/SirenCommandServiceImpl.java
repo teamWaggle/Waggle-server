@@ -3,13 +3,10 @@ package com.example.waggle.domain.board.siren.service;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
-import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -32,11 +29,13 @@ import static com.example.waggle.domain.board.service.BoardType.SIREN;
 @Transactional
 @Service
 public class SirenCommandServiceImpl implements SirenCommandService {
+    //REPOSITORY
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
-    private final CommentRepository commentRepository;
-    private final BoardService boardService;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
+    private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
 
@@ -93,11 +92,9 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        List<Comment> comments = commentRepository.findByBoardId(siren.getId());
-        comments.stream().forEach(c -> commentCommandService.deleteComment(c.getId()));
+        siren.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+        recommendRepository.deleteAllByBoardId(boardId);
 
-        List<Recommend> recommends = recommendRepository.findByBoardId(siren.getId());
-        recommends.stream().forEach(r -> recommendRepository.delete(r));
         sirenRepository.delete(siren);
     }
 

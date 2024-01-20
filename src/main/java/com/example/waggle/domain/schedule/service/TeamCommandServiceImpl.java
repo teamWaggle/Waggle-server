@@ -1,13 +1,15 @@
 package com.example.waggle.domain.schedule.service;
 
-import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
+import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
@@ -19,18 +21,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class TeamCommandServiceImpl implements TeamCommandService {
 
-    private final MemberQueryService memberQueryService;
+    //REPOSITORY
+    private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final BoardService boardService;
+    private final ScheduleRepository scheduleRepository;
     private final ParticipationRepository participationRepository;
-
+    //QUERY_SERVICE
+    private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
+    private final ScheduleCommandService scheduleCommandService;
 
     @Override
     public Long createTeam(Post request) {
@@ -52,6 +60,26 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
+    public Long createTeam(Post request, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Team createdTeam = Team.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+//                .coverImageUrl(request.get)
+                .colorScheme(request.getColorScheme())
+                .maxTeamSize(request.getMaxTeamSize())
+                .leader(member)
+                .build();
+
+        Team team = teamRepository.save(createdTeam);
+        addMemberToTeam(team, member);
+
+        return team.getId();
+    }
+
+    @Override
     public Long updateTeam(Long teamId, Post request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
@@ -63,6 +91,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
+        allByTeamId.stream().forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
         teamRepository.delete(team);
     }
 

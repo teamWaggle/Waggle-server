@@ -11,6 +11,8 @@ public interface StoryCommandService {
 
     Long createStory(StoryRequest.Post request, List<MultipartFile> multipartFiles) throws IOException;
 
+    Long createStoryByUsername(StoryRequest.Post request, List<MultipartFile> multipartFiles, String username) throws IOException;
+
     Long updateStory(Long boardId,
                      StoryRequest.Put storyWriteDto,
                      List<MultipartFile> multipartFiles,
