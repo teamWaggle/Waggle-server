@@ -5,7 +5,7 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.TokenService;
-import com.example.waggle.global.security.oauth2.cookie.CookieUtil;
+import com.example.waggle.global.util.CookieUtil;
 import com.example.waggle.web.dto.member.MemberRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
