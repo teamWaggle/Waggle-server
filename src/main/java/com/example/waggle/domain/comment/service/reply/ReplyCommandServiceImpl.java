@@ -27,11 +27,9 @@ import java.util.List;
 @Service
 public class ReplyCommandServiceImpl implements ReplyCommandService {
 
-    //REPOSITORY
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
 
     @Override

@@ -29,12 +29,9 @@ import java.util.List;
 @Service
 public class StoryCommandServiceImpl implements StoryCommandService {
 
-    //REPOSITORY
     private final StoryRepository storyRepository;
     private final RecommendRepository recommendRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
-    //COMMAND_SERVICE
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
     private final CommentCommandService commentCommandService;

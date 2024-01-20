@@ -17,8 +17,6 @@ public class AnswerConverter {
                 .username(answer.getMember().getUsername())
                 .profileImg(MediaUtil.getProfile(answer.getMember()))
                 .createDate(answer.getCreatedDate())
-                .hashtags(answer.getBoardHashtags().stream()
-                        .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(answer))
                 .build();
     }

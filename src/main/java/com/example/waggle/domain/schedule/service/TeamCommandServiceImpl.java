@@ -29,15 +29,12 @@ import java.util.List;
 @Service
 public class TeamCommandServiceImpl implements TeamCommandService {
 
-    //REPOSITORY
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final ScheduleRepository scheduleRepository;
     private final ParticipationRepository participationRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
-    //COMMAND_SERVICE
     private final ScheduleCommandService scheduleCommandService;
 
     @Override

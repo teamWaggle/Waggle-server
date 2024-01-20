@@ -21,7 +21,9 @@ import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -41,7 +43,6 @@ import java.util.List;
 @Service
 public class MemberCommandServiceImpl implements MemberCommandService {
 
-    //REPOSITORY
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
@@ -52,9 +53,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final AnswerRepository answerRepository;
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
-    //QUERY_SERVICE
+    private final TeamRepository teamRepository;
     private final MemberQueryService memberQueryService;
-    //COMMAND_SERVICE
     private final AwsS3Service awsS3Service;
     private final RedisService redisService;
     private final StoryCommandService storyCommandService;
@@ -132,6 +132,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
         sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
         schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
+
+        List<Team> teamsByLeader = teamRepository.findListByTeamMembers_Member_Username(username);
+        teamsByLeader.stream()
+                .forEach(team -> {
+                    team.getSchedules().stream()
+                            .forEach(schedule -> scheduleCommandService.deleteScheduleForHardReset(schedule.getId()));
+                    teamRepository.deleteById(team.getId());
+                });
 
         memberRepository.delete(member);
     }
