@@ -1,4 +1,4 @@
-package com.example.waggle.global.security.oauth2.cookie;
+package com.example.waggle.global.util;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

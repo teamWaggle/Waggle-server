@@ -60,4 +60,7 @@ server:
     whitelabel.enabled: true
 
 springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
   use-fqn: true
