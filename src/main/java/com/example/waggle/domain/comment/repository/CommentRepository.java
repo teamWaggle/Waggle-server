@@ -11,4 +11,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByBoardId(Long boardId);
 
     Page<Comment> findPagedCommentsByBoardId(Long boardId, Pageable pageable);
+
+    void deleteAllByMemberUsername(String username);
 }

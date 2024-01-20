@@ -11,8 +11,10 @@ import com.example.waggle.web.dto.pet.PetResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +35,7 @@ public class PetApiController {
     @Operation(summary = "반려견 정보 입력", description = "반려견 정보를 입력합니다. 입력한 반려견의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "반려견 정보 입력 성공. 입력한 반려견 고유의 ID를 반환.")
     @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart PetRequest.Post request,
                                           @RequestPart MultipartFile profileImg) throws IOException {
         String profileImgUrl = null;
@@ -58,7 +60,7 @@ public class PetApiController {
     @Operation(summary = "반려견 정보 수정", description = "반려견 정보를 수정합니다. 입력한 반려견의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "반려견 정보 수정 성공. 입력한 반려견 고유의 ID를 반환.")
     @ApiResponse(responseCode = "400", description = "정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
-    @PutMapping("/{petId}")
+    @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@RequestPart PetRequest.Post request,
                                           @RequestPart MultipartFile profileImg,
                                           @PathVariable Long petId) throws IOException {
@@ -77,5 +79,14 @@ public class PetApiController {
     public ApiResponseDto<List<PetResponse.SummaryDto>> findPets(@PathVariable String username) {
         List<Pet> petsByUsername = petQueryService.getPetsByUsername(username);
         return ApiResponseDto.onSuccess(PetConverter.toListDto(petsByUsername));
+    }
+
+    @Operation(summary = "펫 삭제", description = "회원의 특정 펫 정보를 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "펫 삭제 성공.")
+    @ApiResponse(responseCode = "404", description = "펫정보를 찾을 수 없거나 인증 정보가 펫을 소유한 유저와 일치하지 않습니다.")
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deletePet(@PathParam("petId") Long petId) {
+        petCommandService.deletePet(petId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

@@ -15,22 +15,23 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id",callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Team extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "team_id")
     private Long id;
 
     private String name;
     private String description;
     private String coverImageUrl;
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String colorScheme;
     private Integer maxTeamSize;
 
 
     @Builder.Default
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<Schedule> schedules = new ArrayList<>();
 
     @Builder.Default

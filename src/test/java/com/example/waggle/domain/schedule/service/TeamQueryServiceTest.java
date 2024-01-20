@@ -96,7 +96,7 @@ class TeamQueryServiceTest {
     void getTeamsByUsername() {
         // when
         Pageable pageable = PageRequest.of(0, 5);
-        List<Team> teams = teamQueryService.getTeamsByUsername(member1.getUsername(), pageable).getContent();
+        List<Team> teams = teamQueryService.getPagingTeamByUsername(member1.getUsername(), pageable).getContent();
 
         // then
         assertThat(teams.size()).isEqualTo(2);

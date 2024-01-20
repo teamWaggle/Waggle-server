@@ -54,18 +54,12 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private Role role;
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
-
-
-//    public void setPets(List<Pet> pets) {
-//        this.pets = pets;
-//    }
-
 
     public void saveProfileImg(String profileImgUrl) {
         this.profileImgUrl = profileImgUrl;

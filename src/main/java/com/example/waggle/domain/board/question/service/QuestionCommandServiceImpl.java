@@ -10,7 +10,6 @@ import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -32,10 +31,13 @@ import java.util.List;
 @Service
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
+    //REPOSITORY
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final RecommendRepository recommendRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final AnswerCommandService answerCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
@@ -105,14 +107,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
-        answers.stream().forEach(a -> answerCommandService.deleteAnswer(a.getId()));
+        answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
 
-        List<Recommend> recommends = recommendRepository.findByBoardId(question.getId());
-        recommends.stream().forEach(r -> recommendRepository.delete(r));
-
+        recommendRepository.deleteAllByBoardId(question.getId());
 
         questionRepository.delete(question);
     }
+
     private Question buildQuestion(QuestionRequest.Post request) {
         Member member = memberQueryService.getSignInMember();
 

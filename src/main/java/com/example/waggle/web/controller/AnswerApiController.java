@@ -13,6 +13,7 @@ import com.example.waggle.web.dto.media.MediaRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -99,5 +99,14 @@ public class AnswerApiController {
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "대답 삭제", description = "특정 대답을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등이 모두 삭제됩니다.")
+    @ApiResponse(responseCode = "200", description = "대답 삭제 성공.")
+    @ApiResponse(responseCode = "404", description = "대답을 찾을 수 없거나 인증 정보가 대답을 작성한 유저와 일치하지 않습니다.")
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deleteAnswer(@PathParam("boardId") Long boardId) {
+        answerCommandService.deleteAnswer(boardId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

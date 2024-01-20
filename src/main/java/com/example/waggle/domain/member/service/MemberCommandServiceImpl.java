@@ -1,9 +1,28 @@
 package com.example.waggle.domain.member.service;
 
+import com.example.waggle.domain.board.answer.entity.Answer;
+import com.example.waggle.domain.board.answer.repository.AnswerRepository;
+import com.example.waggle.domain.board.answer.service.AnswerCommandService;
+import com.example.waggle.domain.board.question.entity.Question;
+import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.board.question.service.QuestionCommandService;
+import com.example.waggle.domain.board.siren.entity.Siren;
+import com.example.waggle.domain.board.siren.repository.SirenRepository;
+import com.example.waggle.domain.board.siren.service.SirenCommandService;
+import com.example.waggle.domain.board.story.entity.Story;
+import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.board.story.service.StoryCommandService;
+import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.comment.repository.ReplyRepository;
+import com.example.waggle.domain.follow.repository.FollowRepository;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
+import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -13,9 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -24,12 +41,30 @@ import java.util.List;
 @Service
 public class MemberCommandServiceImpl implements MemberCommandService {
 
+    //REPOSITORY
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
+    private final RecommendRepository recommendRepository;
+    private final FollowRepository followRepository;
+    private final StoryRepository storyRepository;
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
+    private final SirenRepository sirenRepository;
+    private final ScheduleRepository scheduleRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final AwsS3Service awsS3Service;
-    private static final String AUTH_CODE_PREFIX = "AuthCode ";
     private final RedisService redisService;
+    private final StoryCommandService storyCommandService;
+    private final QuestionCommandService questionCommandService;
+    private final AnswerCommandService answerCommandService;
+    private final SirenCommandService sirenCommandService;
+    private final ScheduleCommandService scheduleCommandService;
+    //ELSE
+    private final PasswordEncoder passwordEncoder;
+    private static final String AUTH_CODE_PREFIX = "AuthCode ";
 
 
     @Override
@@ -77,7 +112,28 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public void deleteMember() {
         Member member = memberQueryService.getSignInMember();
-        //TODO member relation all data removing
+        String username = member.getUsername();
+
+        //TODO MemberMention DeleteAll
+        replyRepository.deleteAllByMemberUsername(username);
+        commentRepository.deleteAllByMemberUsername(username);
+        followRepository.deleteAllByFromMemberUsername(username);
+        followRepository.deleteAllByToMemberUsername(username);
+        recommendRepository.deleteAllByMemberUsername(username);
+
+        List<Story> stories = storyRepository.findListByMemberUsername(username);
+        List<Question> questions = questionRepository.findListByMemberUsername(username);
+        List<Answer> answers = answerRepository.findListByMemberUsername(username);
+        List<Siren> sirens = sirenRepository.findListByMemberUsername(username);
+        List<Schedule> schedules = scheduleRepository.findListByMemberUsername(username);
+
+        stories.forEach(story -> storyCommandService.deleteStory(story.getId()));
+        questions.forEach(question -> questionCommandService.deleteQuestion(question.getId()));
+        answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
+        sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
+        schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
+
+        memberRepository.delete(member);
     }
 
     @Override

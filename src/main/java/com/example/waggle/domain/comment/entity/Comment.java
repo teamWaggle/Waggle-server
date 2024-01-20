@@ -33,6 +33,10 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "board_id")
     private Board board;
 
+//    @Builder.Default
+//    @OneToMany(mappedBy = "comment", orphanRemoval = true)
+//    private List<Reply> replies = new ArrayList<>();
+
 
     public void changeContent(String content) {
         this.content = content;

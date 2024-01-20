@@ -15,4 +15,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     Optional<Follow> findByToMember_UsernameAndFromMember_Username(String toUser_username, String fromUser_username);
 
     boolean existsFollowByFromMemberAndToMember(Member fromUser, Member toUser);
+
+    void deleteAllByFromMemberUsername(String fromMemberUsername);
+
+    void deleteAllByToMemberUsername(String toMemberUsername);
 }
