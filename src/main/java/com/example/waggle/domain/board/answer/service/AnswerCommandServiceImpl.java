@@ -34,13 +34,10 @@ import static com.example.waggle.domain.board.service.BoardType.ANSWER;
 public class AnswerCommandServiceImpl implements AnswerCommandService {
     //TODO user는 question 내에 하나의 answer만 사용할 수 있도록 제어
 
-    //REPOSITORY
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
-    //COMMAND_SERVICE
     private final CommentCommandService commentCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
@@ -88,10 +85,6 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, answer);
 
-        answer.getBoardHashtags().clear();
-        for (String hashtag : answerUpdateDto.getHashtags()) {
-            boardService.saveHashtag(answer, hashtag);
-        }
         return answer.getId();
     }
 

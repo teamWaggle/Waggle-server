@@ -14,22 +14,18 @@ import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
-import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
-    //REPOSITORY
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
-    //SERVICE
     private final CommentCommandService commentCommandService;
     private final BoardService boardService;
 
@@ -78,6 +74,16 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         scheduleRepository.delete(schedule);
+    }
+
+    @Override
+    public void deleteScheduleForHardReset(Long scheduleId) {
+        scheduleRepository.findById(scheduleId).ifPresent(
+                schedule -> {
+                    schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+                    scheduleRepository.delete(schedule);
+                }
+        );
     }
 
     private static void validateTeamMember(Team team, Member member) {

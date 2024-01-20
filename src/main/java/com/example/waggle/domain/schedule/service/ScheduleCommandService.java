@@ -10,4 +10,6 @@ public interface ScheduleCommandService {
 
     void deleteSchedule(Long scheduleId);
 
+    void deleteScheduleForHardReset(Long scheduleId);
+
 }

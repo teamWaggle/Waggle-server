@@ -21,10 +21,8 @@ import java.util.List;
 @Service
 public class PetCommandServiceImpl implements PetCommandService {
 
-    //REPOSITORY
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
 
     @Override

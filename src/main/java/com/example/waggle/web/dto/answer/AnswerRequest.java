@@ -19,9 +19,6 @@ public class AnswerRequest {
         @NotNull(message = "답변 내용을 작성해주세요.")
         @Max(1500)
         private String content;
-
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
     }
 
     @Getter
@@ -36,8 +33,6 @@ public class AnswerRequest {
         private String content;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
 
         private String username;
         private String profileImg;

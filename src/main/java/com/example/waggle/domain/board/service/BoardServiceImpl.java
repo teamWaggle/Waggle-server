@@ -25,14 +25,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
-    //REPOSITORY
     private final StoryRepository storyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
     private final HashtagRepository hashtagRepository;
-    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
 
 
