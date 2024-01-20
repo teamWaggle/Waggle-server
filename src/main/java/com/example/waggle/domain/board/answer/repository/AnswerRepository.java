@@ -8,9 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    Page<Answer> findByQuestionId(Long questionId,Pageable pageable);
+    Page<Answer> findByQuestionId(Long questionId, Pageable pageable);
+
+    List<Answer> findListByMemberUsername(String username);
+
     Page<Answer> findAll(Pageable pageable);
 
     List<Answer> findAnswerByQuestionId(Long questionId);
+
     Page<Answer> findPagedAnswerByMemberUsername(String username, Pageable pageable);
+
+    void deleteAllByMemberUsername(String username);
 }

@@ -3,7 +3,6 @@ package com.example.waggle.domain.schedule.service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
@@ -14,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -21,11 +22,15 @@ public class TeamQueryServiceImpl implements TeamQueryService {
 
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
-    private final TeamMemberRepository teamMemberRepository;
 
     @Override
-    public Page<Team> getTeamsByUsername(String username, Pageable pageable) {
+    public Page<Team> getPagingTeamByUsername(String username, Pageable pageable) {
         return teamRepository.findByTeamMembers_Member_Username(username, pageable);
+    }
+
+    @Override
+    public List<Team> getTeamListByUsername(String username) {
+        return teamRepository.findListByTeamMembers_Member_Username(username);
     }
 
     @Override

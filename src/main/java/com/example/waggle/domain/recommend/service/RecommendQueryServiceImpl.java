@@ -1,6 +1,5 @@
 package com.example.waggle.domain.recommend.service;
 
-import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class RecommendQueryServiceImpl implements RecommendQueryService {
 
-    private final BoardService boardService;
     private final RecommendRepository recommendRepository;
     private final MemberQueryService memberQueryService;
 

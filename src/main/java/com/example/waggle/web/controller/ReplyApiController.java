@@ -10,6 +10,7 @@ import com.example.waggle.web.dto.reply.ReplyResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,10 +54,19 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/{commentId}")
     public ApiResponseDto<ReplyResponse.ListDto> getReplies(@RequestParam(defaultValue = "0") int currentPage,
-                                       @PathVariable Long commentId) {
+                                                            @PathVariable Long commentId) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Reply> pagedReplies = replyQueryService.getPagedReplies(commentId, pageable);
         ReplyResponse.ListDto listDto = ReplyConverter.toListDto(pagedReplies);
         return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "대댓글 삭제", description = "특정 대댓글을 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "대댓글 삭제 성공.")
+    @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없거나 인증 정보가 댓글을 작성한 유저와 일치하지 않습니다.")
+    @DeleteMapping
+    public ApiResponseDto<Boolean> deleteReply(@PathParam("replyId") Long replyId) {
+        replyCommandService.deleteReply(replyId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

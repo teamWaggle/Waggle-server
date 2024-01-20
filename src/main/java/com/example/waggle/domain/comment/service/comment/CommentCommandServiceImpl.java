@@ -4,7 +4,6 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.domain.comment.entity.Reply;
 import com.example.waggle.domain.comment.repository.CommentRepository;
 import com.example.waggle.domain.comment.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
@@ -17,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,9 +23,12 @@ import java.util.List;
 @Service
 public class CommentCommandServiceImpl implements CommentCommandService {
 
+    //REPOSITORY
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    //QUERY_SERVICE
     private final MemberQueryService memberQueryService;
+    //COMMAND_SERVICE
     private final BoardService boardService;
 
     @Override
@@ -39,6 +39,19 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .content(commentWriteDto.getContent())
                 .board(board)
                 .member(signInMember)
+                .build();
+        commentRepository.save(build);
+        return build.getId();
+    }
+
+    @Override
+    public Long createCommentByUsername(Long boardId, CommentRequest.Post commentWriteDto, String username, BoardType boardType) {
+        Member memberByUsername = memberQueryService.getMemberByUsername(username);
+        Board board = boardService.getBoard(boardId, boardType);
+        Comment build = Comment.builder()
+                .content(commentWriteDto.getContent())
+                .board(board)
+                .member(memberByUsername)
                 .build();
         commentRepository.save(build);
         return build.getId();
@@ -63,9 +76,16 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        List<Reply> replies = replyRepository.findByCommentId(commentId);
-        replies.stream().forEach(r -> replyRepository.delete(r));
+        replyRepository.deleteAllByCommentId(commentId);
+        commentRepository.delete(comment);
+    }
 
+    @Override
+    public void deleteCommentForHardReset(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        replyRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
     }
 

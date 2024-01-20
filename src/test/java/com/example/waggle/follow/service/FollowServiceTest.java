@@ -42,12 +42,6 @@ public class FollowServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-
-    @AfterEach
-    void afterEach() {
-        databaseCleanUp.truncateAllEntity();
-    }
-
     void setUp() {
         signUpDto1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
@@ -104,6 +98,7 @@ public class FollowServiceTest {
         //then
         assertThat(followingsByUser.get(0).getToMember().getUsername()).isEqualTo("member2");
     }
+
     @Test
     @WithMockCustomUser
     @Transactional
@@ -129,7 +124,7 @@ public class FollowServiceTest {
         //when
         followCommandService.follow("member2");
         //then
-        Assertions.assertThrows(FollowHandler.class ,()->followCommandService.follow("member2"));
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow("member2"));
     }
 
     @Test

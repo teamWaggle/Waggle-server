@@ -6,6 +6,8 @@ public interface TeamCommandService {
 
     Long createTeam(Post request);
 
+    Long createTeam(Post request, String username);
+
     Long updateTeam(Long teamId, Post request);
 
     void deleteTeam(Long teamId);

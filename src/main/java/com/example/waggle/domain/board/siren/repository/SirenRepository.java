@@ -11,7 +11,12 @@ public interface SirenRepository extends JpaRepository<Siren, Long> {
 
     Page<Siren> findByMemberUsername(String username, Pageable pageable);
 
+    List<Siren> findListByMemberUsername(String username);
+
     List<Siren> findAll();
 
     Page<Siren> findAll(Pageable pageable);
+
+    void deleteAllByMemberUsername(String username);
+
 }
