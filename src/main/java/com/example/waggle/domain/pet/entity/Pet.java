@@ -35,7 +35,7 @@ public class Pet extends BaseEntity {
 
     private LocalDate birthday;
 
-    private String profileImg;
+    private String profileImgUrl;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,7 +47,7 @@ public class Pet extends BaseEntity {
         this.breed = petDto.getBreed();
         this.gender = petDto.getGender();
         this.birthday = petDto.getBirthday();
-        this.profileImg = petDto.getProfileImg();
+        this.profileImgUrl = petDto.getProfileImgUrl();
     }
 
 }

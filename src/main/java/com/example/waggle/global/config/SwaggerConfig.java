@@ -10,8 +10,10 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@OpenAPIDefinition(servers = {@Server(url = "https://suddii01.store", description = "https://suddii01.store")})
-
+@OpenAPIDefinition(servers = {
+        @Server(url = "https://suddii01.store", description = "deploy server"),
+        @Server(url = "http://localhost:8080", description = "local server")
+})
 @Configuration
 public class SwaggerConfig {
 
@@ -42,6 +44,5 @@ public class SwaggerConfig {
                 .components(components);
 
     }
-
 
 }

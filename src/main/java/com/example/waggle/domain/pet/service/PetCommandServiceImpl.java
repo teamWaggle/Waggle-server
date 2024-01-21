@@ -34,10 +34,10 @@ public class PetCommandServiceImpl implements PetCommandService {
     }
 
     @Override
-    public void createPets(List<PetRequest.Post> petList, String username) {
+    public void createPets(PetRequest.PostList petList, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        petList.stream().forEach(pet -> petRepository.save(buildPet(pet, member)));
+        petList.getPetList().stream().forEach(pet -> petRepository.save(buildPet(pet, member)));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class PetCommandServiceImpl implements PetCommandService {
                 .breed(petDto.getBreed())
                 .gender(petDto.getGender())
                 .member(member)
-                .profileImg(petDto.getProfileImg())
+                .profileImgUrl(petDto.getProfileImgUrl())
                 .build();
         return build;
     }

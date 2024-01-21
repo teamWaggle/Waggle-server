@@ -20,7 +20,7 @@ public class PetResponse {
         private String breed;
         private Gender gender;
         private LocalDate birthday;
-        private String profileImg;
+        private String profileImgUrl;
 //        @NotNull
 //        private String username;
     }
@@ -36,7 +36,7 @@ public class PetResponse {
         @NotNull
         private String name;
         private Gender gender;
-        private String profileImg;
+        private String profileImgUrl;
     }
 
 }

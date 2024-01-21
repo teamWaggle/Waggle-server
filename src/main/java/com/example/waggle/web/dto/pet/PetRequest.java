@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PetRequest {
 
@@ -21,6 +23,18 @@ public class PetRequest {
         private String breed;
         private Gender gender;
         private LocalDate birthday;
-        private String profileImg;
+        private String profileImgUrl;
+        private boolean isUploadProfile;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class PostList {
+        @Builder.Default
+        private List<Post> petList = new ArrayList<>();
     }
 }
