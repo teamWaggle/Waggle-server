@@ -41,7 +41,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
         replyRepository.save(reply);
 
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        addMentionsToReply(reply, replyWriteDto.getMentionedMembers());
         return reply.getId();
     }
 
@@ -54,7 +54,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
         replyRepository.save(reply);
 
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        addMentionsToReply(reply, replyWriteDto.getMentionedMembers());
         return reply.getId();
     }
 
@@ -66,7 +66,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
         reply.getMentions().clear();
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        addMentionsToReply(reply, replyWriteDto.getMentionedMembers());
         return reply.getId();
     }
 

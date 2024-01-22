@@ -6,14 +6,12 @@ import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.service.BoardService;
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,22 +74,22 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public Long updateQuestionV2(Long boardId,
-                                 QuestionRequest.Put questionUpdateDto,
+                                 QuestionRequest.Post request,
                                  MediaRequest.Put mediaUpdateDto,
                                  List<MultipartFile> multipartFiles) throws IOException {
-        if (!SecurityUtil.getCurrentUsername().equals(questionUpdateDto.getUsername())) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
 
-        question.changeQuestion(questionUpdateDto);
+        question.changeQuestion(request);
 
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, question);
 
         question.getBoardHashtags().clear();
-        for (String hashtag : questionUpdateDto.getHashtags()) {
+        for (String hashtag : request.getHashtags()) {
             boardService.saveHashtag(question, hashtag);
         }
         return question.getId();
@@ -97,7 +97,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public void deleteQuestion(Long boardId) {
-        if (!boardService.validateMemberUseBoard(boardId, BoardType.QUESTION)) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)

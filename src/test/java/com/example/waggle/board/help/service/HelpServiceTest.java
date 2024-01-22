@@ -7,8 +7,8 @@ import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
-import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.siren.SirenRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class HelpServiceTest {
     SirenRequest.Post hwd1;
     SirenRequest.Post hwd2;
     SirenRequest.Post hwd3;
-    SirenRequest.Put hwd4;
+    SirenRequest.Post hwd4;
 
     MemberRequest.RegisterDto signUpDto1;
 
@@ -73,7 +73,7 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(Siren.Category.FIND_PET)
                 .build();
-        hwd4 = SirenRequest.Put.builder()
+        hwd4 = SirenRequest.Post.builder()
                 .title("this is title")
                 .content("help page4. hi")
                 .contact("01025522972")

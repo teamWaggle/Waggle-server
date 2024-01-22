@@ -1,12 +1,8 @@
 package com.example.waggle.web.dto.schedule;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 public class ScheduleRequest {
 
@@ -17,6 +13,7 @@ public class ScheduleRequest {
     @Builder
     @ToString
     public static class Post {
+        private Long id;
         private String title;
         private String content;
         private LocalDateTime startTime;

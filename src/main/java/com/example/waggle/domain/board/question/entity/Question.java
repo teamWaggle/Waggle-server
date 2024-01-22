@@ -23,7 +23,7 @@ public class Question extends Board {
     @Column(nullable = false)
     private Status status;
 
-    public void changeQuestion(QuestionRequest.Put request) {
+    public void changeQuestion(QuestionRequest.Post request) {
         this.content = request.getContent();
         this.title = request.getTitle();
         this.status = request.getStatus();

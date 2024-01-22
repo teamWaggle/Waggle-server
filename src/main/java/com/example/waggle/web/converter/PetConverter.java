@@ -21,7 +21,7 @@ public class PetConverter {
         return PetResponse.DetailDto.builder()
                 .id(pet.getId())
                 .breed(pet.getBreed())
-                .birthday(pet.getBirthday())
+                .age(pet.getAge())
                 .gender(pet.getGender())
                 .name(pet.getName())
                 .profileImgUrl(MediaUtil.getProfileImg(pet))

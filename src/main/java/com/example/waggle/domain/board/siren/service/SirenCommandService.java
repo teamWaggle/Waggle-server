@@ -12,12 +12,12 @@ public interface SirenCommandService {
                      List<MultipartFile> multipartFiles) throws IOException;
 
     Long updateSiren(Long boardId,
-                     SirenRequest.Put sirenUpdateDto,
+                     SirenRequest.Post request,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles) throws IOException;
 
     Long updateSirenV2(Long boardId,
-                       SirenRequest.Put sirenUpdateDto,
+                       SirenRequest.Post request,
                        MediaRequest.Put mediaUpdateDto,
                        List<MultipartFile> multipartFiles) throws IOException;
 

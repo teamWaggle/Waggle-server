@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.reply;
 
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -14,9 +15,9 @@ public class ReplyResponse {
     public static class ViewDto {
         private Long id;
         private String content;
-        private String username;
         @Builder.Default
         private List<String> mentionMembers = new ArrayList<>();
+        private MemberResponse.SummaryDto member;
     }
 
     @Builder
