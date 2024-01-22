@@ -124,5 +124,4 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teams));
     }
 
-
 }
