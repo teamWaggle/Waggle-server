@@ -22,7 +22,7 @@ public class Siren extends Board {
     @Column(nullable = false)
     private String title;
     private String petKind;
-    private int petAge;
+    private String petAge;
     @Enumerated(EnumType.STRING)
     private Gender petGender;
     private LocalDateTime lostDate;

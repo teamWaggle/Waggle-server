@@ -17,7 +17,7 @@ public class SirenRequest {
         private Long id;
         private String title;
         private String petKind;
-        private int petAge;
+        private String petAge;
         private Gender petGender;
         private String contact;
         private String lostLocate;
