@@ -13,7 +13,6 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.media.MediaRequest;
 import lombok.RequiredArgsConstructor;
@@ -71,17 +70,17 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long updateAnswerV2(Long boardId,
-                               AnswerRequest.Put answerUpdateDto,
+                               AnswerRequest.Post request,
                                MediaRequest.Put mediaUpdateDto,
                                List<MultipartFile> multipartFiles) throws IOException {
-        if (!SecurityUtil.getCurrentUsername().equals(answerUpdateDto.getUsername())) {
+        if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
 
-        answer.changeAnswer(answerUpdateDto.getContent());
+        answer.changeAnswer(request.getContent());
 
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, answer);
 

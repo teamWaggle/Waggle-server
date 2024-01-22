@@ -15,9 +15,10 @@ public class ReplyRequest {
     @AllArgsConstructor
     @Builder
     public static class Post {
+        private Long id;
         private String content;
         @Builder.Default
-        private List<String> mentions = new ArrayList<>();
+        private List<String> mentionedMembers = new ArrayList<>();
         private Long commentId;
     }
 }

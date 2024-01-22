@@ -2,6 +2,8 @@ package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
@@ -9,23 +11,35 @@ import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.schedule.TeamRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @WithMockCustomUser
-@Transactional
 @SpringBootTest
 class TeamCommandServiceTest {
 
     @Autowired
     TeamCommandService teamCommandService;
+    @Autowired
+    TeamQueryService teamQueryService;
+    @Autowired
+    MemberCommandService memberCommandService;
+    @Autowired
+    MemberQueryService memberQueryService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -34,52 +48,49 @@ class TeamCommandServiceTest {
     TeamMemberRepository teamMemberRepository;
     @Autowired
     ParticipationRepository participationRepository;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
 
-    private Member member1;
-    private Member member2;
-    private Member member3;
-    private Team team;
+    private MemberRequest.RegisterDto member1;
+
+    private MemberRequest.RegisterDto member2;
+
+    private MemberRequest.RegisterDto member3;
+
+    private TeamRequest.Post team;
+
+    private Long teamId;
 
 
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = Member.builder()
+        member1 = MemberRequest.RegisterDto.builder()
                 .username("member1")
                 .password("12345678")
                 .email("dasfk")
                 .nickname("lksadfjklj")
                 .build();
-        memberRepository.save(member1);
 
-        member2 = Member.builder()
+        member2 = MemberRequest.RegisterDto.builder()
                 .username("member2")
                 .password("12345678")
                 .email("aksdfhsafa")
                 .nickname("sadlfkdsfjkw")
                 .build();
-        memberRepository.save(member2);
 
-        member3 = Member.builder()
+        member3 = MemberRequest.RegisterDto.builder()
                 .username("member3")
                 .password("12345678")
                 .email("wldkfjk")
                 .nickname("jdhskjfhac")
                 .build();
-        memberRepository.save(member3);
 
-        // Setup team
-        team = Team.builder()
-                .name("team1")
-                .description("team1 description")
-                .leader(member1)
-                .maxTeamSize(4)
-                .colorScheme("red")
-                .build();
-        teamRepository.save(team);
-
-        // Setup teamMember
-        addMemberToTeam(team, member1);
+        team = TeamRequest.Post.builder().colorScheme("hi").maxTeamSize(4).name("team").description("team").build();
+        memberCommandService.signUp(member1);
+        memberCommandService.signUp(member2);
+        memberCommandService.signUp(member3);
+        teamId = teamCommandService.createTeam(team, "member1");
     }
 
     private void addMemberToTeam(Team team, Member member) {
@@ -91,21 +102,28 @@ class TeamCommandServiceTest {
         teamMemberRepository.save(teamMember);
     }
 
+    @AfterEach
+    void clean() {
+        databaseCleanUp.truncateAllEntity();
+    }
+
 
     @Test
+    @Transactional
     void createTeam() {
         // given
         TeamRequest.Post createRequest = TeamRequest.Post.builder()
                 .name("test name")
                 .description("test description")
                 .maxTeamSize(10)
+                .colorScheme("red")
                 .build();
 
         // when
         Long createdTeamId = teamCommandService.createTeam(createRequest);
 
         // then
-        Team createdTeam = teamRepository.findById(createdTeamId).get();
+        Team createdTeam = teamQueryService.getTeamById(createdTeamId);
         assertThat(createdTeam.getName()).isEqualTo(createRequest.getName());
         assertThat(createdTeam.getDescription()).isEqualTo(createRequest.getDescription());
         assertThat(createdTeam.getMaxTeamSize()).isEqualTo(createRequest.getMaxTeamSize());
@@ -120,11 +138,12 @@ class TeamCommandServiceTest {
         TeamRequest.Post updateRequest = TeamRequest.Post.builder()
                 .name("updated name")
                 .description("updated description")
+                .colorScheme("zz")
                 .maxTeamSize(15)
                 .build();
 
         // when
-        Long updatedTeamId = teamCommandService.updateTeam(team.getId(), updateRequest);
+        Long updatedTeamId = teamCommandService.updateTeam(teamId, updateRequest);
 
         // then
         Team updatedTeam = teamRepository.findById(updatedTeamId).get();
@@ -136,63 +155,65 @@ class TeamCommandServiceTest {
     @Test
     void deleteTeam() {
         // when
-        teamCommandService.deleteTeam(team.getId());
+        teamCommandService.deleteTeam(teamId);
 
         // then
-        assertThat(teamRepository.existsById(team.getId())).isEqualTo(false);
+        assertThat(teamRepository.existsById(teamId)).isEqualTo(false);
     }
 
 
     @Test
+    @Transactional
     void addTeamMember() {
 
         // when
-        Long updatedTeamId = teamCommandService.addTeamMember(team.getId(), member2.getUsername());
+        Long updatedTeamId = teamCommandService.addTeamMember(teamId, member2.getUsername());
 
         // then
-        Team updatedTeam = teamRepository.findById(updatedTeamId).get();
-        assertThat(updatedTeam.getTeamMembers().size()).isEqualTo(2);
+        Team teamById = teamQueryService.getTeamById(updatedTeamId);
+        assertThat(teamById.getTeamMembers().size()).isEqualTo(2);
     }
 
 
     @Test
+    @Transactional
     void deleteTeamMember() {
         // given
-        Long updatedTeamId = teamCommandService.addTeamMember(team.getId(), member2.getUsername());
-
+        Long teamMember = teamCommandService.addTeamMember(teamId, "member2");
         // when
-        teamCommandService.deleteTeamMember(updatedTeamId, member2.getUsername());
+        Team teamById = teamQueryService.getTeamById(teamId);
+        teamCommandService.deleteTeamMember(teamId, "member2");
 
         // then
-        Team updatedTeam = teamRepository.findById(updatedTeamId).get();
-        assertThat(updatedTeam.getTeamMembers().size()).isEqualTo(1);
-        assertThat(updatedTeam.getTeamMembers().get(0).getMember().getUsername()).isEqualTo(member1.getUsername());
+        List<TeamMember> teamMemberByTeamId = teamMemberRepository.findTeamMemberByTeamId(teamId);
+        assertThat(teamMemberByTeamId.size()).isEqualTo(1);
+        assertThat(teamMemberByTeamId.get(0).getMember().getUsername()).isEqualTo("member1");
     }
 
 
-    @WithMockCustomUser
     @Test
+    @Transactional
     void changeTeamLeader() {
         // given
-        Long updatedTeamId = teamCommandService.addTeamMember(team.getId(), member2.getUsername());
+        Long updatedTeamId = teamCommandService.addTeamMember(teamId, member2.getUsername());
 
         // when
-        teamCommandService.changeTeamLeader(team.getId(), member2.getUsername());
+        teamCommandService.changeTeamLeader(teamId, member2.getUsername());
 
         // then
-        Team updatedTeam = teamRepository.findById(updatedTeamId).get();
-        assertThat(updatedTeam.getLeader().getUsername()).isEqualTo(member2.getUsername());
+        Team teamById = teamQueryService.getTeamById(teamId);
+        assertThat(teamById.getLeader().getUsername()).isEqualTo(member2.getUsername());
     }
 
     @Test
     void requestParticipation() {
         // when
-        teamCommandService.requestParticipation(team.getId(), member2.getUsername());
+        teamCommandService.requestParticipation(teamId, member2.getUsername());
 
         // then
-        Participation participation = participationRepository.findByTeamIdAndUsername(team.getId(),
+        Participation participation = participationRepository.findByTeamIdAndUsername(teamId,
                 member2.getUsername()).get();
-        assertThat(participation.getTeamId()).isEqualTo(team.getId());
+        assertThat(participation.getTeamId()).isEqualTo(teamId);
         assertThat(participation.getUsername()).isEqualTo(member2.getUsername());
         assertThat(participation.getStatus()).isEqualTo(ParticipationStatus.PENDING);
     }
@@ -200,23 +221,23 @@ class TeamCommandServiceTest {
     @Test
     void respondToParticipation() {
         // given
-        teamCommandService.requestParticipation(team.getId(), member2.getUsername());
-        teamCommandService.requestParticipation(team.getId(), member3.getUsername());
+        teamCommandService.requestParticipation(teamId, member2.getUsername());
+        teamCommandService.requestParticipation(teamId, member3.getUsername());
 
         // when
-        teamCommandService.respondToParticipation(team.getId(), member2.getUsername(), true);
-        teamCommandService.respondToParticipation(team.getId(), member3.getUsername(), false);
+        teamCommandService.respondToParticipation(teamId, member2.getUsername(), true);
+        teamCommandService.respondToParticipation(teamId, member3.getUsername(), false);
 
         // then
-        Participation participationOfMember2 = participationRepository.findByTeamIdAndUsername(team.getId(),
+        Participation participationOfMember2 = participationRepository.findByTeamIdAndUsername(teamId,
                 member2.getUsername()).get();
-        assertThat(participationOfMember2.getTeamId()).isEqualTo(team.getId());
+        assertThat(participationOfMember2.getTeamId()).isEqualTo(teamId);
         assertThat(participationOfMember2.getUsername()).isEqualTo(member2.getUsername());
         assertThat(participationOfMember2.getStatus()).isEqualTo(ParticipationStatus.ACCEPTED);
 
-        Participation participationOfMember3 = participationRepository.findByTeamIdAndUsername(team.getId(),
+        Participation participationOfMember3 = participationRepository.findByTeamIdAndUsername(teamId,
                 member3.getUsername()).get();
-        assertThat(participationOfMember3.getTeamId()).isEqualTo(team.getId());
+        assertThat(participationOfMember3.getTeamId()).isEqualTo(teamId);
         assertThat(participationOfMember3.getUsername()).isEqualTo(member3.getUsername());
         assertThat(participationOfMember3.getStatus()).isEqualTo(ParticipationStatus.REJECTED);
     }

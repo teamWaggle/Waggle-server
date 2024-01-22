@@ -18,7 +18,7 @@ public interface QuestionCommandService {
                         List<String> deleteFiles) throws IOException;
 
     Long updateQuestionV2(Long boardId,
-                          QuestionRequest.Put questionUpdateDto,
+                          QuestionRequest.Post request,
                           MediaRequest.Put mediaUpdateDto,
                           List<MultipartFile> multipartFiles) throws IOException;
 

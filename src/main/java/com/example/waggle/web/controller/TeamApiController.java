@@ -10,7 +10,6 @@ import com.example.waggle.web.dto.schedule.TeamResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -50,7 +49,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteTeam(@PathParam("teamId") Long teamId) {
+    public ApiResponseDto<Boolean> deleteTeam(@RequestParam("teamId") Long teamId) {
         teamCommandService.deleteTeam(teamId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
@@ -68,7 +67,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 팀원을 찾을 수 없습니다.")
     @DeleteMapping("/members/{username}")
-    public ApiResponseDto<Boolean> deleteTeamMember(@PathParam("teamId") Long teamId, @PathVariable String username) {
+    public ApiResponseDto<Boolean> deleteTeamMember(@RequestParam("teamId") Long teamId, @PathVariable String username) {
         teamCommandService.deleteTeamMember(teamId, username);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

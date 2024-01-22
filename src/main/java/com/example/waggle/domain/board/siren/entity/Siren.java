@@ -32,16 +32,16 @@ public class Siren extends Board {
     @Column(nullable = false)
     private Category category;
 
-    public void changeSiren(SirenRequest.Put sirenUpdateDto) {
-        this.title = sirenUpdateDto.getTitle();
-        this.petKind = sirenUpdateDto.getPetKind();
-        this.petAge = sirenUpdateDto.getPetAge();
-        this.petGender = sirenUpdateDto.getPetGender();
-        this.lostDate = sirenUpdateDto.getLostDate();
-        this.lostLocate = sirenUpdateDto.getLostLocate();
-        this.contact = sirenUpdateDto.getContact();
-        this.content = sirenUpdateDto.getContent();
-        this.category = sirenUpdateDto.getCategory();
+    public void changeSiren(SirenRequest.Post request) {
+        this.title = request.getTitle();
+        this.petKind = request.getPetKind();
+        this.petAge = request.getPetAge();
+        this.petGender = request.getPetGender();
+        this.lostDate = request.getLostDate();
+        this.lostLocate = request.getLostLocate();
+        this.contact = request.getContact();
+        this.content = request.getContent();
+        this.category = request.getCategory();
     }
 
     public enum Category {
