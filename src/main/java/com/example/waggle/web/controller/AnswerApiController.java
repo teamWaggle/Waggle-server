@@ -13,7 +13,6 @@ import com.example.waggle.web.dto.media.MediaRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,12 +55,12 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 대답 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
-                                             @RequestPart AnswerRequest.Put answerUpdateDto,
+                                             @RequestPart AnswerRequest.Post request,
                                              @RequestPart MediaRequest.Put mediaUpdateDto,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        answerCommandService.updateAnswerV2(boardId, answerUpdateDto, mediaUpdateDto, multipartFiles);
+        answerCommandService.updateAnswerV2(boardId, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -105,7 +104,7 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "200", description = "대답 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "대답을 찾을 수 없거나 인증 정보가 대답을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteAnswer(@PathParam("boardId") Long boardId) {
+    public ApiResponseDto<Boolean> deleteAnswer(@RequestParam("boardId") Long boardId) {
         answerCommandService.deleteAnswer(boardId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

@@ -13,7 +13,6 @@ import com.example.waggle.web.dto.story.StoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,12 +52,12 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateStory(@PathVariable Long boardId,
-                                            @RequestPart StoryRequest.Put storyUpdateDto,
+                                            @RequestPart StoryRequest.Post request,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        storyCommandService.updateStoryV2(boardId, storyUpdateDto, mediaUpdateDto, multipartFiles);
+        storyCommandService.updateStoryV2(boardId, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -111,7 +110,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "200", description = "스토리 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "스토리를 찾을 수 없거나 인증 정보가 스토리를 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteStory(@PathParam("boardId") Long boardId) {
+    public ApiResponseDto<Boolean> deleteStory(@RequestParam("boardId") Long boardId) {
         storyCommandService.deleteStory(boardId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

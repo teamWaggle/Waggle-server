@@ -41,7 +41,7 @@ public class SirenResponse {
         private Long id;
         private String title;
         private String petKind;
-        private int petAge;
+        private String petAge;
         private Gender petGender;
         private String contact;
 

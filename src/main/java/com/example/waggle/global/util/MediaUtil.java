@@ -3,6 +3,7 @@ package com.example.waggle.global.util;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,18 @@ public class MediaUtil {
         return stringBuffer.append(s3URI).toString();
     }
 
-    public static String getProfile(Member member) {
+    public static String getProfileImg(Member member) {
         if (member.getProfileImgUrl() == null) {
             return null;
         }
         return appendUri(member.getProfileImgUrl());
+    }
+
+    public static String getProfileImg(Pet pet) {
+        if (pet.getProfileImgUrl() == null) {
+            return null;
+        }
+        return appendUri(pet.getProfileImgUrl());
     }
 
     public static String getThumbnail(Board board) {
@@ -36,7 +44,7 @@ public class MediaUtil {
     }
 
     public static String saveProfileImg(MultipartFile file, AwsS3Service awsS3Service) {
-        return (file != null && !file.isEmpty())? awsS3Service.uploadFile(file) : null;
+        return (file != null && !file.isEmpty()) ? awsS3Service.uploadFile(file) : null;
     }
 
     public static List<String> getBoardMedias(Board board) {
@@ -52,7 +60,7 @@ public class MediaUtil {
         if (url != null) {
             if (url.startsWith(SERVER_URI)) {
                 subPrefixUrl = url.substring(SERVER_URI.length());
-            }else{
+            } else {
                 throw new MediaHandler(ErrorStatus.MEDIA_PREFIX_IS_WRONG);
             }
         }

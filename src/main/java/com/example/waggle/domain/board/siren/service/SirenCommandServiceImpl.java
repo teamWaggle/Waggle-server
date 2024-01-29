@@ -10,7 +10,6 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +56,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public Long updateSiren(Long boardId,
-                            SirenRequest.Put sirenUpdateDto,
+                            SirenRequest.Post sirenUpdateDto,
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFiles) throws IOException {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
@@ -74,16 +73,16 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public Long updateSirenV2(Long boardId,
-                              SirenRequest.Put sirenUpdateDto,
+                              SirenRequest.Post request,
                               MediaRequest.Put mediaUpdateDto,
                               List<MultipartFile> multipartFiles) throws IOException {
-        if (!SecurityUtil.getCurrentUsername().equals(sirenUpdateDto.getUsername())) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        siren.changeSiren(sirenUpdateDto);
+        siren.changeSiren(request);
 
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, siren);
 

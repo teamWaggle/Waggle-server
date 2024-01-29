@@ -47,9 +47,6 @@ public class MemberRequest {
         private String phone;
         private String profileImgUrl;
 
-//        @Builder.Default
-//        private List<PetDto> pets = new ArrayList<>();
-
     }
 
     @Builder

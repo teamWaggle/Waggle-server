@@ -68,6 +68,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
         reply.getMentions().clear();
+
         addMentionsToReply(reply, replyWriteDto.getMentionedUsername());
         return reply.getId();
     }

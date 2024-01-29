@@ -16,25 +16,12 @@ public class AnswerRequest {
     @AllArgsConstructor
     @Builder
     public static class Post {
-        @NotNull(message = "답변 내용을 작성해주세요.")
-        @Max(1500)
-        private String content;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Put {
         private Long id;
-
         @NotNull(message = "답변 내용을 작성해주세요.")
         @Max(1500)
         private String content;
+
         @Builder.Default
         private List<String> medias = new ArrayList<>();
-
-        private String username;
-        private String profileImg;
     }
 }

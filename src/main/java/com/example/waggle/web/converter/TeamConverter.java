@@ -1,6 +1,9 @@
 package com.example.waggle.web.converter;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.schedule.TeamResponse;
 import org.springframework.data.domain.Page;
 
@@ -10,6 +13,8 @@ import java.util.stream.Collectors;
 public class TeamConverter {
 
     public static TeamResponse.DetailDto toDetailDto(Team team) {
+        List<Member> teamMembers = team.getTeamMembers().stream()
+                .map(teamMember -> teamMember.getMember()).collect(Collectors.toList());
         return TeamResponse.DetailDto.builder()
                 .teamId(team.getId())
                 .name(team.getName())
@@ -17,7 +22,8 @@ public class TeamConverter {
                 .coverImageUrl(team.getCoverImageUrl())
                 .colorScheme(team.getColorScheme())
                 .maxTeamSize(team.getMaxTeamSize())
-                .leaderUsername(team.getLeader().getUsername())
+                .leader(getMemberInfo(team.getLeader()))
+                .teamMember(teamMembers.stream().map(TeamConverter::getMemberInfo).collect(Collectors.toList()))
                 .build();
     }
 
@@ -43,6 +49,14 @@ public class TeamConverter {
                 .totalQuestions(teamPage.getTotalElements())
                 .isFirst(teamPage.isFirst())
                 .isLast(teamPage.isLast())
+                .build();
+    }
+
+    private static MemberResponse.SummaryDto getMemberInfo(Member member) {
+        return MemberResponse.SummaryDto.builder()
+                .username(member.getUsername())
+                .nickname(member.getNickname())
+                .profileImgUrl(MediaUtil.getProfileImg(member))
                 .build();
     }
 }

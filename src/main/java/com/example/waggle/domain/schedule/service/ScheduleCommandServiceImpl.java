@@ -58,6 +58,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public Long updateSchedule(Long scheduleId, Post request) {
+        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
+            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         schedule.update(request);
