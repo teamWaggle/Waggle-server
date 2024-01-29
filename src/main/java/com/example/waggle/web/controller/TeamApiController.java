@@ -53,8 +53,15 @@ public class TeamApiController {
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId,
                                            @Validated @RequestPart Post request,
-                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                           @RequestParam boolean allowUpload) {
+        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getCoverImageUrl());
+        if (allowUpload) {
+            awsS3Service.deleteFile(removePrefixCoverUrl);
+            request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+        } else {
+            request.setCoverImageUrl(removePrefixCoverUrl);
+        }
         Long updatedTeamId = teamCommandService.updateTeam(teamId, request);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
