@@ -1,11 +1,7 @@
 package com.example.waggle.web.dto.schedule;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.Min;
+import lombok.*;
 
 public class TeamRequest {
 
@@ -29,6 +25,7 @@ public class TeamRequest {
         private String name;
         private String description;
         private String colorScheme;
+        @Min(value = 1, message = "팀인원수는 최소 1명입니다.(팀 리더 포함 인원 수)")
         private Integer maxTeamSize;
     }
 

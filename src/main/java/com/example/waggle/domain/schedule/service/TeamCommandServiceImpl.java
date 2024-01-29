@@ -103,13 +103,19 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public Long addTeamMember(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateTeamMemberCount(team);
+
         Member member = memberQueryService.getMemberByUsername(username);
-
         validateMemberDuplication(team, member);
-
         addMemberToTeam(team, member);
 
         return team.getId();
+    }
+
+    private static void validateTeamMemberCount(Team team) {
+        if (team.getTeamMembers().size() == team.getMaxTeamSize()) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_CANNOT_BE_EXCEEDED);
+        }
     }
 
     @Override
@@ -118,7 +124,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
 
-        teamMemberRepository.deleteAllByMemberUsername(username);
+        teamMemberRepository.deleteAllByMemberUsernameAndTeamId(username, teamId);
     }
 
     @Override
@@ -162,6 +168,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND));
 
         if (accept) {
+            validateTeamMemberCount(team);
             participation.setStatus(Participation.ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
         } else {

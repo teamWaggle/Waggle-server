@@ -62,6 +62,7 @@ public enum ErrorStatus implements BaseCode {
     TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS(CONFLICT, 4205, "이미 팀 참여 요청이 존재합니다."),
     TEAM_PARTICIPATION_NOT_FOUND(NOT_FOUND, 4206, "참여 요청 정보가 존재하지 않습니다."),
     TEAM_LEADER_ONLY_CAN_DELETE_TEAM(BAD_REQUEST, 4207, "팀 리더만 팀을 지울 수 있습니다."),
+    TEAM_MEMBER_CANNOT_BE_EXCEEDED(BAD_REQUEST, 4208, "팀 멤버 수 제한을 초과할 수 없습니다."),
 
 
     // 펫 관련 오류 (4250 ~ 4299)
