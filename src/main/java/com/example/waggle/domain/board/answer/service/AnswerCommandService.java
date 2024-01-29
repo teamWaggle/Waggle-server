@@ -12,6 +12,11 @@ public interface AnswerCommandService {
                       AnswerRequest.Post answerWriteDto,
                       List<MultipartFile> multipartFiles) throws IOException;
 
+    Long createAnswerByUsername(Long questionId,
+                                AnswerRequest.Post answerWriteDto,
+                                List<MultipartFile> multipartFiles,
+                                String username) throws IOException;
+
     Long updateAnswer(Long boardId,
                       AnswerRequest.Post answerWriteDto,
                       List<MultipartFile> multipartFiles,

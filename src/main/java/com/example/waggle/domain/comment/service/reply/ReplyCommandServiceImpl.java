@@ -8,6 +8,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.mention.entity.Mention;
+import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
@@ -30,6 +31,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final MentionRepository mentionRepository;
     private final MemberQueryService memberQueryService;
 
     @Override
@@ -41,12 +43,12 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
         replyRepository.save(reply);
 
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        addMentionsToReply(reply, replyWriteDto.getMentionedUsername());
         return reply.getId();
     }
 
     @Override
-    public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto, String username) {
+    public Long createReplyByUsername(Long commentId, ReplyRequest.Post replyWriteDto, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
@@ -54,7 +56,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
         replyRepository.save(reply);
 
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        addMentionsToReply(reply, replyWriteDto.getMentionedUsername());
         return reply.getId();
     }
 
@@ -66,7 +68,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
         reply.getMentions().clear();
-        addMentionsToReply(reply, replyWriteDto.getMentions());
+        addMentionsToReply(reply, replyWriteDto.getMentionedUsername());
         return reply.getId();
     }
 
@@ -88,8 +90,9 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         mentions.stream().forEach(m -> {
                     Member member = memberRepository.findByUsername(m)
                             .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));        //TODO 하나라도 not found -> error?
-                    Mention build = Mention.builder().reply(reply).member(member).build();
-                    reply.addMention(build);    //save -> cascade.persist
+                    Mention build = Mention.builder().reply(reply).mentionedUsername(member.getUsername()).build();
+                    log.info("mentioned member is {}", build.getMentionedUsername());
+                    mentionRepository.save(build);
                 }
         );
     }

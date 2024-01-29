@@ -16,7 +16,7 @@ public class ReplyResponse {
         private String content;
         private String username;
         @Builder.Default
-        private List<String> mentionMembers = new ArrayList<>();
+        private List<String> mentionedUsername = new ArrayList<>();
     }
 
     @Builder
