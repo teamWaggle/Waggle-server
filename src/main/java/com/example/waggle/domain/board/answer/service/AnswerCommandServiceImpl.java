@@ -54,6 +54,19 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
         return answer.getId();
     }
 
+    @Override
+    public Long createAnswerByUsername(Long questionId,
+                                       AnswerRequest.Post answerWriteDto,
+                                       List<MultipartFile> multipartFiles,
+                                       String username) throws IOException {
+        Member member = memberQueryService.getMemberByUsername(username);
+        Answer answer = buildAnswer(questionId, answerWriteDto, member);
+        answerRepository.save(answer);
+
+        mediaCommandService.createMedia(multipartFiles, answer);
+        return answer.getId();
+    }
+
 
     @Override
     public Long updateAnswer(Long boardId,

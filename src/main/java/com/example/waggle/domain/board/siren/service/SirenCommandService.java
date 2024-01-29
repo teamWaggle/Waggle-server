@@ -11,6 +11,10 @@ public interface SirenCommandService {
     Long createSiren(SirenRequest.Post sirenWriteDto,
                      List<MultipartFile> multipartFiles) throws IOException;
 
+    Long createSirenByUsername(SirenRequest.Post sirenWriteDto,
+                               List<MultipartFile> multipartFiles,
+                               String username) throws IOException;
+
     Long updateSiren(Long boardId,
                      SirenRequest.Post request,
                      List<MultipartFile> multipartFiles,

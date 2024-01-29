@@ -53,6 +53,20 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return question.getId();
     }
 
+    @Override
+    public Long createQuestionByUsername(QuestionRequest.Post request,
+                                         List<MultipartFile> multipartFiles,
+                                         String username) {
+        Question createdQuestion = buildQuestion(request, username);
+        Question question = questionRepository.save(createdQuestion);
+
+        for (String hashtag : request.getHashtags()) {
+            boardService.saveHashtag(question, hashtag);
+        }
+        mediaCommandService.createMedia(multipartFiles, question);
+        return question.getId();
+    }
+
 
     @Override
     public Long updateQuestion(Long boardId,
@@ -113,6 +127,17 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     private Question buildQuestion(QuestionRequest.Post request) {
         Member member = memberQueryService.getSignInMember();
+
+        Question createdQuestion = Question.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .status(request.getStatus())
+                .member(member).build();
+        return createdQuestion;
+    }
+
+    private Question buildQuestion(QuestionRequest.Post request, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
 
         Question createdQuestion = Question.builder()
                 .title(request.getTitle())

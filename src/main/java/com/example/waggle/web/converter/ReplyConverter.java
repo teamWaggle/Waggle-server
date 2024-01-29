@@ -21,8 +21,8 @@ public class ReplyConverter {
                         .profileImgUrl(MediaUtil.getProfileImg(member))
                         .build())
                 .content(reply.getContent())
-                .mentionMembers(reply.getMentions().stream()
-                        .map(r -> r.getMember().getUsername()).collect(Collectors.toList()))
+                .mentionedUsername(reply.getMentions().stream()
+                        .map(mention -> mention.getMentionedUsername()).collect(Collectors.toList()))
                 .build();
     }
 

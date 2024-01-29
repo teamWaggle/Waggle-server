@@ -12,6 +12,10 @@ public interface QuestionCommandService {
     Long createQuestion(QuestionRequest.Post request,
                         List<MultipartFile> multipartFiles) throws IOException;
 
+    Long createQuestionByUsername(QuestionRequest.Post request,
+                                  List<MultipartFile> multipartFiles,
+                                  String username);
+
     Long updateQuestion(Long boardId,
                         QuestionRequest.Post request,
                         List<MultipartFile> multipartFiles,
