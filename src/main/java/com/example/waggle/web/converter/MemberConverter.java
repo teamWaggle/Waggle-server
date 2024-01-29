@@ -10,7 +10,7 @@ public class MemberConverter {
         return MemberResponse.SummaryDto.builder()
                 .username(member.getUsername())
                 .nickname(member.getNickname())
-                .profileImgUrl(MediaUtil.getProfile(member)).build();
+                .profileImgUrl(MediaUtil.getProfileImg(member)).build();
     }
 
     public static MemberResponse.DetailDto toMemberDetailDto(Member member) {
@@ -20,7 +20,7 @@ public class MemberConverter {
                 .nickname(member.getNickname())
                 .address(member.getAddress())
                 .phone(member.getPhone())
-                .profileImgUrl(MediaUtil.getProfile(member)).build();
+                .profileImgUrl(MediaUtil.getProfileImg(member)).build();
     }
 
 }

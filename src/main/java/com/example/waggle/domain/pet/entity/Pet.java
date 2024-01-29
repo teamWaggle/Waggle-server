@@ -11,14 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@AllArgsConstructor
-//@Builder
 public class Pet extends BaseEntity {
     @Id
     @GeneratedValue
@@ -33,9 +29,9 @@ public class Pet extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private LocalDate birthday;
+    private String age;
 
-    private String profileImg;
+    private String profileImgUrl;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,8 +42,8 @@ public class Pet extends BaseEntity {
         this.name = petDto.getName();
         this.breed = petDto.getBreed();
         this.gender = petDto.getGender();
-        this.birthday = petDto.getBirthday();
-        this.profileImg = petDto.getProfileImg();
+        this.age = petDto.getAge();
+        this.profileImgUrl = petDto.getProfileImgUrl();
     }
 
 }

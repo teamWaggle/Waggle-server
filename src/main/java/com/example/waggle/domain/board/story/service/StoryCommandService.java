@@ -14,12 +14,12 @@ public interface StoryCommandService {
     Long createStoryByUsername(StoryRequest.Post request, List<MultipartFile> multipartFiles, String username) throws IOException;
 
     Long updateStory(Long boardId,
-                     StoryRequest.Put storyWriteDto,
+                     StoryRequest.Post storyWriteDto,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles) throws IOException;
 
     Long updateStoryV2(Long boardId,
-                       StoryRequest.Put storyWriteDto,
+                       StoryRequest.Post storyWriteDto,
                        MediaRequest.Put mediaListDto,
                        List<MultipartFile> multipartFiles) throws IOException;
 

@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,7 +64,7 @@ class PetServiceTest {
                 .name("루이")
                 .breed("포메라니안")
                 .gender(Gender.MALE)
-                .birthday(LocalDate.now()).build();
+                .age("now").build();
 
         savedPetId = petService.createPet(petDto);
     }
@@ -107,7 +106,7 @@ class PetServiceTest {
                 .name("루이2")
                 .breed("포메라니안2")
                 .gender(Gender.MALE)
-                .birthday(LocalDate.of(2016, 9, 17)).build();
+                .age("now").build();
 
         Long updatedPetId = petService.updatePet(savedPetId, updatePetDto);
         Pet petById = petQueryService.getPetById(updatedPetId);

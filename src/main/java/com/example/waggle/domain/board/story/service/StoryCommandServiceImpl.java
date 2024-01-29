@@ -1,7 +1,6 @@
 package com.example.waggle.domain.board.story.service;
 
 import com.example.waggle.domain.board.service.BoardService;
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.comment.service.comment.CommentCommandService;
@@ -11,7 +10,6 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.STORY;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -65,10 +65,10 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryRequest.Put storyWriteDto,
+                            StoryRequest.Post storyWriteDto,
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFile) throws IOException {
-        if (!SecurityUtil.getCurrentUsername().equals(storyWriteDto.getUsername())) {
+        if (!boardService.validateMemberUseBoard(boardId, STORY)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
@@ -87,10 +87,10 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStoryV2(Long boardId,
-                              StoryRequest.Put storyWriteDto,
+                              StoryRequest.Post storyWriteDto,
                               MediaRequest.Put mediaListDto,
                               List<MultipartFile> multipartFiles) throws IOException {
-        if (!SecurityUtil.getCurrentUsername().equals(storyWriteDto.getUsername())) {
+        if (!boardService.validateMemberUseBoard(boardId, STORY)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
@@ -110,7 +110,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public void deleteStory(Long boardId) {
-        if (!boardService.validateMemberUseBoard(boardId, BoardType.STORY)) {
+        if (!boardService.validateMemberUseBoard(boardId, STORY)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)

@@ -1,7 +1,10 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.comment.entity.Comment;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.comment.CommentResponse;
+import com.example.waggle.web.dto.member.MemberResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -10,10 +13,15 @@ import java.util.stream.Collectors;
 public class CommentConverter {
 
     public static CommentResponse.ViewDto toViewDto(Comment comment) {
+        Member member = comment.getMember();
         return CommentResponse.ViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .username(comment.getMember().getUsername())
+                .member(MemberResponse.SummaryDto.builder()
+                        .username(member.getUsername())
+                        .nickname(member.getNickname())
+                        .profileImgUrl(MediaUtil.getProfileImg(member))
+                        .build())
                 .build();
     }
 

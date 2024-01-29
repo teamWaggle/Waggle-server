@@ -4,8 +4,6 @@ import com.example.waggle.domain.member.entity.Gender;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDate;
-
 public class PetResponse {
     @Getter
     @Setter
@@ -19,10 +17,8 @@ public class PetResponse {
         private String name;
         private String breed;
         private Gender gender;
-        private LocalDate birthday;
-        private String profileImg;
-//        @NotNull
-//        private String username;
+        private String age;
+        private String profileImgUrl;
     }
 
     @Getter
@@ -36,7 +32,7 @@ public class PetResponse {
         @NotNull
         private String name;
         private Gender gender;
-        private String profileImg;
+        private String profileImgUrl;
     }
 
 }

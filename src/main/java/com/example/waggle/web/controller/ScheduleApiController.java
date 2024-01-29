@@ -11,7 +11,6 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +56,7 @@ public class ScheduleApiController {
     @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteSchedule(@PathParam("boardId") Long boardId) {
+    public ApiResponseDto<Boolean> deleteSchedule(@RequestParam("boardId") Long boardId) {
         scheduleCommandService.deleteSchedule(boardId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

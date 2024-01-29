@@ -15,7 +15,7 @@ public class AnswerConverter {
                 .id(answer.getId())
                 .content(answer.getContent())
                 .username(answer.getMember().getUsername())
-                .profileImg(MediaUtil.getProfile(answer.getMember()))
+                .profileImg(MediaUtil.getProfileImg(answer.getMember()))
                 .createDate(answer.getCreatedDate())
                 .medias(MediaUtil.getBoardMedias(answer))
                 .build();

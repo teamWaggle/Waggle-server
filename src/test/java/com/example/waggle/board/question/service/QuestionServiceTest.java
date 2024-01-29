@@ -49,7 +49,7 @@ class QuestionServiceTest {
 
     QuestionRequest.Post questionWriteDto1;
     QuestionRequest.Post questionWriteDto2;
-    QuestionRequest.Put questionEditDto1;
+    QuestionRequest.Post questionEditDto1;
     AnswerRequest.Post answerWriteDto1;
     AnswerRequest.Post answerWriteDto2;
     AnswerRequest.Post answerEditDto1;
@@ -101,11 +101,10 @@ class QuestionServiceTest {
                 .build();
 
 
-        questionEditDto1 = QuestionRequest.Put.builder()
+        questionEditDto1 = QuestionRequest.Post.builder()
                 .title("EditQuestion")
                 .content("I wanna know that what it is")
                 .hashtags(tags2)
-                .username("member1")
                 .status(Question.Status.UNRESOLVED)
                 .build();
 

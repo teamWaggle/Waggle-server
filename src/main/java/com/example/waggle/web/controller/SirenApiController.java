@@ -55,13 +55,13 @@ public class SirenApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateSiren(@PathVariable Long boardId,
-                                            @RequestPart SirenRequest.Put sirenUpdateDto,
+                                            @RequestPart SirenRequest.Post request,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
-        sirenCommandService.updateSirenV2(boardId, sirenUpdateDto, mediaUpdateDto, multipartFiles);
+        sirenCommandService.updateSirenV2(boardId, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

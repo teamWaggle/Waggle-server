@@ -3,6 +3,7 @@ package com.example.waggle.domain.schedule.service;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -10,13 +11,14 @@ import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +41,8 @@ class ScheduleCommandServiceTest {
     TeamQueryService teamQueryService;
     @PersistenceContext
     EntityManager em;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
 
     private MemberRequest.RegisterDto member1;
     private MemberRequest.RegisterDto member2;
@@ -85,6 +89,11 @@ class ScheduleCommandServiceTest {
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
                 .build();
         scheduleId = scheduleCommandService.createSchedule(teamId, schedule, "member1");
+    }
+
+    @AfterEach
+    void clean() {
+        databaseCleanUp.truncateAllEntity();
     }
 
 
