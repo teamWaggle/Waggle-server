@@ -1,8 +1,8 @@
 package com.example.waggle.domain.comment.entity;
 
-import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.mention.entity.Mention;
+import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -38,7 +38,7 @@ public class Reply extends BaseEntity {
 
 
     @Builder.Default
-    @OneToMany(mappedBy = "reply",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "reply", orphanRemoval = true)
     private List<Mention> mentions = new ArrayList<>();
 
     public void changeContent(String content) {

@@ -46,6 +46,14 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         return build.getId();
     }
 
+    @Override
+    public Long createSirenByUsername(SirenRequest.Post sirenWriteDto, List<MultipartFile> multipartFiles, String username) throws IOException {
+        Siren build = buildSiren(sirenWriteDto, username);
+        sirenRepository.save(build);
+        mediaCommandService.createMedia(multipartFiles, build);
+        return build.getId();
+    }
+
 
     @Override
     public Long updateSiren(Long boardId,
@@ -98,6 +106,23 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     private Siren buildSiren(SirenRequest.Post sirenWriteDto) {
         Member signInMember = memberQueryService.getSignInMember();
+        Siren build = Siren.builder()
+                .title(sirenWriteDto.getTitle())
+                .contact(sirenWriteDto.getContact())
+                .content(sirenWriteDto.getContent())
+                .petKind(sirenWriteDto.getPetKind())
+                .petGender(sirenWriteDto.getPetGender())
+                .petAge(sirenWriteDto.getPetAge())
+                .lostDate(sirenWriteDto.getLostDate())
+                .lostLocate(sirenWriteDto.getLostLocate())
+                .category(sirenWriteDto.getCategory())
+                .member(signInMember)
+                .build();
+        return build;
+    }
+
+    private Siren buildSiren(SirenRequest.Post sirenWriteDto, String username) {
+        Member signInMember = memberQueryService.getMemberByUsername(username);
         Siren build = Siren.builder()
                 .title(sirenWriteDto.getTitle())
                 .contact(sirenWriteDto.getContact())
