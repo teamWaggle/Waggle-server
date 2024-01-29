@@ -141,12 +141,12 @@ class ReplyServiceTest {
 
         replyWriteDto1 = ReplyRequest.Post.builder()
                 .content("reply1")
-                .mentions(mentions1)
+                .mentionedMembers(mentions1)
                 .build();
 
         replyWriteDto2 = ReplyRequest.Post.builder()
                 .content("reply2")
-                .mentions(mentions2)
+                .mentionedMembers(mentions2)
                 .build();
 
 

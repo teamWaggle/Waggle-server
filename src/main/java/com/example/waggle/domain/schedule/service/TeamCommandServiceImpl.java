@@ -18,12 +18,14 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -80,6 +82,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public Long updateTeam(Long teamId, Post request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team);
+
         team.update(request);
         return team.getId();
     }
@@ -88,6 +92,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public void deleteTeam(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team);
+
         List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
         allByTeamId.stream().forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
         teamRepository.delete(team);
@@ -108,9 +114,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void deleteTeamMember(Long teamId, String username) {
-        TeamMember teamMember = teamMemberRepository.findTeamMemberByMemberUsernameAndTeamId(username, teamId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        teamMember.removeTeamMember();
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team);
+
+        teamMemberRepository.deleteAllByMemberUsername(username);
     }
 
     @Override
@@ -199,5 +207,4 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
     }
-
 }

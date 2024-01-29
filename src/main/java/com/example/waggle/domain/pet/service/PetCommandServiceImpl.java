@@ -8,6 +8,7 @@ import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.PetHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.security.SecurityUtil;
 import com.example.waggle.web.dto.pet.PetRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,16 +35,19 @@ public class PetCommandServiceImpl implements PetCommandService {
     }
 
     @Override
-    public void createPets(List<PetRequest.Post> petList, String username) {
+    public void createPets(PetRequest.PostList petList, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        petList.stream().forEach(pet -> petRepository.save(buildPet(pet, member)));
+        petList.getPetList().stream().forEach(pet -> petRepository.save(buildPet(pet, member)));
     }
 
     @Override
     public Long updatePet(Long petId, PetRequest.Post petDto) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
+        if (!pet.getMember().getUsername().equals(SecurityUtil.getCurrentUsername())) {
+            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
+        }
         pet.update(petDto);
         return pet.getId();
     }
@@ -65,12 +69,12 @@ public class PetCommandServiceImpl implements PetCommandService {
 
     private static Pet buildPet(PetRequest.Post petDto, Member member) {
         Pet build = Pet.builder()
-                .birthday(petDto.getBirthday())
+                .age(petDto.getAge())
                 .name(petDto.getName())
                 .breed(petDto.getBreed())
                 .gender(petDto.getGender())
                 .member(member)
-                .profileImg(petDto.getProfileImg())
+                .profileImgUrl(petDto.getProfileImgUrl())
                 .build();
         return build;
     }

@@ -23,6 +23,7 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
@@ -54,6 +55,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final MemberQueryService memberQueryService;
     private final AwsS3Service awsS3Service;
     private final RedisService redisService;
@@ -133,6 +135,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
         schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
 
+        teamMemberRepository.deleteAllByMemberUsername(username);
         List<Team> teamsByLeader = teamRepository.findListByTeamMembers_Member_Username(username);
         teamsByLeader.stream()
                 .forEach(team -> {

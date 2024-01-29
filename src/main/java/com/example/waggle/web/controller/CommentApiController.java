@@ -11,7 +11,6 @@ import com.example.waggle.web.dto.comment.CommentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -42,16 +41,6 @@ public class CommentApiController {
         return ApiResponseDto.onSuccess(listDto);
     }
 
-    //    @Operation(summary = "특정 게시글 댓글 조회", description = "게시글의 댓글 목록을 조회합니다.")
-//    @ApiResponse(responseCode = "200", description = "댓글 조회 성공. 게시글 댓글 목록을 반환합니다.")
-//    @GetMapping
-//    public ApiResponseDto<List<CommentResponse.ViewDto>> getComments(@RequestParam(defaultValue = "0") int currentPage,
-//                                                                       @RequestParam Long boardId) {
-//        List<Comment> comments = commentQueryService.getComments(boardId);
-//        List<CommentResponse.ViewDto> collect = comments.stream()
-//                .map(c -> CommentConverter.toViewDto(c)).collect(Collectors.toList());
-//        return ApiResponseDto.onSuccess(collect);
-//    }
     @Operation(summary = "스토리 댓글 작성", description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "스토리 댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
@@ -94,7 +83,7 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "댓글 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없거나 인증 정보가 댓글을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteComment(@PathParam("commentId") Long commentId) {
+    public ApiResponseDto<Boolean> deleteComment(@RequestParam("commentId") Long commentId) {
         commentCommandService.deleteComment(commentId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

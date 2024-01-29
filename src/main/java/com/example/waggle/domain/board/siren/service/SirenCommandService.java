@@ -16,12 +16,12 @@ public interface SirenCommandService {
                                String username) throws IOException;
 
     Long updateSiren(Long boardId,
-                     SirenRequest.Put sirenUpdateDto,
+                     SirenRequest.Post request,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles) throws IOException;
 
     Long updateSirenV2(Long boardId,
-                       SirenRequest.Put sirenUpdateDto,
+                       SirenRequest.Post request,
                        MediaRequest.Put mediaUpdateDto,
                        List<MultipartFile> multipartFiles) throws IOException;
 

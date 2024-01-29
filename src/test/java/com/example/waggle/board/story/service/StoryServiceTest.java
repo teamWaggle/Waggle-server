@@ -186,12 +186,11 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
-        StoryRequest.Put editDto = StoryRequest.Put.builder()
+        StoryRequest.Post editDto = StoryRequest.Post.builder()
                 .id(id)
                 .content("edit edit edit")
                 .hashtags(tags)
                 .medias(medias2)
-                .username("member1")
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);

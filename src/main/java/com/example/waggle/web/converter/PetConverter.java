@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.pet.entity.Pet;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.pet.PetResponse;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class PetConverter {
     public static PetResponse.SummaryDto toSummaryDto(Pet pet) {
         return PetResponse.SummaryDto.builder()
                 .id(pet.getId())
-                .profileImg(pet.getProfileImg())
+                .profileImgUrl(MediaUtil.getProfileImg(pet))
                 .name(pet.getName())
                 .gender(pet.getGender())
                 .build();
@@ -20,10 +21,10 @@ public class PetConverter {
         return PetResponse.DetailDto.builder()
                 .id(pet.getId())
                 .breed(pet.getBreed())
-                .birthday(pet.getBirthday())
+                .age(pet.getAge())
                 .gender(pet.getGender())
                 .name(pet.getName())
-                .profileImg(pet.getProfileImg())
+                .profileImgUrl(MediaUtil.getProfileImg(pet))
                 .build();
     }
 

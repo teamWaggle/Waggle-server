@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ public class TeamResponse {
         private String coverImageUrl;
         private String colorScheme;
         private Integer maxTeamSize;
-        private String leaderUsername;
+        private MemberResponse.SummaryDto leader;
+        private List<MemberResponse.SummaryDto> teamMember;
     }
 
     @Getter
