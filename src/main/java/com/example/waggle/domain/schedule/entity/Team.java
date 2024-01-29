@@ -55,7 +55,7 @@ public class Team extends BaseEntity {
     public void update(Post request) {
         this.name = request.getName();
         this.description = request.getDescription();
-//        this.coverImageUrl = request.get
+        this.coverImageUrl = request.getCoverImageUrl();
         this.colorScheme = request.getColorScheme();
         this.maxTeamSize = request.getMaxTeamSize();
     }

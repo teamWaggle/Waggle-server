@@ -1,10 +1,12 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.TeamCommandService;
 import com.example.waggle.domain.schedule.service.TeamQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.security.annotation.AuthUser;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import com.example.waggle.web.dto.schedule.TeamResponse;
@@ -17,9 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,12 +34,15 @@ public class TeamApiController {
 
     private final TeamCommandService teamCommandService;
     private final TeamQueryService teamQueryService;
+    private final AwsS3Service awsS3Service;
 
     @Operation(summary = "팀 생성", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "팀 생성 성공. 작성한 팀의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 팀 생성에 실패했습니다.")
-    @PostMapping
-    public ApiResponseDto<Long> createTeam(@Validated @RequestBody Post request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> createTeam(@Validated @RequestPart Post request,
+                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long createdTeamId = teamCommandService.createTeam(request);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
@@ -43,8 +50,11 @@ public class TeamApiController {
     @Operation(summary = "팀 정보 업데이트", description = "팀의 정보를 업데이트합니다.")
     @ApiResponse(responseCode = "200", description = "팀 정보 업데이트 성공.")
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
-    @PutMapping("/{teamId}")
-    public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId, @Validated @RequestBody Post request) {
+    @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId,
+                                           @Validated @RequestPart Post request,
+                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long updatedTeamId = teamCommandService.updateTeam(teamId, request);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
