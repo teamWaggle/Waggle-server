@@ -50,5 +50,8 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         if (isFollowExists) {
             throw new FollowHandler(ErrorStatus.FOLLOW_ALREADY_EXIST);
         }
+        if (member == followee) {
+            throw new FollowHandler(ErrorStatus.FOLLOW_NOT_ALLOWED_MYSELF);
+        }
     }
 }

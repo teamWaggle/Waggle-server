@@ -8,7 +8,6 @@ import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class FollowApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 이미 팔로잉이 된 상대입니다.")
     @PostMapping("/follow")
     public ApiResponseDto<Long> requestFollow(@RequestParam String username,
-                                              @Parameter(hidden = true) @AuthUser UserDetails userDetails) {
+                                              @AuthUser UserDetails userDetails) {
         Long follow = followCommandService.follow(userDetails.getUsername(), username);
         return ApiResponseDto.onSuccess(follow);
     }
