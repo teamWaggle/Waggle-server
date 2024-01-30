@@ -8,6 +8,7 @@ import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +33,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 멤버 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 이미 팔로잉이 된 상대입니다.")
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@RequestParam String username, @AuthUser UserDetails userDetails) {
-        log.info("user = {}", userDetails.getUsername());
-        Long follow = followCommandService.follow(username);
+    public ApiResponseDto<Long> requestFollow(@RequestParam String username,
+                                              @Parameter(hidden = true) @AuthUser UserDetails userDetails) {
+        Long follow = followCommandService.follow(userDetails.getUsername(), username);
         return ApiResponseDto.onSuccess(follow);
     }
 
@@ -42,8 +43,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "언팔로우 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 팔로잉이 되지 않은 상대입니다.")
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam String username) {
-        followCommandService.unFollow(username);
+    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam String username,
+                                                   @AuthUser UserDetails userDetails) {
+        followCommandService.unFollow(userDetails.getUsername(), username);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -57,6 +59,7 @@ public class FollowApiController {
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
+
     @Operation(summary = "멤버 팔로잉 목록 조회", description = "조회한 멤버의 팔로잉 목록을 보여줍니다.")
     @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
