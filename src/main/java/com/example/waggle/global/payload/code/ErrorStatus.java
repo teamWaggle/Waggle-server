@@ -63,6 +63,7 @@ public enum ErrorStatus implements BaseCode {
     TEAM_PARTICIPATION_NOT_FOUND(NOT_FOUND, 4206, "참여 요청 정보가 존재하지 않습니다."),
     TEAM_LEADER_ONLY_CAN_DELETE_TEAM(BAD_REQUEST, 4207, "팀 리더만 팀을 지울 수 있습니다."),
     TEAM_MEMBER_CANNOT_BE_EXCEEDED(BAD_REQUEST, 4208, "팀 멤버 수 제한을 초과할 수 없습니다."),
+    TEAM_LEADER_CANNOT_BE_REMOVED(BAD_REQUEST, 4209, "팀 리더는 팀 멤버에서 제외될 수 없습니다."),
 
 
     // 펫 관련 오류 (4250 ~ 4299)
