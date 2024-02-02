@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.pet.entity.Pet;
+import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,13 @@ public class MediaUtil {
             return null;
         }
         return appendUri(pet.getProfileImgUrl());
+    }
+
+    public static String getCoverImg(Team team) {
+        if (team.getCoverImageUrl() == null) {
+            return null;
+        }
+        return appendUri(team.getCoverImageUrl());
     }
 
     public static String getThumbnail(Board board) {
