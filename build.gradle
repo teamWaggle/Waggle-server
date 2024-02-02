@@ -1,7 +1,7 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.0.6'
-	id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+    id 'org.springframework.boot' version '3.0.6'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.example'
@@ -9,75 +9,75 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'com.h2database:h2'
 
-	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 
-	implementation group: 'com.google.guava', name: 'guava', version: '12.0'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+    implementation group: 'com.google.guava', name: 'guava', version: '12.0'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	//for annotation 'WithMockUser'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //for annotation 'WithMockUser'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
-	// ModelMapper
-	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+    // ModelMapper
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 
-	// p5spy
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+    // p5spy
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	runtimeOnly 'io.jsonwebtoken:jjwt-gson:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-gson:0.11.5'
 
-	// oauth2
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	// swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
-	// aws s3
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    // aws s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	// Redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'it.ozimov:embedded-redis:0.7.2'
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'it.ozimov:embedded-redis:0.7.2'
 
-	// mail
-	implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.2'
+    // mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.2'
 
-	// thymeleaf
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+    // thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 tasks.named("jar") {
-	enabled = false
+    enabled = false
 }
