@@ -32,8 +32,8 @@ public class TeamResponse {
     @Builder
     @ToString
     public static class SummaryDto {
+        private Long teamId;
         private String name;
-        private String description;
         private String coverImageUrl;
         private String colorScheme;
         private Integer maxTeamSize;

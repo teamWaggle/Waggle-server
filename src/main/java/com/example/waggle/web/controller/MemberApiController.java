@@ -51,8 +51,15 @@ public class MemberApiController {
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateInfo(
             @RequestPart MemberRequest.Put request,
-            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) {
-        request.setProfile(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+            @RequestParam boolean allowUpload) {
+        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImg());
+        if (allowUpload) {
+            awsS3Service.deleteFile(removePrefixCoverUrl);
+            request.setProfile(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+        } else {
+            request.setProfile(removePrefixCoverUrl);
+        }
         Long memberId = memberCommandService.updateMemberInfo(request);
         return ApiResponseDto.onSuccess(memberId);
     }

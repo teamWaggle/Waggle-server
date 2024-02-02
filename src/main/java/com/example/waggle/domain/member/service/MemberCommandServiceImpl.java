@@ -134,16 +134,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
         sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
         schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
-
+        
         teamMemberRepository.deleteAllByMemberUsername(username);
-        List<Team> teamsByLeader = teamRepository.findListByTeamMembers_Member_Username(username);
+        List<Team> teamsByLeader = teamRepository.findTeamByLeader_Username(username);
         teamsByLeader.stream()
                 .forEach(team -> {
                     team.getSchedules().stream()
-                            .forEach(schedule -> scheduleCommandService.deleteScheduleForHardReset(schedule.getId()));
+                            .forEach(schedule -> {
+                                scheduleCommandService.deleteScheduleForHardReset(schedule.getId());
+                            });
                     teamRepository.deleteById(team.getId());
                 });
-
         memberRepository.delete(member);
     }
 
