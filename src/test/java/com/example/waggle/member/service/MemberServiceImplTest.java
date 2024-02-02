@@ -217,7 +217,7 @@ class MemberServiceImplTest {
         Long comment = commentCommandService.createComment(story, commentRequest, BoardType.STORY);
         replyCommandService.createReply(comment, replyRequest);
         commentCommandService.createCommentByUsername(story, commentRequest2, "member2", BoardType.STORY);
-        followCommandService.follow("member2");
+        followCommandService.follow("member1", "member2");
         Long pet = petService.createPet(petRequest);
         Member member = memberQueryService.getMemberByUsername("member1");
 
