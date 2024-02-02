@@ -2,8 +2,8 @@ package com.example.waggle.domain.follow.service;
 
 public interface FollowCommandService {
 
-    Long follow(String username);
+    Long follow(String from, String to);
 
-    void unFollow(String username);
+    void unFollow(String from, String to);
 
 }

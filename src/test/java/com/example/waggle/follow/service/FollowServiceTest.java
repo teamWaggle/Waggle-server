@@ -93,7 +93,7 @@ public class FollowServiceTest {
         //given
         setUp();
         //when
-        followCommandService.follow("member2");
+        followCommandService.follow("member1", "member2");
         List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         //then
         assertThat(followingsByUser.get(0).getToMember().getUsername()).isEqualTo("member2");
@@ -106,9 +106,9 @@ public class FollowServiceTest {
         //given
         setUp();
         //when
-        Long followId = followCommandService.follow("member2");
-        followCommandService.follow("member3");
-        followCommandService.unFollow("member2");
+        Long followId = followCommandService.follow("member1", "member2");
+        followCommandService.follow("member1", "member3");
+        followCommandService.unFollow("member1", "member2");
         List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
         //then
         assertThat(followingsByUser.get(0).getFromMember().getUsername()).isEqualTo("member1");
@@ -122,9 +122,9 @@ public class FollowServiceTest {
         //given
         setUp();
         //when
-        followCommandService.follow("member2");
+        followCommandService.follow("member1", "member2");
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow("member2"));
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow("member1", "member2"));
     }
 
     @Test
@@ -134,10 +134,10 @@ public class FollowServiceTest {
         //given
         setUp();
         //when
-        Long followId = followCommandService.follow("member2");
-        followCommandService.follow("member3");
-        followCommandService.unFollow("member2");
+        Long followId = followCommandService.follow("member1", "member2");
+        followCommandService.follow("member1", "member3");
+        followCommandService.unFollow("member1", "member2");
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow("member2"));
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow("member1", "member2"));
     }
 }

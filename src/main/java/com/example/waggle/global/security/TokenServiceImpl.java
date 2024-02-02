@@ -3,6 +3,7 @@ package com.example.waggle.global.security;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest;
 import io.jsonwebtoken.*;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -52,7 +54,13 @@ public class TokenServiceImpl implements TokenService {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 request.getUsername(), request.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication;
+        try {
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
         JwtToken jwtToken = generateToken(authentication);
         return jwtToken;
     }
