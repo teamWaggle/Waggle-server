@@ -19,7 +19,7 @@ public class TeamConverter {
                 .teamId(team.getId())
                 .name(team.getName())
                 .description(team.getDescription())
-                .coverImageUrl(team.getCoverImageUrl())
+                .coverImageUrl(MediaUtil.getCoverImg(team))
                 .colorScheme(team.getColorScheme())
                 .maxTeamSize(team.getMaxTeamSize())
                 .leader(getMemberInfo(team.getLeader()))
@@ -30,8 +30,7 @@ public class TeamConverter {
     public static TeamResponse.SummaryDto toSummaryDto(Team team) {
         return TeamResponse.SummaryDto.builder()
                 .name(team.getName())
-                .description(team.getDescription())
-                .coverImageUrl(team.getCoverImageUrl())
+                .coverImageUrl(MediaUtil.getCoverImg(team))
                 .colorScheme(team.getColorScheme())
                 .maxTeamSize(team.getMaxTeamSize())
                 .build();
