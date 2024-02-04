@@ -23,7 +23,7 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
     private final MemberQueryService memberQueryService;
 
     @Override
-    public boolean checkRecommend(Long boardId, String boardWriter) {
+    public boolean checkRecommend(Long boardId, Long memberId) {
         if (!memberQueryService.isAuthenticated()) {
             return false;
         }
@@ -31,8 +31,7 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
 
         boolean recommendIt = false;
         //(login user == board writer) checking
-        if (!signInMember.getUsername()
-                .equals(boardWriter)) {
+        if (signInMember.getId() != memberId) {
             recommendIt = recommendRepository
                     .existsByMemberIdAndBoardId(signInMember.getId(), boardId);
         }

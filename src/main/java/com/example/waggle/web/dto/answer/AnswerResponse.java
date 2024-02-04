@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.answer;
 
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,8 +17,6 @@ public class AnswerResponse {
 
         private Long id;
         private String content;
-        private String username;
-        private String profileImg;
         private LocalDateTime createDate;
         private int recommendCount;
         private boolean isRecommend;
@@ -27,6 +26,8 @@ public class AnswerResponse {
 
         @Builder.Default
         private List<String> medias = new ArrayList<>();
+
+        private MemberResponse.SummaryDto member;
 
     }
 

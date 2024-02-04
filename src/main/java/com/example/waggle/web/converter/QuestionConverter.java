@@ -12,12 +12,11 @@ public class QuestionConverter {
     public static QuestionResponse.SummaryDto toSummaryDto(Question question) {
         return QuestionResponse.SummaryDto.builder()
                 .id(question.getId())
-                .username(question.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(question.getMember()))
                 .title(question.getTitle())
                 .createTime(question.getCreatedDate())
                 .hashtags(question.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
+                .member(MemberConverter.toMemberSummaryDto(question.getMember()))
                 .build();
     }
 

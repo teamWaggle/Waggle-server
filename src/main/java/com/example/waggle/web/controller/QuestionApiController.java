@@ -72,7 +72,7 @@ public class QuestionApiController {
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
+                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);

@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.service.EmailService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,14 +36,24 @@ public class MemberApiController {
     private final EmailService emailService;
 
 
-    @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 회원가입 후 회원 정보와 프로필 이미지를 반환합니다.")
+    @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 임의의 userUrl과 nickname을 넣어줍니다.")
     @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> register(@RequestPart MemberRequest.RegisterDto request,
-                                         @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+    @PostMapping
+    public ApiResponseDto<Long> signUp(@RequestBody MemberRequest.SignUpDto request) {
         Long memberId = memberCommandService.signUp(request);
+        return ApiResponseDto.onSuccess(memberId);
+    }
+
+    @Operation(summary = "회원 정보 등록", description = "회원가입 후 회원정보를 처음 등록합니다. 서버에서 임의로 설정해둔 정보들을 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "회원정보 등록 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
+    @ApiResponse(responseCode = "400", description = "회원정보 등록 실패. 잘못된 요청 또는 파일 저장 실패.")
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> registerInfo(@AuthUser UserDetails userDetails,
+                                             @RequestPart MemberRequest.RegisterDto request,
+                                             @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+        Long memberId = memberCommandService.registerMemberInfo(userDetails.getUsername(), request);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -53,12 +65,12 @@ public class MemberApiController {
             @RequestPart MemberRequest.Put request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
             @RequestParam boolean allowUpload) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImg());
+        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
-            request.setProfile(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            request.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
         } else {
-            request.setProfile(removePrefixCoverUrl);
+            request.setProfileImgUrl(removePrefixCoverUrl);
         }
         Long memberId = memberCommandService.updateMemberInfo(request);
         return ApiResponseDto.onSuccess(memberId);

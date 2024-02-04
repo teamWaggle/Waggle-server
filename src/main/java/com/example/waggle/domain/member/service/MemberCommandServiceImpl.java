@@ -28,6 +28,7 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest;
 import lombok.RequiredArgsConstructor;
@@ -70,21 +71,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(MemberRequest.RegisterDto request) {
-        if (memberRepository.existsByUsername(request.getUsername())) {
-            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
-        }
+    public Long signUp(MemberRequest.SignUpDto request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         Member createdMember = Member.builder()
-                .username(request.getUsername())
+                .username(generateAutoUsername())
                 .password(encodedPassword)
-                .nickname(request.getNickname())
+                .nickname(generateAutoNickname())
                 .email(request.getEmail())
-                .address(request.getAddress())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .profileImgUrl(request.getProfileImgUrl())
                 .role(Role.GUEST)
                 .build();
 
@@ -93,14 +87,24 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return member.getId();
     }
 
+    @Override
+    public Long registerMemberInfo(String username, MemberRequest.RegisterDto request) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (member.getRole() == Role.GUEST) {
+            member.changeRole(Role.USER);
+        }
+        if (member.getProfileImgUrl() != null) {
+            awsS3Service.deleteFile(member.getProfileImgUrl());
+        }
+        member.registerInfo(request);
+        return member.getId();
+    }
+
 
     @Override
     public Long updateMemberInfo(MemberRequest.Put request) {
         Member member = memberQueryService.getSignInMember();
-        //첫 회원가입 후에 나올 수정 페이지에서 guest -> user로 변경
-        if (member.getRole() == Role.GUEST) {
-            member.changeRole(Role.USER);
-        }
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {
@@ -134,7 +138,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
         sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
         schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
-        
+
         teamMemberRepository.deleteAllByMemberUsername(username);
         List<Team> teamsByLeader = teamRepository.findTeamByLeader_Username(username);
         teamsByLeader.stream()
@@ -155,5 +159,21 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         if (!isSuccess) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
         }
+    }
+
+    private String generateAutoUsername() {
+        String username;
+        do {
+            username = NameUtil.generateAutoUsername();
+        } while (memberRepository.existsByUsername(username));
+        return username;
+    }
+
+    private String generateAutoNickname() {
+        String username;
+        do {
+            username = NameUtil.generateAutoNickname();
+        } while (memberRepository.existsByUsername(username));
+        return username;
     }
 }

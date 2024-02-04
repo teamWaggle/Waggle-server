@@ -17,9 +17,8 @@ public class SirenConverter {
                 .lostLocate(siren.getLostLocate())
                 .lostDate(siren.getLostDate())
                 .category(siren.getCategory())
-                .username(siren.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(siren.getMember()))
                 .title(siren.getTitle())
+                .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .build();
     }
 
