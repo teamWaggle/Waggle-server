@@ -58,7 +58,6 @@ public class QuestionResponse {
         private List<String> medias = new ArrayList<>();
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-        private String username;
-        private String profileImg;
+        private MemberResponse.SummaryDto member;
     }
 }

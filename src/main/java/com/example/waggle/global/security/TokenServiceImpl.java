@@ -12,7 +12,6 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -20,6 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -35,29 +35,31 @@ public class TokenServiceImpl implements TokenService {
 
     private final Key key;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
     private final MemberQueryService memberQueryService;
 
     public TokenServiceImpl(@Value("${app.jwt.secret}") String key,
                             AuthenticationManagerBuilder authenticationManagerBuilder,
+                            PasswordEncoder passwordEncoder,
                             RedisService redisService,
                             MemberQueryService memberQueryService) {
         byte[] keyBytes = Decoders.BASE64.decode(key);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.passwordEncoder = passwordEncoder;
         this.redisService = redisService;
         this.memberQueryService = memberQueryService;
     }
 
     @Override
     public JwtToken login(MemberRequest.LoginDto request) {
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                request.getUsername(), request.getPassword());
+        UserDetails userDetails = memberQueryService.getMemberByEmail(request.getEmail());
         Authentication authentication;
-        try {
-            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        } catch (BadCredentialsException e) {
+        if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+            authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
+                    userDetails.getAuthorities());
+        } else {
             throw new AuthenticationHandler(ErrorStatus.MEMBER_NOT_FOUND);
         }
 

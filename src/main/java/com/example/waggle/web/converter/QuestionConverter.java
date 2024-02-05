@@ -37,13 +37,12 @@ public class QuestionConverter {
         return QuestionResponse.DetailDto.builder()
                 .id(question.getId())
                 .content(question.getContent())
-                .username(question.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(question.getMember()))
                 .title(question.getTitle())
                 .createDate(question.getCreatedDate())
                 .hashtags(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(question))
+                .member(MemberConverter.toMemberSummaryDto(question.getMember()))
                 .build();
     }
 }

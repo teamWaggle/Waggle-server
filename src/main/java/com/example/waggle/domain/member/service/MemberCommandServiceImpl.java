@@ -39,6 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -79,6 +81,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .password(encodedPassword)
                 .nickname(generateAutoNickname())
                 .email(request.getEmail())
+                .authProvider(WAGGLE)
                 .role(Role.GUEST)
                 .build();
 

@@ -97,7 +97,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.name = request.getName();
         this.nickname = request.getNickname();
         this.birthday = request.getBirthday();
-        this.profileImgUrl = request.getProfileImg();
+        this.profileImgUrl = request.getProfileImgUrl();
     }
 
     public void registerInfo(MemberRequest.RegisterDto request) {
@@ -105,7 +105,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.name = request.getName();
         this.nickname = request.getNickname();
         this.birthday = request.getBirthday();
-        this.profileImgUrl = request.getProfileImg();
+        this.profileImgUrl = request.getProfileImgUrl();
     }
 
     public void changeRole(Role role) {

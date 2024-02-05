@@ -6,6 +6,8 @@ public interface MemberQueryService {
 
     Member getMemberByUsername(String username);
 
+    Member getMemberByEmail(String email);
+
     Member getSignInMember();
 
     boolean isAuthenticated();
