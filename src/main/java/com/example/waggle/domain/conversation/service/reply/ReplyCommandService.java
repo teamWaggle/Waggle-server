@@ -1,4 +1,4 @@
-package com.example.waggle.domain.comment.service.reply;
+package com.example.waggle.domain.conversation.service.reply;
 
 import com.example.waggle.web.dto.reply.ReplyRequest;
 

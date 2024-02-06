@@ -1,6 +1,6 @@
-package com.example.waggle.domain.comment.repository;
+package com.example.waggle.domain.conversation.repository;
 
-import com.example.waggle.domain.comment.entity.Reply;
+import com.example.waggle.domain.conversation.entity.Reply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

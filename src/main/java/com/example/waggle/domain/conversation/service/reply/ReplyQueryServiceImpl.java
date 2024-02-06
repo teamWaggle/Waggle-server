@@ -1,7 +1,7 @@
-package com.example.waggle.domain.comment.service.reply;
+package com.example.waggle.domain.conversation.service.reply;
 
-import com.example.waggle.domain.comment.entity.Reply;
-import com.example.waggle.domain.comment.repository.ReplyRepository;
+import com.example.waggle.domain.conversation.entity.Reply;
+import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;

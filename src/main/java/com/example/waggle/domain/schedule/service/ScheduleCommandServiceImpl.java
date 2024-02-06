@@ -2,7 +2,7 @@ package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
-import com.example.waggle.domain.comment.service.comment.CommentCommandService;
+import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;

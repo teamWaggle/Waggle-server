@@ -12,8 +12,8 @@ import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
-import com.example.waggle.domain.comment.repository.CommentRepository;
-import com.example.waggle.domain.comment.repository.ReplyRepository;
+import com.example.waggle.domain.conversation.repository.CommentRepository;
+import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.follow.repository.FollowRepository;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
@@ -134,7 +134,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
         sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
         schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
-        
+
         teamMemberRepository.deleteAllByMemberUsername(username);
         List<Team> teamsByLeader = teamRepository.findTeamByLeader_Username(username);
         teamsByLeader.stream()

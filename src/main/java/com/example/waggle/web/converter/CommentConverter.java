@@ -1,6 +1,6 @@
 package com.example.waggle.web.converter;
 
-import com.example.waggle.domain.comment.entity.Comment;
+import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.comment.CommentResponse;
@@ -17,6 +17,8 @@ public class CommentConverter {
         return CommentResponse.ViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
+                .mentionedNickname(comment.getMentions().stream()
+                        .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .member(MemberResponse.SummaryDto.builder()
                         .username(member.getUsername())
                         .nickname(member.getNickname())

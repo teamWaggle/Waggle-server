@@ -1,4 +1,4 @@
-package com.example.waggle.domain.comment.entity;
+package com.example.waggle.domain.conversation;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.mention.entity.Mention;
@@ -17,37 +17,29 @@ import java.util.List;
 @Entity
 @Getter
 @SuperBuilder
+@DiscriminatorColumn(name = "DTYPE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reply extends BaseEntity {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Conversation extends BaseEntity {
     @Id
     @GeneratedValue
-    @Column(name = "reply_id")
+    @Column(name = "conversation_id")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @Column(nullable = false)
-    private String content;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
-
+    @JoinColumn(name = "member_id")
+    protected Member member;
+    @Lob
+    @Column(nullable = false)
+    private String content;
 
     @Builder.Default
-    @OneToMany(mappedBy = "reply", orphanRemoval = true)
+    @OneToMany(mappedBy = "conversation", orphanRemoval = true)
     private List<Mention> mentions = new ArrayList<>();
 
     public void changeContent(String content) {
         this.content = content;
-    }
-
-    public void addMention(Mention mention) {
-        this.getMentions().add(mention);
-        mention.changeReply(this);
     }
 
 }

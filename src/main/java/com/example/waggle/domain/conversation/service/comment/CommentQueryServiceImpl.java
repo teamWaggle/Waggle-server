@@ -1,7 +1,7 @@
-package com.example.waggle.domain.comment.service.comment;
+package com.example.waggle.domain.conversation.service.comment;
 
-import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.domain.comment.repository.CommentRepository;
+import com.example.waggle.domain.conversation.entity.Comment;
+import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.SecurityUtil;

@@ -16,7 +16,7 @@ public class ReplyResponse {
         private Long id;
         private String content;
         @Builder.Default
-        private List<String> mentionedUsername = new ArrayList<>();
+        private List<String> mentionedNickname = new ArrayList<>();
         private MemberResponse.SummaryDto member;
     }
 

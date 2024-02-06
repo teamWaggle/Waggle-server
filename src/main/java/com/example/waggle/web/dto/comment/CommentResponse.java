@@ -14,6 +14,8 @@ public class CommentResponse {
     public static class ViewDto {
         private Long id;
         private String content;
+        @Builder.Default
+        private List<String> mentionedNickname = new ArrayList<>();
         private MemberResponse.SummaryDto member;
     }
 

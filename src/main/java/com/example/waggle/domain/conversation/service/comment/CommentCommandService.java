@@ -1,4 +1,4 @@
-package com.example.waggle.domain.comment.service.comment;
+package com.example.waggle.domain.conversation.service.comment;
 
 import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.web.dto.comment.CommentRequest;

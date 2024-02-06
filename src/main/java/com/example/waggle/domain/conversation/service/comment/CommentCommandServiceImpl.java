@@ -1,13 +1,14 @@
-package com.example.waggle.domain.comment.service.comment;
+package com.example.waggle.domain.conversation.service.comment;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
-import com.example.waggle.domain.comment.entity.Comment;
-import com.example.waggle.domain.comment.repository.CommentRepository;
-import com.example.waggle.domain.comment.repository.ReplyRepository;
+import com.example.waggle.domain.conversation.entity.Comment;
+import com.example.waggle.domain.conversation.repository.CommentRepository;
+import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.mention.service.MentionCommandService;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.comment.CommentRequest;
@@ -26,6 +27,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final MemberQueryService memberQueryService;
+    private final MentionCommandService mentionCommandService;
     private final BoardService boardService;
 
     @Override
@@ -38,6 +40,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .member(signInMember)
                 .build();
         commentRepository.save(build);
+        mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
         return build.getId();
     }
 
@@ -51,27 +54,22 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .member(memberByUsername)
                 .build();
         commentRepository.save(build);
+        mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
         return build.getId();
     }
 
     @Override
     public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
-        if (!validateMember(commentId)) {
-            throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
-        }
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        Comment comment = validateMember(commentId);
+
         comment.changeContent(commentWriteDto.getContent());
+        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedNickname());
         return comment.getId();
     }
 
     @Override
     public void deleteComment(Long commentId) {
-        if (!validateMember(commentId)) {
-            throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
-        }
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        Comment comment = validateMember(commentId);
 
         replyRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
@@ -87,10 +85,13 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         );
     }
 
-    public boolean validateMember(Long commentId) {
+    public Comment validateMember(Long commentId) {
         Member signInMember = memberQueryService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        return comment.getMember().equals(signInMember);
+        if (!comment.getMember().equals(signInMember)) {
+            throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
+        }
+        return comment;
     }
 }

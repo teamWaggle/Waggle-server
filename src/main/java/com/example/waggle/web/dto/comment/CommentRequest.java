@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommentRequest {
     @Getter
     @NoArgsConstructor
@@ -15,5 +18,7 @@ public class CommentRequest {
         private String content;
         private String username;
         private Long boardId;
+        @Builder.Default
+        List<String> mentionedNickname = new ArrayList<>();
     }
 }

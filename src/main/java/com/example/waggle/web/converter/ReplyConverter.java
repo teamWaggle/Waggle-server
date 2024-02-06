@@ -1,6 +1,6 @@
 package com.example.waggle.web.converter;
 
-import com.example.waggle.domain.comment.entity.Reply;
+import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.member.MemberResponse;
@@ -21,8 +21,8 @@ public class ReplyConverter {
                         .profileImgUrl(MediaUtil.getProfileImg(member))
                         .build())
                 .content(reply.getContent())
-                .mentionedUsername(reply.getMentions().stream()
-                        .map(mention -> mention.getMentionedUsername()).collect(Collectors.toList()))
+                .mentionedNickname(reply.getMentions().stream()
+                        .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .build();
     }
 
