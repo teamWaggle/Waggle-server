@@ -44,28 +44,31 @@ public class CommentApiController {
     @Operation(summary = "스토리 댓글 작성", description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "스토리 댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
-    @PostMapping("/story")
-    public ApiResponseDto<Long> createStoryComment(@RequestBody CommentRequest.Post commentWriteDto) {
-        Long commentId = commentCommandService.createComment(commentWriteDto.getBoardId(), commentWriteDto, BoardType.STORY);
+    @PostMapping("/story/{boardId}")
+    public ApiResponseDto<Long> createStoryComment(@PathVariable Long boardId,
+                                                   @RequestBody CommentRequest.Post commentWriteDto) {
+        Long commentId = commentCommandService.createComment(boardId, commentWriteDto, BoardType.STORY);
         return ApiResponseDto.onSuccess(commentId);
     }
 
     @Operation(summary = "대답 댓글 작성", description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대답 댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
-    @PostMapping("/answer")
-    public ApiResponseDto<Long> createAnswerComment(@RequestBody CommentRequest.Post commentWriteDto) {
-        Long commentId = commentCommandService.createComment(commentWriteDto.getBoardId(), commentWriteDto, BoardType.ANSWER);
+    @PostMapping("/answer/{boardId}")
+    public ApiResponseDto<Long> createAnswerComment(@PathVariable Long boardId,
+                                                    @RequestBody CommentRequest.Post commentWriteDto) {
+        Long commentId = commentCommandService.createComment(boardId, commentWriteDto, BoardType.ANSWER);
         return ApiResponseDto.onSuccess(commentId);
     }
 
     @Operation(summary = "스케줄 댓글 작성", description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "스케줄 댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
-    @PostMapping("/schedule")
-    public ApiResponseDto<Long> createScheduleComment(@RequestBody CommentRequest.Post commentWriteDto) {
+    @PostMapping("/schedule/{boardId}")
+    public ApiResponseDto<Long> createScheduleComment(@PathVariable Long boardId,
+                                                      @RequestBody CommentRequest.Post commentWriteDto) {
         //TODO auth user is not team, cannot do it
-        Long commentId = commentCommandService.createComment(commentWriteDto.getBoardId(), commentWriteDto, BoardType.SCHEDULE);
+        Long commentId = commentCommandService.createComment(boardId, commentWriteDto, BoardType.SCHEDULE);
         return ApiResponseDto.onSuccess(commentId);
     }
 
