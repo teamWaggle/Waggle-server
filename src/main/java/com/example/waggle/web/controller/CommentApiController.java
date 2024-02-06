@@ -32,9 +32,9 @@ public class CommentApiController {
 
     @Operation(summary = "특정 게시글(로그, 질답, 사이렌) 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 조회 성공. 게시글 댓글 목록을 반환합니다.")
-    @GetMapping("/page")
+    @GetMapping("/page/{boardId}")
     public ApiResponseDto<CommentResponse.ListDto> getCommentsByPage(@RequestParam(defaultValue = "0") int currentPage,
-                                                                     @RequestParam Long boardId) {
+                                                                     @PathVariable Long boardId) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
         CommentResponse.ListDto listDto = CommentConverter.toListDto(pagedComments);

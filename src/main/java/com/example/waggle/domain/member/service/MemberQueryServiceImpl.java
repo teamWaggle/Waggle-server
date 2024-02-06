@@ -40,6 +40,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
+    public Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
     public boolean isAuthenticated() {
         if (SecurityUtil.getCurrentUsername().equals("anonymousUser")) {
             return false;

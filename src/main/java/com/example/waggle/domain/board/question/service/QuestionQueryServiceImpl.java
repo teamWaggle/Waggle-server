@@ -33,6 +33,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
+    public Page<Question> getPagedQuestionByMemberId(Long memberId, Pageable pageable) {
+        return questionRepository.findPageByMemberId(memberId, pageable);
+    }
+
+    @Override
     public Question getQuestionByBoardId(Long boardId) {
         return questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));

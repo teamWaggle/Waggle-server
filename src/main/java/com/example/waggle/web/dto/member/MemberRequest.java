@@ -16,22 +16,7 @@ public class MemberRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LoginDto {
-
-        @NotBlank(message = "아이디를 작성해주세요.")
-        private String email;
-        @NotBlank(message = "비밀번호를 작성해주세요.")
-        private String password;
-
-    }
-
-    @Builder
-    @Setter
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SignUpDto {
+    public static class AccessDto {
         @NotBlank
         private String email;
 

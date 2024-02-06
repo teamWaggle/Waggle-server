@@ -5,8 +5,6 @@ import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.global.exception.handler.MediaHandler;
-import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,8 +66,6 @@ public class MediaUtil {
         if (url != null) {
             if (url.startsWith(SERVER_URI)) {
                 subPrefixUrl = url.substring(SERVER_URI.length());
-            } else {
-                throw new MediaHandler(ErrorStatus.MEDIA_PREFIX_IS_WRONG);
             }
         }
         return subPrefixUrl;

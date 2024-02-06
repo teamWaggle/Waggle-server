@@ -40,7 +40,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody MemberRequest.SignUpDto request) {
+    public ApiResponseDto<Long> signUp(@RequestBody MemberRequest.AccessDto request) {
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }

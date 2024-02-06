@@ -29,6 +29,7 @@ import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.NameUtil;
+import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest;
 import lombok.RequiredArgsConstructor;
@@ -73,13 +74,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(MemberRequest.SignUpDto request) {
+    public Long signUp(MemberRequest.AccessDto request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         Member createdMember = Member.builder()
                 .username(generateAutoUsername())
                 .password(encodedPassword)
                 .nickname(generateAutoNickname())
+                .userUrl(generateAutoUserUrl())
                 .email(request.getEmail())
                 .authProvider(WAGGLE)
                 .role(Role.GUEST)
@@ -167,7 +169,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String generateAutoUsername() {
         String username;
         do {
-            username = NameUtil.generateAutoUsername();
+            username = NameUtil.generateAuto(NameType.USERNAME);
         } while (memberRepository.existsByUsername(username));
         return username;
     }
@@ -175,8 +177,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String generateAutoNickname() {
         String username;
         do {
-            username = NameUtil.generateAutoNickname();
-        } while (memberRepository.existsByUsername(username));
+            username = NameUtil.generateAuto(NameType.NICKNAME);
+        } while (memberRepository.existsByNickname(username));
+        return username;
+    }
+
+    private String generateAutoUserUrl() {
+        String username;
+        do {
+            username = NameUtil.generateAuto(NameType.USERURL);
+        } while (memberRepository.existsByUserUrl(username));
         return username;
     }
 }

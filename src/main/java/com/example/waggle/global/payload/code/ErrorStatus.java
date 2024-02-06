@@ -13,6 +13,7 @@ public enum ErrorStatus implements BaseCode {
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
     _UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR(INTERNAL_SERVER_ERROR, 5001, "서버 에러, 로그인이 필요없는 요청입니다."),
     _ASSIGNABLE_PRINCIPAL(BAD_REQUEST, 5002, "인증타입이 잘못되어 할당이 불가능합니다."),
+    _NAME_TYPE_IS_NOT_FOUND(NOT_FOUND, 5003, "랜덤 입력할 필드의 타입을 잘못 입력하였습니다"),
 
     // 일반적인 요청 오류
     _BAD_REQUEST(BAD_REQUEST, 4000, "잘못된 요청입니다."),

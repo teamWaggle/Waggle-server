@@ -37,6 +37,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false)
+    private String userUrl;
+
     @Column(nullable = false)
     private String password;
 
@@ -101,7 +104,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     }
 
     public void registerInfo(MemberRequest.RegisterDto request) {
-        this.username = request.getUserUrl();
+        this.userUrl = request.getUserUrl();
         this.name = request.getName();
         this.nickname = request.getNickname();
         this.birthday = request.getBirthday();

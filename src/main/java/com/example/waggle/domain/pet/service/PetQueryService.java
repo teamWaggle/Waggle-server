@@ -10,4 +10,6 @@ public interface PetQueryService {
 
     List<Pet> getPetsByUsername(String username);
 
+    List<Pet> getPetsByMemberId(Long memberId);
+
 }

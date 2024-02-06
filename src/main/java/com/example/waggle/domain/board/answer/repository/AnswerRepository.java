@@ -18,6 +18,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     Page<Answer> findPagedAnswerByMemberUsername(String username, Pageable pageable);
 
+    Page<Answer> findPagedAnswerByMemberId(Long memberId, Pageable pageable);
+
     void deleteAllByMemberUsername(String username);
 
 }

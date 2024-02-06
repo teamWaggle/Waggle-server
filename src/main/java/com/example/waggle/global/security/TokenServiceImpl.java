@@ -53,7 +53,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public JwtToken login(MemberRequest.LoginDto request) {
+    public JwtToken login(MemberRequest.AccessDto request) {
         UserDetails userDetails = memberQueryService.getMemberByEmail(request.getEmail());
         Authentication authentication;
         if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {

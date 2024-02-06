@@ -10,6 +10,8 @@ public interface MemberQueryService {
 
     Member getSignInMember();
 
+    Member getMemberById(Long memberId);
+
     boolean isAuthenticated();
 
     void validateEmailDuplication(String email);

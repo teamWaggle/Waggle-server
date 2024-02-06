@@ -5,7 +5,7 @@ import com.example.waggle.web.dto.member.VerifyMailRequest;
 
 public interface MemberCommandService {
 
-    Long signUp(MemberRequest.SignUpDto request);
+    Long signUp(MemberRequest.AccessDto request);
 
     Long registerMemberInfo(String username, MemberRequest.RegisterDto request);
 
