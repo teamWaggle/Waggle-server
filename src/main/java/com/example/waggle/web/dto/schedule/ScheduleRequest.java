@@ -19,5 +19,4 @@ public class ScheduleRequest {
         private LocalDateTime startTime;
         private LocalDateTime endTime;
     }
-
 }

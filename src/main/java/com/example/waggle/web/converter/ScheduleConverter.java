@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.global.util.ScheduleUtil;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import org.springframework.data.domain.Page;
 
@@ -16,7 +17,9 @@ public class ScheduleConverter {
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .startTime(schedule.getStartTime())
-                .endTime(schedule.getEndTime()).build();
+                .endTime(schedule.getEndTime())
+                .status(ScheduleUtil.setStatus(schedule))
+                .build();
     }
 
     public static ScheduleResponse.ListDto toListDto(Page<Schedule> pagedSchedules) {

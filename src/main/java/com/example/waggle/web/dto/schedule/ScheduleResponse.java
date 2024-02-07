@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import com.example.waggle.global.util.ScheduleUtil.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class ScheduleResponse {
         private String content;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
+        private Status status;
     }
 
     @NoArgsConstructor
