@@ -73,4 +73,9 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         return scheduleRepository.findByTeamIdAndDay(teamId, startDateTime, endDateTime);
     }
 
+    @Override
+    public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDateTime startTime, LocalDateTime endTime) {
+        return scheduleRepository.findByTeamIdAndDay(teamId, startTime, endTime);
+    }
+
 }

@@ -17,9 +17,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -133,6 +135,18 @@ public class ScheduleApiController {
             @RequestParam int month) {
 
         List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(memberId, year, month);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+    }
+
+    @Operation(summary = "기간 해당 팀 일정 조회", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
+    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @GetMapping("/teams/{teamId}/period")
+    public ApiResponseDto<ScheduleResponse.ListDto> getTeamScheduleByPeriod(
+            @PathVariable Long teamId,
+            @RequestParam(value = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(value = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+        List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
