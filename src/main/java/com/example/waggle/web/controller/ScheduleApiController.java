@@ -13,6 +13,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +31,7 @@ public class ScheduleApiController {
 
     private final ScheduleCommandService scheduleCommandService;
     private final ScheduleQueryService scheduleQueryService;
+    private Sort latestStart = Sort.by("startTime").descending();
 
     @Operation(summary = "일정 생성", description = "새로운 일정을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "일정 생성 성공.")
@@ -76,6 +81,17 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
+    @Operation(summary = "특정 팀의 모든 일정 조회", description = "특정 팀의 모든 일정을 가져옵니다.")
+    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @GetMapping("/teams/{teamId}/page")
+    public ApiResponseDto<ScheduleResponse.ListDto> getPagedSchedulesByTeam(@RequestParam(defaultValue = "0") int currentPage,
+                                                                            @PathVariable Long teamId) {
+        Pageable pageable = PageRequest.of(currentPage, 12, latestStart);
+        Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(teamId, pageable);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(pagedSchedules));
+    }
+
     @Operation(summary = "특정 사용자의 모든 일정 조회", description = "특정 사용자가 선택한 모든 일정을 가져옵니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
@@ -88,7 +104,7 @@ public class ScheduleApiController {
     @Operation(summary = "특정 사용자가 작성한 일정 조회", description = "특정 사용자가 작성한 모든 일정을 가져옵니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
-    @GetMapping("/wrtiers/{memberId}")
+    @GetMapping("/writers/{memberId}")
     public ApiResponseDto<ScheduleResponse.ListDto> getSchedulesByWriter(@PathVariable Long memberId) {
         List<Schedule> schedules = scheduleQueryService.getSchedulesByWriter(memberId);
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
@@ -117,34 +133,6 @@ public class ScheduleApiController {
             @RequestParam int month) {
 
         List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(memberId, year, month);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
-    }
-
-    @Operation(summary = "특정 팀의 일주일 일정 조회", description = "특정 팀 스케줄 전체를 일주일 단위로 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
-    @GetMapping("/teams/{teamId}/weekly")
-    public ApiResponseDto<ScheduleResponse.ListDto> getWeeklySchedulesForTeam(
-            @PathVariable Long teamId,
-            @RequestParam int year,
-            @RequestParam int month,
-            @RequestParam int day) {
-
-        List<Schedule> schedules = scheduleQueryService.getWeeklyTeamSchedule(teamId, year, month, day);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
-    }
-
-    @Operation(summary = "특정 사용자의 일주일 일정 조회", description = "특정 사용자가 선택한 팀 스케줄 전체를 일주일 단위로 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
-    @GetMapping("/members/{memberId}/weekly")
-    public ApiResponseDto<ScheduleResponse.ListDto> getWeeklySchedulesForMember(
-            @PathVariable Long memberId,
-            @RequestParam int year,
-            @RequestParam int month,
-            @RequestParam int day) {
-
-        List<Schedule> schedules = scheduleQueryService.getWeeklySchedulesByMember(memberId, year, month, day);
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 

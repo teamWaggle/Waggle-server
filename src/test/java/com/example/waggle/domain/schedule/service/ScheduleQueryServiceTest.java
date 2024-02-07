@@ -129,7 +129,7 @@ class ScheduleQueryServiceTest {
         team1.addSchedule(schedule2);
 
         // when
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByTeamId(team1.getId());
+        List<Schedule> schedules = scheduleQueryService.getTeamSchedules(team1.getId());
 
         // then
         assertThat(schedules.size()).isEqualTo(2);
@@ -150,7 +150,7 @@ class ScheduleQueryServiceTest {
         team2.addSchedule(schedule2);
 
         // when
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByMemberUsername(member1.getUsername());
+        List<Schedule> schedules = scheduleQueryService.getSchedulesByMember(member1.getId());
 
         // then
         assertThat(schedules.size()).isEqualTo(2);
@@ -189,7 +189,7 @@ class ScheduleQueryServiceTest {
 
         // when
         List<Schedule> monthlySchedules = scheduleQueryService.getMonthlySchedulesByMember(
-                member1.getUsername(), 2023, 10);
+                member1.getId(), 2023, 10);
 
         // then
         assertThat(monthlySchedules.size()).isEqualTo(4);

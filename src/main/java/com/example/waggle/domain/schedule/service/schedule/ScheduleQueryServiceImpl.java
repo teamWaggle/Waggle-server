@@ -1,7 +1,5 @@
 package com.example.waggle.domain.schedule.service.schedule;
 
-import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
@@ -9,6 +7,8 @@ import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +23,7 @@ import java.util.stream.Collectors;
 public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     private final ScheduleRepository scheduleRepository;
-    private final MemberRepository memberRepository;
     private final MemberScheduleRepository memberScheduleRepository;
-    private final MemberQueryService memberQueryService;
 
     @Override
     public Schedule getScheduleById(Long scheduleId) {
@@ -36,6 +34,11 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Override
     public List<Schedule> getTeamSchedules(Long teamId) {
         return scheduleRepository.findAllByTeamId(teamId);
+    }
+
+    @Override
+    public Page<Schedule> getPagedTeamSchedules(Long teamId, Pageable pageable) {
+        return scheduleRepository.findPagedByTeamId(teamId, pageable);
     }
 
     @Override
@@ -62,17 +65,6 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     }
 
     @Override
-    public List<Schedule> getWeeklySchedulesByMember(Long memberId, int year, int month, int day) {
-        LocalDate startDay = LocalDate.of(year, month, day);
-        LocalDateTime startDateTime = startDay.atStartOfDay();
-        LocalDateTime endDateTime = startDay.plusWeeks(1).atStartOfDay();
-
-        return memberScheduleRepository.findByMemberIdAndDay(memberId, startDateTime, endDateTime).stream()
-                .map(MemberSchedule::getSchedule)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month) {
         LocalDate startDay = LocalDate.of(year, month, 1);
         LocalDateTime startDateTime = startDay.atStartOfDay();
@@ -81,12 +73,4 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         return scheduleRepository.findByTeamIdAndDay(teamId, startDateTime, endDateTime);
     }
 
-    @Override
-    public List<Schedule> getWeeklyTeamSchedule(Long teamId, int year, int month, int day) {
-        LocalDate startDay = LocalDate.of(year, month, day);
-        LocalDateTime startDateTime = startDay.atStartOfDay();
-        LocalDateTime endDateTime = startDay.plusWeeks(1).atStartOfDay();
-
-        return scheduleRepository.findByTeamIdAndDay(teamId, startDateTime, endDateTime);
-    }
 }

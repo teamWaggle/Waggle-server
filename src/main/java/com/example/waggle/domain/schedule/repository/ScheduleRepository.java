@@ -2,6 +2,8 @@ package com.example.waggle.domain.schedule.repository;
 
 import com.example.waggle.domain.schedule.entity.Schedule;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,6 +22,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByTeamIdAndDay(@Param("teamId") Long teamId,
                                       @Param("startOfDay") LocalDateTime startOfDay,
                                       @Param("endOfDay") LocalDateTime endOfDay);
+
+    Page<Schedule> findPagedByTeamId(Long teamId, Pageable pageable);
 
     void deleteAllByMemberUsername(String username);
 
