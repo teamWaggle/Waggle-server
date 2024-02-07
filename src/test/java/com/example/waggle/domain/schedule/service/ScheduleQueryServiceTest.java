@@ -8,6 +8,7 @@ import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

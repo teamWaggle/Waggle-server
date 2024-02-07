@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.service;
+package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 

@@ -64,6 +64,7 @@ public enum ErrorStatus implements BaseCode {
     TEAM_LEADER_ONLY_CAN_DELETE_TEAM(BAD_REQUEST, 4207, "팀 리더만 팀을 지울 수 있습니다."),
     TEAM_MEMBER_CANNOT_BE_EXCEEDED(BAD_REQUEST, 4208, "팀 멤버 수 제한을 초과할 수 없습니다."),
     TEAM_LEADER_CANNOT_BE_REMOVED(BAD_REQUEST, 4209, "팀 리더는 팀 멤버에서 제외될 수 없습니다."),
+    SCHEDULE_NOT_IN_YOUR_TEAM_SCHEDULE(BAD_REQUEST, 4210, "해당 스케줄은 당신이 소속한 팀의 스케줄이 아닙니다"),
 
 
     // 펫 관련 오류 (4250 ~ 4299)

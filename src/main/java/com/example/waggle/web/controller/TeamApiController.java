@@ -2,8 +2,8 @@ package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.domain.schedule.service.TeamCommandService;
-import com.example.waggle.domain.schedule.service.TeamQueryService;
+import com.example.waggle.domain.schedule.service.team.TeamCommandService;
+import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;

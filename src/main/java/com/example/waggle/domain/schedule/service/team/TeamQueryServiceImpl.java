@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.service;
+package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;

@@ -12,12 +12,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     List<Schedule> findAllByTeamId(Long teamId);
 
-    @Query("SELECT s FROM Schedule s JOIN s.team t JOIN t.teamMembers tm WHERE tm.member.username = :username AND (s.startTime <= :endOfMonth AND s.endTime >= :startOfMonth)")
-    List<Schedule> findSchedulesByMemberUsernameAndMonth(@Param("username") String username,
-                                                         @Param("startOfMonth") LocalDateTime startOfMonth,
-                                                         @Param("endOfMonth") LocalDateTime endOfMonth);
-
     List<Schedule> findListByMemberUsername(String username);
+
+    List<Schedule> findListByMemberId(Long memberId);
+
+    @Query("SELECT s FROM Schedule s JOIN s.team t WHERE s.team.id = :teamId AND (s.startTime <= :endOfDay AND s.endTime >= :startOfDay)")
+    List<Schedule> findByTeamIdAndDay(@Param("teamId") Long teamId,
+                                      @Param("startOfDay") LocalDateTime startOfDay,
+                                      @Param("endOfDay") LocalDateTime endOfDay);
 
     void deleteAllByMemberUsername(String username);
 

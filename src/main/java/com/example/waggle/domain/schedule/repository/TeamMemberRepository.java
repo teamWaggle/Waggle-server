@@ -1,6 +1,8 @@
 package com.example.waggle.domain.schedule.repository;
 
 
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,6 +16,8 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     List<TeamMember> findTeamMemberByTeamId(Long teamId);
 
     boolean existsByMemberUsername(String username);
+
+    boolean existsByMemberAndTeam(Member member, Team team);
 
     void deleteAllByMemberUsername(String username);
 

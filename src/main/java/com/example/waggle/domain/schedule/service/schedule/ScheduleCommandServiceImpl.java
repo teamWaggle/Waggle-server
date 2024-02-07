@@ -1,13 +1,16 @@
-package com.example.waggle.domain.schedule.service;
+package com.example.waggle.domain.schedule.service.schedule;
 
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.schedule.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
@@ -26,6 +29,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final MemberScheduleRepository memberScheduleRepository;
     private final CommentCommandService commentCommandService;
     private final BoardService boardService;
 
@@ -53,6 +58,11 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         team.addSchedule(createdSchedule);
 
         Schedule schedule = scheduleRepository.save(createdSchedule);
+        MemberSchedule memberSchedule = MemberSchedule.builder()
+                .member(member)
+                .schedule(schedule)
+                .build();
+        memberScheduleRepository.save(memberSchedule);
         return schedule.getId();
     }
 
@@ -76,6 +86,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+
+        memberScheduleRepository.deleteAllByScheduleId(scheduleId);
         scheduleRepository.delete(schedule);
     }
 
@@ -84,9 +96,39 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         scheduleRepository.findById(scheduleId).ifPresent(
                 schedule -> {
                     schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+                    memberScheduleRepository.deleteAllByScheduleId(scheduleId);
                     scheduleRepository.delete(schedule);
                 }
         );
+    }
+
+    @Override
+    public Long addMemberSchedule(Long scheduleId, String username) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        validateScheduleIsInYourTeam(schedule, member);
+
+        MemberSchedule build = MemberSchedule.builder()
+                .member(member)
+                .schedule(schedule)
+                .build();
+        memberScheduleRepository.save(build);
+        return build.getId();
+    }
+
+    @Override
+    public void deleteMemberSchedule(Long scheduleId, String username) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        validateScheduleIsInYourTeam(schedule, member);
+
+        memberScheduleRepository.deleteByMemberIdAndScheduleId(member.getId(), scheduleId);
     }
 
     private static void validateTeamMember(Team team, Member member) {
@@ -94,6 +136,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .anyMatch(teamMember -> teamMember.getMember().equals(member));
         if (!isWriterInTeam) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM);
+        }
+    }
+
+    private void validateScheduleIsInYourTeam(Schedule schedule, Member member) {
+        if (!teamMemberRepository.existsByMemberAndTeam(member, schedule.getTeam())) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_IN_YOUR_TEAM_SCHEDULE);
         }
     }
 }

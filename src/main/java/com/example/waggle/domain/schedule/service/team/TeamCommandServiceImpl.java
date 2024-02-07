@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.service;
+package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
@@ -12,6 +12,7 @@ import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;

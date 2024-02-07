@@ -25,7 +25,7 @@ import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.domain.schedule.service.ScheduleCommandService;
+import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest;
