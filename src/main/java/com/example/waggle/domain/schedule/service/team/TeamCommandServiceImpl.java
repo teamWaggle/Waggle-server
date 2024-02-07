@@ -48,7 +48,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .coverImageUrl(request.getCoverImageUrl())
-                .colorScheme(request.getColorScheme())
+                .teamColor(request.getTeamColor())
                 .maxTeamSize(request.getMaxTeamSize())
                 .leader(loginMember)
                 .build();
@@ -68,7 +68,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .coverImageUrl(request.getCoverImageUrl())
-                .colorScheme(request.getColorScheme())
+                .teamColor(request.getTeamColor())
                 .maxTeamSize(request.getMaxTeamSize())
                 .leader(member)
                 .build();

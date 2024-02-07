@@ -14,6 +14,7 @@ public class ScheduleConverter {
         return ScheduleResponse.DetailDto.builder()
                 .scheduleId(schedule.getId())
                 .teamId(schedule.getTeam().getId())
+                .teamColor(schedule.getTeam().getTeamColor())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .startTime(schedule.getStartTime())

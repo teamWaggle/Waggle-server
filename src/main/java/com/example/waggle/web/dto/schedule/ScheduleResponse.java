@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.schedule;
 
-import com.example.waggle.global.util.ScheduleUtil.Status;
+import com.example.waggle.domain.schedule.entity.ScheduleStatus;
+import com.example.waggle.domain.schedule.entity.TeamColor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,11 +20,12 @@ public class ScheduleResponse {
     public static class DetailDto {
         private Long scheduleId;
         private Long teamId;
+        private TeamColor teamColor;
         private String title;
         private String content;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
-        private Status status;
+        private ScheduleStatus status;
     }
 
     @NoArgsConstructor

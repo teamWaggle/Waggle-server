@@ -1,19 +1,17 @@
 package com.example.waggle.global.util;
 
 import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.ScheduleStatus;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 
 import java.time.LocalDateTime;
 
-import static com.example.waggle.global.util.ScheduleUtil.Status.*;
+import static com.example.waggle.domain.schedule.entity.ScheduleStatus.*;
 
 public class ScheduleUtil {
-    public enum Status {
-        IN_PROGRESS, UPCOMING, CLOSING
-    }
 
-    public static Status setStatus(Schedule schedule) {
+    public static ScheduleStatus setStatus(Schedule schedule) {
         if (LocalDateTime.now().isBefore(schedule.getStartTime())) {
             return UPCOMING;
         } else if (LocalDateTime.now().isAfter(schedule.getEndTime())) {

@@ -26,7 +26,8 @@ public class Team extends BaseEntity {
     private String description;
     private String coverImageUrl;
     @Column(nullable = false)
-    private String colorScheme;
+    @Enumerated(EnumType.STRING)
+    private TeamColor teamColor;
     private Integer maxTeamSize;
 
 
@@ -56,7 +57,7 @@ public class Team extends BaseEntity {
         this.name = request.getName();
         this.description = request.getDescription();
         this.coverImageUrl = request.getCoverImageUrl();
-        this.colorScheme = request.getColorScheme();
+        this.teamColor = request.getTeamColor();
         this.maxTeamSize = request.getMaxTeamSize();
     }
 
