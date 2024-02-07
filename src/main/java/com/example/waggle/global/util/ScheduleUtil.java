@@ -22,4 +22,10 @@ public class ScheduleUtil {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME);
         }
     }
+
+    public static void validateSchedule(LocalDateTime start, LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME);
+        }
+    }
 }

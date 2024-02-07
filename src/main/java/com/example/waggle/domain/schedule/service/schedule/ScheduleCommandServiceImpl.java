@@ -16,6 +16,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ScheduleUtil;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
 
         validateTeamMember(team, member);
+        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
 
         Schedule createdSchedule = Schedule.builder()
                 .team(team)
@@ -71,6 +73,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
+        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
+
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         schedule.update(request);
