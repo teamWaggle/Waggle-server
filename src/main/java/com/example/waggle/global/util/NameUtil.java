@@ -28,7 +28,7 @@ public class NameUtil {
                 prefix = WAGGLE_AUTO_USERNAME;
                 break;
             default:
-                throw new MemberHandler(ErrorStatus._NAME_TYPE_IS_NOT_FOUND);
+                throw new MemberHandler(ErrorStatus.MEMBER_NAME_TYPE_IS_NOT_FOUND);
         }
         StringBuilder usernameBuilder = getStringBuilder(prefix);
 

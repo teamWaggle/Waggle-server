@@ -56,12 +56,11 @@ public class TokenServiceImpl implements TokenService {
     public JwtToken login(MemberRequest.AccessDto request) {
         UserDetails userDetails = memberQueryService.getMemberByEmail(request.getEmail());
         Authentication authentication;
-        if (passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-            authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
-                    userDetails.getAuthorities());
-        } else {
-            throw new AuthenticationHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+            throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
+        authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
+                userDetails.getAuthorities());
 
         JwtToken jwtToken = generateToken(authentication);
         return jwtToken;

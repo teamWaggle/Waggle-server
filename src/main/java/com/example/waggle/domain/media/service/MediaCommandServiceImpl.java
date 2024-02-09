@@ -105,9 +105,8 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         if (requestCount != mediaCount) {
             throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
         }
-
-        //개수가 0이면 false, 하지만 mediaList가 존재한다면 true
-        return (requestCount != 0 || mediaCount != 0) || !request.getMediaList().isEmpty();
+        
+        return !request.getMediaList().isEmpty();
     }
 
 }
