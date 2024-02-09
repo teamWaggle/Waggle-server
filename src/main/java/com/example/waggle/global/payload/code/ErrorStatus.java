@@ -68,6 +68,7 @@ public enum ErrorStatus implements BaseCode {
     SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME(BAD_REQUEST, 4211, "시작시간이 종료시간보다 늦습니다."),
     TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE(BAD_REQUEST, 4212, "현재 존재하는 팀멤버의 사이즈가 업데이트하고자 하는 팀멤버 사이즈보다 큽니다"),
     SCHEDULE_WRITER_CANNOT_DELETE_MEMBER_SCHEDULE(BAD_REQUEST, 4213, "작성자는 멤버 스케줄에서 제외가 불가능합니다"),
+    SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS(BAD_REQUEST, 4214, "개인 스케줄이 아니므로 댓글을 달 수 없습니다."),
 
 
     // 펫 관련 오류 (4250 ~ 4299)

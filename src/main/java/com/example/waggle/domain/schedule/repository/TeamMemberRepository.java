@@ -23,4 +23,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     void deleteAllByMemberUsernameAndTeamId(String username, Long teamId);
 
+    void deleteAllByMemberIdAndTeamId(Long memberId, Long teamId);
+
 }

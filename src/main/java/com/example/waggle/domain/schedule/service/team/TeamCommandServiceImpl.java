@@ -5,10 +5,7 @@ import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.*;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
-import com.example.waggle.domain.schedule.repository.ParticipationRepository;
-import com.example.waggle.domain.schedule.repository.ScheduleRepository;
-import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
@@ -33,6 +30,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final ScheduleRepository scheduleRepository;
+    private final MemberScheduleRepository memberScheduleRepository;
     private final ParticipationRepository participationRepository;
     private final MemberQueryService memberQueryService;
     private final ScheduleCommandService scheduleCommandService;
@@ -99,12 +97,13 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public Long addTeamMember(Long teamId, String username) {
+    public Long addTeamMember(Long teamId, Long memberId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateTeamMemberCount(team);
 
-        Member member = memberQueryService.getMemberByUsername(username);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         validateMemberDuplication(team, member);
         addMemberToTeam(team, member);
 
@@ -112,19 +111,34 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public void deleteTeamMember(Long teamId, String username) {
+    public void deleteTeamMemberByLeader(Long teamId, Long memberId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
-        validateRemovedIsLeader(username, team);
-        teamMemberRepository.deleteAllByMemberUsernameAndTeamId(username, teamId);
+        validateRemovedIsLeader(memberId, team);
+        memberScheduleRepository.deleteAllByMemberId(memberId);
+        teamMemberRepository.deleteAllByMemberIdAndTeamId(memberId, teamId);
     }
 
     @Override
-    public void changeTeamLeader(Long teamId, String username) {
+    public void deleteTeamMemberByMyself(Long teamId, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberQueryService.getMemberByUsername(username);
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        validateRemovedIsLeader(member.getId(), team);
+
+        memberScheduleRepository.deleteAllByMemberId(member.getId());
+        teamMemberRepository.deleteAllByMemberIdAndTeamId(member.getId(), teamId);
+    }
+
+    @Override
+    public void changeTeamLeader(Long teamId, Long memberId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         validateCallerIsLeader(team);
         validateMemberBelongsToTeam(team, member);
@@ -206,8 +220,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateRemovedIsLeader(String username, Team team) {
-        if (team.getLeader().getUsername().equals(username)) {
+    private static void validateRemovedIsLeader(Long memberId, Team team) {
+        if (team.getLeader().getId().equals(memberId)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED);
         }
     }

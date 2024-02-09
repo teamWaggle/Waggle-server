@@ -197,7 +197,7 @@ class TeamCommandServiceTest {
     @Transactional
     void changeTeamLeader() {
         // given
-        Long updatedTeamId = teamCommandService.addTeamMember(teamId, member2.getUsername());
+        Long updatedTeamId = teamCommandService.addTeamMember(teamId, member2);
 
         // when
         teamCommandService.changeTeamLeader(teamId, member2.getUsername());

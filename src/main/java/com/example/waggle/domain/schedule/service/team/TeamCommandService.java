@@ -12,11 +12,13 @@ public interface TeamCommandService {
 
     void deleteTeam(Long teamId);
 
-    Long addTeamMember(Long teamId, String username);
+    Long addTeamMember(Long teamId, Long memberId);
 
-    void deleteTeamMember(Long teamId, String username);
+    void deleteTeamMemberByLeader(Long teamId, Long memberId);
 
-    void changeTeamLeader(Long teamId, String username);
+    void deleteTeamMemberByMyself(Long teamId, String username);
+
+    void changeTeamLeader(Long teamId, Long memberId);
 
     void requestParticipation(Long teamId, String username);
 

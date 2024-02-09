@@ -75,30 +75,39 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "팀원 추가", description = "지정된 팀에 새로운 팀원을 추가합니다.")
-    @ApiResponse(responseCode = "200", description = "팀원 추가 성공.")
-    @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
-    @PostMapping("/{teamId}/members")
-    public ApiResponseDto<Boolean> addTeamMember(@PathVariable Long teamId, @Parameter(hidden = true) @AuthUser UserDetails userDetails) {
-        teamCommandService.addTeamMember(teamId, userDetails.getUsername());
+//    @Operation(summary = "팀원 추가", description = "지정된 팀에 새로운 팀원을 추가합니다.")
+//    @ApiResponse(responseCode = "200", description = "팀원 추가 성공.")
+//    @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
+//    @PostMapping("/{teamId}/members/{memberId}")
+//    public ApiResponseDto<Boolean> addTeamMember(@PathVariable Long teamId, @Parameter(hidden = true) @AuthUser UserDetails userDetails) {
+//        teamCommandService.addTeamMember(teamId, userDetails.getUsername());
+//        return ApiResponseDto.onSuccess(Boolean.TRUE);
+//    }
+
+    @Operation(summary = "팀원 삭제(수동)", description = "리더에 의해 지정된 팀에서 특정 팀원을 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")
+    @ApiResponse(responseCode = "404", description = "팀 또는 팀원을 찾을 수 없습니다.")
+    @DeleteMapping("/{teamId}/members/{memberId}")
+    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
+        teamCommandService.deleteTeamMemberByLeader(teamId, memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "팀원 삭제", description = "지정된 팀에서 특정 팀원을 삭제합니다.")
+    @Operation(summary = "팀원 삭제(능동)", description = "자신이 속한 팀으로부터 탈퇴합니다.")
     @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 팀원을 찾을 수 없습니다.")
-    @DeleteMapping("/members")
-    public ApiResponseDto<Boolean> deleteTeamMember(@RequestParam Long teamId, @RequestParam String username) {
-        teamCommandService.deleteTeamMember(teamId, username);
+    @DeleteMapping("/{teamId}/members")
+    public ApiResponseDto<Boolean> deleteTeamMemberByMyself(@PathVariable Long teamId, @AuthUser UserDetails userDetails) {
+        teamCommandService.deleteTeamMemberByMyself(teamId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "팀 리더 변경", description = "지정된 팀의 리더를 변경합니다.")
     @ApiResponse(responseCode = "200", description = "팀 리더 변경 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 멤버를 찾을 수 없습니다.")
-    @PutMapping("/{teamId}/leader")
-    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @RequestParam String username) {
-        teamCommandService.changeTeamLeader(teamId, username);
+    @PutMapping("/{teamId}/leader/{memberId}")
+    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
+        teamCommandService.changeTeamLeader(teamId, memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

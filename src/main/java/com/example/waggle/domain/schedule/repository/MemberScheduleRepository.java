@@ -22,4 +22,8 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
 
     void deleteAllByScheduleId(Long scheduleId);
 
+    void deleteAllByMemberId(Long memberId);
+
+    boolean existsByMemberIdAndScheduleId(Long memberId, Long scheduleId);
+
 }
