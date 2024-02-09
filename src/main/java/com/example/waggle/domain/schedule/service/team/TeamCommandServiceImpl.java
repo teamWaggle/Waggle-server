@@ -81,6 +81,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
+        validateMaxTeamMemberSize(request, team);
 
         team.update(request);
         return team.getId();
@@ -149,14 +150,15 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public void respondToParticipation(Long teamId, String username, boolean accept) {
+    public void respondToParticipation(Long teamId, Long memberId, boolean accept) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberQueryService.getMemberByUsername(username);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         validateCallerIsLeader(team);
 
-        Participation participation = participationRepository.findByTeamIdAndUsername(teamId, username)
+        Participation participation = participationRepository.findByTeamIdAndUsername(teamId, member.getUsername())
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND));
 
         if (accept) {
@@ -207,6 +209,12 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private static void validateRemovedIsLeader(String username, Team team) {
         if (team.getLeader().getUsername().equals(username)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED);
+        }
+    }
+
+    private static void validateMaxTeamMemberSize(Post request, Team team) {
+        if (team.getTeamMembers().size() > request.getMaxTeamSize()) {
+            throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE);
         }
     }
 

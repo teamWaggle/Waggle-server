@@ -1,5 +1,6 @@
 package com.example.waggle.domain.schedule.service.schedule;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,5 +25,7 @@ public interface ScheduleQueryService {
     List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month);
 
     List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDateTime startTime, LocalDateTime endTime);
+
+    List<Member> getMemberBySchedule(Long scheduleId);
 
 }

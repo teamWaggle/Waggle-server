@@ -1,11 +1,14 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.security.annotation.AuthUser;
+import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
+import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -168,6 +171,15 @@ public class ScheduleApiController {
             @RequestParam(value = "end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
         List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+    }
+
+    @Operation(summary = "스케줄 선택 멤버 조회", description = "특정한 팀 스케줄을 선택한 멤버들을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 멤버 조회에 실패했습니다.")
+    @GetMapping("/{scheduleId}/members")
+    public ApiResponseDto<MemberResponse.ListDto> getMembersBySchedules(@PathVariable Long scheduleId) {
+        List<Member> memberBySchedule = scheduleQueryService.getMemberBySchedule(scheduleId);
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(memberBySchedule));
     }
 
 }

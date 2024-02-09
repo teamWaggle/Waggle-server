@@ -114,10 +114,10 @@ public class TeamApiController {
     @Operation(summary = "팀 참여 요청 승인/거절", description = "팀 리더가 팀 참여 요청을 승인하거나 거절합니다.")
     @ApiResponse(responseCode = "200", description = "팀 참여 요청 승인/거절 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 요청을 찾을 수 없습니다.")
-    @PutMapping("/{teamId}/participation/{username}")
-    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId, @PathVariable String username,
+    @PutMapping("/{teamId}/participation/{memberId}")
+    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId, @PathVariable Long memberId,
                                                           @RequestParam boolean accept) {
-        teamCommandService.respondToParticipation(teamId, username, accept);
+        teamCommandService.respondToParticipation(teamId, memberId, accept);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

@@ -1,11 +1,9 @@
 package com.example.waggle.web.dto.member;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemberResponse {
 
@@ -34,6 +32,16 @@ public class MemberResponse {
         private String address;
         private String phone;
         private String profileImgUrl;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ListDto {
+        @Builder.Default
+        private List<SummaryDto> members = new ArrayList<>();
+        private int totalSize;
     }
 
 }

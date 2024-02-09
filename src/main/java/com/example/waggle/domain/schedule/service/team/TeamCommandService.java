@@ -20,6 +20,6 @@ public interface TeamCommandService {
 
     void requestParticipation(Long teamId, String username);
 
-    void respondToParticipation(Long teamId, String username, boolean accept);
+    void respondToParticipation(Long teamId, Long memberId, boolean accept);
 
 }

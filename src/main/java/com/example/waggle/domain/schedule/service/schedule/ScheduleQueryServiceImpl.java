@@ -1,5 +1,6 @@
 package com.example.waggle.domain.schedule.service.schedule;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
@@ -76,6 +77,13 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Override
     public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDateTime startTime, LocalDateTime endTime) {
         return scheduleRepository.findByTeamIdAndDay(teamId, startTime, endTime);
+    }
+
+    @Override
+    public List<Member> getMemberBySchedule(Long scheduleId) {
+        return memberScheduleRepository.findByScheduleId(scheduleId).stream()
+                .map(MemberSchedule::getMember)
+                .collect(Collectors.toList());
     }
 
 }

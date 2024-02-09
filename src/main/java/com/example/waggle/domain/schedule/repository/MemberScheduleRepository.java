@@ -16,6 +16,8 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
                                               @Param("startOfDay") LocalDateTime startOfDay,
                                               @Param("endOfDay") LocalDateTime endOfDay);
 
+    List<MemberSchedule> findByScheduleId(Long scheduleId);
+
     void deleteByMemberIdAndScheduleId(Long memberId, Long scheduleId);
 
     void deleteAllByScheduleId(Long scheduleId);
