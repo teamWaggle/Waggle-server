@@ -22,6 +22,7 @@ public class TeamResponse {
         private String coverImageUrl;
         private TeamColor teamColor;
         private Integer maxTeamSize;
+        private Integer teamSize;
         private MemberResponse.SummaryDto leader;
         private List<MemberResponse.SummaryDto> teamMember;
     }
@@ -38,6 +39,7 @@ public class TeamResponse {
         private String coverImageUrl;
         private TeamColor teamColor;
         private Integer maxTeamSize;
+        private Integer teamSize;
     }
 
 
