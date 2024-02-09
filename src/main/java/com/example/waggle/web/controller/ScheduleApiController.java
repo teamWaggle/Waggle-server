@@ -46,6 +46,16 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
+    @Operation(summary = "일정 추가", description = "사용자의 팀내 일정을 선택하여 추가합니다.")
+    @ApiResponse(responseCode = "200", description = "일정 추가 성공.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 저장에 실패했습니다.")
+    @PostMapping("/members/{scheduleId}")
+    public ApiResponseDto<Long> addSchedule(@AuthUser UserDetails userDetails,
+                                            @PathVariable Long scheduleId) {
+        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, userDetails.getUsername());
+        return ApiResponseDto.onSuccess(createdScheduleId);
+    }
+
     @Operation(summary = "특정 일정 조회", description = "특정 일정의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
@@ -68,9 +78,19 @@ public class ScheduleApiController {
     @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteSchedule(@RequestParam("boardId") Long boardId) {
+    @DeleteMapping("/teams")
+    public ApiResponseDto<Boolean> deleteScheduleInTeam(@RequestParam("boardId") Long boardId) {
         scheduleCommandService.deleteSchedule(boardId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
+    @DeleteMapping("/members/{boardId}")
+    public ApiResponseDto<Boolean> deleteScheduleInMember(@AuthUser UserDetails userDetails,
+                                                          @RequestParam("boardId") Long boardId) {
+        scheduleCommandService.deleteMemberSchedule(boardId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

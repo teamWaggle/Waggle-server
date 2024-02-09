@@ -57,7 +57,7 @@ public class Team extends BaseEntity {
         this.name = request.getName();
         this.description = request.getDescription();
         this.coverImageUrl = request.getCoverImageUrl();
-        this.teamColor = request.getTeamColor();
+        this.teamColor = Enum.valueOf(TeamColor.class, request.getTeamColor());
         this.maxTeamSize = request.getMaxTeamSize();
     }
 

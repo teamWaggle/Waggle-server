@@ -3,11 +3,8 @@ package com.example.waggle.domain.schedule.service.team;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.*;
 import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
-import com.example.waggle.domain.schedule.entity.Schedule;
-import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
@@ -48,7 +45,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .coverImageUrl(request.getCoverImageUrl())
-                .teamColor(request.getTeamColor())
+                .teamColor(Enum.valueOf(TeamColor.class, request.getTeamColor()))
                 .maxTeamSize(request.getMaxTeamSize())
                 .leader(loginMember)
                 .build();
@@ -68,7 +65,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .coverImageUrl(request.getCoverImageUrl())
-                .teamColor(request.getTeamColor())
+                .teamColor(Enum.valueOf(TeamColor.class, request.getTeamColor()))
                 .maxTeamSize(request.getMaxTeamSize())
                 .leader(member)
                 .build();
