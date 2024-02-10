@@ -63,7 +63,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .coverImageUrl(request.getCoverImageUrl())
-                .teamColor(Enum.valueOf(TeamColor.class, request.getTeamColor()))
+                .teamColor(TeamColor.valueOf(request.getTeamColor()))
                 .maxTeamSize(request.getMaxTeamSize())
                 .leader(member)
                 .build();

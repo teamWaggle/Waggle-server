@@ -35,7 +35,7 @@ public class ScheduleResponse {
     public static class ListDto {
         @Builder.Default
         private List<ScheduleResponse.DetailDto> scheduleList = new ArrayList<>();
-        private long totalStories;
+        private long totalSchedules;
         private boolean isFirst;
         private boolean isLast;
     }

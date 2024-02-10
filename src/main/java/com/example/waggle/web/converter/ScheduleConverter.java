@@ -28,7 +28,7 @@ public class ScheduleConverter {
                 .map(ScheduleConverter::toScheduleResponseDto).collect(Collectors.toList());
         return ScheduleResponse.ListDto.builder()
                 .scheduleList(schedules)
-                .totalStories(pagedSchedules.getTotalElements())
+                .totalSchedules(pagedSchedules.getTotalElements())
                 .isFirst(pagedSchedules.isFirst())
                 .isLast(pagedSchedules.isLast())
                 .build();
@@ -37,7 +37,7 @@ public class ScheduleConverter {
     public static ScheduleResponse.ListDto toListDto(List<Schedule> schedules) {
         return ScheduleResponse.ListDto.builder()
                 .scheduleList(schedules.stream().map(ScheduleConverter::toScheduleResponseDto).collect(Collectors.toList()))
-                .totalStories(schedules.size())
+                .totalSchedules(schedules.size())
                 .build();
     }
 

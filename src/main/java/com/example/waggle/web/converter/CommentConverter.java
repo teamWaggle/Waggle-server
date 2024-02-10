@@ -17,6 +17,7 @@ public class CommentConverter {
         return CommentResponse.ViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
+                .createDate(comment.getCreatedDate())
                 .mentionedNickname(comment.getMentions().stream()
                         .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .member(MemberResponse.SummaryDto.builder()

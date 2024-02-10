@@ -60,7 +60,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     @Override
     public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
-        Comment comment = validateMember(commentId);
+        Member signInMember = memberQueryService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        validateMember(comment, signInMember);
 
         comment.changeContent(commentWriteDto.getContent());
         mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedNickname());
@@ -69,7 +72,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     @Override
     public void deleteComment(Long commentId) {
-        Comment comment = validateMember(commentId);
+        Member signInMember = memberQueryService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        validateMember(comment, signInMember);
 
         replyRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
@@ -85,13 +91,9 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         );
     }
 
-    public Comment validateMember(Long commentId) {
-        Member signInMember = memberQueryService.getSignInMember();
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        if (!comment.getMember().equals(signInMember)) {
+    public void validateMember(Comment comment, Member member) {
+        if (!comment.getMember().equals(member)) {
             throw new CommentHandler(ErrorStatus.COMMENT_CANNOT_EDIT_OTHERS);
         }
-        return comment;
     }
 }
