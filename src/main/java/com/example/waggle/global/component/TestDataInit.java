@@ -6,8 +6,8 @@
 //import com.example.waggle.domain.member.entity.Member;
 //import com.example.waggle.domain.member.repository.MemberRepository;
 //import com.example.waggle.domain.member.service.MemberCommandService;
-//import com.example.waggle.domain.schedule.service.ScheduleCommandService;
-//import com.example.waggle.domain.schedule.service.TeamCommandService;
+//import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
+//import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 //import com.example.waggle.web.dto.help.HelpWriteDto;
 //import com.example.waggle.web.dto.member.MemberSummaryDto;
 //import com.example.waggle.web.dto.member.SignUpDto;

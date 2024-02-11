@@ -3,6 +3,7 @@ package com.example.waggle.web.dto.story;
 import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,8 @@ public class StoryResponse {
 
         private Long id;
         private String content;
-        private String createdDate;
+        private String profileImg;
+        private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
 
@@ -38,7 +40,7 @@ public class StoryResponse {
     public static class SummaryDto {
 
         private Long id;
-        private String createdDate;
+        private LocalDateTime createdDate;
         private String thumbnail;
         private int recommendCount;
         private boolean isRecommend;

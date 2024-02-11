@@ -14,7 +14,7 @@ public class AnswerConverter {
         return AnswerResponse.ViewDto.builder()
                 .id(answer.getId())
                 .content(answer.getContent())
-                .createDate(answer.getCreatedDate())
+                .createdDate(answer.getCreatedDate())
                 .medias(MediaUtil.getBoardMedias(answer))
                 .member(MemberConverter.toMemberSummaryDto(answer.getMember()))
                 .build();

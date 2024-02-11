@@ -3,6 +3,8 @@ package com.example.waggle.web.dto.member;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemberResponse {
 
@@ -32,5 +34,15 @@ public class MemberResponse {
         private String name;
         private LocalDateTime birthday;
         private String profileImgUrl;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ListDto {
+        @Builder.Default
+        private List<SummaryDto> members = new ArrayList<>();
+        private int totalSize;
     }
 }

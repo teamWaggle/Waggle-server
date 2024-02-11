@@ -1,8 +1,8 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.comment.entity.Reply;
-import com.example.waggle.domain.comment.service.reply.ReplyCommandService;
-import com.example.waggle.domain.comment.service.reply.ReplyQueryService;
+import com.example.waggle.domain.conversation.entity.Reply;
+import com.example.waggle.domain.conversation.service.reply.ReplyCommandService;
+import com.example.waggle.domain.conversation.service.reply.ReplyQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.ReplyConverter;
 import com.example.waggle.web.dto.reply.ReplyRequest;
