@@ -72,7 +72,7 @@ public class QuestionApiController {
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
+                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -81,16 +81,15 @@ public class QuestionApiController {
     @Operation(summary = "사용자의 질문 목록 조회", description = "특정 사용자가 작성한 질문 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 사용자가 작성한 질문 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
-    @GetMapping("/member/{username}")
+    @GetMapping("/member/{memberId}")
     public ApiResponseDto<QuestionResponse.ListDto> getQuestionsByUsername(
-            @RequestParam(defaultValue = "0") int currentPage, @PathVariable String username) {
+            @RequestParam(defaultValue = "0") int currentPage, @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Question> questions = questionQueryService.getPagedQuestionsByUsername(username,
-                pageable);
+        Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getUsername()));
+                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -103,7 +102,7 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionResponse.DetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         QuestionResponse.DetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

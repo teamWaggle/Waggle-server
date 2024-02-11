@@ -7,7 +7,6 @@ import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,7 +75,7 @@ public class MediaCommandServiceImpl implements MediaCommandService {
                 .orElseGet(Stream::empty)
                 .forEach(deleteFileDto -> {
                     awsS3Service.deleteFile(deleteFileDto.getImageUrl());
-                    mediaRepository.deleteById(deleteFileDto.getId());
+//                    mediaRepository.deleteById(deleteFileDto.getId());
                 });
     }
 
@@ -106,9 +105,8 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         if (requestCount != mediaCount) {
             throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
         }
-
-        //개수가 0이면 false, 하지만 mediaList가 존재한다면 true
-        return  (requestCount != 0 || mediaCount != 0) || !request.getMediaList().isEmpty();
+        
+        return !request.getMediaList().isEmpty();
     }
 
 }

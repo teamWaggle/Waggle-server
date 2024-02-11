@@ -15,7 +15,9 @@ public class ScheduleConverter {
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .startTime(schedule.getStartTime())
-                .endTime(schedule.getEndTime()).build();
+                .endTime(schedule.getEndTime())
+                .member(MemberConverter.toMemberSummaryDto(schedule.getMember()))
+                .build();
     }
 
     public static ScheduleResponse.ListDto toListDto(List<Schedule> schedules) {

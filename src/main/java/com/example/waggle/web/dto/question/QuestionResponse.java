@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.question;
 
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,8 +24,7 @@ public class QuestionResponse {
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
-        private String username;
-        private String profileImg;
+        MemberResponse.SummaryDto member;
     }
 
     @Builder
@@ -58,7 +58,6 @@ public class QuestionResponse {
         private List<String> medias = new ArrayList<>();
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-        private String username;
-        private String profileImg;
+        private MemberResponse.SummaryDto member;
     }
 }

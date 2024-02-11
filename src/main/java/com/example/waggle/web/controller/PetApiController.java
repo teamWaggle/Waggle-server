@@ -4,9 +4,7 @@ import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
-import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
 import com.example.waggle.web.dto.pet.PetRequest;
@@ -45,36 +43,44 @@ public class PetApiController {
         return ApiResponseDto.onSuccess(petId);
     }
 
-    @Operation(summary = "반려견 정보 다수 입력", description = "회원가입 시 반려견 정보를 목록으로 입력합니다. 입력한 반려견들의 주인 이름을 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "반려견 정보 입력 성공. 입력한 반려견들의 주인 이름 반환.")
-    @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
-    @PostMapping(value = "/{username}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<String> createPets(@RequestPart PetRequest.PostList requests,
-                                             @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
-                                             @PathVariable String username) throws IOException {
-        log.info("upload file count = {}", requests.getPetList().stream().filter(request -> request.isUploadProfile() == true).count());
-        if (requests.getPetList().stream()
-                .filter(request -> request.isUploadProfile() == true).count() != multipartFiles.size()) {
-            throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
-        }
-        requests.getPetList().stream().forEach(request -> {
-            if (request.isUploadProfile()) {
-                request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFiles.get(0), awsS3Service));
-                multipartFiles.remove(0);
-            }
-        });
-        petCommandService.createPets(requests, username);
-        return ApiResponseDto.onSuccess(username);
-    }
+//    @Operation(summary = "반려견 정보 다수 입력", description = "회원가입 시 반려견 정보를 목록으로 입력합니다. 입력한 반려견들의 주인 이름을 반환합니다.")
+//    @ApiResponse(responseCode = "200", description = "반려견 정보 입력 성공. 입력한 반려견들의 주인 이름 반환.")
+//    @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
+//    @PostMapping(value = "/{memberId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ApiResponseDto<String> createPets(@RequestPart PetRequest.PostList requests,
+//                                             @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
+//                                             @PathVariable Long memberId) throws IOException {
+//        log.info("upload file count = {}", requests.getPetList().stream().filter(request -> request.isUploadProfile() == true).count());
+//        if (requests.getPetList().stream()
+//                .filter(request -> request.isUploadProfile() == true).count() != multipartFiles.size()) {
+//            throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
+//        }
+//        requests.getPetList().stream().forEach(request -> {
+//            if (request.isUploadProfile()) {
+//                request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFiles.get(0), awsS3Service));
+//                multipartFiles.remove(0);
+//            }
+//        });
+//        petCommandService.createPets(requests, username);
+//        return ApiResponseDto.onSuccess(username);
+//    }
 
     @Operation(summary = "반려견 정보 수정", description = "반려견 정보를 수정합니다. 입력한 반려견의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "반려견 정보 수정 성공. 입력한 반려견 고유의 ID를 반환.")
     @ApiResponse(responseCode = "400", description = "정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updatePet(@RequestPart PetRequest.Post request,
+    public ApiResponseDto<Long> updatePet(@PathVariable Long petId,
+                                          @RequestPart PetRequest.Post request,
                                           @RequestPart(value = "file", required = false) MultipartFile profileImg,
-                                          @PathVariable Long petId) throws IOException {
-        request.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+                                          @RequestParam boolean allowUpload) throws IOException {
+        String removePrefixProfileUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
+        if (allowUpload) {
+            awsS3Service.deleteFile(removePrefixProfileUrl);
+            request.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+        } else {
+            request.setProfileImgUrl(removePrefixProfileUrl);
+        }
+
         Long result = petCommandService.updatePet(petId, request);
         return ApiResponseDto.onSuccess(result);
     }
@@ -82,9 +88,9 @@ public class PetApiController {
     @Operation(summary = "반려견 정보 조회", description = "사용자의 정보를 통해 반려견 정보를 목록으로 조회합니다.")
     @ApiResponse(responseCode = "200", description = "반려견 정보 조회 성공. 반려견 정보들을 목록으로 반환.")
     @ApiResponse(responseCode = "400", description = "정보 조회 실패. 잘못된 요청 혹은 존재하지 않는 유저")
-    @GetMapping("/{username}")
-    public ApiResponseDto<List<PetResponse.SummaryDto>> findPets(@PathVariable String username) {
-        List<Pet> petsByUsername = petQueryService.getPetsByUsername(username);
+    @GetMapping("/{memberId}")
+    public ApiResponseDto<List<PetResponse.SummaryDto>> findPets(@PathVariable Long memberId) {
+        List<Pet> petsByUsername = petQueryService.getPetsByMemberId(memberId);
         return ApiResponseDto.onSuccess(PetConverter.toListDto(petsByUsername));
     }
 

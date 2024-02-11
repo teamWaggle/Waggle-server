@@ -1,4 +1,4 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

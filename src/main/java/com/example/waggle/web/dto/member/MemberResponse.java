@@ -1,11 +1,8 @@
 package com.example.waggle.web.dto.member;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 public class MemberResponse {
 
@@ -16,7 +13,8 @@ public class MemberResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SummaryDto {
-        private String username;
+        private Long id;
+        private String userUrl;
         private String nickname;
         private String profileImgUrl;
     }
@@ -29,11 +27,10 @@ public class MemberResponse {
     @AllArgsConstructor
     public static class DetailDto {
         private Long id;
-        private String username;
+        private String userUrl;
         private String nickname;
-        private String address;
-        private String phone;
+        private String name;
+        private LocalDateTime birthday;
         private String profileImgUrl;
     }
-
 }
