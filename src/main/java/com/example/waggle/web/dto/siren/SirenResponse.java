@@ -22,6 +22,7 @@ public class SirenResponse {
         private String title;
         private String thumbnail;
         private LocalDateTime lostDate;
+        private LocalDateTime createdDate;
         private String lostLocate;
         private boolean isRecommend;
         private int recommendCount;
@@ -45,6 +46,7 @@ public class SirenResponse {
         private String contact;
 
         private LocalDateTime lostDate;
+        private LocalDateTime createdDate;
         private String lostLocate;
         private String content;
         private Category category;

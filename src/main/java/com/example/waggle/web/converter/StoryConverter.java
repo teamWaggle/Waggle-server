@@ -1,7 +1,6 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.story.entity.Story;
-import com.example.waggle.global.util.DateUtil;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.story.StoryResponse;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,7 @@ public class StoryConverter {
     public static StoryResponse.SummaryDto toSummaryDto(Story story) {
         return StoryResponse.SummaryDto.builder()
                 .id(story.getId())
-                .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
+                .createdDate(story.getCreatedDate())
                 .thumbnail(MediaUtil.getThumbnail(story))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
@@ -37,7 +36,7 @@ public class StoryConverter {
         return StoryResponse.DetailDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
-                .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
+                .createdDate(story.getCreatedDate())
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(story))

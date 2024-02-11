@@ -17,7 +17,7 @@ public class AnswerResponse {
 
         private Long id;
         private String content;
-        private LocalDateTime createDate;
+        private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
 

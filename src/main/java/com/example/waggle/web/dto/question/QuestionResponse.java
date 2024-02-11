@@ -18,7 +18,7 @@ public class QuestionResponse {
     public static class SummaryDto {
         private Long id;
         private String title;
-        private LocalDateTime createTime;
+        private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
         @Builder.Default
@@ -51,7 +51,7 @@ public class QuestionResponse {
         private Long id;
         private String content;
         private String title;
-        private LocalDateTime createDate;
+        private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
         @Builder.Default

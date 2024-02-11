@@ -19,8 +19,9 @@ public class TeamConverter {
                 .name(team.getName())
                 .description(team.getDescription())
                 .coverImageUrl(MediaUtil.getCoverImg(team))
-                .colorScheme(team.getColorScheme())
+                .teamColor(team.getTeamColor())
                 .maxTeamSize(team.getMaxTeamSize())
+                .teamSize(team.getTeamMembers().size())
                 .leader(MemberConverter.toMemberSummaryDto(team.getLeader()))
                 .teamMember(teamMembers.stream().map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList()))
                 .build();
@@ -30,8 +31,9 @@ public class TeamConverter {
         return TeamResponse.SummaryDto.builder()
                 .name(team.getName())
                 .coverImageUrl(MediaUtil.getCoverImg(team))
-                .colorScheme(team.getColorScheme())
+                .teamColor(team.getTeamColor())
                 .maxTeamSize(team.getMaxTeamSize())
+                .teamSize(team.getTeamMembers().size())
                 .build();
     }
 
@@ -40,7 +42,6 @@ public class TeamConverter {
         List<TeamResponse.SummaryDto> teamSummaryDtos = teamPage.stream()
                 .map(TeamConverter::toSummaryDto)
                 .collect(Collectors.toList());
-
 
         return TeamResponse.ListDto.builder()
                 .teams(teamSummaryDtos)

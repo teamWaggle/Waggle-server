@@ -1,6 +1,6 @@
 package com.example.waggle.domain.mention.entity;
 
-import com.example.waggle.domain.comment.entity.Reply;
+import com.example.waggle.domain.conversation.Conversation;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,16 +15,12 @@ import lombok.experimental.SuperBuilder;
 public class Mention extends BaseEntity {
     @Id
     @GeneratedValue
-    @Column(name = "member_mention_id")
+    @Column(name = "mention_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_id")
-    private Reply reply;
+    @JoinColumn(name = "conversation_id")
+    private Conversation conversation;
 
-    private String mentionedUsername;
-
-    public void changeReply(Reply reply) {
-        this.reply = reply;
-    }
+    private String mentionedNickname;
 }

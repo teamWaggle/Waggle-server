@@ -17,7 +17,7 @@ public class ReplyRequest {
     public static class Post {
         private String content;
         @Builder.Default
-        private List<String> mentionedUsername = new ArrayList<>();
+        private List<String> mentionedNickname = new ArrayList<>();
         private Long commentId;
     }
 }
