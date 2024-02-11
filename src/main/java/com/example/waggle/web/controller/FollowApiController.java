@@ -32,9 +32,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 멤버 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 이미 팔로잉이 된 상대입니다.")
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@RequestParam String username,
+    public ApiResponseDto<Long> requestFollow(@RequestParam String nickname,
                                               @AuthUser UserDetails userDetails) {
-        Long follow = followCommandService.follow(userDetails.getUsername(), username);
+        Long follow = followCommandService.follow(userDetails.getUsername(), nickname);
         return ApiResponseDto.onSuccess(follow);
     }
 
@@ -42,9 +42,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "언팔로우 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 팔로잉이 되지 않은 상대입니다.")
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam String username,
+    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam String nickname,
                                                    @AuthUser UserDetails userDetails) {
-        followCommandService.unFollow(userDetails.getUsername(), username);
+        followCommandService.unFollow(userDetails.getUsername(), nickname);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
