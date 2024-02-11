@@ -10,6 +10,7 @@ import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.*;
@@ -31,6 +32,7 @@ public class BoardServiceImpl implements BoardService {
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
     private final HashtagRepository hashtagRepository;
+    private final MemberScheduleRepository memberScheduleRepository;
     private final MemberQueryService memberQueryService;
 
 
@@ -90,6 +92,10 @@ public class BoardServiceImpl implements BoardService {
             case SCHEDULE:
                 board = scheduleRepository.findById(boardId)
                         .orElseThrow(() -> new ScheduleHandler(ErrorStatus.BOARD_NOT_FOUND));
+                Member signInMember = memberQueryService.getSignInMember();
+                if (!memberScheduleRepository.existsByMemberIdAndScheduleId(signInMember.getId(), boardId)) {
+                    throw new ScheduleHandler(ErrorStatus.SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS);
+                }
                 break;
             default:
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);

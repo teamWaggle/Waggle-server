@@ -11,6 +11,8 @@ import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.service.team.TeamCommandService;
+import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -195,7 +197,7 @@ class TeamCommandServiceTest {
     @Transactional
     void changeTeamLeader() {
         // given
-        Long updatedTeamId = teamCommandService.addTeamMember(teamId, member2.getUsername());
+        Long updatedTeamId = teamCommandService.addTeamMember(teamId, member2);
 
         // when
         teamCommandService.changeTeamLeader(teamId, member2.getUsername());

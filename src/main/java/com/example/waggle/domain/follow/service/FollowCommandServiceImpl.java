@@ -26,7 +26,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     public Long follow(String from, String to) {
         Member member = memberRepository.findByUsername(from)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Member followee = memberRepository.findByUsername(to)
+        Member followee = memberRepository.findByNickname(to)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         validateFollowing(member, followee);
         Follow follow = Follow.builder()
@@ -39,8 +39,12 @@ public class FollowCommandServiceImpl implements FollowCommandService {
 
     @Override
     public void unFollow(String from, String to) {
+        Member fromMember = memberRepository.findByUsername(from)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member toMember = memberRepository.findByNickname(to)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Follow follow = followRepository
-                .findByToMember_UsernameAndFromMember_Username(to, from)
+                .findByToMemberAndFromMember(toMember, fromMember)
                 .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
         followRepository.delete(follow);
     }

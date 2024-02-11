@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import com.example.waggle.domain.schedule.entity.TeamColor;
 import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class TeamResponse {
         private String name;
         private String description;
         private String coverImageUrl;
-        private String colorScheme;
+        private TeamColor teamColor;
         private Integer maxTeamSize;
+        private Integer teamSize;
         private MemberResponse.SummaryDto leader;
         private List<MemberResponse.SummaryDto> teamMember;
     }
@@ -35,8 +37,9 @@ public class TeamResponse {
         private Long teamId;
         private String name;
         private String coverImageUrl;
-        private String colorScheme;
+        private TeamColor teamColor;
         private Integer maxTeamSize;
+        private Integer teamSize;
     }
 
 
