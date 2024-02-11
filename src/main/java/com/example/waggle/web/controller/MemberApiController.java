@@ -89,8 +89,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 전송 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 전송 실패. 잘못된 이메일 형식 등.")
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Valid String email) {
-        emailService.sendMail(email, "email");
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Valid VerifyMailRequest.ConfirmationDto confirmEmail) {
+        emailService.sendMail(confirmEmail.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -98,7 +98,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
     @PostMapping("/email/verify")
-    public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest verifyMailRequest) {
+    public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest.AuthDto verifyMailRequest) {
         memberCommandService.verifyMail(verifyMailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
