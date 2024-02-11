@@ -11,11 +11,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findListByMemberUsername(String username);
 
-    List<Question> findAllByOrderByCreatedDateDesc();
-
     Page<Question> findAll(Pageable pageable);
 
     Page<Question> findByMemberUsername(String username, Pageable pageable);
+
+    Page<Question> findPageByMemberId(Long memberId, Pageable pageable);
+
 
     void deleteAllByMemberUsername(String username);
 

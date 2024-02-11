@@ -13,7 +13,6 @@ public class StoryRequest {
     @Builder
     @ToString(of = {"content"})
     public static class Post {
-        private Long id;
         @Max(500)
         private String content;
         @Builder.Default

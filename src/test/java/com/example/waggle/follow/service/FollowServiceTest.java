@@ -6,7 +6,7 @@ import com.example.waggle.domain.follow.service.FollowQueryService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.FollowHandler;
-import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import org.junit.jupiter.api.AfterEach;

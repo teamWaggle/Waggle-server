@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class StoryQueryServiceImpl implements StoryQueryService{
+public class StoryQueryServiceImpl implements StoryQueryService {
 
     private final StoryRepository storyRepository;
 
@@ -30,8 +30,13 @@ public class StoryQueryServiceImpl implements StoryQueryService{
 
     @Override
     public Page<Story> getPagedStoriesByUsername(String username, Pageable pageable) {
-        Page<Story> stories = storyRepository.findByMemberUsername(username,pageable);
+        Page<Story> stories = storyRepository.findByMemberUsername(username, pageable);
         return stories;
+    }
+
+    @Override
+    public Page<Story> getPagedStoriesByMemberId(Long memberId, Pageable pageable) {
+        return storyRepository.findByMemberId(memberId, pageable);
     }
 
 

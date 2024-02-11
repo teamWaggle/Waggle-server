@@ -16,7 +16,6 @@ public class PetRequest {
     @Builder
     @ToString
     public static class Post {
-        private Long id;
         @NotNull
         private String name;
         private String breed;

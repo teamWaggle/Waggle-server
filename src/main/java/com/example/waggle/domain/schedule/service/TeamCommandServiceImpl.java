@@ -15,7 +15,7 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.schedule.TeamRequest.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

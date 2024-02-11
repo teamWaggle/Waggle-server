@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class PetQueryServiceImpl implements PetQueryService{
+public class PetQueryServiceImpl implements PetQueryService {
 
     private final PetRepository petRepository;
 
@@ -26,5 +26,10 @@ public class PetQueryServiceImpl implements PetQueryService{
     @Override
     public List<Pet> getPetsByUsername(String username) {
         return petRepository.findByMemberUsername(username);
+    }
+
+    @Override
+    public List<Pet> getPetsByMemberId(Long memberId) {
+        return petRepository.findPetsByMemberId(memberId);
     }
 }

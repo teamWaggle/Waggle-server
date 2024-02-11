@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,15 +37,19 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false)
+    private String userUrl;
+
     @Column(nullable = false)
     private String password;
 
     @Column(unique = true)
     private String nickname;
 
-    private String address;
+    private String name;
 
-    private String phone;
+    private LocalDateTime birthday;
+
 
     private String profileImgUrl;
 
@@ -92,10 +97,18 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     public void updateInfo(MemberRequest.Put request, String encodedPassword) {
         this.password = encodedPassword;
-        this.address = request.getAddress();
+        this.name = request.getName();
         this.nickname = request.getNickname();
-        this.phone = request.getPhone();
-        this.profileImgUrl = request.getProfileImg();
+        this.birthday = request.getBirthday();
+        this.profileImgUrl = request.getProfileImgUrl();
+    }
+
+    public void registerInfo(MemberRequest.RegisterDto request) {
+        this.userUrl = request.getUserUrl();
+        this.name = request.getName();
+        this.nickname = request.getNickname();
+        this.birthday = request.getBirthday();
+        this.profileImgUrl = request.getProfileImgUrl();
     }
 
     public void changeRole(Role role) {

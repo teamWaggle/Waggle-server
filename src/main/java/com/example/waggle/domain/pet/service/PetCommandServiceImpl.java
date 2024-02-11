@@ -8,7 +8,7 @@ import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.PetHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.pet.PetRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

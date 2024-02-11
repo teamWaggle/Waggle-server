@@ -29,6 +29,11 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
+    public Page<Team> getPagedTeamByMemberId(Long memberId, Pageable pageable) {
+        return teamRepository.findByTeamMembers_MemberId(memberId, pageable);
+    }
+
+    @Override
     public List<Team> getTeamListByUsername(String username) {
         return teamRepository.findListByTeamMembers_Member_Username(username);
     }

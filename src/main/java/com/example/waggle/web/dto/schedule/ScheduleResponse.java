@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class ScheduleResponse {
         private String content;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
+        private MemberResponse.SummaryDto member;
     }
 
     @Getter

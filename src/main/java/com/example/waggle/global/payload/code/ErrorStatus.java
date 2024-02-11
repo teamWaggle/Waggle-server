@@ -30,6 +30,7 @@ public enum ErrorStatus implements BaseCode {
     AUTH_ROLE_CANNOT_EXECUTE_URI(BAD_REQUEST, 4056, "사용자는 해당 로직을 수행할 수 없는 역할군입니다."),
     AUTH_MUST_AUTHORIZED_URI(UNAUTHORIZED, 4057, "해당 uri는 권한 인증이 필수입니다. 만료된 토큰이거나 인증 정보가 없습니다."),
     AUTH_REFRESH_NOT_EXIST_IN_COOKIE(UNAUTHORIZED, 4058, "cookie에 refresh token이 존재하지 않습니다"),
+    AUTH_MISMATCH_EMAIL_AND_PASSWORD(UNAUTHORIZED, 4059, "이메일과 패스워드가 일치하는 회원정보가 존재하지 않습니다"),
 
     // 회원 관련 오류 (4100 ~ 4149)
     MEMBER_DUPLICATE_USERNAME(CONFLICT, 4100, "이미 존재하는 사용자 이름입니다."),
@@ -39,6 +40,7 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_SIGN_IN_INFO_REQUIRED(BAD_REQUEST, 4104, "아이디나 비밀번호를 확인해주세요."),
     MEMBER_DUPLICATE_EMAIL(CONFLICT, 4105, "이미 사용중인 이메일입니다."),
     MEMBER_DUPLICATE_NICKNAME(CONFLICT, 4106, "이미 사용중인 닉네임입니다."),
+    MEMBER_NAME_TYPE_IS_INVALID(NOT_ACCEPTABLE, 4107, "랜덤 입력할 필드의 타입을 잘못 입력하였습니다"),
 
 
     // 게시판 관련 오류 (4150 ~ 4199)

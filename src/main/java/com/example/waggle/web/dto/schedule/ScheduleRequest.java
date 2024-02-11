@@ -13,7 +13,6 @@ public class ScheduleRequest {
     @Builder
     @ToString
     public static class Post {
-        private Long id;
         private String title;
         private String content;
         private LocalDateTime startTime;

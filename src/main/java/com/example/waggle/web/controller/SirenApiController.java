@@ -75,7 +75,7 @@ public class SirenApiController {
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
         listDto.getSirenList().stream()
                 .forEach(h -> {
-                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
+                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -84,15 +84,15 @@ public class SirenApiController {
     @Operation(summary = "사용자의 사이렌 목록 조회", description = "특정 사용자가 작성한 사이렌 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 사용자가 작성한 사이렌 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
-    @GetMapping("/member/{username}")
+    @GetMapping("/member/{memberId}")
     public ApiResponseDto<SirenResponse.ListDto> getSirenListByUsername(@RequestParam(defaultValue = "0") int currentPage,
-                                                                        @PathVariable String username) {
+                                                                        @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByUsername(username, pageable);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
         listDto.getSirenList().stream()
                 .forEach(h -> {
-                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getUsername()));
+                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -105,7 +105,7 @@ public class SirenApiController {
     public ApiResponseDto<SirenResponse.DetailDto> getSirenByBoardId(@PathVariable Long boardId) {
         Siren siren = sirenQueryService.getSirenByBoardId(boardId);
         SirenResponse.DetailDto detailDto = SirenConverter.toDetailDto(siren);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getUsername()));
+        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

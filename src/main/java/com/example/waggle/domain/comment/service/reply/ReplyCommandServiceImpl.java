@@ -13,7 +13,7 @@ import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
