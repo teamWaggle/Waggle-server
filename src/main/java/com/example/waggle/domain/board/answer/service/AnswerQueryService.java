@@ -10,7 +10,10 @@ public interface AnswerQueryService {
 
     Page<Answer> getPagedAnswerByUsername(String username, Pageable pageable);
 
+    Page<Answer> getPagedAnswerByMemberId(Long memberId, Pageable pageable);
+
     Answer getAnswerByBoardId(Long boardId);
+
     Page<Answer> getPagedAnswers(Long questionId, Pageable pageable);
 
     List<Answer> getAnswersByQuestion(Long questionId);

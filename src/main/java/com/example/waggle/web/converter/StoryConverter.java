@@ -14,12 +14,11 @@ public class StoryConverter {
     public static StoryResponse.SummaryDto toSummaryDto(Story story) {
         return StoryResponse.SummaryDto.builder()
                 .id(story.getId())
-                .username(story.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(story.getMember()))
                 .createdDate(DateUtil.simpleStoryTimeFormat(story.getCreatedDate()))
                 .thumbnail(MediaUtil.getThumbnail(story))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
+                .member(MemberConverter.toMemberSummaryDto(story.getMember()))
                 .build();
     }
 
@@ -38,13 +37,11 @@ public class StoryConverter {
         return StoryResponse.DetailDto.builder()
                 .id(story.getId())
                 .content(story.getContent())
-                .username(story.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(story.getMember()))
                 .createdDate(DateUtil.storyTimeFormat(story.getCreatedDate()))
                 .hashtags(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(story))
-
+                .member(MemberConverter.toMemberSummaryDto(story.getMember()))
                 .build();
     }
 }

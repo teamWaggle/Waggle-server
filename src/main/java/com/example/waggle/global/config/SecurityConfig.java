@@ -15,8 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -52,39 +50,26 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/members").authenticated()
                 .requestMatchers("/api/members/**").permitAll()
 //                // TEAM
-//                .requestMatchers("/api/teams/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/teams/**").permitAll()
 //                // REPLY
-//                .requestMatchers("/api/replies/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/replies/**").permitAll()
 //                // COMMENT
-//                .requestMatchers("/api/comments/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
-//                // SCHEDULE -> need to custom
-//                .requestMatchers("/api/schedules/**").authenticated()
+//                // SCHEDULE
                 .requestMatchers(HttpMethod.GET, "/api/schedules/**").permitAll()
 //                // PET
-//                .requestMatchers("/api/pets/**").authenticated()
-//                .requestMatchers(HttpMethod.GET,"/api/pets/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/pets/**").permitAll()
 //                // STORY
-//                .requestMatchers("/api/stories/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/stories/**").permitAll()
 //                // QUESTION
-//                .requestMatchers("/api/questions/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/questions/**").permitAll()
 //                // HELP
-//                .requestMatchers("/api/help-us/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/sirens/**").permitAll()
-//                // TOKEN
-//                .requestMatchers("/api/tokens/**").authenticated()
 //                // RECOMMEND
-//                .requestMatchers("/api/recommends/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll()
 //                // ANSWER
-//                .requestMatchers("/api/answers/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/answers/**").permitAll()
 //                // FOLLOW
-//                .requestMatchers("/api/follows/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/follows/**").permitAll()
                 // OAUTH2
                 .requestMatchers("/oauth2/**", "/login/**").permitAll()
@@ -104,7 +89,6 @@ public class SecurityConfig {
         httpSecurity
                 .oauth2Login()
                 .authorizationEndpoint().baseUri("/oauth2/authorize")  // 소셜 로그인 url
-//                .authorizationRequestRepository(cookieAuthorizationRequestRepository)  // 인증 요청을 cookie 에 저장
                 .and()
                 //userService()는 OAuth2 인증 과정에서 Authentication 생성에 필요한 OAuth2User 를 반환하는 클래스를 지정한다.
                 .userInfoEndpoint().userService(customOAuth2UserService)  // 회원 정보 처리
@@ -122,12 +106,6 @@ public class SecurityConfig {
 
 
         return httpSecurity.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // BCrypt Encoder 사용
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
 

@@ -12,6 +12,8 @@ public interface QuestionQueryService {
 
     Page<Question> getPagedQuestionsByUsername(String username, Pageable pageable);
 
+    Page<Question> getPagedQuestionByMemberId(Long memberId, Pageable pageable);
+
     Question getQuestionByBoardId(Long boardId);
 
     Page<Question> getPagedQuestions(Pageable pageable);

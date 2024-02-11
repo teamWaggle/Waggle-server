@@ -45,14 +45,23 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Schedule> getSchedulesByMemberId(Long memberId) {
+        Member member = memberQueryService.getMemberById(memberId);
+        return member.getTeamMembers().stream()
+                .map(TeamMember::getTeam)
+                .flatMap(team -> team.getSchedules().stream())
+                .collect(Collectors.toList());
+    }
+
 
     @Override
-    public List<Schedule> getMonthlySchedulesByMember(String username, int year, int month) {
+    public List<Schedule> getMonthlySchedulesByMemberId(Long memberId, int year, int month) {
         LocalDate startOfMonth = LocalDate.of(year, month, 1);
         LocalDateTime startDateTime = startOfMonth.atStartOfDay();
         LocalDateTime endDateTime = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth()).atTime(23, 59, 59);
 
-        return scheduleRepository.findSchedulesByMemberUsernameAndMonth(username, startDateTime, endDateTime);
+        return scheduleRepository.findSchedulesByMemberIdAndMonth(memberId, startDateTime, endDateTime);
 
     }
 

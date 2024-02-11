@@ -27,6 +27,11 @@ public class AnswerQueryServiceImpl implements AnswerQueryService {
     }
 
     @Override
+    public Page<Answer> getPagedAnswerByMemberId(Long memberId, Pageable pageable) {
+        return answerRepository.findPagedAnswerByMemberId(memberId, pageable);
+    }
+
+    @Override
     public Answer getAnswerByBoardId(Long boardId) {
         return answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));

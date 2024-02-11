@@ -4,7 +4,7 @@ import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.ScheduleQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
 import com.example.waggle.web.dto.schedule.ScheduleResponse;
@@ -68,22 +68,22 @@ public class ScheduleApiController {
     @Operation(summary = "특정 사용자가 속한 팀의 모든 일정 조회", description = "특정 사용자가 속한 모든 팀의 일정을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
-    @GetMapping("/members/{username}")
-    public ApiResponseDto<ScheduleResponse.ListDto> getSchedulesByMemberUsername(@PathVariable String username) {
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByMemberUsername(username);
+    @GetMapping("/members/{memberId}")
+    public ApiResponseDto<ScheduleResponse.ListDto> getSchedulesByMemberId(@PathVariable Long memberId) {
+        List<Schedule> schedules = scheduleQueryService.getSchedulesByMemberId(memberId);
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
     @Operation(summary = "특정 사용자가 속한 팀의 특정 월 일정 조회", description = "특정 사용자가 속한 모든 팀의 특정 월에 대한 일정을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
-    @GetMapping("/members/{username}/monthly")
+    @GetMapping("/members/{memberId}/monthly")
     public ApiResponseDto<ScheduleResponse.ListDto> getMonthlySchedulesForMember(
-            @PathVariable String username,
+            @PathVariable Long memberId,
             @RequestParam int year,
             @RequestParam int month) {
 
-        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(username, year, month);
+        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMemberId(memberId, year, month);
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 

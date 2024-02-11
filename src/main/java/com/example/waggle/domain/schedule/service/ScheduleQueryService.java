@@ -1,6 +1,7 @@
 package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.schedule.entity.Schedule;
+
 import java.util.List;
 
 public interface ScheduleQueryService {
@@ -11,6 +12,8 @@ public interface ScheduleQueryService {
 
     List<Schedule> getSchedulesByMemberUsername(String username);
 
-    List<Schedule> getMonthlySchedulesByMember(String username, int year, int month);
+    List<Schedule> getSchedulesByMemberId(Long memberId);
+
+    List<Schedule> getMonthlySchedulesByMemberId(Long memberId, int year, int month);
 
 }

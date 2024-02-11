@@ -20,8 +20,6 @@ public class QuestionRequest {
     @AllArgsConstructor
     public static class Post {
 
-        private Long id;
-
         @NotEmpty(message = "질문 내용을 작성해주세요.")
         @Max(1500)
         private String content;

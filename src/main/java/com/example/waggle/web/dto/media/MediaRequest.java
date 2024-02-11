@@ -13,7 +13,6 @@ public class MediaRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SaveDto {
-        public Long id;
         public String imageUrl;
         //0~4(maxSize=5)
         public boolean allowUpload;
@@ -26,9 +25,9 @@ public class MediaRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DeleteDto {
-        public Long id;
         public String imageUrl;
     }
+
     @Builder
     @Setter
     @Getter

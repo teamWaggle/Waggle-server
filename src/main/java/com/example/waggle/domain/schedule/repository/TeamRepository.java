@@ -20,6 +20,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     Page<Team> findByTeamMembers_Member_Username(String username, Pageable pageable);
 
+    Page<Team> findByTeamMembers_MemberId(Long memberId, Pageable pageable);
+
     List<Team> findListByTeamMembers_Member_Username(String username);
 
     List<Team> findTeamByLeader_Username(String username);
