@@ -19,6 +19,7 @@ public class CommentResponse {
         @Builder.Default
         private List<String> mentionedNickname = new ArrayList<>();
         private MemberResponse.SummaryDto member;
+        private boolean isMine;
     }
 
     @Builder

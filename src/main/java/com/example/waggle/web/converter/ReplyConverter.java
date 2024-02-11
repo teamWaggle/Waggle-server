@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Reply;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.reply.ReplyResponse;
 import org.springframework.data.domain.Page;
 
@@ -16,6 +17,7 @@ public class ReplyConverter {
                 .createdDate(reply.getCreatedDate())
                 .mentionedNickname(reply.getMentions().stream()
                         .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
+                .isMine(reply.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 

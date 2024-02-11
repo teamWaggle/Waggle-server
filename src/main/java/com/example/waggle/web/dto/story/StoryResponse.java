@@ -22,6 +22,7 @@ public class StoryResponse {
         private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
+        private boolean isMine;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
@@ -44,6 +45,7 @@ public class StoryResponse {
         private String thumbnail;
         private int recommendCount;
         private boolean isRecommend;
+        private boolean isMine;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 

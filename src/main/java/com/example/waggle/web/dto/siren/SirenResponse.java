@@ -25,6 +25,7 @@ public class SirenResponse {
         private LocalDateTime createdDate;
         private String lostLocate;
         private boolean isRecommend;
+        private boolean isMine;
         private int recommendCount;
         private Category category;
 
@@ -57,6 +58,7 @@ public class SirenResponse {
 
         private boolean isRecommend;
         private int recommendCount;
+        private boolean isMine;
     }
 
     @Builder

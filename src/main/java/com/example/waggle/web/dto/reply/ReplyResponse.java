@@ -17,6 +17,7 @@ public class ReplyResponse {
         private Long id;
         private String content;
         private LocalDateTime createdDate;
+        private boolean isMine;
         @Builder.Default
         private List<String> mentionedNickname = new ArrayList<>();
         private MemberResponse.SummaryDto member;
