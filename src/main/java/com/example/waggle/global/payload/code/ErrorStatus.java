@@ -40,7 +40,7 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_SIGN_IN_INFO_REQUIRED(BAD_REQUEST, 4104, "아이디나 비밀번호를 확인해주세요."),
     MEMBER_DUPLICATE_EMAIL(CONFLICT, 4105, "이미 사용중인 이메일입니다."),
     MEMBER_DUPLICATE_NICKNAME(CONFLICT, 4106, "이미 사용중인 닉네임입니다."),
-    MEMBER_NAME_TYPE_IS_NOT_FOUND(NOT_ACCEPTABLE, 4107, "랜덤 입력할 필드의 타입을 잘못 입력하였습니다"),
+    MEMBER_NAME_TYPE_IS_INVALID(NOT_ACCEPTABLE, 4107, "랜덤 입력할 필드의 타입을 잘못 입력하였습니다"),
 
 
     // 게시판 관련 오류 (4150 ~ 4199)
