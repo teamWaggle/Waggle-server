@@ -1,4 +1,4 @@
-package com.example.waggle.global.annotation.color;
+package com.example.waggle.global.annotation.valid;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -2,6 +2,7 @@ package com.example.waggle.web.dto.siren;
 
 import com.example.waggle.domain.board.siren.entity.Siren.Category;
 import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,14 +22,13 @@ public class SirenResponse {
         private String title;
         private String thumbnail;
         private LocalDateTime lostDate;
+        private LocalDateTime createdDate;
         private String lostLocate;
         private boolean isRecommend;
         private int recommendCount;
         private Category category;
 
-        private String username;
-        private String profileImg;
-
+        private MemberResponse.SummaryDto member;
     }
 
     @Getter
@@ -46,14 +46,14 @@ public class SirenResponse {
         private String contact;
 
         private LocalDateTime lostDate;
+        private LocalDateTime createdDate;
         private String lostLocate;
         private String content;
         private Category category;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
 
-        private String username;
-        private String profileImg;
+        private MemberResponse.SummaryDto member;
 
         private boolean isRecommend;
         private int recommendCount;

@@ -13,17 +13,27 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class FollowQueryServiceImpl implements FollowQueryService{
+public class FollowQueryServiceImpl implements FollowQueryService {
 
     private final FollowRepository followRepository;
 
     @Override
-    public List<Follow> getFollowings(String username) {
+    public List<Follow> getFollowings(Long memberId) {
+        return followRepository.findByFromMemberId(memberId);
+    }
+
+    @Override
+    public List<Follow> getFollowingsByUsername(String username) {
         return followRepository.findByFromMember_Username(username);
     }
 
     @Override
-    public List<Follow> getFollowers(String username) {
+    public List<Follow> getFollowers(Long memberId) {
+        return followRepository.findByToMemberId(memberId);
+    }
+
+    @Override
+    public List<Follow> getFollowersByUsername(String username) {
         return followRepository.findByToMember_Username(username);
     }
 

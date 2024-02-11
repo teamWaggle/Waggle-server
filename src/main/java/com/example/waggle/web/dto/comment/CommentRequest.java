@@ -14,10 +14,7 @@ public class CommentRequest {
     @AllArgsConstructor
     @Builder
     public static class Post {
-        private Long id;
         private String content;
-        private String username;
-        private Long boardId;
         @Builder.Default
         List<String> mentionedNickname = new ArrayList<>();
     }

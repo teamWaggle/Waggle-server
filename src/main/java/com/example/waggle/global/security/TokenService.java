@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 public interface TokenService {
 
 
-    JwtToken login(MemberRequest.LoginDto request);
+    JwtToken login(MemberRequest.AccessDto request);
 
     JwtToken issueTokens(String refreshToken);
 

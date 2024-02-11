@@ -1,7 +1,7 @@
 package com.example.waggle.web.dto.schedule;
 
 import com.example.waggle.domain.schedule.entity.TeamColor;
-import com.example.waggle.global.annotation.color.ValidEnum;
+import com.example.waggle.global.annotation.valid.ValidEnum;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 

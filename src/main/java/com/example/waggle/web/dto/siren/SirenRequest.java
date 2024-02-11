@@ -14,7 +14,6 @@ public class SirenRequest {
     @Builder
     @ToString
     public static class Post {
-        private Long id;
         private String title;
         private String petKind;
         private String petAge;

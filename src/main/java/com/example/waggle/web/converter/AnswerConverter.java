@@ -14,10 +14,9 @@ public class AnswerConverter {
         return AnswerResponse.ViewDto.builder()
                 .id(answer.getId())
                 .content(answer.getContent())
-                .username(answer.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(answer.getMember()))
-                .createDate(answer.getCreatedDate())
+                .createdDate(answer.getCreatedDate())
                 .medias(MediaUtil.getBoardMedias(answer))
+                .member(MemberConverter.toMemberSummaryDto(answer.getMember()))
                 .build();
     }
 

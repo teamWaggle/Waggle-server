@@ -12,6 +12,7 @@ public interface StoryQueryService {
 
     Page<Story> getPagedStoriesByUsername(String username, Pageable pageable);
 
+    Page<Story> getPagedStoriesByMemberId(Long memberId, Pageable pageable);
 
     Page<Story> getPagedStories(Pageable pageable);
 

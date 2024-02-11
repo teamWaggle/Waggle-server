@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.question;
 
+import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,14 +18,13 @@ public class QuestionResponse {
     public static class SummaryDto {
         private Long id;
         private String title;
-        private LocalDateTime createTime;
+        private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
-        private String username;
-        private String profileImg;
+        MemberResponse.SummaryDto member;
     }
 
     @Builder
@@ -51,14 +51,13 @@ public class QuestionResponse {
         private Long id;
         private String content;
         private String title;
-        private LocalDateTime createDate;
+        private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
-        private String username;
-        private String profileImg;
+        private MemberResponse.SummaryDto member;
     }
 }

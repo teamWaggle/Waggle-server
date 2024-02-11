@@ -10,6 +10,8 @@ public interface TeamQueryService {
 
     Page<Team> getPagingTeamByUsername(String username, Pageable pageable);
 
+    Page<Team> getPagedTeamByMemberId(Long memberId, Pageable pageable);
+
     List<Team> getTeamListByUsername(String username);
 
     Team getTeamById(Long teamId);

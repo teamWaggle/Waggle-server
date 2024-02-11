@@ -2,9 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.comment.CommentResponse;
-import com.example.waggle.web.dto.member.MemberResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -17,14 +15,10 @@ public class CommentConverter {
         return CommentResponse.ViewDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .createDate(comment.getCreatedDate())
+                .createdDate(comment.getCreatedDate())
                 .mentionedNickname(comment.getMentions().stream()
                         .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
-                .member(MemberResponse.SummaryDto.builder()
-                        .username(member.getUsername())
-                        .nickname(member.getNickname())
-                        .profileImgUrl(MediaUtil.getProfileImg(member))
-                        .build())
+                .member(MemberConverter.toMemberSummaryDto(comment.getMember()))
                 .build();
     }
 

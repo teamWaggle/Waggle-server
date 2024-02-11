@@ -11,7 +11,8 @@ public class MemberConverter {
 
     public static MemberResponse.SummaryDto toMemberSummaryDto(Member member) {
         return MemberResponse.SummaryDto.builder()
-                .username(member.getUsername())
+                .id(member.getId())
+                .userUrl(member.getUserUrl())
                 .nickname(member.getNickname())
                 .profileImgUrl(MediaUtil.getProfileImg(member)).build();
     }
@@ -19,10 +20,10 @@ public class MemberConverter {
     public static MemberResponse.DetailDto toMemberDetailDto(Member member) {
         return MemberResponse.DetailDto.builder()
                 .id(member.getId())
-                .username(member.getUsername())
+                .userUrl(member.getUserUrl())
                 .nickname(member.getNickname())
-                .address(member.getAddress())
-                .phone(member.getPhone())
+                .birthday(member.getBirthday())
+                .name(member.getName())
                 .profileImgUrl(MediaUtil.getProfileImg(member)).build();
     }
 

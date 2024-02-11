@@ -16,10 +16,10 @@ public class SirenConverter {
                 .thumbnail(MediaUtil.getThumbnail(siren))
                 .lostLocate(siren.getLostLocate())
                 .lostDate(siren.getLostDate())
+                .createdDate(siren.getCreatedDate())
                 .category(siren.getCategory())
-                .username(siren.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(siren.getMember()))
                 .title(siren.getTitle())
+                .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .build();
     }
 
@@ -45,10 +45,10 @@ public class SirenConverter {
                 .category(siren.getCategory())
                 .lostLocate(siren.getLostLocate())
                 .lostDate(siren.getLostDate())
+                .createdDate(siren.getCreatedDate())
                 .content(siren.getContent())
-                .username(siren.getMember().getUsername())
-                .profileImg(MediaUtil.getProfileImg(siren.getMember()))
                 .medias(MediaUtil.getBoardMedias(siren))
+                .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .build();
     }
 }

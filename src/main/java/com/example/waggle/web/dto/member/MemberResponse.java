@@ -2,6 +2,7 @@ package com.example.waggle.web.dto.member;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,8 @@ public class MemberResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SummaryDto {
-        private String username;
+        private Long id;
+        private String userUrl;
         private String nickname;
         private String profileImgUrl;
     }
@@ -27,10 +29,10 @@ public class MemberResponse {
     @AllArgsConstructor
     public static class DetailDto {
         private Long id;
-        private String username;
+        private String userUrl;
         private String nickname;
-        private String address;
-        private String phone;
+        private String name;
+        private LocalDateTime birthday;
         private String profileImgUrl;
     }
 
@@ -43,5 +45,4 @@ public class MemberResponse {
         private List<SummaryDto> members = new ArrayList<>();
         private int totalSize;
     }
-
 }

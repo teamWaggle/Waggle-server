@@ -143,14 +143,14 @@ public class TeamApiController {
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
     @ApiResponse(responseCode = "200", description = "팀 조회 성공.")
     @ApiResponse(responseCode = "404", description = "사용자 또는 팀을 찾을 수 없습니다.")
-    @GetMapping("/user/{username}/teams")
-    public ApiResponseDto<TeamResponse.ListDto> getTeamsByUsername(
-            @PathVariable String username,
+    @GetMapping("/user/{memberId}/teams")
+    public ApiResponseDto<TeamResponse.ListDto> getTeamsByMemberId(
+            @PathVariable Long memberId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Team> teams = teamQueryService.getPagingTeamByUsername(username, pageable);
+        Page<Team> teams = teamQueryService.getPagedTeamByMemberId(memberId, pageable);
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teams));
     }
 

@@ -66,17 +66,17 @@ public class AnswerApiController {
 
     @Operation(summary = "질문의 대답 목록 조회", description = "질문의 전체 대답 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "대답 조회 성공. 질문의 전체 대답 목록을 반환합니다.")
-    @GetMapping
+    @GetMapping("/question/{questionId}")
     public ApiResponseDto<AnswerResponse.ListDto> getAllAnswerByPage(
             @RequestParam(defaultValue = "0") int currentPage,
-            @RequestParam Long questionId) {
+            @PathVariable Long questionId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(questionId, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswers);
         //recommend relation field
         listDto.getAnswerList().stream()
                 .forEach(a -> {
-                    a.setRecommend(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
+                    a.setRecommend(recommendQueryService.checkRecommend(a.getId(), a.getMember().getId()));
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -85,16 +85,16 @@ public class AnswerApiController {
     @Operation(summary = "사용자의 대답 목록 조회", description = "특정 사용자가 작성한 대답 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "대답 조회 성공. 사용자가 작성한 대답 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
-    @GetMapping("/member/{username}")
-    public ApiResponseDto<AnswerResponse.ListDto> getAnswerByUsername(
-            @RequestParam(defaultValue = "0") int currentPage, @PathVariable String username) {
+    @GetMapping("/member/{memberId}")
+    public ApiResponseDto<AnswerResponse.ListDto> getAnswerByMemberId(
+            @RequestParam(defaultValue = "0") int currentPage, @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByUsername(username, pageable);
+        Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswerByUsername);
 
         listDto.getAnswerList().stream()
                 .forEach(a -> {
-                    a.setRecommend(recommendQueryService.checkRecommend(a.getId(), a.getUsername()));
+                    a.setRecommend(recommendQueryService.checkRecommend(a.getId(), a.getMember().getId()));
                     a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);

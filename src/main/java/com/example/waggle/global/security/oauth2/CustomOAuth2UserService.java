@@ -7,6 +7,7 @@ import com.example.waggle.global.security.CustomUserDetails;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.global.security.oauth2.info.OAuth2UserInfo;
 import com.example.waggle.global.util.NameUtil;
+import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,13 +58,38 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private Member registerMember(AuthProvider authProvider, OAuth2UserInfo oAuth2UserInfo) {
         Member register = Member.builder()
                 .email(oAuth2UserInfo.getEmail())
-                .username(oAuth2UserInfo.getOAuth2Id())
+                .username(generateAutoUsername())
                 .password(PasswordUtil.generateRandomPassword(10))
-                .nickname(NameUtil.generateAutoNickname())
+                .nickname(generateAutoNickname())
+                .userUrl(generateAutoUserUrl())
                 .authProvider(authProvider)
                 .role(Role.GUEST)           //회원가입시에만 guest로 두고 이후 사용에는 user로 돌린다
                 .build();
 
         return memberRepository.save(register);
+    }
+
+    private String generateAutoUsername() {
+        String username;
+        do {
+            username = NameUtil.generateAuto(NameType.USERNAME);
+        } while (memberRepository.existsByUsername(username));
+        return username;
+    }
+
+    private String generateAutoNickname() {
+        String username;
+        do {
+            username = NameUtil.generateAuto(NameType.NICKNAME);
+        } while (memberRepository.existsByNickname(username));
+        return username;
+    }
+
+    private String generateAutoUserUrl() {
+        String username;
+        do {
+            username = NameUtil.generateAuto(NameType.USERURL);
+        } while (memberRepository.existsByUserUrl(username));
+        return username;
     }
 }

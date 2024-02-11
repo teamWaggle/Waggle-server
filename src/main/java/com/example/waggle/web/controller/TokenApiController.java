@@ -31,7 +31,7 @@ public class TokenApiController {
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.LoginDto request, HttpServletResponse response) {
+    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.AccessDto request, HttpServletResponse response) {
         JwtToken jwtToken = tokenService.login(request);
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         return ApiResponseDto.onSuccess(jwtToken);

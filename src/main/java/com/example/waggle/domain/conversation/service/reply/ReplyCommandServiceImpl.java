@@ -10,7 +10,7 @@ import com.example.waggle.domain.mention.service.MentionCommandService;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,15 +79,6 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         return replyRepository.findById(replyId)
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
-
-//    private void addMentionsToReply(Reply reply, List<String> mentions) {
-//        mentions.stream().forEach(mention -> {
-//            if (memberRepository.existsByNickname(mention)) {
-//                Mention build = Mention.builder().conversation(reply).mentionedNickname(mention).build();
-//                mentionRepository.save(build);
-//            }
-//        });
-//    }
 
     public boolean validateMember(Long replyId) {
         Reply reply = getReplyById(replyId);

@@ -2,9 +2,6 @@ package com.example.waggle.domain.conversation.service.comment;
 
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
-import com.example.waggle.global.exception.handler.CommentHandler;
-import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,14 +27,5 @@ public class CommentQueryServiceImpl implements CommentQueryService {
     public Page<Comment> getPagedComments(Long boardId, Pageable pageable) {
         return commentRepository.findPagedCommentsByBoardId(boardId, pageable);
     }
-
-    @Override
-    public boolean validateMember(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        return comment.getMember().getUsername()
-                .equals(SecurityUtil.getCurrentUsername());
-    }
-
 
 }
