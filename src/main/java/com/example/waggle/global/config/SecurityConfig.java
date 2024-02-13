@@ -75,6 +75,7 @@ public class SecurityConfig {
                 .requestMatchers("/oauth2/**", "/login/**").permitAll()
                 // TOKEN
                 .requestMatchers(HttpMethod.POST, "/api/tokens").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/tokens").permitAll()
                 .requestMatchers("/api/tokens/oauth2").permitAll()
                 // SWAGGER
                 .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
