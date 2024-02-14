@@ -28,4 +28,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true) //요청 허용 쿠키
                 .maxAge(MAX_AGE_SECS);
     }
+    @Bean
+    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
+        return CookieSameSiteSupplier.ofNone();
+    }
 }
