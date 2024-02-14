@@ -1,6 +1,8 @@
 package com.example.waggle.domain.schedule.service;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
@@ -40,6 +42,8 @@ class ScheduleCommandServiceTest {
     @Autowired
     MemberCommandService memberCommandService;
     @Autowired
+    MemberQueryService memberQueryService;
+    @Autowired
     TeamCommandService teamCommandService;
     @Autowired
     TeamQueryService teamQueryService;
@@ -48,40 +52,39 @@ class ScheduleCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    private MemberRequest.RegisterDto member1;
-    private MemberRequest.RegisterDto member2;
+    private MemberRequest.AccessDto member1;
+    private MemberRequest.AccessDto member2;
     private TeamRequest.Post team;
     private ScheduleRequest.Post schedule;
 
     private Long teamId;
     private Long scheduleId;
+    private String username;
 
 
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
+        member1 = MemberRequest.AccessDto.builder()
+                .email("member1")
                 .password("12345678")
-                .nickname("nickname1")
-                .email("email1")
                 .build();
 
-        member2 = MemberRequest.RegisterDto.builder()
-                .username("member2")
+        member2 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("nickname2")
                 .email("email2")
                 .build();
-        memberCommandService.signUp(member1);
+        Long memberId = memberCommandService.signUp(member1);
         memberCommandService.signUp(member2);
+        Member member = memberQueryService.getMemberById(memberId);
+        username = member.getUsername();
 
         // Setup team
         team = TeamRequest.Post.builder()
                 .name("team1")
                 .description("team1 description")
                 .maxTeamSize(4)
-                .colorScheme("red")
+                .teamColor("team_3")
                 .build();
         teamId = teamCommandService.createTeam(team, "member1");
 
@@ -92,7 +95,7 @@ class ScheduleCommandServiceTest {
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
                 .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
                 .build();
-        scheduleId = scheduleCommandService.createSchedule(teamId, schedule, "member1");
+        scheduleId = scheduleCommandService.createSchedule(teamId, schedule, username);
     }
 
     @AfterEach

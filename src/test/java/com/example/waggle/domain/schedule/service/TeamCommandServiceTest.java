@@ -53,11 +53,11 @@ class TeamCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    private MemberRequest.RegisterDto member1;
+    private MemberRequest.AccessDto member1;
 
-    private MemberRequest.RegisterDto member2;
+    private MemberRequest.AccessDto member2;
 
-    private MemberRequest.RegisterDto member3;
+    private MemberRequest.AccessDto member3;
 
     private TeamRequest.Post team;
 
@@ -67,28 +67,27 @@ class TeamCommandServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
+        member1 = MemberRequest.AccessDto.builder()
                 .password("12345678")
                 .email("dasfk")
-                .nickname("lksadfjklj")
                 .build();
 
-        member2 = MemberRequest.RegisterDto.builder()
-                .username("member2")
+        member2 = MemberRequest.AccessDto.builder()
                 .password("12345678")
                 .email("aksdfhsafa")
-                .nickname("sadlfkdsfjkw")
                 .build();
 
-        member3 = MemberRequest.RegisterDto.builder()
-                .username("member3")
+        member3 = MemberRequest.AccessDto.builder()
                 .password("12345678")
                 .email("wldkfjk")
-                .nickname("jdhskjfhac")
                 .build();
 
-        team = TeamRequest.Post.builder().colorScheme("hi").maxTeamSize(4).name("team").description("team").build();
+        team = TeamRequest.Post.builder()
+                .teamColor("team_4")
+                .maxTeamSize(4)
+                .name("team")
+                .description("team")
+                .build();
         memberCommandService.signUp(member1);
         memberCommandService.signUp(member2);
         memberCommandService.signUp(member3);
@@ -118,7 +117,7 @@ class TeamCommandServiceTest {
                 .name("test name")
                 .description("test description")
                 .maxTeamSize(10)
-                .colorScheme("red")
+                .teamColor("team_1")
                 .build();
 
         // when

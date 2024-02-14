@@ -7,7 +7,9 @@ import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.service.comment.CommentQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
@@ -20,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,8 @@ class CommentServiceTest {
     @Autowired
     private MemberCommandService memberService;
     @Autowired
+    private MemberQueryService memberQueryService;
+    @Autowired
     private CommentQueryService commentService;
     @Autowired
     private CommentCommandService commentCommandService;
@@ -44,8 +47,8 @@ class CommentServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    MemberRequest.RegisterDto signUpDto1;
-    MemberRequest.RegisterDto signUpDto2;
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
 
 
     StoryRequest.Post storyWriteDto1;
@@ -58,6 +61,8 @@ class CommentServiceTest {
     List<String> tags2 = new ArrayList<>();
     List<String> medias1 = new ArrayList<>();
     List<String> medias2 = new ArrayList<>();
+    Long memberId1;
+    Long memberId2;
 
 
     @BeforeEach
@@ -71,22 +76,14 @@ class CommentServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
-                .password("12345678")
-                .nickname("닉네임1")
+        signUpDto1 = MemberRequest.AccessDto.builder()
                 .email("ertyuio")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
+                .password("string")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterDto.builder()
-                .username("member2")
-                .password("12345678")
-                .nickname("닉네임2")
+        signUpDto2 = MemberRequest.AccessDto.builder()
                 .email("78347dj")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
+                .password("string")
                 .build();
 
         storyWriteDto1 = StoryRequest.Post.builder()
@@ -117,19 +114,20 @@ class CommentServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setBoardAndMember() throws IOException {
+    private void setBoardAndMember() {
         //member set
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
+        Long memberId1 = memberService.signUp(signUpDto1);
+        Long memberId2 = memberService.signUp(signUpDto2);
+        Member member1 = memberQueryService.getMemberById(memberId1);
+        Member member2 = memberQueryService.getMemberById(memberId2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1, null);
-        storyCommandService.createStory(storyWriteDto2, null);
+        storyCommandService.createStoryByUsername(storyWriteDto1, null, member1.getUsername());
+        storyCommandService.createStoryByUsername(storyWriteDto2, null, member2.getUsername());
     }
 
     @Test
-    @WithMockCustomUser
-    void saveComment() throws IOException {
+    void saveComment() {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
@@ -144,7 +142,7 @@ class CommentServiceTest {
 
     @Test
     @WithMockCustomUser
-    void editCommentV1() throws IOException {
+    void editCommentV1() {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
@@ -161,8 +159,7 @@ class CommentServiceTest {
 
 
     @Test
-    @WithMockCustomUser
-    void deleteComment() throws IOException {
+    void deleteComment() {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
@@ -180,7 +177,7 @@ class CommentServiceTest {
 
     @Test
     @WithMockCustomUser
-    void deleteStory() throws IOException {
+    void deleteStory() {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
