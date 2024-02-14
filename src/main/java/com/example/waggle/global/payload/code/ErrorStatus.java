@@ -1,10 +1,16 @@
 package com.example.waggle.global.payload.code;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -33,7 +39,7 @@ public enum ErrorStatus implements BaseCode {
     AUTH_MISMATCH_EMAIL_AND_PASSWORD(UNAUTHORIZED, 4059, "이메일과 패스워드가 일치하는 회원정보가 존재하지 않습니다"),
 
     // 회원 관련 오류 (4100 ~ 4149)
-    MEMBER_DUPLICATE_USERNAME(CONFLICT, 4100, "이미 존재하는 사용자 이름입니다."),
+    MEMBER_DUPLICATE_USER_URL(CONFLICT, 4100, "이미 존재하는 사용자 url 입니다."),
     MEMBER_INFO_REQUIRED_REGISTER(BAD_REQUEST, 4101, "회원가입 시 필요한 정보를 모두 입력해주세요."),
     MEMBER_NOT_FOUND(NOT_FOUND, 4102, "해당 사용자 정보를 찾을 수 없습니다."),
     MEMBER_REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, 4103, "로그아웃 된 사용자입니다."),

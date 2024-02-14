@@ -59,9 +59,9 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    public void validateUsernameDuplication(String username) {
-        if (memberRepository.existsByUsername(username)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USERNAME);
+    public void validateUserUrlDuplication(String userUrl) {
+        if (memberRepository.existsByUserUrl(userUrl)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_USER_URL);
         }
     }
 

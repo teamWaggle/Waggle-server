@@ -113,9 +113,9 @@ public class MemberApiController {
 
     @Operation(summary = "유저네임 중복 검사", description = "제공된 유저네임이 이미 사용 중인지 확인합니다.")
     @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
-    @GetMapping("/check-username")
-    public ApiResponseDto<Boolean> checkUsername(@RequestParam String username) {
-        memberQueryService.validateUsernameDuplication(username);
+    @GetMapping("/check-user-url")
+    public ApiResponseDto<Boolean> checkUsername(@RequestParam String userUrl) {
+        memberQueryService.validateUserUrlDuplication(userUrl);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -127,7 +127,7 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "인증 회원 삭제", description = "로그인 된 특정 회원을 삭제합니다. 회원이 작성한 관련된 게시글, 댓글 등이 모두 삭제됩니다.")
+    @Operation(summary = "회원 탈퇴", description = "로그인 된 특정 회원을 삭제합니다. 회원이 작성한 관련된 게시글, 댓글 등이 모두 삭제됩니다.")
     @ApiResponse(responseCode = "200", description = "멤버 삭제 성공.")
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteMember() {
