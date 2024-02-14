@@ -1,6 +1,8 @@
 package com.example.waggle.global.config;
 
 import com.example.waggle.global.security.annotation.CustomAuthenticationPrincipalArgumentResolver;
+import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -28,6 +30,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true) //요청 허용 쿠키
                 .maxAge(MAX_AGE_SECS);
     }
+
     @Bean
     public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
         return CookieSameSiteSupplier.ofNone();
