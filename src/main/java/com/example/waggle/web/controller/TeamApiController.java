@@ -75,14 +75,6 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-//    @Operation(summary = "팀원 추가", description = "지정된 팀에 새로운 팀원을 추가합니다.")
-//    @ApiResponse(responseCode = "200", description = "팀원 추가 성공.")
-//    @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
-//    @PostMapping("/{teamId}/members/{memberId}")
-//    public ApiResponseDto<Boolean> addTeamMember(@PathVariable Long teamId, @Parameter(hidden = true) @AuthUser UserDetails userDetails) {
-//        teamCommandService.addTeamMember(teamId, userDetails.getUsername());
-//        return ApiResponseDto.onSuccess(Boolean.TRUE);
-//    }
 
     @Operation(summary = "팀원 삭제(수동)", description = "리더에 의해 지정된 팀에서 특정 팀원을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")

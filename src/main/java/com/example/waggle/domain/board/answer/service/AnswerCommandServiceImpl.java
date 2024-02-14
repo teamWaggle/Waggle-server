@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.example.waggle.domain.board.service.BoardType.ANSWER;
@@ -45,7 +44,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     @Override
     public Long createAnswer(Long questionId,
                              AnswerRequest.Post answerWriteDto,
-                             List<MultipartFile> multiPartFiles) throws IOException {
+                             List<MultipartFile> multiPartFiles) {
         Member signInMember = memberQueryService.getSignInMember();
         Answer answer = buildAnswer(questionId, answerWriteDto, signInMember);
         answerRepository.save(answer);
@@ -58,7 +57,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     public Long createAnswerByUsername(Long questionId,
                                        AnswerRequest.Post answerWriteDto,
                                        List<MultipartFile> multipartFiles,
-                                       String username) throws IOException {
+                                       String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         Answer answer = buildAnswer(questionId, answerWriteDto, member);
         answerRepository.save(answer);
@@ -72,7 +71,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     public Long updateAnswer(Long boardId,
                              AnswerRequest.Post answerWriteDto,
                              List<MultipartFile> multipartFiles,
-                             List<String> deleteFiles) throws IOException {
+                             List<String> deleteFiles) {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
@@ -85,7 +84,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     public Long updateAnswerV2(Long boardId,
                                AnswerRequest.Post request,
                                MediaRequest.Put mediaUpdateDto,
-                               List<MultipartFile> multipartFiles) throws IOException {
+                               List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }

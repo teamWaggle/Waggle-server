@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -45,7 +44,7 @@ public class AnswerApiController {
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@RequestPart AnswerRequest.Post request,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
-                                             @PathVariable Long questionId) throws IOException {
+                                             @PathVariable Long questionId) {
         Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
     }
@@ -57,7 +56,7 @@ public class AnswerApiController {
     public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
                                              @RequestPart AnswerRequest.Post request,
                                              @RequestPart MediaRequest.Put mediaUpdateDto,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         answerCommandService.updateAnswerV2(boardId, request, mediaUpdateDto, multipartFiles);

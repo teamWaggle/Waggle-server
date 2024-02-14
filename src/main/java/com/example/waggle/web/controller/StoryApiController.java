@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -42,7 +41,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = storyCommandService.createStory(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -54,7 +53,7 @@ public class StoryApiController {
     public ApiResponseDto<Long> updateStory(@PathVariable Long boardId,
                                             @RequestPart StoryRequest.Post request,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         storyCommandService.updateStoryV2(boardId, request, mediaUpdateDto, multipartFiles);

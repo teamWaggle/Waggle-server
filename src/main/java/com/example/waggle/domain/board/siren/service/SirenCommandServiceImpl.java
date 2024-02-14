@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.example.waggle.domain.board.service.BoardType.SIREN;
@@ -38,7 +37,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public Long createSiren(SirenRequest.Post sirenWriteDto,
-                            List<MultipartFile> multipartFiles) throws IOException {
+                            List<MultipartFile> multipartFiles) {
         Siren build = buildSiren(sirenWriteDto);
         sirenRepository.save(build);
         mediaCommandService.createMedia(multipartFiles, build);
@@ -46,7 +45,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
-    public Long createSirenByUsername(SirenRequest.Post sirenWriteDto, List<MultipartFile> multipartFiles, String username) throws IOException {
+    public Long createSirenByUsername(SirenRequest.Post sirenWriteDto, List<MultipartFile> multipartFiles, String username) {
         Siren build = buildSiren(sirenWriteDto, username);
         sirenRepository.save(build);
         mediaCommandService.createMedia(multipartFiles, build);
@@ -58,7 +57,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     public Long updateSiren(Long boardId,
                             SirenRequest.Post sirenUpdateDto,
                             List<MultipartFile> multipartFiles,
-                            List<String> deleteFiles) throws IOException {
+                            List<String> deleteFiles) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -75,7 +74,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     public Long updateSirenV2(Long boardId,
                               SirenRequest.Post request,
                               MediaRequest.Put mediaUpdateDto,
-                              List<MultipartFile> multipartFiles) throws IOException {
+                              List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
