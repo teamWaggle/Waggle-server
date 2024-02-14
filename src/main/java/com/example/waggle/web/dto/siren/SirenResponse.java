@@ -29,6 +29,7 @@ public class SirenResponse {
         private Category category;
 
         private MemberResponse.SummaryDto member;
+        private boolean isMine;
     }
 
     @Getter
@@ -55,6 +56,7 @@ public class SirenResponse {
 
         private MemberResponse.SummaryDto member;
 
+        private boolean isMine;
         private boolean isRecommend;
         private int recommendCount;
     }

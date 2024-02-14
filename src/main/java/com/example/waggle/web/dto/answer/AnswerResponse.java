@@ -20,6 +20,7 @@ public class AnswerResponse {
         private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
+        private boolean isMine;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();

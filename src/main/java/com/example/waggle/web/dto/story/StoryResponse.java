@@ -29,6 +29,7 @@ public class StoryResponse {
         private List<String> medias = new ArrayList<>();
 
         private MemberResponse.SummaryDto member;
+        private boolean isMine;
 
     }
 
@@ -44,6 +45,7 @@ public class StoryResponse {
         private String thumbnail;
         private int recommendCount;
         private boolean isRecommend;
+        private boolean isMine;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 

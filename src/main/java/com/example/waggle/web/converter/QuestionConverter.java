@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.question.QuestionResponse;
 import org.springframework.data.domain.Page;
 
@@ -17,6 +18,7 @@ public class QuestionConverter {
                 .hashtags(question.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
+                .isMine(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 
@@ -43,6 +45,7 @@ public class QuestionConverter {
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(question))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
+                .isMine(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }

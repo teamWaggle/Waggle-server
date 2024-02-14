@@ -25,6 +25,7 @@ public class QuestionResponse {
         private List<String> hashtags = new ArrayList<>();
 
         MemberResponse.SummaryDto member;
+        private boolean isMine;
     }
 
     @Builder
@@ -54,6 +55,7 @@ public class QuestionResponse {
         private LocalDateTime createdDate;
         private int recommendCount;
         private boolean isRecommend;
+        private boolean isMine;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
         @Builder.Default

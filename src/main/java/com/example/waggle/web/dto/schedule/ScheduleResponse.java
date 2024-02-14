@@ -29,6 +29,7 @@ public class ScheduleResponse {
         private LocalDateTime createdDate;
         private ScheduleStatus status;
         private MemberResponse.SummaryDto member;
+        private boolean isMine;
     }
 
     @NoArgsConstructor
