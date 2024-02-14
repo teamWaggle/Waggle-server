@@ -71,6 +71,7 @@ public enum ErrorStatus implements BaseCode {
     TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE(BAD_REQUEST, 4212, "현재 존재하는 팀멤버의 사이즈가 업데이트하고자 하는 팀멤버 사이즈보다 큽니다"),
     SCHEDULE_WRITER_CANNOT_DELETE_MEMBER_SCHEDULE(BAD_REQUEST, 4213, "작성자는 멤버 스케줄에서 제외가 불가능합니다"),
     SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS(BAD_REQUEST, 4214, "개인 스케줄이 아니므로 댓글을 달 수 없습니다."),
+    TEAM_SIZE_IS_OVER_THAN_MAX_SIZE(BAD_REQUEST, 4215, "수용할 수 있는 팀멤버를 초과하는 요청입니다"),
 
 
     // 펫 관련 오류 (4250 ~ 4299)

@@ -34,6 +34,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final ParticipationRepository participationRepository;
     private final MemberQueryService memberQueryService;
     private final ScheduleCommandService scheduleCommandService;
+    private final int teamCapacityLimit = 50;
 
     @Override
     public Long createTeam(Post request) {
@@ -79,7 +80,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
-        validateMaxTeamMemberSize(request, team);
+        validateTeamMemberIsOverRequestSize(request, team);
 
         team.update(request);
         return team.getId();
@@ -105,6 +106,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         validateMemberDuplication(team, member);
+        validateLimitOfTeamCapacity(team);
         addMemberToTeam(team, member);
 
         return team.getId();
@@ -177,6 +179,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         if (accept) {
             validateTeamMemberCount(team);
+            validateLimitOfTeamCapacity(team);
             participation.setStatus(Participation.ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
         } else {
@@ -226,9 +229,15 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateMaxTeamMemberSize(Post request, Team team) {
+    private static void validateTeamMemberIsOverRequestSize(Post request, Team team) {
         if (team.getTeamMembers().size() > request.getMaxTeamSize()) {
             throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE);
+        }
+    }
+
+    private void validateLimitOfTeamCapacity(Team team) {
+        if (team.getTeamMembers().size() == teamCapacityLimit) {
+            throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_MAX_SIZE);
         }
     }
 
