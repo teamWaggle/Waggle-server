@@ -124,8 +124,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void deleteMember() {
-        Member member = memberQueryService.getSignInMember();
+    public void deleteMember(Long memberId) {
+        Member member = memberQueryService.getMemberById(memberId);
 
         deleteAllDataLinkedToMember(member);
         deleteMemberContent(member);

@@ -11,7 +11,7 @@ public interface MemberCommandService {
 
     Long updateMemberInfo(MemberRequest.Put request);
 
-    void deleteMember();
+    void deleteMember(Long memberId);
 
     void verifyMail(VerifyMailRequest request);
 
