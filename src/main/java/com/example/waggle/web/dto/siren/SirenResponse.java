@@ -24,12 +24,12 @@ public class SirenResponse {
         private LocalDateTime lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
-        private boolean isRecommend;
+        private Boolean isRecommend;
         private int recommendCount;
         private Category category;
 
         private MemberResponse.SummaryDto member;
-        private boolean isMine;
+        private Boolean isMine;
     }
 
     @Getter
@@ -56,8 +56,8 @@ public class SirenResponse {
 
         private MemberResponse.SummaryDto member;
 
-        private boolean isMine;
-        private boolean isRecommend;
+        private Boolean isMine;
+        private Boolean isRecommend;
         private int recommendCount;
     }
 
@@ -71,7 +71,7 @@ public class SirenResponse {
         @Builder.Default
         private List<SirenResponse.SummaryDto> sirenList = new ArrayList<>();
         private long totalSirens;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 }

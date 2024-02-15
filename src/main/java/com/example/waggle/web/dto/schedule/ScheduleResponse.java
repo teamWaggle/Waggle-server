@@ -29,7 +29,7 @@ public class ScheduleResponse {
         private LocalDateTime createdDate;
         private ScheduleStatus status;
         private MemberResponse.SummaryDto member;
-        private boolean isMine;
+        private Boolean isMine;
     }
 
     @NoArgsConstructor
@@ -40,8 +40,8 @@ public class ScheduleResponse {
         @Builder.Default
         private List<ScheduleResponse.DetailDto> scheduleList = new ArrayList<>();
         private long totalSchedules;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 
 }

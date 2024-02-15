@@ -75,7 +75,7 @@ public class SirenApiController {
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
         listDto.getSirenList().stream()
                 .forEach(h -> {
-                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
+                    h.setIsRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -92,7 +92,7 @@ public class SirenApiController {
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
         listDto.getSirenList().stream()
                 .forEach(h -> {
-                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
+                    h.setIsRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
                     h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -105,7 +105,7 @@ public class SirenApiController {
     public ApiResponseDto<SirenResponse.DetailDto> getSirenByBoardId(@PathVariable Long boardId) {
         Siren siren = sirenQueryService.getSirenByBoardId(boardId);
         SirenResponse.DetailDto detailDto = SirenConverter.toDetailDto(siren);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
+        detailDto.setIsRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

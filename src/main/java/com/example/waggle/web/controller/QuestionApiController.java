@@ -72,7 +72,7 @@ public class QuestionApiController {
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
+                    q.setIsRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -89,7 +89,7 @@ public class QuestionApiController {
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
         listDto.getQuestionsList().stream()
                 .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
+                    q.setIsRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
                     q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
                 });
         return ApiResponseDto.onSuccess(listDto);
@@ -102,7 +102,7 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionResponse.DetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         QuestionResponse.DetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
+        detailDto.setIsRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
         return ApiResponseDto.onSuccess(detailDto);
     }

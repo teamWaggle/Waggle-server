@@ -20,12 +20,12 @@ public class QuestionResponse {
         private String title;
         private LocalDateTime createdDate;
         private int recommendCount;
-        private boolean isRecommend;
+        private Boolean isRecommend;
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
-        MemberResponse.SummaryDto member;
-        private boolean isMine;
+        private MemberResponse.SummaryDto member;
+        private Boolean isMine;
     }
 
     @Builder
@@ -38,8 +38,8 @@ public class QuestionResponse {
         @Builder.Default
         private List<SummaryDto> questionsList = new ArrayList<>();
         private long totalQuestions;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 
     @Builder
@@ -54,8 +54,8 @@ public class QuestionResponse {
         private String title;
         private LocalDateTime createdDate;
         private int recommendCount;
-        private boolean isRecommend;
-        private boolean isMine;
+        private Boolean isRecommend;
+        private Boolean isMine;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
         @Builder.Default
