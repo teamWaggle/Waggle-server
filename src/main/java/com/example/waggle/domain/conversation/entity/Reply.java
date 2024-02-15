@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @DiscriminatorValue("type_reply")
-@Table(name = "reply")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply extends Conversation {
 
