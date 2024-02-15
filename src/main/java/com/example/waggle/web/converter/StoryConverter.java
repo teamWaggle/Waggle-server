@@ -13,11 +13,7 @@ public class StoryConverter {
     public static StoryResponse.SummaryDto toSummaryDto(Story story) {
         return StoryResponse.SummaryDto.builder()
                 .id(story.getId())
-                .createdDate(story.getCreatedDate())
                 .thumbnail(MediaUtil.getThumbnail(story))
-                .hashtags(story.getBoardHashtags().stream()
-                        .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
-                .member(MemberConverter.toMemberSummaryDto(story.getMember()))
                 .build();
     }
 
