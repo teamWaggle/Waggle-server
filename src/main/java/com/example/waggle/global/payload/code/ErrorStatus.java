@@ -47,6 +47,7 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_DUPLICATE_EMAIL(CONFLICT, 4105, "이미 사용중인 이메일입니다."),
     MEMBER_DUPLICATE_NICKNAME(CONFLICT, 4106, "이미 사용중인 닉네임입니다."),
     MEMBER_NAME_TYPE_IS_INVALID(NOT_ACCEPTABLE, 4107, "랜덤 입력할 필드의 타입을 잘못 입력하였습니다"),
+    MEMBER_EMAIL_VERIFICATION_FAILED(BAD_REQUEST, 4108, "인증번호가 일치하지 않습니다. 이메일 인증에 실패했습니다."),
 
 
     // 게시판 관련 오류 (4150 ~ 4199)

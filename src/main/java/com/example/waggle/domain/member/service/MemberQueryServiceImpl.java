@@ -67,7 +67,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     public void validateNicknameDuplication(String nickname) {
-        if (memberRepository.existsByUsername(nickname)) {
+        if (memberRepository.existsByNickname(nickname)) {
             throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE_NICKNAME);
         }
     }

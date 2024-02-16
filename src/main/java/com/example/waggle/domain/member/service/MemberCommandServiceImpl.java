@@ -12,7 +12,6 @@ import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.follow.repository.FollowRepository;
 import com.example.waggle.domain.hashtag.repository.BoardHashtagRepository;
-import com.example.waggle.domain.media.repository.MediaRepository;
 import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;

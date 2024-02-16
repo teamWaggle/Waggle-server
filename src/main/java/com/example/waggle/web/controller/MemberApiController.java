@@ -127,8 +127,8 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "회원 탈퇴", description = "특정 회원을 삭제합니다. 회원과 관련된 데이터가 모두 삭제됩니다.")
-    @ApiResponse(responseCode = "200", description = "멤버 삭제 성공.")
+    @Operation(summary = "회원 삭제", description = "특정 회원을 삭제합니다. 회원과 관련된 데이터가 모두 삭제됩니다.")
+    @ApiResponse(responseCode = "200", description = "회원 삭제 성공.")
     @DeleteMapping("/{memberId}")
     public ApiResponseDto<Boolean> deleteMember(@PathVariable Long memberId) {
         memberCommandService.deleteMember(memberId);
