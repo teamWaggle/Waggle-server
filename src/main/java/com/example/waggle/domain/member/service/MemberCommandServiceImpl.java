@@ -14,6 +14,7 @@ import com.example.waggle.domain.follow.repository.FollowRepository;
 import com.example.waggle.domain.hashtag.repository.BoardHashtagRepository;
 import com.example.waggle.domain.media.repository.MediaRepository;
 import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
@@ -50,28 +51,25 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     private final PetRepository petRepository;
-    private final MentionRepository mentionRepository;
     private final FollowRepository followRepository;
     private final ParticipationRepository participationRepository;
-
+    private final RecommendRepository recommendRepository;
+    private final MentionRepository mentionRepository;
     private final BoardHashtagRepository boardHashtagRepository;
-    private final ScheduleRepository scheduleRepository;
-
-    private final MediaRepository mediaRepository;
-    private final MemberScheduleRepository memberScheduleRepository;
-
-    private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final RecommendRepository recommendRepository;
-    private final TeamRepository teamRepository;
-    private final TeamMemberRepository teamMemberRepository;
-    private final BoardRepository boardRepository;
+    private final ScheduleRepository scheduleRepository;
     private final AnswerRepository answerRepository;
+    private final MemberScheduleRepository memberScheduleRepository;
+    private final BoardRepository boardRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
     private final MemberQueryService memberQueryService;
     private final AwsS3Service awsS3Service;
     private final RedisService redisService;
+    private final MediaCommandService mediaCommandService;
 
     private final PasswordEncoder passwordEncoder;
     private static final String AUTH_CODE_PREFIX = "AuthCode ";
@@ -125,6 +123,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public void deleteMember(Long memberId) {
+        // TODO boardHashtag, teamMember, scheduleMember ➡️ 삭제 시 고아 객체 처리 필요 (참조 카운팅, 스케줄링・・・)
         Member member = memberQueryService.getMemberById(memberId);
 
         deleteAllDataLinkedToMember(member);
@@ -152,7 +151,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private void deleteBoards(List<Board> boards) {
         for (Board board : boards) {
             boardHashtagRepository.deleteAllByBoard(board);
-            mediaRepository.deleteAllByBoard(board);
+            mediaCommandService.deleteMedia(board);
             recommendRepository.deleteAllByBoard(board);
 
             deleteCommentsAndReplies(commentRepository.findByBoard(board));
