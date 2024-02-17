@@ -164,7 +164,7 @@ class HelpServiceTest {
         sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
         sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
 
-        Long aLong = sirenCommandService.updateSiren(helpId, hwd4, null, null);
+        Long aLong = sirenCommandService.updateSirenByUsername(helpId, member.getUsername(), hwd4, null, null);
         Siren help = sirenQueryService.getSirenByBoardId(aLong);
         assertThat(help.getContent()).isEqualTo("help page4. hi");
     }
@@ -179,7 +179,7 @@ class HelpServiceTest {
         sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
         Long help = sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
 
-        sirenCommandService.deleteSiren(help);
+        sirenCommandService.deleteSirenByUsername(help, member.getUsername());
         List<Siren> allHelp = sirenQueryService.getAllSiren();
         assertThat(allHelp.size()).isEqualTo(2);
     }

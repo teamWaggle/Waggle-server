@@ -46,6 +46,23 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
         }
     }
 
+    @Override
+    public void handleRecommendationByUsername(Long boardId, BoardType boardType, String username) {
+        Board board = boardService.getBoard(boardId, boardType);
+        Member member = memberQueryService.getMemberByUsername(username);
+        //boardWriter.equals(user)
+        if (board.getMember().equals(member)) {
+            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
+        }
+
+        boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
+        if (isRecommended) {
+            cancelRecommendation(member.getId(), boardId);
+        } else {
+            createRecommendation(board, member);
+        }
+    }
+
     private void cancelRecommendation(Long memberId, Long boardId) {
         Recommend recommend = recommendRepository
                 .findRecommendByMemberIdAndBoardId(memberId, boardId)

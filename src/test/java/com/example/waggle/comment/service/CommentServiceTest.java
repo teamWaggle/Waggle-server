@@ -12,7 +12,6 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.comment.CommentRequest;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +62,8 @@ class CommentServiceTest {
     List<String> medias2 = new ArrayList<>();
     Long memberId1;
     Long memberId2;
+    Member member1;
+    Member member2;
 
 
     @BeforeEach
@@ -116,10 +117,10 @@ class CommentServiceTest {
 
     private void setBoardAndMember() {
         //member set
-        Long memberId1 = memberService.signUp(signUpDto1);
-        Long memberId2 = memberService.signUp(signUpDto2);
-        Member member1 = memberQueryService.getMemberById(memberId1);
-        Member member2 = memberQueryService.getMemberById(memberId2);
+        memberId1 = memberService.signUp(signUpDto1);
+        memberId2 = memberService.signUp(signUpDto2);
+        member1 = memberQueryService.getMemberById(memberId1);
+        member2 = memberQueryService.getMemberById(memberId2);
 
         //story set
         storyCommandService.createStoryByUsername(storyWriteDto1, null, member1.getUsername());
@@ -133,7 +134,7 @@ class CommentServiceTest {
         Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
         List<Comment> comments = commentService.getComments(story.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
@@ -141,16 +142,15 @@ class CommentServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
     void editCommentV1() {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
-        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
         List<Comment> comments = commentService.getComments(story.getId());
 
         //when
-        commentCommandService.updateComment(comments.get(0).getId(), commentWriteDto2);
+        commentCommandService.updateCommentByUsername(comments.get(0).getId(), member1.getUsername(), commentWriteDto2);
         List<Comment> commentList = commentService.getComments(story.getId());
 
         //then
@@ -165,9 +165,9 @@ class CommentServiceTest {
         Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
         List<Comment> comments = commentService.getComments(story.getId());
-        commentCommandService.deleteComment(comments.get(0).getId());
+        commentCommandService.deleteCommentByUsername(comments.get(0).getId(), member1.getUsername());
         List<Comment> commentList = commentService.getComments(story.getId());
 
         //then
@@ -176,15 +176,14 @@ class CommentServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
     void deleteStory() {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createComment(story.getId(), commentWriteDto1, BoardType.STORY);
-        storyCommandService.deleteStory(story.getId());
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
+        storyCommandService.deleteStoryByUsername(story.getId(), member1.getUsername());
 
         List<Comment> comments = commentService.getComments(story.getId());
         //then

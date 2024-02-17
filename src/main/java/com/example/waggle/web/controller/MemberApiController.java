@@ -64,7 +64,8 @@ public class MemberApiController {
     public ApiResponseDto<Long> updateInfo(
             @RequestPart MemberRequest.Put request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
-            @RequestParam boolean allowUpload) {
+            @RequestParam boolean allowUpload,
+            @AuthUser UserDetails userDetails) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
@@ -72,7 +73,7 @@ public class MemberApiController {
         } else {
             request.setProfileImgUrl(removePrefixCoverUrl);
         }
-        Long memberId = memberCommandService.updateMemberInfo(request);
+        Long memberId = memberCommandService.updateMemberInfo(userDetails.getUsername(), request);
         return ApiResponseDto.onSuccess(memberId);
     }
 

@@ -1,11 +1,11 @@
 package com.example.waggle.recommend.repository;
 
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.board.story.entity.Story;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.recommend.entity.Recommend;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -42,17 +42,20 @@ class RecommendRepositoryTest {
         member = Member.builder()
                 .username("username")
                 .password("password")
+                .userUrl("hi1")
                 .nickname("nickname")
                 .email("email")
                 .build();
         member1 = Member.builder()
                 .username("username1")
+                .userUrl("hi2")
                 .password("password1")
                 .nickname("nickname1")
                 .email("email1")
                 .build();
         member2 = Member.builder()
                 .username("username2")
+                .userUrl("hi3")
                 .password("password2")
                 .nickname("nickname2")
                 .email("email2")
@@ -75,6 +78,7 @@ class RecommendRepositoryTest {
     void clean() {
         databaseCleanUp.truncateAllEntity();
     }
+
     @Test
     @Transactional
     void countByBoardId() {

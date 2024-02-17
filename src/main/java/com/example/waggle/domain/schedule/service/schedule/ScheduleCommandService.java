@@ -8,7 +8,11 @@ public interface ScheduleCommandService {
 
     Long updateSchedule(Long scheduleId, Post request);
 
+    Long updateScheduleByUsername(Long scheduleId, String username, Post request);
+
     void deleteSchedule(Long scheduleId);
+
+    void deleteScheduleByUsername(Long scheduleId, String username);
 
     void deleteScheduleForHardReset(Long scheduleId);
 

@@ -89,8 +89,44 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
+    public Long updateSirenByUsername(Long boardId,
+                                      String username,
+                                      SirenRequest.Post request,
+                                      MediaRequest.Put mediaUpdateDto,
+                                      List<MultipartFile> multipartFiles) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        siren.changeSiren(request);
+
+        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, siren);
+
+        return siren.getId();
+    }
+
+    @Override
     public void deleteSiren(Long boardId) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN)) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        siren.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+        recommendRepository.deleteAllByBoardId(boardId);
+
+        sirenRepository.delete(siren);
+    }
+
+    @Override
+    public void deleteSirenByUsername(Long boardId, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Siren siren = sirenRepository.findById(boardId)

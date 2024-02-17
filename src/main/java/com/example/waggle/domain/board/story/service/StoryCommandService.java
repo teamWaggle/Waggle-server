@@ -22,5 +22,13 @@ public interface StoryCommandService {
                        MediaRequest.Put mediaListDto,
                        List<MultipartFile> multipartFiles);
 
+    Long updateStoryByUsername(Long boardId,
+                               String username,
+                               StoryRequest.Post storyWriteDto,
+                               MediaRequest.Put mediaListDto,
+                               List<MultipartFile> multipartFiles);
+
     void deleteStory(Long boardId);
+
+    void deleteStoryByUsername(Long boardId, String username);
 }

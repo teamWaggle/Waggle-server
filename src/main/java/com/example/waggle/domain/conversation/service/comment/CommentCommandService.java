@@ -10,7 +10,11 @@ public interface CommentCommandService {
 
     Long updateComment(Long commentId, CommentRequest.Post commentWriteDto);
 
+    Long updateCommentByUsername(Long commentId, String username, CommentRequest.Post commentWriteDto);
+
     void deleteComment(Long commentId);
+
+    void deleteCommentByUsername(Long commentId, String username);
 
     void deleteCommentForHardReset(Long commentId);
 

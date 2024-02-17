@@ -100,8 +100,42 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
+    public Long updateAnswerByUsername(Long boardId, String username, AnswerRequest.Post request, MediaRequest.Put mediaUpdateDto, List<MultipartFile> multipartFiles) {
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
+            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Answer answer = answerRepository.findById(boardId)
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+
+        answer.changeAnswer(request.getContent());
+
+        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, answer);
+
+        return answer.getId();
+    }
+
+    @Override
     public void deleteAnswer(Long boardId) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
+            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Answer answer = answerRepository.findById(boardId)
+                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        answer.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+        recommendRepository.deleteAllByBoardId(boardId);
+
+        answerRepository.delete(answer);
+    }
+
+    @Override
+    public void deleteAnswerByUsername(Long boardId, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)

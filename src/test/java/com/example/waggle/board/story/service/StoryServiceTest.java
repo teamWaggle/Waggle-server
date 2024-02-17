@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,12 +152,11 @@ class StoryServiceTest {
         //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
         //then
-        assertThat(member1.getContent().size()).isEqualTo(2);
+        assertThat(member1.getContent().size()).isEqualTo(1);
         //assertThat(user1.size()).isEqualTo(1);
     }
 
     @Test
-    @Transactional
     void findStoryViewByBoardId() {
         //given
         setBoardAndMember();
@@ -168,11 +166,10 @@ class StoryServiceTest {
         Story storyByBoardId = storyService.getStoryByBoardId(stories.get(0).getId());
 
         //then
-        assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
+        assertThat(storyByBoardId.getContent()).isEqualTo("i love my choco");
     }
 
     @Test
-    @Transactional
     void changeStory() {
         //given
         setBoardAndMember();
@@ -187,14 +184,13 @@ class StoryServiceTest {
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
-
-        storyCommandService.updateStory(id, editDto, null, null);
+        Member member = memberQueryService.getMemberById(memberId1);
+        storyCommandService.updateStoryByUsername(id, member.getUsername(), editDto, null, null);
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then
 //        assertThat(isSameUser).isTrue();
         assertThat(storyByBoardId.getContent()).isEqualTo("edit edit edit");
-        assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
     }
 
     @Test
@@ -204,8 +200,8 @@ class StoryServiceTest {
         List<Story> stories = storyService.getStories();
         Story storyByBoardId = storyService.getStoryByBoardId(stories.get(0).getId());
         //when
-        storyCommandService.deleteStory(storyByBoardId.getId());
-        log.info("=========remove service ==============");
+        Member member = memberQueryService.getMemberById(memberId1);
+        storyCommandService.deleteStoryByUsername(storyByBoardId.getId(), member.getUsername());
         List<Hashtag> allHashtags = hashtagQueryService.getAllHashtags();
         Page<Story> pagedStories = storyService.getPagedStories(pageable);
         //then

@@ -9,7 +9,7 @@ public interface MemberCommandService {
 
     Long registerMemberInfo(String username, MemberRequest.RegisterDto request);
 
-    Long updateMemberInfo(MemberRequest.Put request);
+    Long updateMemberInfo(String username, MemberRequest.Put request);
 
     void deleteMember();
 

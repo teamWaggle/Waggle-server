@@ -25,6 +25,14 @@ public interface QuestionCommandService {
                           MediaRequest.Put mediaUpdateDto,
                           List<MultipartFile> multipartFiles);
 
+    Long updateQuestionByUsername(Long boardId,
+                                  String username,
+                                  QuestionRequest.Post request,
+                                  MediaRequest.Put mediaUpdateDto,
+                                  List<MultipartFile> multipartFiles);
+
     void deleteQuestion(Long boardId);
+
+    void deleteQuestionByUsername(Long boardId, String username);
 
 }

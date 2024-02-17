@@ -24,5 +24,13 @@ public interface SirenCommandService {
                        MediaRequest.Put mediaUpdateDto,
                        List<MultipartFile> multipartFiles);
 
+    Long updateSirenByUsername(Long boardId,
+                               String username,
+                               SirenRequest.Post request,
+                               MediaRequest.Put mediaUpdateDto,
+                               List<MultipartFile> multipartFiles);
+
     void deleteSiren(Long boardId);
+
+    void deleteSirenByUsername(Long boardId, String username);
 }

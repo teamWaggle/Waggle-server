@@ -83,8 +83,39 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
+    public Long updateScheduleByUsername(Long scheduleId, String username, Post request) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
+            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
+
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        schedule.update(request);
+
+        return schedule.getId();
+    }
+
+    @Override
     public void deleteSchedule(Long scheduleId) {
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
+            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+
+        memberScheduleRepository.deleteAllByScheduleId(scheduleId);
+        scheduleRepository.delete(schedule);
+    }
+
+    @Override
+    public void deleteScheduleByUsername(Long scheduleId, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Schedule schedule = scheduleRepository.findById(scheduleId)

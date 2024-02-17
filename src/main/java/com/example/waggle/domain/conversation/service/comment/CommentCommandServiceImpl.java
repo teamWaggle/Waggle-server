@@ -71,8 +71,31 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
+    public Long updateCommentByUsername(Long commentId, String username, CommentRequest.Post commentWriteDto) {
+        Member signInMember = memberQueryService.getMemberByUsername(username);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        validateMember(comment, signInMember);
+
+        comment.changeContent(commentWriteDto.getContent());
+        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedNickname());
+        return comment.getId();
+    }
+
+    @Override
     public void deleteComment(Long commentId) {
         Member signInMember = memberQueryService.getSignInMember();
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        validateMember(comment, signInMember);
+
+        replyRepository.deleteAllByCommentId(commentId);
+        commentRepository.delete(comment);
+    }
+
+    @Override
+    public void deleteCommentByUsername(Long commentId, String username) {
+        Member signInMember = memberQueryService.getMemberByUsername(username);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         validateMember(comment, signInMember);

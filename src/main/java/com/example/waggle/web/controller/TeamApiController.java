@@ -80,8 +80,8 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 팀원을 찾을 수 없습니다.")
     @DeleteMapping("/{teamId}/members/{memberId}")
-    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
-        teamCommandService.deleteTeamMemberByLeader(teamId, memberId);
+    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable Long teamId, @PathVariable Long memberId, @AuthUser UserDetails userDetails) {
+        teamCommandService.deleteTeamMemberByLeader(teamId, memberId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -98,8 +98,8 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 리더 변경 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 멤버를 찾을 수 없습니다.")
     @PutMapping("/{teamId}/leader/{memberId}")
-    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
-        teamCommandService.changeTeamLeader(teamId, memberId);
+    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @PathVariable Long memberId, @AuthUser UserDetails userDetails) {
+        teamCommandService.changeTeamLeader(teamId, memberId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -116,9 +116,11 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 참여 요청 승인/거절 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 요청을 찾을 수 없습니다.")
     @PutMapping("/{teamId}/participation/{memberId}")
-    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId, @PathVariable Long memberId,
-                                                          @RequestParam boolean accept) {
-        teamCommandService.respondToParticipation(teamId, memberId, accept);
+    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId,
+                                                          @PathVariable Long memberId,
+                                                          @RequestParam boolean accept,
+                                                          @AuthUser UserDetails userDetails) {
+        teamCommandService.respondToParticipation(teamId, memberId, userDetails.getUsername(), accept);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

@@ -106,10 +106,48 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         return story.getId();
     }
 
+    @Override
+    public Long updateStoryByUsername(Long boardId,
+                                      String username,
+                                      StoryRequest.Post storyWriteDto,
+                                      MediaRequest.Put mediaListDto,
+                                      List<MultipartFile> multipartFiles) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        story.changeContent(storyWriteDto.getContent());
+
+        mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
+
+        story.getBoardHashtags().clear();
+        for (String hashtag : storyWriteDto.getHashtags()) {
+            boardService.saveHashtag(story, hashtag);
+        }
+        return story.getId();
+    }
+
 
     @Override
     public void deleteStory(Long boardId) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+        story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+        recommendRepository.deleteAllByBoardId(story.getId());
+
+        storyRepository.delete(story);
+    }
+
+    @Override
+    public void deleteStoryByUsername(Long boardId, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)

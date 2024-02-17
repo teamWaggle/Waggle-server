@@ -109,8 +109,51 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
+    public Long updateQuestionByUsername(Long boardId,
+                                         String username,
+                                         QuestionRequest.Post request,
+                                         MediaRequest.Put mediaUpdateDto,
+                                         List<MultipartFile> multipartFiles) {
+        Member member = memberQueryService.getMemberByUsername(username);
+
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+
+        question.changeQuestion(request);
+
+        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, question);
+
+        question.getBoardHashtags().clear();
+        for (String hashtag : request.getHashtags()) {
+            boardService.saveHashtag(question, hashtag);
+        }
+        return question.getId();
+    }
+
+    @Override
     public void deleteQuestion(Long boardId) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
+        answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
+
+        recommendRepository.deleteAllByBoardId(question.getId());
+
+        questionRepository.delete(question);
+    }
+
+    @Override
+    public void deleteQuestionByUsername(Long boardId, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)

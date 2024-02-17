@@ -26,7 +26,13 @@ public interface AnswerCommandService {
                         MediaRequest.Put mediaUpdateDto,
                         List<MultipartFile> multipartFiles);
 
+    Long updateAnswerByUsername(Long boardId,
+                                String username,
+                                AnswerRequest.Post request,
+                                MediaRequest.Put mediaUpdateDto,
+                                List<MultipartFile> multipartFiles);
+
     void deleteAnswer(Long boardId);
 
-
+    void deleteAnswerByUsername(Long boardId, String username);
 }
