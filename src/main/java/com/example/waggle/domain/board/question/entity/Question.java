@@ -27,7 +27,7 @@ public class Question extends Board {
     public void changeQuestion(QuestionRequest.Post request) {
         this.content = request.getContent();
         this.title = request.getTitle();
-        this.status = request.getStatus();
+        this.status = ResolutionStatus.valueOf(request.getStatus());
     }
 
     public void changeStatus(ResolutionStatus status) {

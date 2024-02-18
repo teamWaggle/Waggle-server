@@ -1,7 +1,10 @@
 package com.example.waggle.domain.board.siren.service;
 
+import static com.example.waggle.domain.board.service.BoardType.SIREN;
+
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
+import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
@@ -12,15 +15,12 @@ import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.siren.SirenRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-
-import static com.example.waggle.domain.board.service.BoardType.SIREN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,7 +45,8 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
-    public Long createSirenByUsername(SirenRequest.Post sirenWriteDto, List<MultipartFile> multipartFiles, String username) {
+    public Long createSirenByUsername(SirenRequest.Post sirenWriteDto, List<MultipartFile> multipartFiles,
+                                      String username) {
         Siren build = buildSiren(sirenWriteDto, username);
         sirenRepository.save(build);
         mediaCommandService.createMedia(multipartFiles, build);
@@ -149,7 +150,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .petAge(sirenWriteDto.getPetAge())
                 .lostDate(sirenWriteDto.getLostDate())
                 .lostLocate(sirenWriteDto.getLostLocate())
-                .category(sirenWriteDto.getCategory())
+                .category(SirenCategory.valueOf(sirenWriteDto.getCategory()))
                 .member(signInMember)
                 .build();
         return build;
@@ -166,7 +167,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .petAge(sirenWriteDto.getPetAge())
                 .lostDate(sirenWriteDto.getLostDate())
                 .lostLocate(sirenWriteDto.getLostLocate())
-                .category(sirenWriteDto.getCategory())
+                .category(SirenCategory.valueOf(sirenWriteDto.getCategory()))
                 .member(signInMember)
                 .build();
         return build;
