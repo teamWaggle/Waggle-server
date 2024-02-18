@@ -1,6 +1,5 @@
 package com.example.waggle.recommend.service;
 
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
@@ -118,7 +117,7 @@ class RecommendServiceTest {
         Story story = storyQueryService.getStories().get(0);
 
         //when
-        recommendService.handleRecommendationByUsername(story.getId(), BoardType.STORY, recommendMember.getUsername());
+        recommendService.handleRecommendationByUsername(story.getId(), recommendMember.getUsername());
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
         int count = recommendQueryService.countRecommend(storyByBoardId.getId());
 
@@ -131,8 +130,8 @@ class RecommendServiceTest {
         //given
         setBoardAndMember();
         Story story = storyQueryService.getStories().get(0);
-        recommendService.handleRecommendationByUsername(story.getId(), BoardType.STORY, recommendMember.getUsername());
-        recommendService.handleRecommendationByUsername(story.getId(), BoardType.STORY, recommendMember.getUsername());
+        recommendService.handleRecommendationByUsername(story.getId(), recommendMember.getUsername());
+        recommendService.handleRecommendationByUsername(story.getId(), recommendMember.getUsername());
 
         //when
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
@@ -148,7 +147,7 @@ class RecommendServiceTest {
         setBoardAndMember();
         Story story = storyQueryService.getStories().get(0);
         //then
-        assertThatThrownBy(() -> recommendService.handleRecommendationByUsername(story.getId(), BoardType.STORY, member.getUsername()));
+        assertThatThrownBy(() -> recommendService.handleRecommendationByUsername(story.getId(), member.getUsername()));
     }
 
     @Test
@@ -165,7 +164,7 @@ class RecommendServiceTest {
 
         storyService.createStoryByUsername(request, null, memberById.getUsername());
         Story story = storyQueryService.getStories().get(0);
-        recommendService.handleRecommendationByUsername(story.getId(), BoardType.STORY, memberById1.getUsername());
+        recommendService.handleRecommendationByUsername(story.getId(), memberById1.getUsername());
         //when
         storyService.deleteStoryByUsername(story.getId(), memberById.getUsername());
         int size = recommendQueryService.getRecommendingMembers(story.getId()).size();

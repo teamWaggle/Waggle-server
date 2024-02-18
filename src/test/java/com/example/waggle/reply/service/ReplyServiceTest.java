@@ -1,6 +1,5 @@
 package com.example.waggle.reply.service;
 
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
@@ -151,7 +150,7 @@ class ReplyServiceTest {
         Story story = storyQueryService.getStories().get(0);
 
         //comment set
-        commentService.createCommentByUsername(story.getId(), commentWriteDto1, member.getUsername(), BoardType.STORY);
+        commentService.createCommentByUsername(story.getId(), commentWriteDto1, member.getUsername());
         //reply set
         List<Comment> comments = commentQueryService.getComments(story.getId());
         replyService.createReplyByUsername(comments.get(0).getId(), replyWriteDto1, member.getUsername());

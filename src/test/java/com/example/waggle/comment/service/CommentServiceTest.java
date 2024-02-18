@@ -1,6 +1,5 @@
 package com.example.waggle.comment.service;
 
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
@@ -134,7 +133,7 @@ class CommentServiceTest {
         Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername());
         List<Comment> comments = commentService.getComments(story.getId());
         //then
         assertThat(comments.size()).isEqualTo(1);
@@ -146,7 +145,7 @@ class CommentServiceTest {
         //given
         setBoardAndMember();
         Story story = storyService.getStories().get(0);
-        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername());
         List<Comment> comments = commentService.getComments(story.getId());
 
         //when
@@ -165,7 +164,7 @@ class CommentServiceTest {
         Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername());
         List<Comment> comments = commentService.getComments(story.getId());
         commentCommandService.deleteCommentByUsername(comments.get(0).getId(), member1.getUsername());
         List<Comment> commentList = commentService.getComments(story.getId());
@@ -182,7 +181,7 @@ class CommentServiceTest {
         Story story = storyService.getStories().get(0);
 
         //when
-        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername(), BoardType.STORY);
+        commentCommandService.createCommentByUsername(story.getId(), commentWriteDto1, member1.getUsername());
         storyCommandService.deleteStoryByUsername(story.getId(), member1.getUsername());
 
         List<Comment> comments = commentService.getComments(story.getId());

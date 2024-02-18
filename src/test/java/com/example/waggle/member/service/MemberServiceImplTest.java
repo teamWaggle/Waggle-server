@@ -1,6 +1,5 @@
 package com.example.waggle.member.service;
 
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
@@ -207,9 +206,9 @@ class MemberServiceImplTest {
         Member B = memberQueryService.getMemberById(member2);
 
         Long story = storyCommandService.createStoryByUsername(storyRequest, null, A.getUsername());
-        Long comment = commentCommandService.createCommentByUsername(story, commentRequest, A.getUsername(), BoardType.STORY);
+        Long comment = commentCommandService.createCommentByUsername(story, commentRequest, A.getUsername());
         replyCommandService.createReplyByUsername(comment, replyRequest, A.getUsername());
-        commentCommandService.createCommentByUsername(story, commentRequest2, A.getUsername(), BoardType.STORY);
+        commentCommandService.createCommentByUsername(story, commentRequest2, A.getUsername());
         followCommandService.follow(A.getUsername(), B.getUsername());
         Long pet = petService.createPetByUsername(petRequest, A.getUsername());
         Member member = memberQueryService.getMemberByUsername(A.getUsername());
