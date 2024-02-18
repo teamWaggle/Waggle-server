@@ -20,6 +20,7 @@ public class ReplyResponse {
         @Builder.Default
         private List<String> mentionedNickname = new ArrayList<>();
         private MemberResponse.SummaryDto member;
+        private Boolean isMine;
     }
 
     @Builder
@@ -32,7 +33,7 @@ public class ReplyResponse {
         @Builder.Default
         private List<ReplyResponse.ViewDto> replyList = new ArrayList<>();
         private long totalReplies;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 }
