@@ -73,11 +73,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
-        listDto.getSirenList().stream()
-                .forEach(h -> {
-                    h.setIsRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
-                    h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -90,11 +86,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
-        listDto.getSirenList().stream()
-                .forEach(h -> {
-                    h.setIsRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
-                    h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -105,8 +97,7 @@ public class SirenApiController {
     public ApiResponseDto<SirenResponse.DetailDto> getSirenByBoardId(@PathVariable Long boardId) {
         Siren siren = sirenQueryService.getSirenByBoardId(boardId);
         SirenResponse.DetailDto detailDto = SirenConverter.toDetailDto(siren);
-        detailDto.setIsRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
-        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
+        recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }
 

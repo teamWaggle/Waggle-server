@@ -74,11 +74,7 @@ public class AnswerApiController {
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(questionId, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswers);
         //recommend relation field
-        listDto.getAnswerList().stream()
-                .forEach(a -> {
-                    a.setIsRecommend(recommendQueryService.checkRecommend(a.getId(), a.getMember().getId()));
-                    a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -92,11 +88,7 @@ public class AnswerApiController {
         Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswerByUsername);
 
-        listDto.getAnswerList().stream()
-                .forEach(a -> {
-                    a.setIsRecommend(recommendQueryService.checkRecommend(a.getId(), a.getMember().getId()));
-                    a.setRecommendCount(recommendQueryService.countRecommend(a.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 

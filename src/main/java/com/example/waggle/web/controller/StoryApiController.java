@@ -101,8 +101,7 @@ public class StoryApiController {
     public ApiResponseDto<StoryResponse.DetailDto> getStoryByBoardId(@PathVariable Long boardId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
         StoryResponse.DetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
-        detailDto.setIsRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
-        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
+        recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }
 
