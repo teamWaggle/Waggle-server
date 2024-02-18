@@ -1,10 +1,10 @@
 package com.example.waggle.board.story.repository;
 
 import com.example.waggle.domain.board.story.entity.Story;
+import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.hashtag.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
-import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class BoardRepositoryTest {
     @Test
     @Transactional
     void test() {
-        Member member = Member.builder().email("34567").nickname("234289").username("238387384").password("78y93284").build();
+        Member member = Member.builder().email("34567").nickname("234289").username("238387384").userUrl("hi").password("78y93284").build();
         memberRepository.save(member);
 
         Story testStory = Story.builder().content("Board test Repository").member(member).build();
@@ -44,7 +44,7 @@ class BoardRepositoryTest {
         hashtags.add(hashtag2);
 
         for (Hashtag hashtag : hashtags) {
-            BoardHashtag.builder().board(testStory).hashtag(hashtag).build().link(testStory,hashtag);
+            BoardHashtag.builder().board(testStory).hashtag(hashtag).build().link(testStory, hashtag);
             //build.addHashtag(testStory,hashtag);
         }
 
@@ -58,6 +58,7 @@ class BoardRepositoryTest {
         assertThat(all.size()).isEqualTo(1);
         assertThat(all.get(0).getBoardHashtags().size()).isEqualTo(2);
     }
+
     @Test
     @Transactional
     void testFindByHashtag() {

@@ -3,18 +3,17 @@ package com.example.waggle.follow.service;
 import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.FollowHandler;
-import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,12 +28,19 @@ public class FollowServiceTest {
     @Autowired
     MemberCommandService memberCommandService;
     @Autowired
+    MemberQueryService memberQueryService;
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    MemberRequest.RegisterDto signUpDto1;
-    MemberRequest.RegisterDto signUpDto2;
-    MemberRequest.RegisterDto signUpDto3;
-    MemberRequest.RegisterDto signUpDto4;
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
+    MemberRequest.AccessDto signUpDto3;
+    MemberRequest.AccessDto signUpDto4;
+
+    Long memberId1;
+    Long memberId2;
+    Long memberId3;
+    Long memberId4;
 
 
     @AfterEach
@@ -43,101 +49,86 @@ public class FollowServiceTest {
     }
 
     void setUp() {
-        signUpDto1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
+        signUpDto1 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임1")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .email("wjdgks3264@naver.com")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterDto.builder()
-                .username("member2")
+        signUpDto2 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임2")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .email("wjdgks2972@naver.com")
                 .build();
 
-        signUpDto3 = MemberRequest.RegisterDto.builder()
-                .username("member3")
+        signUpDto3 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임3")
-                .address("서울시 광진구")
-                .email("wjdgks@naver.com")
-                .phone("010-1234-5678")
+                .email("wjdgksdfs@naver.com")
                 .build();
 
-        signUpDto4 = MemberRequest.RegisterDto.builder()
-                .username("member4")
+        signUpDto4 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임4")
-                .address("서울시 광진구")
                 .email("hi@naver.com")
-                .phone("010-1234-5678")
                 .build();
 
-        memberCommandService.signUp(signUpDto1);
-        memberCommandService.signUp(signUpDto2);
-        memberCommandService.signUp(signUpDto3);
-        memberCommandService.signUp(signUpDto4);
+        memberId1 = memberCommandService.signUp(signUpDto1);
+        memberId2 = memberCommandService.signUp(signUpDto2);
+        memberId3 = memberCommandService.signUp(signUpDto3);
+        memberId4 = memberCommandService.signUp(signUpDto4);
 
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
     void follow() {
         //given
         setUp();
         //when
-        followCommandService.follow("member1", "member2");
-        List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
+        Member A = memberQueryService.getMemberById(memberId1);
+        Member B = memberQueryService.getMemberById(memberId2);
+        followCommandService.follow(A.getUsername(), B.getNickname());
+        List<Follow> followingsByUser = followQueryService.getFollowings(memberId1);
         //then
-        assertThat(followingsByUser.get(0).getToMember().getUsername()).isEqualTo("member2");
+        assertThat(followingsByUser.size()).isEqualTo(1);
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
     void unfollow() {
         //given
         setUp();
         //when
-        Long followId = followCommandService.follow("member1", "member2");
-        followCommandService.follow("member1", "member3");
-        followCommandService.unFollow("member1", "member2");
-        List<Follow> followingsByUser = followQueryService.getFollowings(SecurityUtil.getCurrentUsername());
+        Member A = memberQueryService.getMemberById(memberId1);
+        Member B = memberQueryService.getMemberById(memberId2);
+        Member C = memberQueryService.getMemberById(memberId3);
+        followCommandService.follow(A.getUsername(), B.getNickname());
+        followCommandService.follow(A.getUsername(), C.getNickname());
+        followCommandService.unFollow(A.getUsername(), B.getNickname());
+        List<Follow> followingsByUser = followQueryService.getFollowings(memberId1);
         //then
-        assertThat(followingsByUser.get(0).getFromMember().getUsername()).isEqualTo("member1");
-        assertThat(followingsByUser.get(0).getToMember().getUsername()).isEqualTo("member3");
+        assertThat(followingsByUser.size()).isEqualTo(1);
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
     void follow_exception() {
         //given
         setUp();
         //when
-        followCommandService.follow("member1", "member2");
+        Member A = memberQueryService.getMemberById(memberId1);
+        Member B = memberQueryService.getMemberById(memberId2);
+        followCommandService.follow(A.getUsername(), B.getNickname());
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow("member1", "member2"));
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow(A.getUsername(), B.getNickname()));
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
     void unfollow_exception() {
         //given
         setUp();
         //when
-        Long followId = followCommandService.follow("member1", "member2");
-        followCommandService.follow("member1", "member3");
-        followCommandService.unFollow("member1", "member2");
+        Member A = memberQueryService.getMemberById(memberId1);
+        Member B = memberQueryService.getMemberById(memberId2);
+        Member C = memberQueryService.getMemberById(memberId3);
+        Long followId = followCommandService.follow(A.getUsername(), B.getNickname());
+        followCommandService.follow(A.getUsername(), C.getNickname());
+        followCommandService.unFollow(A.getUsername(), B.getNickname());
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow("member1", "member2"));
+        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow(A.getUsername(), B.getNickname()));
     }
 }

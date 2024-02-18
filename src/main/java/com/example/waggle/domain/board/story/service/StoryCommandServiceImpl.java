@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.example.waggle.domain.board.service.BoardType.STORY;
@@ -37,7 +36,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     private final CommentCommandService commentCommandService;
 
     @Override
-    public Long createStory(StoryRequest.Post request, List<MultipartFile> multipartFiles) throws IOException {
+    public Long createStory(StoryRequest.Post request, List<MultipartFile> multipartFiles) {
         Story createdStory = buildStory(request);
 
         Story story = storyRepository.save(createdStory);
@@ -50,7 +49,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     }
 
     @Override
-    public Long createStoryByUsername(StoryRequest.Post request, List<MultipartFile> multipartFiles, String username) throws IOException {
+    public Long createStoryByUsername(StoryRequest.Post request, List<MultipartFile> multipartFiles, String username) {
         Story createdStory = buildStory(request, username);
 
         Story story = storyRepository.save(createdStory);
@@ -67,7 +66,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     public Long updateStory(Long boardId,
                             StoryRequest.Post storyWriteDto,
                             List<MultipartFile> multipartFiles,
-                            List<String> deleteFile) throws IOException {
+                            List<String> deleteFile) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -89,8 +88,32 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     public Long updateStoryV2(Long boardId,
                               StoryRequest.Post storyWriteDto,
                               MediaRequest.Put mediaListDto,
-                              List<MultipartFile> multipartFiles) throws IOException {
+                              List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        story.changeContent(storyWriteDto.getContent());
+
+        mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
+
+        story.getBoardHashtags().clear();
+        for (String hashtag : storyWriteDto.getHashtags()) {
+            boardService.saveHashtag(story, hashtag);
+        }
+        return story.getId();
+    }
+
+    @Override
+    public Long updateStoryByUsername(Long boardId,
+                                      String username,
+                                      StoryRequest.Post storyWriteDto,
+                                      MediaRequest.Put mediaListDto,
+                                      List<MultipartFile> multipartFiles) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
@@ -111,6 +134,20 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     @Override
     public void deleteStory(Long boardId) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+        story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+        recommendRepository.deleteAllByBoardId(story.getId());
+
+        storyRepository.delete(story);
+    }
+
+    @Override
+    public void deleteStoryByUsername(Long boardId, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)

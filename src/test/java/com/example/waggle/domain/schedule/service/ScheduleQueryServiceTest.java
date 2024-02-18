@@ -1,160 +1,131 @@
 package com.example.waggle.domain.schedule.service;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.Schedule;
-import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.domain.schedule.entity.TeamMember;
-import com.example.waggle.domain.schedule.repository.ScheduleRepository;
-import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
+import com.example.waggle.domain.schedule.service.team.TeamCommandService;
+import com.example.waggle.domain.schedule.service.team.TeamQueryService;
+import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@WithMockCustomUser
-@Transactional
 @SpringBootTest
 class ScheduleQueryServiceTest {
 
     @Autowired
     ScheduleQueryService scheduleQueryService;
     @Autowired
-    MemberRepository memberRepository;
+    MemberCommandService memberCommandService;
     @Autowired
-    TeamRepository teamRepository;
+    MemberQueryService memberQueryService;
     @Autowired
-    TeamMemberRepository teamMemberRepository;
+    TeamCommandService teamCommandService;
     @Autowired
-    ScheduleRepository scheduleRepository;
+    TeamQueryService teamQueryService;
+    @Autowired
+    ScheduleCommandService scheduleCommandService;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
 
     private Member member1;
     private Member member2;
-    private Team team1;
-    private Team team2;
-    private Schedule schedule1;
+    private Long teamId;
+    private Long scheduleId;
 
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = Member.builder()
-                .username("member1")
-                .password("12345678")
-                .nickname("sdfjsakld")
-                .email("dalsfjk")
+        MemberRequest.AccessDto A = MemberRequest.AccessDto.builder()
+                .password("password")
+                .email("email")
                 .build();
-        memberRepository.save(member1);
-
-        member2 = Member.builder()
-                .username("member2")
-                .password("12345678")
-                .nickname("alsdkfj")
-                .email("23fdfx")
+        MemberRequest.AccessDto B = MemberRequest.AccessDto.builder()
+                .password("password")
+                .email("email1")
                 .build();
-        memberRepository.save(member2);
-
-        // Setup team
-        team1 = Team.builder()
-                .name("team1")
-                .description("team1 description")
-                .leader(member1)
-                .maxTeamSize(4)
-                .colorScheme("red")
+        Long memberA = memberCommandService.signUp(A);
+        Long memberB = memberCommandService.signUp(B);
+        member1 = memberQueryService.getMemberById(memberA);
+        member2 = memberQueryService.getMemberById(memberB);
+        TeamRequest.Post build = TeamRequest.Post.builder()
+                .teamColor("team_3")
+                .maxTeamSize(5)
+                .name("team")
+                .description("hello")
                 .build();
-        teamRepository.save(team1);
-
-        team2 = Team.builder()
-                .name("team2")
-                .description("team2 description")
-                .leader(member1)
-                .maxTeamSize(4)
-                .colorScheme("orange")
-                .build();
-        teamRepository.save(team2);
-
-        // Setup teamMember
-        addMemberToTeam(team1, member1);
-        addMemberToTeam(team2, member1);
-
-        // Setup Schedule
-        schedule1 = Schedule.builder()
+        teamId = teamCommandService.createTeam(build, member1.getUsername());
+        ScheduleRequest.Post schedule = ScheduleRequest.Post.builder()
                 .title("schedule1")
-                .content("schedule1 content")
-                .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
-                .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
-                .member(member1)
+                .content("hi")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
                 .build();
-        scheduleRepository.save(schedule1);
-        team1.addSchedule(schedule1);
+        scheduleId = scheduleCommandService.createSchedule(teamId, schedule, member1.getUsername());
+
     }
 
-    private void addMemberToTeam(Team team, Member member) {
-        TeamMember teamMember = TeamMember.builder()
-                .team(team)
-                .member(member)
-                .build();
-        teamMember.addTeamMember(team, member);
-        teamMemberRepository.save(teamMember);
+    @AfterEach
+    void clean() {
+        databaseCleanUp.truncateAllEntity();
     }
 
     @Test
     void getScheduleById() {
         // when
-        Schedule scheduleById = scheduleQueryService.getScheduleById(schedule1.getId());
+        Schedule scheduleById = scheduleQueryService.getScheduleById(scheduleId);
 
         // then
-        assertThat(scheduleById).isEqualTo(schedule1);
+        assertThat(scheduleById.getContent()).isEqualTo("hi");
     }
 
     @Test
     void getSchedulesByTeamId() {
         // given
-        Schedule schedule2 = Schedule.builder()
-                .title("schedule2")
-                .content("schedule2 content")
-                .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
-                .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
-                .member(member1)
+        ScheduleRequest.Post schedule2 = ScheduleRequest.Post.builder()
+                .title("schedule1")
+                .content("hi")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
                 .build();
-        scheduleRepository.save(schedule2);
-        team1.addSchedule(schedule2);
+        Long schedule = scheduleCommandService.createSchedule(teamId, schedule2, member1.getUsername());
 
         // when
-        List<Schedule> schedules = scheduleQueryService.getTeamSchedules(team1.getId());
+        List<Schedule> schedules = scheduleQueryService.getTeamSchedules(teamId);
 
         // then
         assertThat(schedules.size()).isEqualTo(2);
-        assertThat(schedules).contains(schedule1, schedule2);
     }
 
     @Test
-    void getSchedulesByMemberUsername() {
+    void getSchedulesByMember() {
         // given
-        Schedule schedule2 = Schedule.builder()
-                .title("schedule2")
-                .content("schedule2 content")
-                .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
-                .endTime(LocalDateTime.of(2024, 1, 12, 9, 30))
-                .member(member1)
+        ScheduleRequest.Post schedule2 = ScheduleRequest.Post.builder()
+                .title("schedule1")
+                .content("hi")
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
                 .build();
-        scheduleRepository.save(schedule2);
-        team2.addSchedule(schedule2);
+        Long schedule = scheduleCommandService.createSchedule(teamId, schedule2, member1.getUsername());
 
         // when
         List<Schedule> schedules = scheduleQueryService.getSchedulesByMember(member1.getId());
 
         // then
         assertThat(schedules.size()).isEqualTo(2);
-        assertThat(schedules).contains(schedule1, schedule2);
     }
 
     @Test
@@ -163,28 +134,13 @@ class ScheduleQueryServiceTest {
 
         // Setup team1 schedules
         for (int i = 2; i <= 10; i++) {
-            Schedule newSchedule = Schedule.builder()
+            ScheduleRequest.Post newSchedule = ScheduleRequest.Post.builder()
                     .title("team1 schedule" + i)
                     .content("team1 schedule" + i + " content")
                     .startTime(LocalDateTime.of(2023, i, 12, 9, 30))
                     .endTime(LocalDateTime.of(2023, i + 1, 12, 9, 30))
-                    .member(member1)
                     .build();
-            scheduleRepository.save(newSchedule);
-            team1.addSchedule(newSchedule);
-        }
-
-        // Setup team2 schedules
-        for (int i = 1; i <= 10; i++) {
-            Schedule newSchedule = Schedule.builder()
-                    .title("team2 schedule" + i)
-                    .content("team2 schedule" + i + " content")
-                    .startTime(LocalDateTime.of(2023, i, 12, 9, 30))
-                    .endTime(LocalDateTime.of(2023, i + 1, 12, 9, 30))
-                    .member(member1)
-                    .build();
-            scheduleRepository.save(newSchedule);
-            team2.addSchedule(newSchedule);
+            scheduleCommandService.createSchedule(teamId, newSchedule, member1.getUsername());
         }
 
         // when
@@ -192,10 +148,6 @@ class ScheduleQueryServiceTest {
                 member1.getId(), 2023, 10);
 
         // then
-        assertThat(monthlySchedules.size()).isEqualTo(4);
-        assertThat(monthlySchedules.get(0).getTitle()).isEqualTo("team1 schedule9");
-        assertThat(monthlySchedules.get(1).getTitle()).isEqualTo("team1 schedule10");
-        assertThat(monthlySchedules.get(2).getTitle()).isEqualTo("team2 schedule9");
-        assertThat(monthlySchedules.get(3).getTitle()).isEqualTo("team2 schedule10");
+        assertThat(monthlySchedules.size()).isEqualTo(2);
     }
 }

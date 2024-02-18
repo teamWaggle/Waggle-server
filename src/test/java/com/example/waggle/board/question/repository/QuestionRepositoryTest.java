@@ -55,6 +55,7 @@ class QuestionRepositoryTest {
                 .username("username")
                 .password("password")
                 .nickname("nickname")
+                .userUrl("hi")
                 .email("email")
                 .build();
         Member savedMember = memberRepository.save(member);

@@ -34,6 +34,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final ParticipationRepository participationRepository;
     private final MemberQueryService memberQueryService;
     private final ScheduleCommandService scheduleCommandService;
+    private final int teamCapacityLimit = 50;
 
     @Override
     public Long createTeam(Post request) {
@@ -66,9 +67,21 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public Long updateTeam(Long teamId, Post request) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        validateCallerIsLeader(team);
-        validateMaxTeamMemberSize(request, team);
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team, SecurityUtil.getCurrentUsername());
+        validateTeamMemberIsOverRequestSize(request, team);
+
+        team.update(request);
+        return team.getId();
+    }
+
+    @Override
+    public Long updateTeam(Long teamId, String username, Post request) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team, username);
+        validateTeamMemberIsOverRequestSize(request, team);
 
         team.update(request);
         return team.getId();
@@ -76,8 +89,20 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void deleteTeam(Long teamId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        validateCallerIsLeader(team);
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team, SecurityUtil.getCurrentUsername());
+
+        List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
+        allByTeamId.stream().forEach(schedule -> scheduleCommandService.deleteScheduleForHardReset(schedule.getId()));
+        teamRepository.delete(team);
+    }
+
+    @Override
+    public void deleteTeam(Long teamId, String username) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team, username);
 
         List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
         allByTeamId.stream().forEach(schedule -> scheduleCommandService.deleteScheduleForHardReset(schedule.getId()));
@@ -92,15 +117,17 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         validateMemberDuplication(team, member);
+        validateLimitOfTeamCapacity(team);
         addMemberToTeam(team, member);
 
         return team.getId();
     }
 
     @Override
-    public void deleteTeamMemberByLeader(Long teamId, Long memberId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        validateCallerIsLeader(team);
+    public void deleteTeamMemberByLeader(Long teamId, Long memberId, String username) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateCallerIsLeader(team, username);
         validateRemovedIsLeader(memberId, team);
         memberScheduleRepository.deleteAllByMemberId(memberId);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(memberId, teamId);
@@ -119,12 +146,13 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public void changeTeamLeader(Long teamId, Long memberId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+    public void changeTeamLeader(Long teamId, Long memberId, String leaderUsername) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        validateCallerIsLeader(team);
+        validateCallerIsLeader(team, leaderUsername);
         validateMemberBelongsToTeam(team, member);
 
         team.updateLeader(member);
@@ -144,18 +172,21 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public void respondToParticipation(Long teamId, Long memberId, boolean accept) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+    public void respondToParticipation(Long teamId, Long memberId, String leaderUsername, boolean accept) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        validateCallerIsLeader(team);
+        validateCallerIsLeader(team, leaderUsername);
 
         Participation participation = participationRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND));
 
         if (accept) {
             validateTeamMemberCount(team);
+            validateLimitOfTeamCapacity(team);
             participation.setStatus(Participation.ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
         } else {
@@ -172,8 +203,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private void validateCallerIsLeader(Team team) {
-        if (!team.getLeader().getUsername().equals(SecurityUtil.getCurrentUsername())) {
+    private void validateCallerIsLeader(Team team, String username) {
+        if (!team.getLeader().getUsername().equals(username)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
     }
@@ -203,9 +234,15 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateMaxTeamMemberSize(Post request, Team team) {
+    private static void validateTeamMemberIsOverRequestSize(Post request, Team team) {
         if (team.getTeamMembers().size() > request.getMaxTeamSize()) {
             throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE);
+        }
+    }
+
+    private void validateLimitOfTeamCapacity(Team team) {
+        if (team.getTeamMembers().size() == teamCapacityLimit) {
+            throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_MAX_SIZE);
         }
     }
 

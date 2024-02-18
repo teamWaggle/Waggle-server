@@ -30,7 +30,7 @@ class StoryRepositoryTest {
     @Transactional
     void 생성_내림차순_정렬() {
 
-        Member member = Member.builder().email("34567").nickname("234289").username("238387384").password("78y93284").build();
+        Member member = Member.builder().email("34567").nickname("234289").userUrl("hi").username("238387384").password("78y93284").build();
         memberRepository.save(member);
 
         Story test1 = Story.builder().content("dkdkdk").member(member).build();
@@ -42,7 +42,7 @@ class StoryRepositoryTest {
 
         List<Story> allByOrderByCreatedDateDesc = storyRepository.findAllByOrderByCreatedDateDesc();
         for (Story story : allByOrderByCreatedDateDesc) {
-            log.info("story content = {}",story.getContent());
+            log.info("story content = {}", story.getContent());
             log.info("story createDate = {}", story.getCreatedDate());
         }
     }
@@ -50,7 +50,7 @@ class StoryRepositoryTest {
     @Test
     @Transactional
     void 페이징_내림차순_정렬() {
-        Member member = Member.builder().email("34567").nickname("234289").username("238387384").password("78y93284").build();
+        Member member = Member.builder().email("34567").nickname("234289").username("238387384").userUrl("hi").password("78y93284").build();
         memberRepository.save(member);
 
         for (int i = 0; i < 20; i++) {
