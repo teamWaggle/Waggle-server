@@ -1,5 +1,8 @@
 package com.example.waggle.domain.board.question.service;
 
+import static com.example.waggle.domain.board.service.BoardType.QUESTION;
+
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
@@ -14,15 +17,12 @@ import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-
-import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,7 +75,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-
         mediaCommandService.updateMedia(multipartFiles, deleteFiles, question);
 
         question.getBoardHashtags().clear();
@@ -95,7 +94,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         }
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
 
         question.changeQuestion(request);
 
@@ -121,7 +119,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         }
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
 
         question.changeQuestion(request);
 
@@ -173,7 +170,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question createdQuestion = Question.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .status(request.getStatus())
+                .status(ResolutionStatus.valueOf(request.getStatus()))
                 .member(member).build();
         return createdQuestion;
     }
@@ -184,7 +181,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question createdQuestion = Question.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .status(request.getStatus())
+                .status(ResolutionStatus.valueOf(request.getStatus()))
                 .member(member).build();
         return createdQuestion;
     }
