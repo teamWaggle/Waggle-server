@@ -38,26 +38,25 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     @Override
     public Long createTeam(Post request) {
         Member loginMember = memberQueryService.getSignInMember();
-
-        Team createdTeam = Team.builder().name(request.getName()).description(request.getDescription())
-                .coverImageUrl(request.getCoverImageUrl())
-                .teamColor(Enum.valueOf(TeamColor.class, request.getTeamColor())).maxTeamSize(request.getMaxTeamSize())
-                .leader(loginMember).build();
-
-        Team team = teamRepository.save(createdTeam);
-        addMemberToTeam(team, loginMember);
-
-        return team.getId();
+        return buildTeam(request, loginMember);
     }
 
     @Override
     public Long createTeam(Post request, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return buildTeam(request, member);
+    }
 
-        Team createdTeam = Team.builder().name(request.getName()).description(request.getDescription())
-                .coverImageUrl(request.getCoverImageUrl()).teamColor(TeamColor.valueOf(request.getTeamColor()))
-                .maxTeamSize(request.getMaxTeamSize()).leader(member).build();
+    private Long buildTeam(Post request, Member member) {
+        Team createdTeam = Team.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .coverImageUrl(request.getCoverImageUrl())
+                .teamColor(TeamColor.valueOf(request.getTeamColor()))
+                .maxTeamSize(request.getMaxTeamSize())
+                .leader(member)
+                .build();
 
         Team team = teamRepository.save(createdTeam);
         addMemberToTeam(team, member);
