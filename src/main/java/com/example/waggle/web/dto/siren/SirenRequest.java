@@ -1,10 +1,16 @@
 package com.example.waggle.web.dto.siren;
 
-import com.example.waggle.domain.board.siren.entity.Siren.Category;
+import com.example.waggle.domain.board.ResolutionStatus;
+import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
-import lombok.*;
-
+import com.example.waggle.global.annotation.valid.ValidEnum;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 public class SirenRequest {
     @Getter
@@ -22,6 +28,11 @@ public class SirenRequest {
         private String lostLocate;
         private LocalDateTime lostDate;
         private String content;
-        private Category category;
+
+        @ValidEnum(target = SirenCategory.class)
+        private String category;
+
+        @ValidEnum(target = ResolutionStatus.class)
+        private String status;
     }
 }
