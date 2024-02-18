@@ -74,13 +74,17 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
 
     private void handleDetailDto(Object dto) {
         if (dto instanceof QuestionResponse.DetailDto) {
-            ((QuestionResponse.DetailDto) dto).setIsRecommend(checkRecommend(((QuestionResponse.DetailDto) dto).getId(), ((QuestionResponse.DetailDto) dto).getMember().getId()));
-            ((QuestionResponse.DetailDto) dto).setRecommendCount(countRecommend(((QuestionResponse.DetailDto) dto).getId()));
+            ((QuestionResponse.DetailDto) dto).setIsRecommend(checkRecommend(((QuestionResponse.DetailDto) dto).getId(),
+                    ((QuestionResponse.DetailDto) dto).getMember().getId()));
+            ((QuestionResponse.DetailDto) dto).setRecommendCount(
+                    countRecommend(((QuestionResponse.DetailDto) dto).getId()));
         } else if (dto instanceof StoryResponse.DetailDto) {
-            ((StoryResponse.DetailDto) dto).setIsRecommend(checkRecommend(((StoryResponse.DetailDto) dto).getId(), ((StoryResponse.DetailDto) dto).getMember().getId()));
+            ((StoryResponse.DetailDto) dto).setIsRecommend(checkRecommend(((StoryResponse.DetailDto) dto).getId(),
+                    ((StoryResponse.DetailDto) dto).getMember().getId()));
             ((StoryResponse.DetailDto) dto).setRecommendCount(countRecommend(((StoryResponse.DetailDto) dto).getId()));
         } else if (dto instanceof SirenResponse.DetailDto) {
-            ((SirenResponse.DetailDto) dto).setIsRecommend(checkRecommend(((SirenResponse.DetailDto) dto).getId(), ((SirenResponse.DetailDto) dto).getMember().getId()));
+            ((SirenResponse.DetailDto) dto).setIsRecommend(checkRecommend(((SirenResponse.DetailDto) dto).getId(),
+                    ((SirenResponse.DetailDto) dto).getMember().getId()));
             ((SirenResponse.DetailDto) dto).setRecommendCount(countRecommend(((SirenResponse.DetailDto) dto).getId()));
         }
     }
@@ -100,12 +104,6 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
                     });
         } else if (dto instanceof SirenResponse.ListDto) {
             ((SirenResponse.ListDto) dto).getSirenList()
-                    .forEach(board -> {
-                        board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
-                        board.setRecommendCount(countRecommend(board.getId()));
-                    });
-        } else if (dto instanceof StoryResponse.ListDto) {
-            ((StoryResponse.ListDto) dto).getStoryList()
                     .forEach(board -> {
                         board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
                         board.setRecommendCount(countRecommend(board.getId()));
