@@ -1,6 +1,7 @@
 package com.example.waggle.domain.board.siren.entity;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import jakarta.persistence.*;
@@ -30,7 +31,11 @@ public class Siren extends Board {
     private String contact;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Category category;
+    private SirenCategory category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ResolutionStatus status;
 
     public void changeSiren(SirenRequest.Post request) {
         this.title = request.getTitle();
@@ -42,9 +47,7 @@ public class Siren extends Board {
         this.contact = request.getContact();
         this.content = request.getContent();
         this.category = request.getCategory();
+        this.status = request.getStatus();
     }
 
-    public enum Category {
-        FIND_PET, FIND_OWNER, PROTECT, ETC
-    }
 }

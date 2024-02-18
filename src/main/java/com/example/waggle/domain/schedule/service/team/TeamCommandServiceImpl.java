@@ -4,7 +4,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.schedule.entity.*;
-import com.example.waggle.domain.schedule.entity.Participation.ParticipationStatus;
+import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
@@ -165,8 +165,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         validateNonExistenceOfParticipationRequest(team, member);
 
-        Participation participation = Participation.builder().team(team).member(member)
-                .status(ParticipationStatus.PENDING).build();
+        Participation participation = Participation.builder()
+                .team(team)
+                .member(member)
+                .status(ParticipationStatus.PENDING)
+                .build();
 
         participationRepository.save(participation);
     }
@@ -187,10 +190,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         if (accept) {
             validateTeamMemberCount(team);
             validateLimitOfTeamCapacity(team);
-            participation.setStatus(Participation.ParticipationStatus.ACCEPTED);
+            participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
         } else {
-            participation.setStatus(Participation.ParticipationStatus.REJECTED);
+            participation.setStatus(ParticipationStatus.REJECTED);
         }
         participationRepository.save(participation);
     }
@@ -247,7 +250,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void addMemberToTeam(Team team, Member member) {
-        TeamMember teamMember = TeamMember.builder().team(team).member(member).build();
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
     }

@@ -15,12 +15,21 @@ import com.example.waggle.web.dto.member.VerifyMailRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -93,7 +102,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 전송 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 전송 실패. 잘못된 이메일 형식 등.")
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Valid VerifyMailRequest.ConfirmationDto confirmationDto) {
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated VerifyMailRequest.ConfirmationDto confirmationDto) {
         emailService.sendMail(confirmationDto.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

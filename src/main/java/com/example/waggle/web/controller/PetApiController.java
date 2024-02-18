@@ -12,13 +12,21 @@ import com.example.waggle.web.dto.pet.PetResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +43,7 @@ public class PetApiController {
     @ApiResponse(responseCode = "200", description = "반려견 정보 입력 성공. 입력한 반려견 고유의 ID를 반환.")
     @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createPet(@RequestPart PetRequest.Post request,
+    public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest.Post request,
                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long petId = petCommandService.createPet(request);
@@ -48,7 +56,7 @@ public class PetApiController {
     @ApiResponse(responseCode = "400", description = "정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable Long petId,
-                                          @RequestPart PetRequest.Post request,
+                                          @RequestPart @Validated PetRequest.Post request,
                                           @RequestPart(value = "file", required = false) MultipartFile profileImg,
                                           @RequestParam boolean allowUpload) {
         String removePrefixProfileUrl = MediaUtil.removePrefix(request.getProfileImgUrl());

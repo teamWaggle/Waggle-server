@@ -1,6 +1,6 @@
 package com.example.waggle.web.dto.siren;
 
-import com.example.waggle.domain.board.siren.entity.Siren.Category;
+import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.*;
@@ -26,7 +26,7 @@ public class SirenResponse {
         private String lostLocate;
         private Boolean isRecommend;
         private int recommendCount;
-        private Category category;
+        private SirenCategory category;
 
         private MemberResponse.SummaryDto member;
         private Boolean isMine;
@@ -50,7 +50,7 @@ public class SirenResponse {
         private LocalDateTime createdDate;
         private String lostLocate;
         private String content;
-        private Category category;
+        private SirenCategory category;
         @Builder.Default
         private List<String> medias = new ArrayList<>();
 

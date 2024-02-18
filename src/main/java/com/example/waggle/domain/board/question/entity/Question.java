@@ -1,6 +1,7 @@
 package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,7 +22,7 @@ public class Question extends Board {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private ResolutionStatus status;
 
     public void changeQuestion(QuestionRequest.Post request) {
         this.content = request.getContent();
@@ -29,11 +30,8 @@ public class Question extends Board {
         this.status = request.getStatus();
     }
 
-    public void changeStatus(Status status) {
+    public void changeStatus(ResolutionStatus status) {
         this.status = status;
     }
 
-    public enum Status {
-        RESOLVED, UNRESOLVED
-    }
 }
