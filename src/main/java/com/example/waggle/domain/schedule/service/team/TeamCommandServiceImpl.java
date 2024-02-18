@@ -38,27 +38,17 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     @Override
     public Long createTeam(Post request) {
         Member loginMember = memberQueryService.getSignInMember();
-
-        Team createdTeam = Team.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .coverImageUrl(request.getCoverImageUrl())
-                .teamColor(Enum.valueOf(TeamColor.class, request.getTeamColor()))
-                .maxTeamSize(request.getMaxTeamSize())
-                .leader(loginMember)
-                .build();
-
-        Team team = teamRepository.save(createdTeam);
-        addMemberToTeam(team, loginMember);
-
-        return team.getId();
+        return buildTeam(request, loginMember);
     }
 
     @Override
     public Long createTeam(Post request, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return buildTeam(request, member);
+    }
 
+    private Long buildTeam(Post request, Member member) {
         Team createdTeam = Team.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -76,8 +66,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public Long updateTeam(Long teamId, Post request) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
         validateMaxTeamMemberSize(request, team);
 
@@ -87,8 +76,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void deleteTeam(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
 
         List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
@@ -98,8 +86,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public Long addTeamMember(Long teamId, Long memberId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateTeamMemberCount(team);
 
         Member member = memberRepository.findById(memberId)
@@ -112,8 +99,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void deleteTeamMemberByLeader(Long teamId, Long memberId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team);
         validateRemovedIsLeader(memberId, team);
         memberScheduleRepository.deleteAllByMemberId(memberId);
@@ -122,8 +108,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void deleteTeamMemberByMyself(Long teamId, String username) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -135,8 +120,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void changeTeamLeader(Long teamId, Long memberId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -148,31 +132,26 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     @Override
     public void requestParticipation(Long teamId, String username) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberQueryService.getMemberByUsername(username);
 
         validateNonExistenceOfParticipationRequest(team, member);
 
-        Participation participation = Participation.builder()
-                .teamId(teamId)
-                .username(username)
-                .status(ParticipationStatus.PENDING)
-                .build();
+        Participation participation = Participation.builder().team(team).member(member)
+                .status(ParticipationStatus.PENDING).build();
 
         participationRepository.save(participation);
     }
 
     @Override
     public void respondToParticipation(Long teamId, Long memberId, boolean accept) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         validateCallerIsLeader(team);
 
-        Participation participation = participationRepository.findByTeamIdAndUsername(teamId, member.getUsername())
+        Participation participation = participationRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND));
 
         if (accept) {
@@ -187,8 +166,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
 
     private void validateMemberDuplication(Team team, Member member) {
-        boolean isValid = team.getTeamMembers().stream()
-                .noneMatch(teamMember -> teamMember.getMember().equals(member));
+        boolean isValid = team.getTeamMembers().stream().noneMatch(teamMember -> teamMember.getMember().equals(member));
         if (!isValid) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
         }
@@ -201,15 +179,14 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void validateMemberBelongsToTeam(Team team, Member member) {
-        boolean isMember = team.getTeamMembers().stream()
-                .anyMatch(tm -> tm.getMember().equals(member));
+        boolean isMember = team.getTeamMembers().stream().anyMatch(tm -> tm.getMember().equals(member));
         if (!isMember) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM);
         }
     }
 
     private void validateNonExistenceOfParticipationRequest(Team team, Member member) {
-        if (participationRepository.existsByTeamIdAndUsername(team.getId(), member.getUsername())) {
+        if (participationRepository.existsByTeamAndMember(team, member)) {
             throw new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS);
         }
     }
@@ -233,10 +210,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void addMemberToTeam(Team team, Member member) {
-        TeamMember teamMember = TeamMember.builder()
-                .team(team)
-                .member(member)
-                .build();
+        TeamMember teamMember = TeamMember.builder().team(team).member(member).build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
     }
