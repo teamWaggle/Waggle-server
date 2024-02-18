@@ -1,5 +1,6 @@
 package com.example.waggle.domain.pet.service;
 
+import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
@@ -101,7 +102,7 @@ public class PetCommandServiceImpl implements PetCommandService {
                 .age(petDto.getAge())
                 .name(petDto.getName())
                 .breed(petDto.getBreed())
-                .gender(petDto.getGender())
+                .gender(Gender.valueOf(petDto.getGender()))
                 .member(member)
                 .profileImgUrl(petDto.getProfileImgUrl())
                 .build();
