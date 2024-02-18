@@ -1,7 +1,5 @@
 package com.example.waggle.domain.member.service;
 
-import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
-
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
@@ -23,24 +21,23 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
-import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
-import com.example.waggle.domain.schedule.repository.ParticipationRepository;
-import com.example.waggle.domain.schedule.repository.ScheduleRepository;
-import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -118,6 +115,19 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
         member.updateInfo(request, encodedPassword);
         return member.getId();
+    }
+
+    @Override
+    public Long updatePassword(Long memberId, String password) {
+        Member member = memberQueryService.getMemberById(memberId);
+        member.changePassword(passwordEncoder.encode(password));
+        return member.getId();
+    }
+
+    @Override
+    public Long verifyEmailForPasswordChange(VerifyMailRequest.AuthDto request) {
+        verifyMail(request);
+        return memberQueryService.getMemberByEmail(request.getEmail()).getId();
     }
 
     @Override

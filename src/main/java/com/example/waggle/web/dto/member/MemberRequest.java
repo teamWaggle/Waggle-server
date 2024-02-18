@@ -57,13 +57,4 @@ public class MemberRequest {
         private String profileImgUrl;
 
     }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class FindEmailDto {
-        private String name;
-        private LocalDate birthday;
-    }
 }
