@@ -183,19 +183,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     private void deleteMemberTeams(Member member) {
-        List<TeamMember> teamMemberships = teamMemberRepository.findAllByMember(member);
-        for (TeamMember teamMember : teamMemberships) {
-            Team team = teamMember.getTeam();
-
-            if (team.getLeader().equals(member)) {
-                List<Schedule> schedules = scheduleRepository.findAllByTeam(team);
-                deleteBoards(new ArrayList<>(schedules));
-                teamMemberRepository.deleteAllByTeam(team);
-                teamRepository.delete(team);
-            } else {
-                teamMemberRepository.delete(teamMember);
-            }
+        List<Team> ledTeams = teamRepository.findAllByLeader(member);
+        for (Team team : ledTeams) {
+            List<Schedule> schedules = scheduleRepository.findAllByTeam(team);
+            deleteBoards(new ArrayList<>(schedules));
+            teamMemberRepository.deleteAllByTeam(team);
+            teamRepository.delete(team);
         }
+
+        List<TeamMember> teamMemberships = teamMemberRepository.findAllByMember(member);
+        teamMemberRepository.deleteAll(teamMemberships);
     }
 
     @Override
