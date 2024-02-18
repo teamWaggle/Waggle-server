@@ -51,40 +51,6 @@ public class BoardServiceImpl implements BoardService {
         return board.getMember().equals(member);
     }
 
-    @Override
-    public Board getBoard(Long boardId, BoardType boardType) {
-        Board board;
-
-        switch (boardType) {
-            case STORY:
-                board = storyRepository.findById(boardId)
-                        .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-                break;
-            case QUESTION:
-                board = questionRepository.findById(boardId)
-                        .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-                break;
-            case ANSWER:
-                board = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-                break;
-            case SIREN:
-                board = sirenRepository.findById(boardId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-                break;
-            case SCHEDULE:
-                board = scheduleRepository.findById(boardId)
-                        .orElseThrow(() -> new ScheduleHandler(ErrorStatus.BOARD_NOT_FOUND));
-                Member signInMember = memberQueryService.getSignInMember();
-                if (!memberScheduleRepository.existsByMemberIdAndScheduleId(signInMember.getId(), boardId)) {
-                    throw new ScheduleHandler(ErrorStatus.SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS);
-                }
-                break;
-            default:
-                throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
-        }
-        return board;
-    }
 
     @Override
     public void saveHashtag(Board board, String tag) {

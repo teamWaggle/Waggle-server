@@ -1,12 +1,12 @@
 package com.example.waggle.domain.recommend.service;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.service.BoardService;
-import com.example.waggle.domain.board.service.BoardType;
+import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
+import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +22,14 @@ import java.util.List;
 @Service
 public class RecommendCommandServiceImpl implements RecommendCommandService {
     private final RecommendRepository recommendRepository;
-    private final BoardService boardService;
+    private final BoardRepository boardRepository;
     private final MemberQueryService memberQueryService;
 
 
     @Override
-    public void handleRecommendation(Long boardId, BoardType boardType) {
-        Board board = boardService.getBoard(boardId, boardType);
+    public void handleRecommendation(Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         Member member = memberQueryService.getSignInMember();
         //boardWriter.equals(user)
         if (board.getMember().equals(member)) {
@@ -47,8 +48,9 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     }
 
     @Override
-    public void handleRecommendationByUsername(Long boardId, BoardType boardType, String username) {
-        Board board = boardService.getBoard(boardId, boardType);
+    public void handleRecommendationByUsername(Long boardId, String username) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         Member member = memberQueryService.getMemberByUsername(username);
         //boardWriter.equals(user)
         if (board.getMember().equals(member)) {

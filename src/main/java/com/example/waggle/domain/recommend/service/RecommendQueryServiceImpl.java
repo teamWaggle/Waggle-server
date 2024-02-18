@@ -104,12 +104,6 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
                         board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
                         board.setRecommendCount(countRecommend(board.getId()));
                     });
-        } else if (dto instanceof StoryResponse.ListDto) {
-            ((StoryResponse.ListDto) dto).getStoryList()
-                    .forEach(board -> {
-                        board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
-                        board.setRecommendCount(countRecommend(board.getId()));
-                    });
         }
     }
 

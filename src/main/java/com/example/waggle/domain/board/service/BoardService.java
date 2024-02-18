@@ -6,8 +6,6 @@ import com.example.waggle.domain.member.entity.Member;
 
 public interface BoardService {
 
-    Board getBoard(Long boardId, BoardType boardType);
-
     void saveHashtag(Board board, String tag);
 
     Hashtag getHashtag(String tag);
