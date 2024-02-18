@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -42,6 +45,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday) {
+        return memberRepository.findByNameAndBirthday(name, birthday);
     }
 
     @Override

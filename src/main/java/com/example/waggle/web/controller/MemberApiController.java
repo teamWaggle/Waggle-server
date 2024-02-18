@@ -23,6 +23,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -102,6 +105,15 @@ public class MemberApiController {
     public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest.AuthDto authDto) {
         memberCommandService.verifyMail(authDto);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "이메일 찾기", description = "성명과 생년월일을 통해 이메일을 찾습니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 반환")
+    @ApiResponse(responseCode = "400", description = "회원 검색 실패.")
+    @GetMapping("/email/find")
+    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam String name, @RequestParam LocalDate birthday) {
+        List<Member> members = memberQueryService.getMembersByNameAndBirthday(name, birthday);
+        return ApiResponseDto.onSuccess(MemberConverter.toEmailListDto(members));
     }
 
     @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")

@@ -13,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +48,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     private String name;
 
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 
 
     private String profileImgUrl;

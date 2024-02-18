@@ -2,6 +2,9 @@ package com.example.waggle.domain.member.service;
 
 import com.example.waggle.domain.member.entity.Member;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface MemberQueryService {
 
     Member getMemberByUsername(String username);
@@ -11,6 +14,8 @@ public interface MemberQueryService {
     Member getSignInMember();
 
     Member getMemberById(Long memberId);
+
+    List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday);
 
     boolean isAuthenticated();
 
