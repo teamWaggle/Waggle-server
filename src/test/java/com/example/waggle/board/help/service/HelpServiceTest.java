@@ -1,6 +1,9 @@
 package com.example.waggle.board.help.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.example.waggle.domain.board.siren.entity.Siren;
+import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
 import com.example.waggle.domain.member.entity.Gender;
@@ -10,6 +13,9 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.siren.SirenRequest;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -18,12 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -56,7 +56,7 @@ class HelpServiceTest {
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Siren.Category.FIND_PET)
+                .category(SirenCategory.FIND_PET)
                 .build();
         hwd2 = SirenRequest.Post.builder()
                 .title("this is title")
@@ -65,7 +65,7 @@ class HelpServiceTest {
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Siren.Category.FIND_PET)
+                .category(SirenCategory.FIND_PET)
                 .build();
         hwd3 = SirenRequest.Post.builder()
                 .title("this is title")
@@ -74,7 +74,7 @@ class HelpServiceTest {
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Siren.Category.FIND_PET)
+                .category(SirenCategory.FIND_PET)
                 .build();
         hwd4 = SirenRequest.Post.builder()
                 .title("this is title")
@@ -83,7 +83,7 @@ class HelpServiceTest {
                 .lostDate(LocalDateTime.of(2023, 1, 1, 1, 1))
                 .lostLocate("Seoul")
                 .petGender(Gender.MALE)
-                .category(Siren.Category.FIND_PET)
+                .category(SirenCategory.FIND_PET)
                 .build();
         signUpDto1 = MemberRequest.AccessDto.builder()
                 .email("email1@naver.com")

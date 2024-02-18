@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +44,7 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 작성 성공. 작성한 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createSiren(@RequestPart SirenRequest.Post sirenWriteDto,
+    public ApiResponseDto<Long> createSiren(@RequestPart @Validated SirenRequest.Post sirenWriteDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = sirenCommandService.createSiren(sirenWriteDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -54,7 +55,7 @@ public class SirenApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateSiren(@PathVariable Long boardId,
-                                            @RequestPart SirenRequest.Post request,
+                                            @RequestPart @Validated SirenRequest.Post request,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));

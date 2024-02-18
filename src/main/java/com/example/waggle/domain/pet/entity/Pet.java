@@ -41,7 +41,7 @@ public class Pet extends BaseEntity {
     public void update(PetRequest.Post petDto) {
         this.name = petDto.getName();
         this.breed = petDto.getBreed();
-        this.gender = petDto.getGender();
+        this.gender = Gender.valueOf(petDto.getGender());
         this.age = petDto.getAge();
         this.profileImgUrl = petDto.getProfileImgUrl();
     }

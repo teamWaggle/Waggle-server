@@ -44,8 +44,4 @@ public class Participation {
     @Column(nullable = false)
     private ParticipationStatus status;
 
-    public enum ParticipationStatus {
-        PENDING, ACCEPTED, REJECTED
-    }
-
 }
