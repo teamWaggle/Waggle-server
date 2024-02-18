@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/sirens")
 @RestController
-@Tag(name = "SIREN API", description = "사이렌 API")
+@Tag(name = "Siren API", description = "사이렌 API")
 public class SirenApiController {
 
     private final SirenCommandService sirenCommandService;
@@ -45,7 +45,8 @@ public class SirenApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createSiren(@RequestPart SirenRequest.Post sirenWriteDto,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles)
+            throws IOException {
         Long boardId = sirenCommandService.createSiren(sirenWriteDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -57,9 +58,11 @@ public class SirenApiController {
     public ApiResponseDto<Long> updateSiren(@PathVariable Long boardId,
                                             @RequestPart SirenRequest.Post request,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles)
+            throws IOException {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
         sirenCommandService.updateSirenV2(boardId, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -81,8 +84,9 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 사용자가 작성한 사이렌 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<SirenResponse.ListDto> getSirenListByUsername(@RequestParam(defaultValue = "0") int currentPage,
-                                                                        @PathVariable Long memberId) {
+    public ApiResponseDto<SirenResponse.ListDto> getSirenListByUsername(
+            @RequestParam(defaultValue = "0") int currentPage,
+            @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);

@@ -41,15 +41,7 @@ public class StoryResponse {
     public static class SummaryDto {
 
         private Long id;
-        private LocalDateTime createdDate;
         private String thumbnail;
-        private int recommendCount;
-        private Boolean isRecommend;
-        private Boolean isMine;
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-
-        private MemberResponse.SummaryDto member;
 
     }
 
