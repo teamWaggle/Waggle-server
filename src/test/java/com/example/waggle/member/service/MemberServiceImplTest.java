@@ -214,7 +214,7 @@ class MemberServiceImplTest {
         Member member = memberQueryService.getMemberByUsername(A.getUsername());
 
         //when
-        memberService.deleteMember();
+        memberService.deleteMember(member1);
 
         //then
         List<Story> stories = storyQueryService.getStories();
