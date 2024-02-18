@@ -213,7 +213,7 @@ class TeamCommandServiceTest {
         teamCommandService.requestParticipation(teamId, member2.getUsername());
 
         // then
-        Participation participation = participationRepository.findByTeamIdAndUsername(teamId,
+        Participation participation = participationRepository.findByTeamIdAndMemberUsername(teamId,
                 member2.getUsername()).get();
         assertThat(participation.getTeamId()).isEqualTo(teamId);
         assertThat(participation.getUsername()).isEqualTo(member2.getUsername());
@@ -231,13 +231,13 @@ class TeamCommandServiceTest {
         teamCommandService.respondToParticipation(teamId, member3.getUsername(), false);
 
         // then
-        Participation participationOfMember2 = participationRepository.findByTeamIdAndUsername(teamId,
+        Participation participationOfMember2 = participationRepository.findByTeamIdAndMemberUsername(teamId,
                 member2.getUsername()).get();
         assertThat(participationOfMember2.getTeamId()).isEqualTo(teamId);
         assertThat(participationOfMember2.getUsername()).isEqualTo(member2.getUsername());
         assertThat(participationOfMember2.getStatus()).isEqualTo(ParticipationStatus.ACCEPTED);
 
-        Participation participationOfMember3 = participationRepository.findByTeamIdAndUsername(teamId,
+        Participation participationOfMember3 = participationRepository.findByTeamIdAndMemberUsername(teamId,
                 member3.getUsername()).get();
         assertThat(participationOfMember3.getTeamId()).isEqualTo(teamId);
         assertThat(participationOfMember3.getUsername()).isEqualTo(member3.getUsername());

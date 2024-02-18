@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Entity(name = "recommend")
+@Entity
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,7 +18,7 @@ public class Recommend extends BaseEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "like_id")
+    @Column(name = "recommend_id")
     private Long id;
 
     @NotNull

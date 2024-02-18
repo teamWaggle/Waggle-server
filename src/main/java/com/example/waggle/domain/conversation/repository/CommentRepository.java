@@ -1,6 +1,8 @@
 package com.example.waggle.domain.conversation.repository;
 
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.conversation.entity.Comment;
+import com.example.waggle.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +17,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     void deleteAllByMemberUsername(String username);
 
     boolean existsByMemberId(Long memberId);
+
+    List<Comment> findByBoard(Board board);
+
+    List<Comment> findByMember(Member member);
+
 }
