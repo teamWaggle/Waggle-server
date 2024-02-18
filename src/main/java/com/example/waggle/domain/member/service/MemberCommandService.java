@@ -11,6 +11,10 @@ public interface MemberCommandService {
 
     Long updateMemberInfo(String username, MemberRequest.Put request);
 
+    Long updatePassword(Long memberId, String password);
+
+    Long verifyEmailForPasswordChange(VerifyMailRequest.AuthDto request);
+
     void deleteMember(Long memberId);
 
     void verifyMail(VerifyMailRequest.AuthDto request);

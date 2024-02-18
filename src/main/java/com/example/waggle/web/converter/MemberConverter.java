@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.util.EmailUtil;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.member.MemberResponse;
 
@@ -34,6 +35,13 @@ public class MemberConverter {
                 .totalSize(memberList.size())
                 .build();
 
+    }
+
+    public static MemberResponse.EmailListDto toEmailListDto(List<Member> memberList) {
+        return MemberResponse.EmailListDto.builder()
+                .emails(memberList.stream()
+                        .map(member -> EmailUtil.maskEmail(member.getEmail())).collect(Collectors.toList()))
+                .build();
     }
 
 }
