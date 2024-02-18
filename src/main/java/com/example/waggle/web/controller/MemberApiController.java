@@ -120,8 +120,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
     @PutMapping("/{memberId}/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId, @RequestParam String password) {
-        memberCommandService.updatePassword(memberId, password);
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId, @RequestBody MemberRequest.PasswordDto request) {
+        memberCommandService.updatePassword(memberId, request.getPassword());
         return ApiResponseDto.onSuccess(memberId);
     }
 

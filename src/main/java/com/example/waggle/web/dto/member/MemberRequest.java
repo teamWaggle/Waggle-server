@@ -57,4 +57,12 @@ public class MemberRequest {
         private String profileImgUrl;
 
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordDto {
+        private String password;
+    }
 }
