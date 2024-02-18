@@ -21,7 +21,7 @@ public class StoryResponse {
         private String profileImg;
         private LocalDateTime createdDate;
         private int recommendCount;
-        private boolean isRecommend;
+        private Boolean isRecommend;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
@@ -29,6 +29,7 @@ public class StoryResponse {
         private List<String> medias = new ArrayList<>();
 
         private MemberResponse.SummaryDto member;
+        private Boolean isMine;
 
     }
 
@@ -52,8 +53,8 @@ public class StoryResponse {
         @Builder.Default
         private List<StoryResponse.SummaryDto> storyList = new ArrayList<>();
         private long totalStories;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
 
     }
 }

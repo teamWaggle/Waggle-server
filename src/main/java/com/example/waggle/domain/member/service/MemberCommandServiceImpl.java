@@ -158,7 +158,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void verifyMail(VerifyMailRequest request) {
+    public void verifyMail(VerifyMailRequest.AuthDto request) {
         String authNum = redisService.getValue(AUTH_CODE_PREFIX + request.getEmail());
         boolean isSuccess = authNum.equals(request.getAuthCode());
         if (!isSuccess) {
