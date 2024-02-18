@@ -75,21 +75,13 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-//    @Operation(summary = "팀원 추가", description = "지정된 팀에 새로운 팀원을 추가합니다.")
-//    @ApiResponse(responseCode = "200", description = "팀원 추가 성공.")
-//    @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
-//    @PostMapping("/{teamId}/members/{memberId}")
-//    public ApiResponseDto<Boolean> addTeamMember(@PathVariable Long teamId, @Parameter(hidden = true) @AuthUser UserDetails userDetails) {
-//        teamCommandService.addTeamMember(teamId, userDetails.getUsername());
-//        return ApiResponseDto.onSuccess(Boolean.TRUE);
-//    }
 
     @Operation(summary = "팀원 삭제(수동)", description = "리더에 의해 지정된 팀에서 특정 팀원을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "팀원 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 팀원을 찾을 수 없습니다.")
     @DeleteMapping("/{teamId}/members/{memberId}")
-    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
-        teamCommandService.deleteTeamMemberByLeader(teamId, memberId);
+    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable Long teamId, @PathVariable Long memberId, @AuthUser UserDetails userDetails) {
+        teamCommandService.deleteTeamMemberByLeader(teamId, memberId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -106,8 +98,8 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 리더 변경 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 멤버를 찾을 수 없습니다.")
     @PutMapping("/{teamId}/leader/{memberId}")
-    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @PathVariable Long memberId) {
-        teamCommandService.changeTeamLeader(teamId, memberId);
+    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId, @PathVariable Long memberId, @AuthUser UserDetails userDetails) {
+        teamCommandService.changeTeamLeader(teamId, memberId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -124,9 +116,11 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 참여 요청 승인/거절 성공.")
     @ApiResponse(responseCode = "404", description = "팀 또는 요청을 찾을 수 없습니다.")
     @PutMapping("/{teamId}/participation/{memberId}")
-    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId, @PathVariable Long memberId,
-                                                          @RequestParam boolean accept) {
-        teamCommandService.respondToParticipation(teamId, memberId, accept);
+    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId,
+                                                          @PathVariable Long memberId,
+                                                          @RequestParam boolean accept,
+                                                          @AuthUser UserDetails userDetails) {
+        teamCommandService.respondToParticipation(teamId, memberId, userDetails.getUsername(), accept);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

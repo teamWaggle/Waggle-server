@@ -1,7 +1,6 @@
 package com.example.waggle.global.security.exception;
 
 import com.example.waggle.global.payload.code.ErrorStatus;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +14,9 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         log.info("entry");
         ErrorStatus errorStatus = ErrorStatus.AUTH_MUST_AUTHORIZED_URI;
-        CustomErrorSend.handleException(response,errorStatus, authException.getMessage());
+        CustomErrorSend.handleException(response, errorStatus, authException.getMessage());
     }
 }

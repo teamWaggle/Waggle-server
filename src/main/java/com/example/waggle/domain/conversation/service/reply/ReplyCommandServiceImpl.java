@@ -56,7 +56,19 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     @Override
     public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
-        if (!validateMember(replyId)) {
+        if (!validateMember(replyId, SecurityUtil.getCurrentUsername())) {
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
+        }
+        Reply reply = getReplyById(replyId);
+        reply.changeContent(replyWriteDto.getContent());
+
+        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
+        return reply.getId();
+    }
+
+    @Override
+    public Long updateReplyByUsername(Long replyId, String username, ReplyRequest.Post replyWriteDto) {
+        if (!validateMember(replyId, username)) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         Reply reply = getReplyById(replyId);
@@ -68,7 +80,16 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     @Override
     public void deleteReply(Long replyId) {
-        if (!validateMember(replyId)) {
+        if (!validateMember(replyId, SecurityUtil.getCurrentUsername())) {
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
+        }
+        Reply reply = getReplyById(replyId);
+        replyRepository.delete(reply);
+    }
+
+    @Override
+    public void deleteReply(Long replyId, String username) {
+        if (!validateMember(replyId, username)) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         Reply reply = getReplyById(replyId);
@@ -80,9 +101,9 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
 
-    public boolean validateMember(Long replyId) {
+    public boolean validateMember(Long replyId, String username) {
         Reply reply = getReplyById(replyId);
         return reply.getMember().getUsername()
-                .equals(SecurityUtil.getCurrentUsername());
+                .equals(username);
     }
 }
