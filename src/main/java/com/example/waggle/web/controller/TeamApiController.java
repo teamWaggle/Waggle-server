@@ -47,7 +47,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 생성 성공. 작성한 팀의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 팀 생성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createTeam(@Validated @RequestPart Post request,
+    public ApiResponseDto<Long> createTeam(@RequestPart @Validated Post request,
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long createdTeamId = teamCommandService.createTeam(request);
@@ -59,7 +59,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId,
-                                           @Validated @RequestPart Post request,
+                                           @RequestPart @Validated Post request,
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                            @RequestParam boolean allowUpload) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(request.getCoverImageUrl());
