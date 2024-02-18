@@ -31,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/sirens")
 @RestController
-@Tag(name = "SIREN API", description = "사이렌 API")
+@Tag(name = "Siren API", description = "사이렌 API")
 public class SirenApiController {
 
     private final SirenCommandService sirenCommandService;
@@ -58,7 +58,8 @@ public class SirenApiController {
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
         sirenCommandService.updateSirenV2(boardId, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -72,11 +73,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
-        listDto.getSirenList().stream()
-                .forEach(h -> {
-                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
-                    h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -84,16 +81,13 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 사용자가 작성한 사이렌 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<SirenResponse.ListDto> getSirenListByUsername(@RequestParam(defaultValue = "0") int currentPage,
-                                                                        @PathVariable Long memberId) {
+    public ApiResponseDto<SirenResponse.ListDto> getSirenListByUsername(
+            @RequestParam(defaultValue = "0") int currentPage,
+            @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenResponse.ListDto listDto = SirenConverter.toListDto(pagedSirenList);
-        listDto.getSirenList().stream()
-                .forEach(h -> {
-                    h.setRecommend(recommendQueryService.checkRecommend(h.getId(), h.getMember().getId()));
-                    h.setRecommendCount(recommendQueryService.countRecommend(h.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -104,8 +98,7 @@ public class SirenApiController {
     public ApiResponseDto<SirenResponse.DetailDto> getSirenByBoardId(@PathVariable Long boardId) {
         Siren siren = sirenQueryService.getSirenByBoardId(boardId);
         SirenResponse.DetailDto detailDto = SirenConverter.toDetailDto(siren);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
-        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
+        recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }
 

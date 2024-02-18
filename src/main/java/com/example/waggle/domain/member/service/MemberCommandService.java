@@ -13,6 +13,6 @@ public interface MemberCommandService {
 
     void deleteMember();
 
-    void verifyMail(VerifyMailRequest request);
+    void verifyMail(VerifyMailRequest.AuthDto request);
 
 }

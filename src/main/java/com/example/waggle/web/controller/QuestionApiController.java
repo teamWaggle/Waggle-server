@@ -69,11 +69,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
-        listDto.getQuestionsList().stream()
-                .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
-                    q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -86,11 +82,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
         QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
-        listDto.getQuestionsList().stream()
-                .forEach(q -> {
-                    q.setRecommend(recommendQueryService.checkRecommend(q.getId(), q.getMember().getId()));
-                    q.setRecommendCount(recommendQueryService.countRecommend(q.getId()));
-                });
+        recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -101,8 +93,7 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionResponse.DetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         QuestionResponse.DetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
-        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
+        recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }
 

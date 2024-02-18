@@ -13,15 +13,25 @@ import com.example.waggle.web.dto.story.StoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -55,7 +65,8 @@ public class StoryApiController {
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        mediaUpdateDto.getDeleteMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         storyCommandService.updateStoryV2(boardId, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -66,14 +77,8 @@ public class StoryApiController {
     @GetMapping
     public ApiResponseDto<StoryResponse.ListDto> getAllStories(@RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Story> pagedStories = storyQueryService.getPagedStories(pageable);
-        StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
-        listDto.getStoryList().stream()
-                .forEach(s -> {
-                    s.setRecommend(recommendQueryService.checkRecommend(s.getId(), s.getMember().getId()));
-                    s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
-                });
-        return ApiResponseDto.onSuccess(listDto);
+        return ApiResponseDto.onSuccess(
+                StoryConverter.toListDto(storyQueryService.getPagedStories(pageable)));
     }
 
     @Operation(summary = "사용자의 스토리 목록 조회", description = "특정 사용자가 작성한 스토리 목록을 조회합니다.")
@@ -83,14 +88,8 @@ public class StoryApiController {
     public ApiResponseDto<StoryResponse.ListDto> getStoriesByUsername(@RequestParam(defaultValue = "0") int currentPage,
                                                                       @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Story> pagedStories = storyQueryService.getPagedStoriesByMemberId(memberId, pageable);
-        StoryResponse.ListDto listDto = StoryConverter.toListDto(pagedStories);
-        listDto.getStoryList().stream()
-                .forEach(s -> {
-                    s.setRecommend(recommendQueryService.checkRecommend(s.getId(), s.getMember().getId()));
-                    s.setRecommendCount(recommendQueryService.countRecommend(s.getId()));
-                });
-        return ApiResponseDto.onSuccess(listDto);
+        return ApiResponseDto.onSuccess(
+                StoryConverter.toListDto(storyQueryService.getPagedStoriesByMemberId(memberId, pageable)));
     }
 
     @Operation(summary = "특정 스토리 조회", description = "특정 스토리의 상세 정보를 조회합니다.")
@@ -100,8 +99,7 @@ public class StoryApiController {
     public ApiResponseDto<StoryResponse.DetailDto> getStoryByBoardId(@PathVariable Long boardId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
         StoryResponse.DetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
-        detailDto.setRecommend(recommendQueryService.checkRecommend(detailDto.getId(), detailDto.getMember().getId()));
-        detailDto.setRecommendCount(recommendQueryService.countRecommend(detailDto.getId()));
+        recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }
 

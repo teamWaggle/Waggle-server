@@ -161,16 +161,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        validateScheduleWriter(schedule, member);
         validateScheduleIsInYourTeam(schedule, member);
 
         memberScheduleRepository.deleteByMemberIdAndScheduleId(member.getId(), scheduleId);
-    }
-
-    private static void validateScheduleWriter(Schedule schedule, Member member) {
-        if (schedule.getMember().equals(member)) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_WRITER_CANNOT_DELETE_MEMBER_SCHEDULE);
-        }
     }
 
     private static void validateTeamMember(Team team, Member member) {

@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.story.StoryResponse;
 import org.springframework.data.domain.Page;
 
@@ -13,11 +14,7 @@ public class StoryConverter {
     public static StoryResponse.SummaryDto toSummaryDto(Story story) {
         return StoryResponse.SummaryDto.builder()
                 .id(story.getId())
-                .createdDate(story.getCreatedDate())
                 .thumbnail(MediaUtil.getThumbnail(story))
-                .hashtags(story.getBoardHashtags().stream()
-                        .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
-                .member(MemberConverter.toMemberSummaryDto(story.getMember()))
                 .build();
     }
 
@@ -41,6 +38,7 @@ public class StoryConverter {
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .medias(MediaUtil.getBoardMedias(story))
                 .member(MemberConverter.toMemberSummaryDto(story.getMember()))
+                .isMine(story.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.siren.SirenResponse;
 import org.springframework.data.domain.Page;
 
@@ -20,6 +21,7 @@ public class SirenConverter {
                 .category(siren.getCategory())
                 .title(siren.getTitle())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
+                .isMine(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 
@@ -49,6 +51,7 @@ public class SirenConverter {
                 .content(siren.getContent())
                 .medias(MediaUtil.getBoardMedias(siren))
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
+                .isMine(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }

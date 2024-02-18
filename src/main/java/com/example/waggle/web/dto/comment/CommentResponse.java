@@ -19,6 +19,7 @@ public class CommentResponse {
         @Builder.Default
         private List<String> mentionedNickname = new ArrayList<>();
         private MemberResponse.SummaryDto member;
+        private Boolean isMine;
     }
 
     @Builder
@@ -31,8 +32,8 @@ public class CommentResponse {
         @Builder.Default
         private List<CommentResponse.ViewDto> commentList = new ArrayList<>();
         private long totalComments;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 
 }
