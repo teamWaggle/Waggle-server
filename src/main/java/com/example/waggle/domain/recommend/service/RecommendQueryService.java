@@ -11,4 +11,7 @@ public interface RecommendQueryService {
     int countRecommend(Long boardId);
 
     List<Member> getRecommendingMembers(Long boardId);
+
+    void getRecommendValues(Object dto);
+
 }

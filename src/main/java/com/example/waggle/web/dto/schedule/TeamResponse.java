@@ -53,7 +53,7 @@ public class TeamResponse {
         @Builder.Default
         private List<SummaryDto> teams = new ArrayList<>();
         private long totalQuestions;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 }

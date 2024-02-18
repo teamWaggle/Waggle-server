@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.comment.CommentResponse;
 import org.springframework.data.domain.Page;
 
@@ -19,6 +20,7 @@ public class CommentConverter {
                 .mentionedNickname(comment.getMentions().stream()
                         .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .member(MemberConverter.toMemberSummaryDto(comment.getMember()))
+                .isMine(comment.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 

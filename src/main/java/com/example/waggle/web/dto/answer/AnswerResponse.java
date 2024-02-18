@@ -19,7 +19,8 @@ public class AnswerResponse {
         private String content;
         private LocalDateTime createdDate;
         private int recommendCount;
-        private boolean isRecommend;
+        private Boolean isRecommend;
+        private Boolean isMine;
 
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
@@ -41,7 +42,7 @@ public class AnswerResponse {
         @Builder.Default
         private List<AnswerResponse.ViewDto> AnswerList = new ArrayList<>();
         private long totalAnswers;
-        private boolean isFirst;
-        private boolean isLast;
+        private Boolean isFirst;
+        private Boolean isLast;
     }
 }
