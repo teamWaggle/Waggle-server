@@ -1,5 +1,7 @@
 package com.example.waggle.domain.recommend.repository;
 
+import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -19,5 +21,9 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     void deleteAllByBoardId(Long boardId);
 
     void deleteAllByMemberUsername(String username);
+
+    void deleteAllByMember(Member member);
+
+    void deleteAllByBoard(Board board);
 
 }

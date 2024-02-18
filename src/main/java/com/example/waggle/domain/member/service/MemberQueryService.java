@@ -16,7 +16,7 @@ public interface MemberQueryService {
 
     void validateEmailDuplication(String email);
 
-    void validateUsernameDuplication(String username);
+    void validateUserUrlDuplication(String userUrl);
 
     void validateNicknameDuplication(String nickname);
 
