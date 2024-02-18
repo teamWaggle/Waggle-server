@@ -109,8 +109,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberInfo(MemberRequest.Put request) {
-        Member member = memberQueryService.getSignInMember();
+    public Long updateMemberInfo(String username, MemberRequest.Put request) {
+        Member member = memberQueryService.getMemberByUsername(username);
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {

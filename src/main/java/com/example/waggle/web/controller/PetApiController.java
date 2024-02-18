@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -37,33 +36,12 @@ public class PetApiController {
     @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart PetRequest.Post request,
-                                          @RequestPart(value = "file", required = false) MultipartFile multipartFile) throws IOException {
+                                          @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long petId = petCommandService.createPet(request);
         return ApiResponseDto.onSuccess(petId);
     }
 
-//    @Operation(summary = "반려견 정보 다수 입력", description = "회원가입 시 반려견 정보를 목록으로 입력합니다. 입력한 반려견들의 주인 이름을 반환합니다.")
-//    @ApiResponse(responseCode = "200", description = "반려견 정보 입력 성공. 입력한 반려견들의 주인 이름 반환.")
-//    @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
-//    @PostMapping(value = "/{memberId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ApiResponseDto<String> createPets(@RequestPart PetRequest.PostList requests,
-//                                             @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
-//                                             @PathVariable Long memberId) throws IOException {
-//        log.info("upload file count = {}", requests.getPetList().stream().filter(request -> request.isUploadProfile() == true).count());
-//        if (requests.getPetList().stream()
-//                .filter(request -> request.isUploadProfile() == true).count() != multipartFiles.size()) {
-//            throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
-//        }
-//        requests.getPetList().stream().forEach(request -> {
-//            if (request.isUploadProfile()) {
-//                request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFiles.get(0), awsS3Service));
-//                multipartFiles.remove(0);
-//            }
-//        });
-//        petCommandService.createPets(requests, username);
-//        return ApiResponseDto.onSuccess(username);
-//    }
 
     @Operation(summary = "반려견 정보 수정", description = "반려견 정보를 수정합니다. 입력한 반려견의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "반려견 정보 수정 성공. 입력한 반려견 고유의 ID를 반환.")
@@ -72,7 +50,7 @@ public class PetApiController {
     public ApiResponseDto<Long> updatePet(@PathVariable Long petId,
                                           @RequestPart PetRequest.Post request,
                                           @RequestPart(value = "file", required = false) MultipartFile profileImg,
-                                          @RequestParam boolean allowUpload) throws IOException {
+                                          @RequestParam boolean allowUpload) {
         String removePrefixProfileUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixProfileUrl);

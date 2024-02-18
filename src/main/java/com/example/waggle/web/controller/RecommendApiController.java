@@ -1,6 +1,5 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
@@ -30,9 +29,8 @@ public class RecommendApiController {
     @ApiResponse(responseCode = "200", description = "좋아요 추가 혹은 취소 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 자신의 게시글에는 좋아요를 누를 수 없습니다.")
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> recommendStory(@PathVariable Long boardId,
-                                               @RequestParam BoardType boardType) {
-        recommendCommandService.handleRecommendation(boardId, boardType);
+    public ApiResponseDto<Long> recommendStory(@PathVariable Long boardId) {
+        recommendCommandService.handleRecommendation(boardId);
         return ApiResponseDto.onSuccess(boardId);
     }
 

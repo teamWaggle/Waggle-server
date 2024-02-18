@@ -35,6 +35,14 @@ public class PetCommandServiceImpl implements PetCommandService {
     }
 
     @Override
+    public Long createPetByUsername(PetRequest.Post petDto, String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
+        Pet build = buildPet(petDto, member);
+        Pet pet = petRepository.save(build);
+        return pet.getId();
+    }
+
+    @Override
     public void createPets(PetRequest.PostList petList, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -53,6 +61,17 @@ public class PetCommandServiceImpl implements PetCommandService {
     }
 
     @Override
+    public Long updatePetByUsername(Long petId, String username, PetRequest.Post petDto) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
+        if (!pet.getMember().getUsername().equals(username)) {
+            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
+        }
+        pet.update(petDto);
+        return pet.getId();
+    }
+
+    @Override
     public void deletePet(Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
@@ -60,8 +79,18 @@ public class PetCommandServiceImpl implements PetCommandService {
     }
 
     @Override
-    public void deleteAllPetByUser() {
-        Member member = memberQueryService.getSignInMember();
+    public void deletePetByUsername(Long petId, String username) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
+        if (!pet.getMember().getUsername().equals(username)) {
+            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
+        }
+        petRepository.delete(pet);
+    }
+
+    @Override
+    public void deleteAllPetByUser(String username) {
+        Member member = memberQueryService.getMemberByUsername(username);
         List<Pet> pets =
                 petRepository.findByMemberUsername(member.getUsername());
         pets.stream().forEach(pet -> petRepository.delete(pet));

@@ -4,9 +4,10 @@ import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
 import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,8 @@ class HelpServiceTest {
     @Autowired
     private MemberCommandService memberCommandService;
     @Autowired
+    private MemberQueryService memberQueryService;
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
     SirenRequest.Post hwd1;
@@ -42,7 +45,7 @@ class HelpServiceTest {
     SirenRequest.Post hwd3;
     SirenRequest.Post hwd4;
 
-    MemberRequest.RegisterDto signUpDto1;
+    MemberRequest.AccessDto signUpDto1;
 
 
     void setting() {
@@ -82,13 +85,9 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(Siren.Category.FIND_PET)
                 .build();
-        signUpDto1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
-                .password("12345678")
-                .nickname("닉네임1")
-                .email("wjdgks3264@naver.com")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
+        signUpDto1 = MemberRequest.AccessDto.builder()
+                .email("email1@naver.com")
+                .password("password1")
                 .build();
     }
 
@@ -98,25 +97,26 @@ class HelpServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
-    void help_create_service() throws IOException {
+    void help_create_service() {
         setting();
-        memberCommandService.signUp(signUpDto1);
+        Long memberId = memberCommandService.signUp(signUpDto1);
 
-        Long helpId = sirenCommandService.createSiren(hwd1, null);
+        Member member = memberQueryService.getMemberById(memberId);
+        Long helpId = sirenCommandService.createSirenByUsername(hwd1, null, member.getUsername());
 
         List<Siren> allHelp = sirenQueryService.getAllSiren();
         assertThat(allHelp.size()).isEqualTo(1);
     }
 
     @Test
-    @WithMockCustomUser
-    void help_read_All_ByPaging_service() throws IOException {
+    void help_read_All_ByPaging_service() {
         setting();
-        memberCommandService.signUp(signUpDto1);
-        Long helpId = sirenCommandService.createSiren(hwd1, null);
-        sirenCommandService.createSiren(hwd2, null);
-        sirenCommandService.createSiren(hwd3, null);
+        Long memberId = memberCommandService.signUp(signUpDto1);
+        Member member = memberQueryService.getMemberById(memberId);
+
+        sirenCommandService.createSirenByUsername(hwd1, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
@@ -125,57 +125,61 @@ class HelpServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
-    void help_read_Mine_ByPaging_service() throws IOException {
+    void help_read_Mine_ByPaging_service() {
         setting();
-        memberCommandService.signUp(signUpDto1);
+        Long memberId = memberCommandService.signUp(signUpDto1);
+        Member member = memberQueryService.getMemberById(memberId);
 
-        Long helpId = sirenCommandService.createSiren(hwd1, null);
-        sirenCommandService.createSiren(hwd2, null);
-        sirenCommandService.createSiren(hwd3, null);
+        sirenCommandService.createSirenByUsername(hwd1, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
 
         //List<helpSummaryDto> allhelp = helpService.getAllhelp();
         Pageable pageable = PageRequest.of(0, 2);
-        Page<Siren> member1 = sirenQueryService.getPagedSirenListByUsername("member1", pageable);
+        Page<Siren> member1 = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         assertThat(member1.getContent().size()).isEqualTo(2);
     }
 
     @Test
-    @WithMockCustomUser
     void help_read_One_service() throws IOException {
         setting();
-        memberCommandService.signUp(signUpDto1);
-        Long helpId = sirenCommandService.createSiren(hwd1, null);
-        sirenCommandService.createSiren(hwd2, null);
-        sirenCommandService.createSiren(hwd3, null);
+        Long memberId = memberCommandService.signUp(signUpDto1);
+        Member member = memberQueryService.getMemberById(memberId);
+
+        Long helpId = sirenCommandService.createSirenByUsername(hwd1, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
 
         Siren siren = sirenQueryService.getSirenByBoardId(helpId);
         assertThat(siren.getContent()).isEqualTo("help page. hi");
     }
 
     @Test
-    @WithMockCustomUser
-    void help_update_One_service() throws IOException {
+    void help_update_One_service() {
         setting();
-        memberCommandService.signUp(signUpDto1);
-        Long helpId = sirenCommandService.createSiren(hwd1, null);
-        sirenCommandService.createSiren(hwd2, null);
-        sirenCommandService.createSiren(hwd3, null);
+        Long memberId = memberCommandService.signUp(signUpDto1);
+        Member member = memberQueryService.getMemberById(memberId);
 
-        Long aLong = sirenCommandService.updateSiren(helpId, hwd4, null, null);
+        Long helpId = sirenCommandService.createSirenByUsername(hwd1, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
+
+        Long aLong = sirenCommandService.updateSirenByUsername(helpId, member.getUsername(), hwd4, null, null);
         Siren help = sirenQueryService.getSirenByBoardId(aLong);
         assertThat(help.getContent()).isEqualTo("help page4. hi");
     }
 
     @Test
-    @WithMockCustomUser
     void help_delete_One_service() throws IOException {
         setting();
-        memberCommandService.signUp(signUpDto1);
-        sirenCommandService.createSiren(hwd1, null);
-        sirenCommandService.createSiren(hwd2, null);
-        Long help = sirenCommandService.createSiren(hwd3, null);
-        sirenCommandService.deleteSiren(help);
+        Long memberId = memberCommandService.signUp(signUpDto1);
+        Member member = memberQueryService.getMemberById(memberId);
+
+        sirenCommandService.createSirenByUsername(hwd1, null, member.getUsername());
+        sirenCommandService.createSirenByUsername(hwd2, null, member.getUsername());
+        Long help = sirenCommandService.createSirenByUsername(hwd3, null, member.getUsername());
+
+        sirenCommandService.deleteSirenByUsername(help, member.getUsername());
         List<Siren> allHelp = sirenQueryService.getAllSiren();
         assertThat(allHelp.size()).isEqualTo(2);
     }

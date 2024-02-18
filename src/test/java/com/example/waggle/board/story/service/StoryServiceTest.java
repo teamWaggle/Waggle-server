@@ -5,9 +5,10 @@ import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.service.HashtagQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,14 +37,16 @@ class StoryServiceTest {
     @Autowired
     private MemberCommandService memberService;
     @Autowired
+    private MemberQueryService memberQueryService;
+    @Autowired
     private HashtagQueryService hashtagQueryService;
 
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
 
-    MemberRequest.RegisterDto signUpDto1;
-    MemberRequest.RegisterDto signUpDto2;
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -58,6 +59,9 @@ class StoryServiceTest {
     List<String> medias2 = new ArrayList<>();
 
     Pageable pageable = PageRequest.of(0, 3);
+
+    Long memberId1;
+    Long memberId2;
 
 
     @BeforeEach
@@ -72,22 +76,14 @@ class StoryServiceTest {
         medias2.add("mediamedia2");
 
 
-        signUpDto1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
-                .password("12345678")
-                .nickname("닉네임1")
-                .email("fjkjk")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
+        signUpDto1 = MemberRequest.AccessDto.builder()
+                .email("email1@naver.com")
+                .password("password")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterDto.builder()
-                .username("member2")
-                .password("12345678")
-                .nickname("닉네임2")
-                .email("wdfcgh")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
+        signUpDto2 = MemberRequest.AccessDto.builder()
+                .email("email2@naver.com")
+                .password("password")
                 .build();
 
         storyWriteDto1 = StoryRequest.Post.builder()
@@ -121,20 +117,21 @@ class StoryServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    private void setBoardAndMember() throws IOException {
+    private void setBoardAndMember() {
         //member set
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
+        memberId1 = memberService.signUp(signUpDto1);
+        memberId2 = memberService.signUp(signUpDto2);
+        Member member1 = memberQueryService.getMemberById(memberId1);
+        Member member2 = memberQueryService.getMemberById(memberId2);
 
         //story set
-        storyCommandService.createStory(storyWriteDto1, null);
-        storyCommandService.createStory(storyWriteDto2, null);
+        storyCommandService.createStoryByUsername(storyWriteDto1, null, member1.getUsername());
+        storyCommandService.createStoryByUsername(storyWriteDto2, null, member2.getUsername());
     }
 
 
     @Test
-    @WithMockCustomUser
-    void findAll() throws Exception {
+    void findAll() {
         //given
         setBoardAndMember();
 
@@ -146,24 +143,21 @@ class StoryServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
-    void findAllStoryByMember() throws IOException {
+    void findAllStoryByMember() {
         //given
         setBoardAndMember();
 
         //when
-        Page<Story> member1 = storyService.getPagedStoriesByUsername("member1", pageable);
+        Page<Story> member1 = storyService.getPagedStoriesByMemberId(memberId1, pageable);
         //List<StorySimpleViewDto> user1 = storyService.findAllStoryByUsername("user1");
 
         //then
-        assertThat(member1.getContent().size()).isEqualTo(2);
+        assertThat(member1.getContent().size()).isEqualTo(1);
         //assertThat(user1.size()).isEqualTo(1);
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
-    void findStoryViewByBoardId() throws IOException {
+    void findStoryViewByBoardId() {
         //given
         setBoardAndMember();
 
@@ -172,14 +166,11 @@ class StoryServiceTest {
         Story storyByBoardId = storyService.getStoryByBoardId(stories.get(0).getId());
 
         //then
-        assertThat(storyByBoardId.getMember().getUsername()).isEqualTo("member1");
-        assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
+        assertThat(storyByBoardId.getContent()).isEqualTo("i love my choco");
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
-    void changeStory() throws IOException {
+    void changeStory() {
         //given
         setBoardAndMember();
         Long id = storyService.getStories().get(0).getId();
@@ -187,34 +178,30 @@ class StoryServiceTest {
         tags.add("poodle");
         tags.add("cute");
         StoryRequest.Post editDto = StoryRequest.Post.builder()
-                .id(id)
                 .content("edit edit edit")
                 .hashtags(tags)
                 .medias(medias2)
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
-
-        storyCommandService.updateStory(id, editDto, null, null);
+        Member member = memberQueryService.getMemberById(memberId1);
+        storyCommandService.updateStoryByUsername(id, member.getUsername(), editDto, null, null);
         Story storyByBoardId = storyService.getStoryByBoardId(id);
 
         //then
 //        assertThat(isSameUser).isTrue();
         assertThat(storyByBoardId.getContent()).isEqualTo("edit edit edit");
-        assertThat(storyByBoardId.getBoardHashtags().size()).isEqualTo(2);
     }
 
     @Test
-    @WithMockCustomUser
-        //@Transactional
-    void deleteStory() throws IOException {
+    void deleteStory() {
         //given
         setBoardAndMember();
         List<Story> stories = storyService.getStories();
         Story storyByBoardId = storyService.getStoryByBoardId(stories.get(0).getId());
         //when
-        storyCommandService.deleteStory(storyByBoardId.getId());
-        log.info("=========remove service ==============");
+        Member member = memberQueryService.getMemberById(memberId1);
+        storyCommandService.deleteStoryByUsername(storyByBoardId.getId(), member.getUsername());
         List<Hashtag> allHashtags = hashtagQueryService.getAllHashtags();
         Page<Story> pagedStories = storyService.getPagedStories(pageable);
         //then

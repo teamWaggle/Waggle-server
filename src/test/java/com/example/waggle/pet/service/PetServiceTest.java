@@ -1,6 +1,7 @@
 package com.example.waggle.pet.service;
 
 import com.example.waggle.domain.member.entity.Gender;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.pet.entity.Pet;
@@ -9,7 +10,6 @@ import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.PetHandler;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.pet.PetRequest;
@@ -45,19 +45,18 @@ class PetServiceTest {
 
     private MemberResponse.SummaryDto memberSummaryDto;
     private Long savedPetId;
+    Member member;
+
 
     @BeforeEach
     void beforeEach() {
         // member 저장
-        MemberRequest.RegisterDto signUpDto = MemberRequest.RegisterDto.builder()
-                .username("member1")
+        MemberRequest.AccessDto signUpDto = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임")
                 .email("dslkajflk")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .build();
-        memberCommandService.signUp(signUpDto);
+        Long memberId = memberCommandService.signUp(signUpDto);
+        member = memberQueryService.getMemberById(memberId);
 
         // pet 저장
         PetRequest.Post petDto = PetRequest.Post.builder()
@@ -66,7 +65,7 @@ class PetServiceTest {
                 .gender(Gender.MALE)
                 .age("now").build();
 
-        savedPetId = petService.createPet(petDto);
+        savedPetId = petService.createPetByUsername(petDto, member.getUsername());
     }
 
     @AfterEach
@@ -75,7 +74,6 @@ class PetServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
     void findByPetId() {
         // petId로 조회
         Pet petById = petQueryService.getPetById(savedPetId);
@@ -83,23 +81,21 @@ class PetServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
     void findByUsername() {
         //given
         PetRequest.Post build = PetRequest.Post.builder()
                 .name("hi")
                 .gender(Gender.MALE)
                 .build();
-        Long pet = petService.createPet(build);
+        Long pet = petService.createPetByUsername(build, member.getUsername());
         //when
-        List<Pet> petsByUsername = petQueryService.getPetsByUsername("member1");
+        List<Pet> petsByUsername = petQueryService.getPetsByUsername(member.getUsername());
         //then
         assertThat(petsByUsername.size()).isEqualTo(2);
 
     }
 
     @Test
-    @WithMockCustomUser
     void updatePet() {
         // pet 수정 (변경 사항만 수정하는 건 컨트롤러 계층에서 처리)
         PetRequest.Post updatePetDto = PetRequest.Post.builder()
@@ -108,7 +104,7 @@ class PetServiceTest {
                 .gender(Gender.MALE)
                 .age("now").build();
 
-        Long updatedPetId = petService.updatePet(savedPetId, updatePetDto);
+        Long updatedPetId = petService.updatePetByUsername(savedPetId, member.getUsername(), updatePetDto);
         Pet petById = petQueryService.getPetById(updatedPetId);
         assertThat(petById.getName()).isEqualTo(updatePetDto.getName());
 
@@ -118,10 +114,9 @@ class PetServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
     void removePet() {
         // pet 삭제
-        petService.deletePet(savedPetId);
+        petService.deletePetByUsername(savedPetId, member.getUsername());
 
         Assertions.assertThrows(PetHandler.class, () -> petQueryService.getPetById(savedPetId));
 
@@ -130,16 +125,15 @@ class PetServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
     void remove_All_Pet_user_have() {
         //given
         PetRequest.Post build = PetRequest.Post.builder()
                 .name("hi")
                 .gender(Gender.MALE)
                 .build();
-        Long pet = petService.createPet(build);
+        Long pet = petService.createPetByUsername(build, member.getUsername());
         //when
-        petService.deleteAllPetByUser();
+        petService.deleteAllPetByUser(member.getUsername());
         //then
         List<Pet> petsByUsername = petQueryService.getPetsByUsername("member1");
         assertThat(petsByUsername.size()).isEqualTo(0);

@@ -9,7 +9,11 @@ public interface ReplyCommandService {
 
     Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto);
 
+    Long updateReplyByUsername(Long replyId, String username, ReplyRequest.Post replyWriteDto);
+
     void deleteReply(Long replyId);
+
+    void deleteReply(Long replyId, String username);
 
 
 }

@@ -70,13 +70,15 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         if (validateUpdateMedia(uploadFiles, request)) {
             request.getMediaList().forEach(media -> forEachMediaUpdate(uploadFiles, board, media));
         }
-        Optional.ofNullable(request.getDeleteMediaList())
-                .map(Collection::stream)
-                .orElseGet(Stream::empty)
-                .forEach(deleteFileDto -> {
-                    awsS3Service.deleteFile(deleteFileDto.getImageUrl());
+        if (request != null) {
+            Optional.ofNullable(request.getDeleteMediaList())
+                    .map(Collection::stream)
+                    .orElseGet(Stream::empty)
+                    .forEach(deleteFileDto -> {
+                        awsS3Service.deleteFile(deleteFileDto.getImageUrl());
 //                    mediaRepository.deleteById(deleteFileDto.getId());
-                });
+                    });
+        }
     }
 
     private void forEachMediaUpdate(List<MultipartFile> uploadFiles, Board board, MediaRequest.SaveDto media) {
@@ -99,14 +101,14 @@ public class MediaCommandServiceImpl implements MediaCommandService {
 
     private boolean validateUpdateMedia(List<MultipartFile> multipartFiles, MediaRequest.Put request) {
         long requestCount =
-                (request.getMediaList() != null) ? request.getMediaList().stream().filter(media -> media.allowUpload).count() : 0;
+                (request != null && request.getMediaList() != null) ? request.getMediaList().stream().filter(media -> media.allowUpload).count() : 0;
         long mediaCount = (multipartFiles != null) ? multipartFiles.size() : 0;
 
         if (requestCount != mediaCount) {
             throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
         }
-        
-        return !request.getMediaList().isEmpty();
+
+        return requestCount > 0;
     }
 
 }

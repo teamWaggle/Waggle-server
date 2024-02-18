@@ -1,20 +1,14 @@
 package com.example.waggle.recommend.service;
 
-import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.board.story.entity.Story;
-import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberCommandService;
-import com.example.waggle.domain.recommend.entity.Recommend;
-import com.example.waggle.domain.recommend.repository.RecommendRepository;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.web.dto.global.annotation.withMockUser.WithMockCustomUser;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +17,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Slf4j
@@ -43,21 +35,17 @@ class RecommendServiceTest {
     @Autowired
     private MemberCommandService memberService;
     @Autowired
+    private MemberQueryService memberQueryService;
+    @Autowired
     private RecommendCommandService recommendService;
     @Autowired
     private RecommendQueryService recommendQueryService;
     @Autowired
-    private RecommendRepository recommendRepository;
-    @Autowired
-    private StoryRepository storyRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
 
-    MemberRequest.RegisterDto signUpDto1;
-    MemberRequest.RegisterDto signUpDto2;
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
 
     StoryRequest.Post storyWriteDto1;
     StoryRequest.Post storyWriteDto2;
@@ -66,6 +54,9 @@ class RecommendServiceTest {
     List<String> tags2 = new ArrayList<>();
     List<String> medias1 = new ArrayList<>();
     List<String> medias2 = new ArrayList<>();
+
+    Member member;
+    Member recommendMember;
 
 
     @BeforeEach
@@ -79,22 +70,14 @@ class RecommendServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = MemberRequest.RegisterDto.builder()
-                .username("member1")
+        signUpDto1 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임1")
                 .email("hi")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .build();
 
-        signUpDto2 = MemberRequest.RegisterDto.builder()
-                .username("member2")
+        signUpDto2 = MemberRequest.AccessDto.builder()
                 .password("12345678")
-                .nickname("닉네임2")
                 .email("hoe")
-                .address("서울시 광진구")
-                .phone("010-1234-5678")
                 .build();
 
         storyWriteDto1 = StoryRequest.Post.builder()
@@ -115,38 +98,26 @@ class RecommendServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    void setBoardAndMember() throws IOException {
+    void setBoardAndMember() {
 
         //member set
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
-
-        Member build = Member.builder()
-                .username("user1")
-                .password("password")
-                .email("email")
-                .nickname("nickname")
-                .build();
-        memberRepository.save(build);
-
-        Story iiii = Story.builder().member(build).content("iiii").build();
-        storyRepository.save(iiii);
+        Long memberId = memberService.signUp(signUpDto1);
+        Long recommendMemberId = memberService.signUp(signUpDto2);
+        member = memberQueryService.getMemberById(memberId);
+        recommendMember = memberQueryService.getMemberById(recommendMemberId);
 
         //story set
-        storyService.createStory(storyWriteDto1, null);
-        //storyService.saveStory(storyWriteDto2);
+        storyService.createStoryByUsername(storyWriteDto1, null, member.getUsername());
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
-    void recommendBoard() throws IOException {
+    void recommendBoard() {
         //given
         setBoardAndMember();
         Story story = storyQueryService.getStories().get(0);
 
         //when
-        recommendService.handleRecommendation(story.getId(), BoardType.STORY);
+        recommendService.handleRecommendationByUsername(story.getId(), recommendMember.getUsername());
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
         int count = recommendQueryService.countRecommend(storyByBoardId.getId());
 
@@ -155,85 +126,50 @@ class RecommendServiceTest {
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
-    void cancelRecommendBoard() throws IOException {
+    void cancelRecommendBoard() {
         //given
         setBoardAndMember();
         Story story = storyQueryService.getStories().get(0);
-        recommendService.handleRecommendation(story.getId(), BoardType.STORY);
-        recommendService.handleRecommendation(story.getId(), BoardType.STORY);
+        recommendService.handleRecommendationByUsername(story.getId(), recommendMember.getUsername());
+        recommendService.handleRecommendationByUsername(story.getId(), recommendMember.getUsername());
 
         //when
         Story storyByBoardId = storyQueryService.getStoryByBoardId(story.getId());
-        boolean recommend = recommendQueryService.checkRecommend(storyByBoardId.getId(), storyByBoardId.getMember().getUsername());
+        boolean recommend = recommendQueryService.checkRecommend(storyByBoardId.getId(), member.getId());
 
         //then
         assertThat(recommend).isFalse();
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
-    void cannot_recommend_Mine() throws IOException {
+    void cannot_recommend_Mine() {
         //given
-        memberService.signUp(signUpDto1);
-
-        storyService.createStory(storyWriteDto1, null);
+        setBoardAndMember();
         Story story = storyQueryService.getStories().get(0);
         //then
-        try {
-            recommendService.handleRecommendation(story.getId(), BoardType.STORY);
-        } catch (GeneralException ge) {
-            log.info("ge = {}", ge);
-        }
+        assertThatThrownBy(() -> recommendService.handleRecommendationByUsername(story.getId(), member.getUsername()));
     }
 
     @Test
-    @WithMockCustomUser
-    @Transactional
-    void story_remove_result_recommendEntity() throws IOException {
+    void story_remove_result_recommendEntity() {
         //given
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
-        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto2.getUsername());
+        Long member1Id = memberService.signUp(signUpDto1);
+        Long member2Id = memberService.signUp(signUpDto2);
+        Member memberById = memberQueryService.getMemberById(member1Id);
+        Member memberById1 = memberQueryService.getMemberById(member2Id);
 
         StoryRequest.Post request = StoryRequest.Post.builder()
                 .content("hi")
                 .build();
 
-        storyService.createStory(request, null);
+        storyService.createStoryByUsername(request, null, memberById.getUsername());
         Story story = storyQueryService.getStories().get(0);
-        Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
-        recommendRepository.save(build);
+        recommendService.handleRecommendationByUsername(story.getId(), memberById1.getUsername());
         //when
-        storyService.deleteStory(story.getId());
-        List<Recommend> all = recommendRepository.findAll();
+        storyService.deleteStoryByUsername(story.getId(), memberById.getUsername());
+        int size = recommendQueryService.getRecommendingMembers(story.getId()).size();
         //then
-        assertThat(all.size()).isEqualTo(0);
+        assertThat(size).isEqualTo(0);
     }
 
-    @Test
-    @WithMockCustomUser
-    @Transactional
-    void member_remove_result_recommendEntity() throws IOException {
-        //given
-        memberService.signUp(signUpDto1);
-        memberService.signUp(signUpDto2);
-        Optional<Member> byUsername = memberRepository.findByUsername(signUpDto2.getUsername());
-
-        StoryRequest.Post request = StoryRequest.Post.builder()
-                .content("hi")
-                .build();
-
-        storyService.createStory(request, null);
-        Story story = storyQueryService.getStories().get(0);
-        Recommend build = Recommend.builder().member(byUsername.get()).board(story).build();
-        recommendRepository.save(build);
-        //when
-        memberService.deleteMember();
-        List<Recommend> all = recommendRepository.findAll();
-        //then
-        assertThat(all.size()).isEqualTo(0);
-    }
 }
