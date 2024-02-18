@@ -14,7 +14,8 @@ public class MemberConverter {
                 .id(member.getId())
                 .userUrl(member.getUserUrl())
                 .nickname(member.getNickname())
-                .profileImgUrl(MediaUtil.getProfileImg(member)).build();
+                .profileImgUrl(MediaUtil.getProfileImg(member))
+                .build();
     }
 
     public static MemberResponse.DetailDto toMemberDetailDto(Member member) {
@@ -24,7 +25,8 @@ public class MemberConverter {
                 .nickname(member.getNickname())
                 .birthday(member.getBirthday())
                 .name(member.getName())
-                .profileImgUrl(MediaUtil.getProfileImg(member)).build();
+                .profileImgUrl(MediaUtil.getProfileImg(member))
+                .build();
     }
 
     public static MemberResponse.ListDto toMemberListDto(List<Member> memberList) {

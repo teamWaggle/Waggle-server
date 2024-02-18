@@ -165,8 +165,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         validateNonExistenceOfParticipationRequest(team, member);
 
-        Participation participation = Participation.builder().team(team).member(member)
-                .status(ParticipationStatus.PENDING).build();
+        Participation participation = Participation.builder()
+                .team(team)
+                .member(member)
+                .status(ParticipationStatus.PENDING)
+                .build();
 
         participationRepository.save(participation);
     }
@@ -247,7 +250,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     private void addMemberToTeam(Team team, Member member) {
-        TeamMember teamMember = TeamMember.builder().team(team).member(member).build();
+        TeamMember teamMember = TeamMember.builder()
+                .team(team)
+                .member(member)
+                .build();
         teamMember.addTeamMember(team, member);
         teamMemberRepository.save(teamMember);
     }
