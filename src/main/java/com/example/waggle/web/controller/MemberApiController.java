@@ -23,6 +23,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -102,6 +105,33 @@ public class MemberApiController {
     public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest.AuthDto authDto) {
         memberCommandService.verifyMail(authDto);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "비밀번호 변경 시 이메일 인증", description = "비밀번호 변경 전 이메일 인증을 시도합니다. 결과값으로 member의 id를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
+    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @PostMapping("/email/verify/password")
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody VerifyMailRequest.AuthDto request) {
+        Long memberId = memberCommandService.verifyEmailForPasswordChange(request);
+        return ApiResponseDto.onSuccess(memberId);
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "앞서 받은 멤버아이디와 일치하는 회원의 비밀번호를 변경합니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
+    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @PutMapping("/{memberId}/password")
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId, @RequestBody MemberRequest.PasswordDto request) {
+        memberCommandService.updatePassword(memberId, request.getPassword());
+        return ApiResponseDto.onSuccess(memberId);
+    }
+
+    @Operation(summary = "이메일 찾기", description = "성명과 생년월일을 통해 이메일을 찾습니다.")
+    @ApiResponse(responseCode = "200", description = "이메일 반환")
+    @ApiResponse(responseCode = "400", description = "회원 검색 실패.")
+    @GetMapping("/email/find")
+    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam String name, @RequestParam LocalDate birthday) {
+        List<Member> members = memberQueryService.getMembersByNameAndBirthday(name, birthday);
+        return ApiResponseDto.onSuccess(MemberConverter.toEmailListDto(members));
     }
 
     @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")

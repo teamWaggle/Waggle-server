@@ -2,7 +2,7 @@ package com.example.waggle.web.dto.member;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class MemberResponse {
         private String userUrl;
         private String nickname;
         private String name;
-        private LocalDateTime birthday;
+        private LocalDate birthday;
         private String profileImgUrl;
     }
 
@@ -44,5 +44,14 @@ public class MemberResponse {
         @Builder.Default
         private List<SummaryDto> members = new ArrayList<>();
         private int totalSize;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailListDto {
+        @Builder.Default
+        private List<String> emails = new ArrayList<>();
     }
 }

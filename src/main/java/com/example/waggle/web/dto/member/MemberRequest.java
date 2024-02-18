@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 public class MemberRequest {
@@ -38,7 +38,7 @@ public class MemberRequest {
         @NotBlank(message = "비밀번호를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
         @Length(min = 10, message = "비밀번호는 최소 10자입니다.", groups = ValidationGroups.LimitCount.class)
         private String password;
-        private LocalDateTime birthday;
+        private LocalDate birthday;
         private String profileImgUrl;
     }
 
@@ -52,9 +52,17 @@ public class MemberRequest {
 
         private String nickname;
         private String name;
-        private LocalDateTime birthday;
+        private LocalDate birthday;
         private String userUrl;
         private String profileImgUrl;
 
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordDto {
+        private String password;
     }
 }
