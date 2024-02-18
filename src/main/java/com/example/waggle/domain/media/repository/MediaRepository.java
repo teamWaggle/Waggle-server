@@ -1,5 +1,6 @@
 package com.example.waggle.domain.media.repository;
 
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.media.entity.Media;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,7 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     Optional<Media> findByUploadFile(String uploadFile);
 
     void deleteMediaByBoardId(Long boardId);
+
+    void deleteAllByBoard(Board board);
+
 }

@@ -232,6 +232,7 @@ class TeamCommandServiceTest {
         // then
         Participation participationOfMember2 = participationRepository.findByTeamIdAndUsername(teamId,
                 memberById.getUsername()).get();
+
         assertThat(participationOfMember2.getTeamId()).isEqualTo(teamId);
         assertThat(participationOfMember2.getUsername()).isEqualTo(memberById.getUsername());
         assertThat(participationOfMember2.getStatus()).isEqualTo(ParticipationStatus.ACCEPTED);

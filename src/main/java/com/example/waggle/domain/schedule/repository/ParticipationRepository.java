@@ -1,14 +1,17 @@
 package com.example.waggle.domain.schedule.repository;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Participation;
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import com.example.waggle.domain.schedule.entity.Team;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
-    boolean existsByTeamIdAndUsername(Long teamId, String username);
+    boolean existsByTeamAndMember(Team team, Member member);
 
-    Optional<Participation> findByTeamIdAndUsername(Long teamId, String username);
+    Optional<Participation> findByTeamAndMember(Team team, Member member);
+
+    void deleteAllByMember(Member member);
 
 }

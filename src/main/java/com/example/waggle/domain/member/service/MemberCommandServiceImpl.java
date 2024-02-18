@@ -1,46 +1,46 @@
 package com.example.waggle.domain.member.service;
 
-import com.example.waggle.domain.board.answer.entity.Answer;
+import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+
+import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
-import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.question.entity.Question;
-import com.example.waggle.domain.board.question.repository.QuestionRepository;
-import com.example.waggle.domain.board.question.service.QuestionCommandService;
-import com.example.waggle.domain.board.siren.entity.Siren;
-import com.example.waggle.domain.board.siren.repository.SirenRepository;
-import com.example.waggle.domain.board.siren.service.SirenCommandService;
-import com.example.waggle.domain.board.story.entity.Story;
-import com.example.waggle.domain.board.story.repository.StoryRepository;
-import com.example.waggle.domain.board.story.service.StoryCommandService;
+import com.example.waggle.domain.conversation.entity.Comment;
+import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.follow.repository.FollowRepository;
+import com.example.waggle.domain.hashtag.repository.BoardHashtagRepository;
 import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.mention.repository.MentionRepository;
+import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamMember;
+import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,27 +48,28 @@ import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.Au
 @Service
 public class MemberCommandServiceImpl implements MemberCommandService {
 
-    private final MemberRepository memberRepository;
+
+    private final PetRepository petRepository;
+    private final FollowRepository followRepository;
+    private final ParticipationRepository participationRepository;
+    private final RecommendRepository recommendRepository;
+    private final MentionRepository mentionRepository;
+    private final BoardHashtagRepository boardHashtagRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final RecommendRepository recommendRepository;
-    private final FollowRepository followRepository;
-    private final StoryRepository storyRepository;
-    private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
-    private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
-    private final TeamRepository teamRepository;
+    private final AnswerRepository answerRepository;
+    private final MemberScheduleRepository memberScheduleRepository;
+    private final BoardRepository boardRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
+
     private final MemberQueryService memberQueryService;
     private final AwsS3Service awsS3Service;
     private final RedisService redisService;
-    private final StoryCommandService storyCommandService;
-    private final QuestionCommandService questionCommandService;
-    private final AnswerCommandService answerCommandService;
-    private final SirenCommandService sirenCommandService;
-    private final ScheduleCommandService scheduleCommandService;
-    //ELSE
+    private final MediaCommandService mediaCommandService;
+
     private final PasswordEncoder passwordEncoder;
     private static final String AUTH_CODE_PREFIX = "AuthCode ";
 
@@ -119,42 +120,79 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return member.getId();
     }
 
-
     @Override
-    public void deleteMember() {
-        Member member = memberQueryService.getSignInMember();
-        String username = member.getUsername();
+    public void deleteMember(Long memberId) {
+        // TODO boardHashtag, teamMember, scheduleMember ➡️ 삭제 시 고아 객체 처리 필요 (참조 카운팅, 스케줄링・・・)
+        Member member = memberQueryService.getMemberById(memberId);
 
-        //TODO MemberMention DeleteAll
-        replyRepository.deleteAllByMemberUsername(username);
-        commentRepository.deleteAllByMemberUsername(username);
-        followRepository.deleteAllByFromMemberUsername(username);
-        followRepository.deleteAllByToMemberUsername(username);
-        recommendRepository.deleteAllByMemberUsername(username);
+        deleteAllDataLinkedToMember(member);
+        deleteMemberContent(member);
+        deleteMemberTeams(member);
 
-        List<Story> stories = storyRepository.findListByMemberUsername(username);
-        List<Question> questions = questionRepository.findListByMemberUsername(username);
-        List<Answer> answers = answerRepository.findListByMemberUsername(username);
-        List<Siren> sirens = sirenRepository.findListByMemberUsername(username);
-        List<Schedule> schedules = scheduleRepository.findListByMemberUsername(username);
-
-        stories.forEach(story -> storyCommandService.deleteStory(story.getId()));
-        questions.forEach(question -> questionCommandService.deleteQuestion(question.getId()));
-        answers.forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
-        sirens.forEach(siren -> sirenCommandService.deleteSiren(siren.getId()));
-        schedules.forEach(schedule -> scheduleCommandService.deleteSchedule(schedule.getId()));
-
-        teamMemberRepository.deleteAllByMemberUsername(username);
-        List<Team> teamsByLeader = teamRepository.findTeamByLeader_Username(username);
-        teamsByLeader.stream()
-                .forEach(team -> {
-                    team.getSchedules().stream()
-                            .forEach(schedule -> {
-                                scheduleCommandService.deleteScheduleForHardReset(schedule.getId());
-                            });
-                    teamRepository.deleteById(team.getId());
-                });
         memberRepository.delete(member);
+    }
+
+    private void deleteAllDataLinkedToMember(Member member) {
+        petRepository.deleteAllByMember(member);
+        followRepository.deleteAllByToMember(member);
+        followRepository.deleteAllByFromMember(member);
+        participationRepository.deleteAllByMember(member);
+        recommendRepository.deleteAllByMember(member);
+        mentionRepository.deleteAllByMentionedNickname(member.getNickname());
+    }
+
+    private void deleteMemberContent(Member member) {
+        deleteBoards(boardRepository.findAllByMember(member));
+        deleteCommentsAndReplies(commentRepository.findByMember(member));
+        deleteReplies(replyRepository.findByMember(member));
+    }
+
+    private void deleteBoards(List<Board> boards) {
+        for (Board board : boards) {
+            boardHashtagRepository.deleteAllByBoard(board);
+            mediaCommandService.deleteMedia(board);
+            recommendRepository.deleteAllByBoard(board);
+
+            deleteCommentsAndReplies(commentRepository.findByBoard(board));
+
+            if (board instanceof Question) {
+                answerRepository.deleteAllByQuestion((Question) board);
+            }
+
+            if (board instanceof Schedule) {
+                memberScheduleRepository.deleteAllBySchedule((Schedule) board);
+            }
+
+            boardRepository.delete(board);
+        }
+    }
+
+    private void deleteCommentsAndReplies(List<Comment> comments) {
+        for (Comment comment : comments) {
+            mentionRepository.deleteAllByConversation(comment);
+            deleteReplies(replyRepository.findByComment(comment));
+            commentRepository.delete(comment);
+        }
+    }
+
+    private void deleteReplies(List<Reply> replies) {
+        for (Reply reply : replies) {
+            mentionRepository.deleteAllByConversation(reply);
+            replyRepository.delete(reply);
+        }
+    }
+
+    private void deleteMemberTeams(Member member) {
+        List<Team> ledTeams = teamRepository.findAllByLeader(member);
+        for (Team team : ledTeams) {
+            List<Schedule> schedules = scheduleRepository.findAllByTeam(team);
+            deleteBoards(new ArrayList<>(schedules));
+            teamMemberRepository.deleteAllByTeam(team);
+            teamRepository.delete(team);
+        }
+
+        List<TeamMember> teamMemberships = teamMemberRepository.findAllByMember(member);
+        teamMemberRepository.deleteAll(teamMemberships);
     }
 
     @Override

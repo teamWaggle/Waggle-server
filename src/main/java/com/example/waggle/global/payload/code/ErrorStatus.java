@@ -1,10 +1,16 @@
 package com.example.waggle.global.payload.code;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -33,7 +39,7 @@ public enum ErrorStatus implements BaseCode {
     AUTH_MISMATCH_EMAIL_AND_PASSWORD(UNAUTHORIZED, 4059, "이메일과 패스워드가 일치하는 회원정보가 존재하지 않습니다"),
 
     // 회원 관련 오류 (4100 ~ 4149)
-    MEMBER_DUPLICATE_USERNAME(CONFLICT, 4100, "이미 존재하는 사용자 이름입니다."),
+    MEMBER_DUPLICATE_USER_URL(CONFLICT, 4100, "이미 존재하는 사용자 url 입니다."),
     MEMBER_INFO_REQUIRED_REGISTER(BAD_REQUEST, 4101, "회원가입 시 필요한 정보를 모두 입력해주세요."),
     MEMBER_NOT_FOUND(NOT_FOUND, 4102, "해당 사용자 정보를 찾을 수 없습니다."),
     MEMBER_REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, 4103, "로그아웃 된 사용자입니다."),
@@ -41,6 +47,7 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_DUPLICATE_EMAIL(CONFLICT, 4105, "이미 사용중인 이메일입니다."),
     MEMBER_DUPLICATE_NICKNAME(CONFLICT, 4106, "이미 사용중인 닉네임입니다."),
     MEMBER_NAME_TYPE_IS_INVALID(NOT_ACCEPTABLE, 4107, "랜덤 입력할 필드의 타입을 잘못 입력하였습니다"),
+    MEMBER_EMAIL_VERIFICATION_FAILED(BAD_REQUEST, 4108, "인증번호가 일치하지 않습니다. 이메일 인증에 실패했습니다."),
 
 
     // 게시판 관련 오류 (4150 ~ 4199)
