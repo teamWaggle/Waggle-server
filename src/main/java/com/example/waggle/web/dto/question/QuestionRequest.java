@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.question;
 
 import com.example.waggle.domain.board.ResolutionStatus;
+import com.example.waggle.global.annotation.valid.ValidEnum;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -35,6 +36,7 @@ public class QuestionRequest {
         @Builder.Default
         private List<String> hashtags = new ArrayList<>();
 
-        private ResolutionStatus status;
+        @ValidEnum(target = ResolutionStatus.class)
+        private String status;
     }
 }
