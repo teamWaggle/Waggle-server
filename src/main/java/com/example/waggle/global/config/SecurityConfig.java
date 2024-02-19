@@ -17,6 +17,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.List;
+
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
@@ -46,42 +51,10 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests()
-                // MEMBER
-                .requestMatchers(HttpMethod.PUT, "/api/members").authenticated()
-                .requestMatchers("/api/members/**").permitAll()
-//                // TEAM
-                .requestMatchers(HttpMethod.GET, "/api/teams/**").permitAll()
-//                // REPLY
-                .requestMatchers(HttpMethod.GET, "/api/replies/**").permitAll()
-//                // COMMENT
-                .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
-//                // SCHEDULE
-                .requestMatchers(HttpMethod.GET, "/api/schedules/**").permitAll()
-//                // PET
-                .requestMatchers(HttpMethod.GET, "/api/pets/**").permitAll()
-//                // STORY
-                .requestMatchers(HttpMethod.GET, "/api/stories/**").permitAll()
-//                // QUESTION
-                .requestMatchers(HttpMethod.GET, "/api/questions/**").permitAll()
-//                // HELP
-                .requestMatchers(HttpMethod.GET, "/api/sirens/**").permitAll()
-//                // RECOMMEND
-                .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll()
-//                // ANSWER
-                .requestMatchers(HttpMethod.GET, "/api/answers/**").permitAll()
-//                // FOLLOW
-                .requestMatchers(HttpMethod.GET, "/api/follows/**").permitAll()
-                // OAUTH2
-                .requestMatchers("/oauth2/**", "/login/**").permitAll()
-                // TOKEN
-                .requestMatchers(HttpMethod.POST, "/api/tokens").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/tokens").permitAll()
-                .requestMatchers("/api/tokens/oauth2").permitAll()
-                // SWAGGER
-                .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
-                //profile
-                .requestMatchers("/profile").permitAll()
-                // ELSE
+                .requestMatchers(additionalRequests()).permitAll()
+                .requestMatchers(aboutAuthRequest()).permitAll()
+                .requestMatchers(permitAllRequest()).permitAll()
+                .requestMatchers(authenticatedRequest()).authenticated()
                 //정적 페이지 허가
                 .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
                 .anyRequest().authenticated();
@@ -107,6 +80,55 @@ public class SecurityConfig {
 
 
         return httpSecurity.build();
+    }
+
+    private RequestMatcher[] additionalRequests() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher("/swagger-ui/**"),
+                antMatcher("/swagger-ui"),
+                antMatcher("/swagger-ui.html"),
+                antMatcher("/swagger/**"),
+                antMatcher("/swagger-resources/**"),
+                antMatcher("/v3/api-docs/**"),
+                antMatcher("/profile")
+
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] aboutAuthRequest() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher("/oauth2/**"),
+                antMatcher("/login/**"),
+                antMatcher(HttpMethod.POST, "/api/tokens"),
+                antMatcher(HttpMethod.DELETE, "/api/tokens"),
+                antMatcher("/api/members/**")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] authenticatedRequest() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(HttpMethod.PUT, "/api/members")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] permitAllRequest() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(HttpMethod.GET, "/api/teams/**"),
+                antMatcher(HttpMethod.GET, "/api/replies/**"),
+                antMatcher(HttpMethod.GET, "/api/comments/**"),
+                antMatcher(HttpMethod.GET, "/api/schedules/**"),
+                antMatcher(HttpMethod.GET, "/api/pets/**"),
+                antMatcher(HttpMethod.GET, "/api/stories/**"),
+                antMatcher(HttpMethod.GET, "/api/questions/**"),
+                antMatcher(HttpMethod.GET, "/api/sirens/**"),
+                antMatcher(HttpMethod.GET, "/api/recommends/**"),
+                antMatcher(HttpMethod.GET, "/api/answers/**"),
+                antMatcher(HttpMethod.GET, "/api/follows/**")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
     }
 }
 

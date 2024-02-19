@@ -3,7 +3,9 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.domain.conversation.service.reply.ReplyCommandService;
 import com.example.waggle.domain.conversation.service.reply.ReplyQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.ReplyConverter;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 import com.example.waggle.web.dto.reply.ReplyResponse;
@@ -34,7 +36,8 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공. 작성한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping
-    public ApiResponseDto<Long> createReply(@RequestBody ReplyRequest.Post replyWriteDto) {
+    public ApiResponseDto<Long> createReply(@RequestBody ReplyRequest.Post replyWriteDto,
+                                            @AuthUser Member member) {
         Long replyId = replyCommandService.createReply(replyWriteDto.getCommentId(), replyWriteDto);
         return ApiResponseDto.onSuccess(replyId);
     }
@@ -43,7 +46,9 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 수정 성공. 수정한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{replyId}")
-    public ApiResponseDto<Long> updateReply(@PathVariable Long replyId, @RequestBody ReplyRequest.Post replyWriteDto) {
+    public ApiResponseDto<Long> updateReply(@PathVariable Long replyId,
+                                            @RequestBody ReplyRequest.Post replyWriteDto,
+                                            @AuthUser Member member) {
         Long updatedReplyId = replyCommandService.updateReply(replyId, replyWriteDto);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
@@ -64,7 +69,8 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없거나 인증 정보가 댓글을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteReply(@RequestParam("replyId") Long replyId) {
+    public ApiResponseDto<Boolean> deleteReply(@RequestParam("replyId") Long replyId,
+                                               @AuthUser Member member) {
         replyCommandService.deleteReply(replyId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

@@ -1,10 +1,12 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
 import com.example.waggle.web.dto.pet.PetRequest;
@@ -12,21 +14,14 @@ import com.example.waggle.web.dto.pet.PetResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,7 +39,8 @@ public class PetApiController {
     @ApiResponse(responseCode = "400", description = "정보 입력 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest.Post request,
-                                          @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+                                          @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                          @AuthUser Member member) {
         request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long petId = petCommandService.createPet(request);
         return ApiResponseDto.onSuccess(petId);
@@ -58,7 +54,8 @@ public class PetApiController {
     public ApiResponseDto<Long> updatePet(@PathVariable Long petId,
                                           @RequestPart @Validated PetRequest.Post request,
                                           @RequestPart(value = "file", required = false) MultipartFile profileImg,
-                                          @RequestParam boolean allowUpload) {
+                                          @RequestParam boolean allowUpload,
+                                          @AuthUser Member member) {
         String removePrefixProfileUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixProfileUrl);
@@ -84,7 +81,8 @@ public class PetApiController {
     @ApiResponse(responseCode = "200", description = "펫 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "펫정보를 찾을 수 없거나 인증 정보가 펫을 소유한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deletePet(@RequestParam("petId") Long petId) {
+    public ApiResponseDto<Boolean> deletePet(@RequestParam("petId") Long petId,
+                                             @AuthUser Member member) {
         petCommandService.deletePet(petId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

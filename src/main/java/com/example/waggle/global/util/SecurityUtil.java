@@ -8,7 +8,6 @@ public class SecurityUtil {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             return "anonymousUser";
-//            throw new RuntimeException("No authentication information.");
         }
         return authentication.getName();
     }

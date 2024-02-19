@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.SirenConverter;
 import com.example.waggle.web.dto.media.MediaRequest;
@@ -45,7 +47,8 @@ public class SirenApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createSiren(@RequestPart @Validated SirenRequest.Post sirenWriteDto,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
+                                            @AuthUser Member member) {
         Long boardId = sirenCommandService.createSiren(sirenWriteDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -57,7 +60,8 @@ public class SirenApiController {
     public ApiResponseDto<Long> updateSiren(@PathVariable Long boardId,
                                             @RequestPart @Validated SirenRequest.Post request,
                                             @RequestPart MediaRequest.Put mediaUpdateDto,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
+                                            @AuthUser Member member) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
@@ -107,7 +111,8 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "사이렌을 찾을 수 없거나 인증 정보가 사이렌을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteSiren(@PathParam("boardId") Long boardId) {
+    public ApiResponseDto<Boolean> deleteSiren(@PathParam("boardId") Long boardId,
+                                               @AuthUser Member member) {
         sirenCommandService.deleteSiren(boardId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

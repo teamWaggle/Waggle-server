@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.answer.service.AnswerQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest;
@@ -44,7 +46,8 @@ public class AnswerApiController {
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@RequestPart AnswerRequest.Post request,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
-                                             @PathVariable Long questionId) {
+                                             @PathVariable Long questionId,
+                                             @AuthUser Member member) {
         Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
     }
@@ -56,7 +59,8 @@ public class AnswerApiController {
     public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
                                              @RequestPart AnswerRequest.Post request,
                                              @RequestPart MediaRequest.Put mediaUpdateDto,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
+                                             @AuthUser Member member) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         answerCommandService.updateAnswerV2(boardId, request, mediaUpdateDto, multipartFiles);
@@ -82,7 +86,8 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
     public ApiResponseDto<AnswerResponse.ListDto> getAnswerByMemberId(
-            @RequestParam(defaultValue = "0") int currentPage, @PathVariable Long memberId) {
+            @RequestParam(defaultValue = "0") int currentPage,
+            @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
         AnswerResponse.ListDto listDto = AnswerConverter.toListDto(pagedAnswerByUsername);
@@ -95,7 +100,9 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "200", description = "대답 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "대답을 찾을 수 없거나 인증 정보가 대답을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteAnswer(@RequestParam("boardId") Long boardId) {
+    public ApiResponseDto<Boolean> deleteAnswer(
+            @RequestParam("boardId") Long boardId,
+            @AuthUser Member member) {
         answerCommandService.deleteAnswer(boardId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
