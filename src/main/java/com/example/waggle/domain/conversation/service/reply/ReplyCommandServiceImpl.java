@@ -10,7 +10,6 @@ import com.example.waggle.domain.mention.service.MentionCommandService;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +66,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     @Override
     public Long updateReply(Long replyId, Member member, ReplyRequest.Post replyWriteDto) {
         Reply reply = getReplyById(replyId);
-        validateMember(reply, member)
+        validateMember(reply, member);
         reply.changeContent(replyWriteDto.getContent());
 
         mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
@@ -94,7 +93,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
 
-    public boolean validateMember(Reply reply, Member member) {
+    public void validateMember(Reply reply, Member member) {
         if (!reply.getMember().equals(member)) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }

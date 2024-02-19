@@ -91,9 +91,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long registerMemberInfo(String username, MemberRequest.RegisterDto request) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public Long registerMemberInfo(Member member, MemberRequest.RegisterDto request) {
         if (member.getRole() == Role.GUEST) {
             member.changeRole(Role.USER);
         }
@@ -106,8 +104,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberInfo(String username, MemberRequest.Put request) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long updateMemberInfo(Member member, MemberRequest.Put request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {
