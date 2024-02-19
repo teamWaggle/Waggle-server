@@ -20,16 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -89,12 +80,12 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 조회", description = "username을 통해 username, nickname, profileImg를 조회합니다.")
+    @Operation(summary = "회원 정보 조회", description = "memberId를 통해 userUrl, nickname, profileImg를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
     @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
-    @GetMapping("/{username}")
-    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    @GetMapping("/{memberId}")
+    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable Long memberId) {
+        Member member = memberQueryService.getMemberById(memberId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 
