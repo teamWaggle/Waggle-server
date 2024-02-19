@@ -52,16 +52,11 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
-    public Long createCommentByUsername(Long boardId, CommentRequest.Post commentWriteDto, String username) {
-        Member memberByUsername = memberQueryService.getMemberByUsername(username);
-        validateAccessSchedule(boardId, memberByUsername);
+    public Long createComment(Long boardId, Member member, CommentRequest.Post commentWriteDto) {
+        validateAccessSchedule(boardId, member);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-        Comment build = Comment.builder()
-                .content(commentWriteDto.getContent())
-                .board(board)
-                .member(memberByUsername)
-                .build();
+        Comment build = buildComment(member, commentWriteDto, board);
         commentRepository.save(build);
         mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
         return build.getId();
@@ -80,11 +75,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
-    public Long updateCommentByUsername(Long commentId, String username, CommentRequest.Post commentWriteDto) {
-        Member signInMember = memberQueryService.getMemberByUsername(username);
+    public Long updateComment(Long commentId, Member member, CommentRequest.Post commentWriteDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        validateMember(comment, signInMember);
+        validateMember(comment, member);
 
         comment.changeContent(commentWriteDto.getContent());
         mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedNickname());
@@ -103,11 +97,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
-    public void deleteCommentByUsername(Long commentId, String username) {
-        Member signInMember = memberQueryService.getMemberByUsername(username);
+    public void deleteComment(Long commentId, Member member) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        validateMember(comment, signInMember);
+        validateMember(comment, member);
 
         replyRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
@@ -133,6 +126,15 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         if (scheduleRepository.existsById(boardId) && memberScheduleRepository.existsByMemberIdAndScheduleId(signInMember.getId(), boardId)) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS);
         }
+    }
+
+    private static Comment buildComment(Member member, CommentRequest.Post commentWriteDto, Board board) {
+        Comment build = Comment.builder()
+                .content(commentWriteDto.getContent())
+                .board(board)
+                .member(member)
+                .build();
+        return build;
     }
 
 }

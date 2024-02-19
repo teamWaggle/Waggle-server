@@ -54,11 +54,10 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public Long createAnswerByUsername(Long questionId,
-                                       AnswerRequest.Post answerWriteDto,
-                                       List<MultipartFile> multipartFiles,
-                                       String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long createAnswer(Long questionId,
+                             Member member,
+                             AnswerRequest.Post answerWriteDto,
+                             List<MultipartFile> multipartFiles) {
         Answer answer = buildAnswer(questionId, answerWriteDto, member);
         answerRepository.save(answer);
 
@@ -100,22 +99,23 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public Long updateAnswerByUsername(Long boardId, String username, AnswerRequest.Post request, MediaRequest.Put mediaUpdateDto, List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public Long updateAnswer(Long boardId,
+                             Member member,
+                             AnswerRequest.Post request,
+                             MediaRequest.Put mediaUpdateDto,
+                             List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-
         answer.changeAnswer(request.getContent());
-
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, answer);
 
         return answer.getId();
     }
+
 
     @Override
     public void deleteAnswer(Long boardId) {
@@ -132,9 +132,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public void deleteAnswerByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public void deleteAnswer(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }

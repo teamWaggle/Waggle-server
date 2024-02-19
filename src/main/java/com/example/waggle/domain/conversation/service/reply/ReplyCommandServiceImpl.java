@@ -34,7 +34,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
+        Reply reply = buildReply(member, replyWriteDto, comment);
         replyRepository.save(reply);
 
         mentionCommandService.createMentions(reply, replyWriteDto.getMentionedNickname());
@@ -42,12 +42,11 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     }
 
     @Override
-    public Long createReplyByUsername(Long commentId, ReplyRequest.Post replyWriteDto, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long createReply(Long commentId, Member member, ReplyRequest.Post replyWriteDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
+        Reply reply = buildReply(member, replyWriteDto, comment);
         replyRepository.save(reply);
 
         mentionCommandService.createMentions(reply, replyWriteDto.getMentionedNickname());
@@ -56,10 +55,9 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     @Override
     public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
-        if (!validateMember(replyId, SecurityUtil.getCurrentUsername())) {
-            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
-        }
         Reply reply = getReplyById(replyId);
+        Member member = memberQueryService.getSignInMember();
+        validateMember(reply, member);
         reply.changeContent(replyWriteDto.getContent());
 
         mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
@@ -67,11 +65,9 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     }
 
     @Override
-    public Long updateReplyByUsername(Long replyId, String username, ReplyRequest.Post replyWriteDto) {
-        if (!validateMember(replyId, username)) {
-            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
-        }
+    public Long updateReply(Long replyId, Member member, ReplyRequest.Post replyWriteDto) {
         Reply reply = getReplyById(replyId);
+        validateMember(reply, member)
         reply.changeContent(replyWriteDto.getContent());
 
         mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
@@ -80,19 +76,16 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     @Override
     public void deleteReply(Long replyId) {
-        if (!validateMember(replyId, SecurityUtil.getCurrentUsername())) {
-            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
-        }
         Reply reply = getReplyById(replyId);
+        Member member = memberQueryService.getSignInMember();
+        validateMember(reply, member);
         replyRepository.delete(reply);
     }
 
     @Override
-    public void deleteReply(Long replyId, String username) {
-        if (!validateMember(replyId, username)) {
-            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
-        }
+    public void deleteReply(Long replyId, Member member) {
         Reply reply = getReplyById(replyId);
+        validateMember(reply, member);
         replyRepository.delete(reply);
     }
 
@@ -101,9 +94,17 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
 
-    public boolean validateMember(Long replyId, String username) {
-        Reply reply = getReplyById(replyId);
-        return reply.getMember().getUsername()
-                .equals(username);
+    public boolean validateMember(Reply reply, Member member) {
+        if (!reply.getMember().equals(member)) {
+            throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
+        }
+    }
+
+    private static Reply buildReply(Member member, ReplyRequest.Post replyWriteDto, Comment comment) {
+        return Reply.builder()
+                .member(member)
+                .comment(comment)
+                .content(replyWriteDto.getContent())
+                .build();
     }
 }
