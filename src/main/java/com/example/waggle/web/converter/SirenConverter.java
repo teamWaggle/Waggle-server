@@ -20,6 +20,7 @@ public class SirenConverter {
                 .createdDate(siren.getCreatedDate())
                 .category(siren.getCategory())
                 .title(siren.getTitle())
+                .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .isMine(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
@@ -50,6 +51,7 @@ public class SirenConverter {
                 .createdDate(siren.getCreatedDate())
                 .content(siren.getContent())
                 .medias(MediaUtil.getBoardMedias(siren))
+                .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .isMine(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();

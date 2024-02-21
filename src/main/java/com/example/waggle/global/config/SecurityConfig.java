@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .requestMatchers(additionalSwaggerRequests()).permitAll()
                 .requestMatchers(authRelatedEndpoints()).permitAll()
                 .requestMatchers(permitAllRequest()).permitAll()
-                .requestMatchers(authenticatedEndpoints()).authenticated()
+//                .requestMatchers(authenticatedEndpoints()).authenticated()
                 //정적 페이지 허가
                 .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
                 .anyRequest().authenticated();
@@ -115,17 +115,20 @@ public class SecurityConfig {
                 antMatcher("/login/**"),
                 antMatcher(HttpMethod.POST, "/api/tokens"),
                 antMatcher(HttpMethod.DELETE, "/api/tokens"),
-                antMatcher("/api/members/**")
+                antMatcher(HttpMethod.GET, "/api/members/**"),
+                antMatcher(HttpMethod.POST, "/api/members/**"),
+                antMatcher("/api/members/{memberId}/password")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
-    private RequestMatcher[] authenticatedEndpoints() {
-        List<RequestMatcher> requestMatchers = List.of(
-                antMatcher(HttpMethod.PUT, "/api/members")
-        );
-        return requestMatchers.toArray(RequestMatcher[]::new);
-    }
+//    private RequestMatcher[] authenticatedEndpoints() {
+//        List<RequestMatcher> requestMatchers = List.of(
+//                antMatcher(HttpMethod.PUT, "/api/members"),
+//                antMatcher("/api/members/info")
+//        );
+//        return requestMatchers.toArray(RequestMatcher[]::new);
+//    }
 
     private RequestMatcher[] permitAllRequest() {
         List<RequestMatcher> requestMatchers = List.of(

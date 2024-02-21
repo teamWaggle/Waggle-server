@@ -44,6 +44,7 @@ public class StoryApiController {
     public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                             @AuthUser Member member) {
+        log.info("member = {}, {}", member.getEmail(), member.getUsername());
         Long boardId = storyCommandService.createStory(member, request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }

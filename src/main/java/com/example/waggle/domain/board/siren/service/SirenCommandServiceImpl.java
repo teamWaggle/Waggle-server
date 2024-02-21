@@ -1,11 +1,13 @@
 package com.example.waggle.domain.board.siren.service;
 
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
+import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
@@ -144,7 +146,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .contact(sirenWriteDto.getContact())
                 .content(sirenWriteDto.getContent())
                 .petKind(sirenWriteDto.getPetKind())
-                .petGender(sirenWriteDto.getPetGender())
+                .petGender(Gender.valueOf(sirenWriteDto.getPetGender()))
                 .petAge(sirenWriteDto.getPetAge())
                 .lostDate(sirenWriteDto.getLostDate())
                 .lostLocate(sirenWriteDto.getLostLocate())
@@ -160,11 +162,12 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .contact(sirenWriteDto.getContact())
                 .content(sirenWriteDto.getContent())
                 .petKind(sirenWriteDto.getPetKind())
-                .petGender(sirenWriteDto.getPetGender())
+                .petGender(Gender.valueOf(sirenWriteDto.getPetGender()))
                 .petAge(sirenWriteDto.getPetAge())
                 .lostDate(sirenWriteDto.getLostDate())
                 .lostLocate(sirenWriteDto.getLostLocate())
                 .category(SirenCategory.valueOf(sirenWriteDto.getCategory()))
+                .status(ResolutionStatus.valueOf(sirenWriteDto.getStatus()))
                 .member(member)
                 .build();
         return build;

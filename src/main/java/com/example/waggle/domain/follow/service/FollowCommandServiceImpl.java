@@ -41,6 +41,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         validateFollowing(from, followee);
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
+        return follow.getId();
     }
 
     @Override
@@ -59,7 +60,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     public void unFollow(Member from, Long to) {
         Member followee = memberRepository.findById(to)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Follow follow = followRepository.findByToMemberAndFromMember(from, followee)
+        Follow follow = followRepository.findByToMemberAndFromMember(followee, from)
                 .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
         followRepository.delete(follow);
     }

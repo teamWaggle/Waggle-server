@@ -4,14 +4,13 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.exception.handler.SecurityHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.TokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -19,12 +18,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.lang.annotation.Annotation;
 
-@Component
+@Slf4j
 @RequiredArgsConstructor
 public final class CustomAuthenticationPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final MemberQueryService memberQueryService;
-    private final TokenService tokenService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -33,7 +31,7 @@ public final class CustomAuthenticationPrincipalArgumentResolver implements Hand
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -43,12 +41,13 @@ public final class CustomAuthenticationPrincipalArgumentResolver implements Hand
             throw new SecurityHandler(ErrorStatus._UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR);
         }
         findMethodAnnotation(AuthUser.class, parameter);
-        if (principal != null && !ClassUtils.isAssignable(parameter.getParameterType(), principal.getClass())) {
+        Member member = memberQueryService.getMemberByUsername(authentication.getName());
+
+        if (principal != null && !ClassUtils.isAssignable(parameter.getParameterType(), member.getClass())) {
             if (annotation.errorOnInvalidType()) {
-                throw new SecurityHandler(ErrorStatus._ASSIGNABLE_PRINCIPAL);
+                throw new SecurityHandler(ErrorStatus._ASSIGNABLE_PARAMETER);
             }
         }
-        Member member = memberQueryService.getMemberByUsername(authentication.getName());
 
         return member;
     }

@@ -1,14 +1,27 @@
 package com.example.waggle.global.config;
 
+import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.global.security.annotation.CustomAuthenticationPrincipalArgumentResolver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
 @Configuration
+@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
     private final long MAX_AGE_SECS = 3600;
+    private final MemberQueryService memberQueryService;
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new CustomAuthenticationPrincipalArgumentResolver(memberQueryService));
+    }
 
     //CORS setting
     @Override
