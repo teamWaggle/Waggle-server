@@ -42,7 +42,7 @@ public class PetApiController {
                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                           @AuthUser Member member) {
         request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long petId = petCommandService.createPet(request);
+        Long petId = petCommandService.createPet(member, request);
         return ApiResponseDto.onSuccess(petId);
     }
 
@@ -64,7 +64,7 @@ public class PetApiController {
             request.setProfileImgUrl(removePrefixProfileUrl);
         }
 
-        Long result = petCommandService.updatePet(petId, request);
+        Long result = petCommandService.updatePet(petId, member, request);
         return ApiResponseDto.onSuccess(result);
     }
 
@@ -83,7 +83,7 @@ public class PetApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deletePet(@RequestParam("petId") Long petId,
                                              @AuthUser Member member) {
-        petCommandService.deletePet(petId);
+        petCommandService.deletePet(petId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

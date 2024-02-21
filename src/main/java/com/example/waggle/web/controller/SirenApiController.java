@@ -49,7 +49,7 @@ public class SirenApiController {
     public ApiResponseDto<Long> createSiren(@RequestPart @Validated SirenRequest.Post sirenWriteDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                             @AuthUser Member member) {
-        Long boardId = sirenCommandService.createSiren(sirenWriteDto, multipartFiles);
+        Long boardId = sirenCommandService.createSiren(member, sirenWriteDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -66,7 +66,7 @@ public class SirenApiController {
         mediaUpdateDto.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
-        sirenCommandService.updateSirenV2(boardId, request, mediaUpdateDto, multipartFiles);
+        sirenCommandService.updateSiren(boardId, member, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -113,7 +113,7 @@ public class SirenApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteSiren(@PathParam("boardId") Long boardId,
                                                @AuthUser Member member) {
-        sirenCommandService.deleteSiren(boardId);
+        sirenCommandService.deleteSiren(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

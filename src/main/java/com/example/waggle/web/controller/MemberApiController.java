@@ -55,7 +55,7 @@ public class MemberApiController {
                                              @RequestPart MemberRequest.RegisterDto request,
                                              @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long memberId = memberCommandService.registerMemberInfo(member.getUsername(), request);
+        Long memberId = memberCommandService.registerMemberInfo(member, request);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -75,7 +75,7 @@ public class MemberApiController {
         } else {
             request.setProfileImgUrl(removePrefixCoverUrl);
         }
-        Long memberId = memberCommandService.updateMemberInfo(member.getUsername(), request);
+        Long memberId = memberCommandService.updateMemberInfo(member, request);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -160,8 +160,8 @@ public class MemberApiController {
     @Operation(summary = "회원 삭제", description = "특정 회원을 삭제합니다. 회원과 관련된 데이터가 모두 삭제됩니다.")
     @ApiResponse(responseCode = "200", description = "회원 삭제 성공.")
     @DeleteMapping("/{memberId}")
-    public ApiResponseDto<Boolean> deleteMember(@PathVariable Long memberId) {
-        memberCommandService.deleteMember(memberId);
+    public ApiResponseDto<Boolean> deleteMember(@AuthUser Member member) {
+        memberCommandService.deleteMember(member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

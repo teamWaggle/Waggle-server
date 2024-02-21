@@ -18,6 +18,8 @@ public interface MemberCommandService {
 
     void deleteMember(Long memberId);
 
+    void deleteMember(Member member);
+
     void verifyMail(VerifyMailRequest.AuthDto request);
 
 }

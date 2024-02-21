@@ -47,7 +47,7 @@ public class QuestionApiController {
     public ApiResponseDto<Long> createQuestion(@RequestPart @Validated QuestionRequest.Post request,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                                @AuthUser Member member) {
-        Long boardId = questionCommandService.createQuestion(request, multipartFiles);
+        Long boardId = questionCommandService.createQuestion(member, request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -63,7 +63,7 @@ public class QuestionApiController {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        questionCommandService.updateQuestionV2(boardId, request, mediaUpdateDto, multipartFiles);
+        questionCommandService.updateQuestion(boardId, member, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -109,7 +109,7 @@ public class QuestionApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteQuestion(@RequestParam("boardId") Long boardId,
                                                   @AuthUser Member member) {
-        questionCommandService.deleteQuestion(boardId);
+        questionCommandService.deleteQuestion(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

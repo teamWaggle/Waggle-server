@@ -43,7 +43,7 @@ public class TeamApiController {
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                            @AuthUser Member member) {
         request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long createdTeamId = teamCommandService.createTeam(request);
+        Long createdTeamId = teamCommandService.createTeam(member, request);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
 
@@ -63,7 +63,7 @@ public class TeamApiController {
         } else {
             request.setCoverImageUrl(removePrefixCoverUrl);
         }
-        Long updatedTeamId = teamCommandService.updateTeam(teamId, request);
+        Long updatedTeamId = teamCommandService.updateTeam(teamId, member, request);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
 
@@ -73,7 +73,7 @@ public class TeamApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteTeam(@RequestParam Long teamId,
                                               @AuthUser Member member) {
-        teamCommandService.deleteTeam(teamId);
+        teamCommandService.deleteTeam(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -84,8 +84,8 @@ public class TeamApiController {
     @DeleteMapping("/{teamId}/members/{memberId}")
     public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable Long teamId,
                                                             @PathVariable Long memberId,
-                                                            @AuthUser Member member) {
-        teamCommandService.deleteTeamMemberByLeader(teamId, memberId, member.getUsername());
+                                                            @AuthUser Member leader) {
+        teamCommandService.deleteTeamMemberByLeader(teamId, memberId, leader);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -95,7 +95,7 @@ public class TeamApiController {
     @DeleteMapping("/{teamId}/members")
     public ApiResponseDto<Boolean> deleteTeamMemberByMyself(@PathVariable Long teamId,
                                                             @AuthUser Member member) {
-        teamCommandService.deleteTeamMemberByMyself(teamId, member.getUsername());
+        teamCommandService.deleteTeamMemberByMyself(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -105,8 +105,8 @@ public class TeamApiController {
     @PutMapping("/{teamId}/leader/{memberId}")
     public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable Long teamId,
                                                     @PathVariable Long memberId,
-                                                    @AuthUser Member member) {
-        teamCommandService.changeTeamLeader(teamId, memberId, member.getUsername());
+                                                    @AuthUser Member leader) {
+        teamCommandService.changeTeamLeader(teamId, memberId, leader);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -116,7 +116,7 @@ public class TeamApiController {
     @PostMapping("/{teamId}/participation")
     public ApiResponseDto<Boolean> requestParticipation(@PathVariable Long teamId,
                                                         @AuthUser Member member) {
-        teamCommandService.requestParticipation(teamId, userDetails.getUsername());
+        teamCommandService.requestParticipation(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -127,8 +127,8 @@ public class TeamApiController {
     public ApiResponseDto<Boolean> respondToParticipation(@PathVariable Long teamId,
                                                           @PathVariable Long memberId,
                                                           @RequestParam boolean accept,
-                                                          @AuthUser Member member) {
-        teamCommandService.respondToParticipation(teamId, memberId, member.getUsername(), accept);
+                                                          @AuthUser Member leader) {
+        teamCommandService.respondToParticipation(teamId, memberId, leader, accept);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

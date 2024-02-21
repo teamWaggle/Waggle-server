@@ -50,7 +50,7 @@ public class CommentApiController {
     public ApiResponseDto<Long> createScheduleComment(@PathVariable Long boardId,
                                                       @RequestBody CommentRequest.Post commentWriteDto,
                                                       @AuthUser Member member) {
-        Long commentId = commentCommandService.createComment(boardId, commentWriteDto);
+        Long commentId = commentCommandService.createComment(boardId, member, commentWriteDto);
         return ApiResponseDto.onSuccess(commentId);
     }
 
@@ -61,7 +61,7 @@ public class CommentApiController {
     public ApiResponseDto<Long> updateComment(@PathVariable Long commentId,
                                               @RequestBody CommentRequest.Post commentWriteDto,
                                               @AuthUser Member member) {
-        Long updatedCommentId = commentCommandService.updateComment(commentId, commentWriteDto);
+        Long updatedCommentId = commentCommandService.updateComment(commentId, member, commentWriteDto);
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 
@@ -71,7 +71,7 @@ public class CommentApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteComment(@RequestParam("commentId") Long commentId,
                                                  @AuthUser Member member) {
-        commentCommandService.deleteComment(commentId);
+        commentCommandService.deleteComment(commentId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

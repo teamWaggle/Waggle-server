@@ -44,7 +44,7 @@ public class StoryApiController {
     public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                             @AuthUser Member member) {
-        Long boardId = storyCommandService.createStory(request, multipartFiles);
+        Long boardId = storyCommandService.createStory(member, request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -60,7 +60,7 @@ public class StoryApiController {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        storyCommandService.updateStoryV2(boardId, request, mediaUpdateDto, multipartFiles);
+        storyCommandService.updateStory(boardId, member, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -102,7 +102,7 @@ public class StoryApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteStory(@RequestParam("boardId") Long boardId,
                                                @AuthUser Member member) {
-        storyCommandService.deleteStory(boardId);
+        storyCommandService.deleteStory(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

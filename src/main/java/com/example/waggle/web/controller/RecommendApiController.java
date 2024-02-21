@@ -32,7 +32,7 @@ public class RecommendApiController {
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> recommendStory(@PathVariable Long boardId,
                                                @AuthUser Member member) {
-        recommendCommandService.handleRecommendation(boardId);
+        recommendCommandService.handleRecommendation(boardId, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 

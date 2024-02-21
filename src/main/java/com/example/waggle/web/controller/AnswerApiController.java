@@ -48,7 +48,7 @@ public class AnswerApiController {
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                              @PathVariable Long questionId,
                                              @AuthUser Member member) {
-        Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
+        Long answer = answerCommandService.createAnswer(questionId, member, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
     }
 
@@ -63,7 +63,7 @@ public class AnswerApiController {
                                              @AuthUser Member member) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        answerCommandService.updateAnswerV2(boardId, request, mediaUpdateDto, multipartFiles);
+        answerCommandService.updateAnswer(boardId, member, request, mediaUpdateDto, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -103,7 +103,7 @@ public class AnswerApiController {
     public ApiResponseDto<Boolean> deleteAnswer(
             @RequestParam("boardId") Long boardId,
             @AuthUser Member member) {
-        answerCommandService.deleteAnswer(boardId);
+        answerCommandService.deleteAnswer(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

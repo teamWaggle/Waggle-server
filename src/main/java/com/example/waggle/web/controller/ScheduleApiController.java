@@ -44,7 +44,7 @@ public class ScheduleApiController {
     public ApiResponseDto<Long> createSchedule(@AuthUser Member member,
                                                @PathVariable Long teamId,
                                                @RequestBody Post request) {
-        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request, member.getUsername());
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, member, request);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -54,7 +54,7 @@ public class ScheduleApiController {
     @PostMapping("/members/{scheduleId}")
     public ApiResponseDto<Long> addSchedule(@AuthUser Member member,
                                             @PathVariable Long scheduleId) {
-        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, member.getUsername());
+        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, member);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -74,7 +74,7 @@ public class ScheduleApiController {
     public ApiResponseDto<Long> updateSchedule(@PathVariable Long scheduleId,
                                                @RequestBody Post request,
                                                @AuthUser Member member) {
-        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, request);
+        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, member, request);
         return ApiResponseDto.onSuccess(updatedScheduleId);
     }
 
@@ -84,7 +84,7 @@ public class ScheduleApiController {
     @DeleteMapping("/teams")
     public ApiResponseDto<Boolean> deleteScheduleInTeam(@RequestParam("boardId") Long boardId,
                                                         @AuthUser Member member) {
-        scheduleCommandService.deleteSchedule(boardId);
+        scheduleCommandService.deleteSchedule(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -94,7 +94,7 @@ public class ScheduleApiController {
     @DeleteMapping("/members/{boardId}")
     public ApiResponseDto<Boolean> deleteScheduleInMember(@AuthUser Member member,
                                                           @RequestParam("boardId") Long boardId) {
-        scheduleCommandService.deleteMemberSchedule(boardId, member.getUsername());
+        scheduleCommandService.deleteMemberSchedule(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

@@ -35,10 +35,11 @@ public class ReplyApiController {
     @Operation(summary = "대댓글 작성", description = "사용자가 대댓글을 작성합니다. 작성한 대댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공. 작성한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
-    @PostMapping
+    @PostMapping("{commentId}")
     public ApiResponseDto<Long> createReply(@RequestBody ReplyRequest.Post replyWriteDto,
+                                            @PathVariable Long commentId,
                                             @AuthUser Member member) {
-        Long replyId = replyCommandService.createReply(replyWriteDto.getCommentId(), replyWriteDto);
+        Long replyId = replyCommandService.createReply(commentId, member, replyWriteDto);
         return ApiResponseDto.onSuccess(replyId);
     }
 
@@ -49,7 +50,7 @@ public class ReplyApiController {
     public ApiResponseDto<Long> updateReply(@PathVariable Long replyId,
                                             @RequestBody ReplyRequest.Post replyWriteDto,
                                             @AuthUser Member member) {
-        Long updatedReplyId = replyCommandService.updateReply(replyId, replyWriteDto);
+        Long updatedReplyId = replyCommandService.updateReply(replyId, member, replyWriteDto);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
 
@@ -71,7 +72,7 @@ public class ReplyApiController {
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteReply(@RequestParam("replyId") Long replyId,
                                                @AuthUser Member member) {
-        replyCommandService.deleteReply(replyId);
+        replyCommandService.deleteReply(replyId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

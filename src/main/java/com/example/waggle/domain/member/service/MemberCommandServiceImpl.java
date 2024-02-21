@@ -139,6 +139,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         memberRepository.delete(member);
     }
 
+    @Override
+    public void deleteMember(Member member) {
+        deleteAllDataLinkedToMember(member);
+        deleteMemberContent(member);
+        deleteMemberTeams(member);
+
+        memberRepository.delete(member);
+    }
+
     private void deleteAllDataLinkedToMember(Member member) {
         petRepository.deleteAllByMember(member);
         followRepository.deleteAllByToMember(member);
