@@ -39,27 +39,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                //cors(다른 자원 허용)
-                .cors().and()
-                // REST API이므로 basic auth 및 csrf 보안을 사용하지 않음
-                .httpBasic().disable()
-                .csrf().disable()
-                .formLogin().disable()
-                // JWT를 사용하기 때문에 세션을 사용하지 않음
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        configureCorsAndSecurity(httpSecurity);
+        configureAuthorization(httpSecurity);
+        configureOAuth2(httpSecurity);
+        addFilter(httpSecurity);
+        configureExceptionHandling(httpSecurity);
 
-        httpSecurity
-                .authorizeHttpRequests()
-                .requestMatchers(additionalRequests()).permitAll()
-                .requestMatchers(aboutAuthRequest()).permitAll()
-                .requestMatchers(permitAllRequest()).permitAll()
-                .requestMatchers(authenticatedRequest()).authenticated()
-                //정적 페이지 허가
-                .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
-                .anyRequest().authenticated();
 
-        //OAUTH2
+        return httpSecurity.build();
+    }
+
+    private void addFilter(HttpSecurity httpSecurity) {
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    private void configureExceptionHandling(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)    // 401
+                .accessDeniedHandler(jwtAccessDeniedHandler);        // 403
+    }
+
+    private void configureOAuth2(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .oauth2Login()
                 .authorizationEndpoint().baseUri("/oauth2/authorize")  // 소셜 로그인 url
@@ -69,20 +69,33 @@ public class SecurityConfig {
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler);
-
-        //order : jwtFilter -> usernamePasswordAuthentication
-        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        //authentication/authorization
-        httpSecurity.exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)    // 401
-                .accessDeniedHandler(jwtAccessDeniedHandler);        // 403
-
-
-        return httpSecurity.build();
     }
 
-    private RequestMatcher[] additionalRequests() {
+    private void configureAuthorization(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .authorizeHttpRequests()
+                .requestMatchers(additionalSwaggerRequests()).permitAll()
+                .requestMatchers(authRelatedEndpoints()).permitAll()
+                .requestMatchers(permitAllRequest()).permitAll()
+                .requestMatchers(authenticatedEndpoints()).authenticated()
+                //정적 페이지 허가
+                .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**").permitAll() // 임시로 모든 API 허용
+                .anyRequest().authenticated();
+    }
+
+    private static void configureCorsAndSecurity(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                //cors(다른 자원 허용)
+                .cors().and()
+                // REST API이므로 basic auth 및 csrf 보안을 사용하지 않음
+                .httpBasic().disable()
+                .csrf().disable()
+                .formLogin().disable()
+                // JWT를 사용하기 때문에 세션을 사용하지 않음
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    private RequestMatcher[] additionalSwaggerRequests() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher("/swagger-ui/**"),
                 antMatcher("/swagger-ui"),
@@ -96,7 +109,7 @@ public class SecurityConfig {
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
-    private RequestMatcher[] aboutAuthRequest() {
+    private RequestMatcher[] authRelatedEndpoints() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher("/oauth2/**"),
                 antMatcher("/login/**"),
@@ -107,7 +120,7 @@ public class SecurityConfig {
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
-    private RequestMatcher[] authenticatedRequest() {
+    private RequestMatcher[] authenticatedEndpoints() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(HttpMethod.PUT, "/api/members")
         );
