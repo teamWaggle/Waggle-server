@@ -3,6 +3,8 @@ package com.example.waggle.global.security.oauth2;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.global.exception.handler.AuthenticationHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.CustomUserDetails;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.global.security.oauth2.info.OAuth2UserInfo;
@@ -44,13 +46,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, oAuth2User.getAttributes());
 
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
-            throw new RuntimeException("Email not found from OAuth2 provider");
+            throw new AuthenticationHandler(ErrorStatus.AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER);
         }
-
+        log.info("authProvider = {}", authProvider);
+        log.info("oAuth2UserInfo = {}", oAuth2UserInfo);
         Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
         Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
-        //이미 가입된 경우
-        //많은 프로젝트 대부분이 플랫폼의 정보를 업데이트 했지만 우리 프로젝트에서는 단순히 '권한'만 발급받을 것
 
         return CustomUserDetails.create(member);
     }

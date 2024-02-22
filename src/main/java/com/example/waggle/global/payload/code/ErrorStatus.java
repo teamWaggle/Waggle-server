@@ -31,6 +31,7 @@ public enum ErrorStatus implements BaseCode {
     AUTH_MUST_AUTHORIZED_URI(UNAUTHORIZED, 4057, "해당 uri는 권한 인증이 필수입니다. 만료된 토큰이거나 인증 정보가 없습니다."),
     AUTH_REFRESH_NOT_EXIST_IN_COOKIE(UNAUTHORIZED, 4058, "cookie에 refresh token이 존재하지 않습니다"),
     AUTH_MISMATCH_EMAIL_AND_PASSWORD(UNAUTHORIZED, 4059, "이메일과 패스워드가 일치하는 회원정보가 존재하지 않습니다"),
+    AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER(UNAUTHORIZED, 4060, "provider로부터 받아올 email의 정보가 존재하지 않습티다"),
 
     // 회원 관련 오류 (4100 ~ 4149)
     MEMBER_DUPLICATE_USER_URL(CONFLICT, 4100, "이미 존재하는 사용자 url 입니다."),

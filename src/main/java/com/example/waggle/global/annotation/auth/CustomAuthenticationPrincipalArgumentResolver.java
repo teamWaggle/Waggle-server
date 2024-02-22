@@ -1,4 +1,4 @@
-package com.example.waggle.global.security.annotation;
+package com.example.waggle.global.annotation.auth;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;

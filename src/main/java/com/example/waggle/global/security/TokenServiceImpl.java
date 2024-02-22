@@ -1,10 +1,12 @@
 package com.example.waggle.global.security;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -54,15 +56,16 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public JwtToken login(MemberRequest.AccessDto request) {
-        UserDetails userDetails = memberQueryService.getMemberByEmail(request.getEmail());
+        Member member = memberQueryService.getMemberByEmail(request.getEmail());
         Authentication authentication;
-        if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
-        authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
-                userDetails.getAuthorities());
+        authentication = new UsernamePasswordAuthenticationToken(member, "",
+                member.getAuthorities());
 
         JwtToken jwtToken = generateToken(authentication);
+        jwtToken.setMember(MemberConverter.toMemberSummaryDto(member));
         return jwtToken;
     }
 

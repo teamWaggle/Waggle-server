@@ -114,6 +114,7 @@ public class SecurityConfig {
                 antMatcher("/oauth2/**"),
                 antMatcher("/login/**"),
                 antMatcher(HttpMethod.POST, "/api/tokens"),
+                antMatcher(HttpMethod.GET, "/api/tokens/oauth2"),
                 antMatcher(HttpMethod.DELETE, "/api/tokens"),
                 antMatcher(HttpMethod.GET, "/api/members/**"),
                 antMatcher(HttpMethod.POST, "/api/members/**"),
