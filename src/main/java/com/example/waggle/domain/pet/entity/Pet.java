@@ -26,6 +26,8 @@ public class Pet extends BaseEntity {
 
     private String breed;
 
+    private String description;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -41,6 +43,7 @@ public class Pet extends BaseEntity {
     public void update(PetRequest.Post petDto) {
         this.name = petDto.getName();
         this.breed = petDto.getBreed();
+        this.description = petDto.getDescription();
         this.gender = Gender.valueOf(petDto.getGender());
         this.age = petDto.getAge();
         this.profileImgUrl = petDto.getProfileImgUrl();
