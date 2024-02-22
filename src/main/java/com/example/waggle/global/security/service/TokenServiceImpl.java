@@ -1,4 +1,4 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.security.service;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.security.object.JwtToken;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
 import io.jsonwebtoken.*;

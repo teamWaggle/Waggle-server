@@ -1,7 +1,7 @@
 package com.example.waggle.global.security.oauth2.handler;
 
-import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.global.security.TokenService;
+import com.example.waggle.global.security.object.JwtToken;
+import com.example.waggle.global.security.service.TokenService;
 import com.example.waggle.global.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

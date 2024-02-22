@@ -1,4 +1,4 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.security.object;
 
 import com.example.waggle.web.dto.member.MemberResponse;
 import lombok.AllArgsConstructor;
