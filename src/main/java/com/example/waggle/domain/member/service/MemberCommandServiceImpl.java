@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
 
@@ -223,7 +224,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String generateAutoUsername() {
         String username;
         do {
-            username = NameUtil.generateAuto(NameType.USERNAME);
+            username = UUID.randomUUID().toString();
         } while (memberRepository.existsByUsername(username));
         return username;
     }

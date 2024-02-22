@@ -13,6 +13,7 @@ import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Transactional
@@ -31,6 +33,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -48,8 +51,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new AuthenticationHandler(ErrorStatus.AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER);
         }
-        log.info("authProvider = {}", authProvider);
-        log.info("oAuth2UserInfo = {}", oAuth2UserInfo);
         Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
         Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
 
@@ -60,7 +61,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member register = Member.builder()
                 .email(oAuth2UserInfo.getEmail())
                 .username(generateAutoUsername())
-                .password(PasswordUtil.generateRandomPassword(10))
+                .password(passwordEncoder.encode(PasswordUtil.generateRandomPassword(10)))
                 .nickname(generateAutoNickname())
                 .userUrl(generateAutoUserUrl())
                 .authProvider(authProvider)
@@ -73,7 +74,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private String generateAutoUsername() {
         String username;
         do {
-            username = NameUtil.generateAuto(NameType.USERNAME);
+            username = UUID.randomUUID().toString();
         } while (memberRepository.existsByUsername(username));
         return username;
     }
