@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.security.exception.JwtAuthenticationException;
 import com.example.waggle.global.security.object.JwtToken;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -159,14 +160,17 @@ public class TokenServiceImpl implements TokenService {
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_TOKEN_HAS_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_TOKEN_IS_UNSUPPORTED);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_IS_NULL);
         }
-        return false;
     }
 
     @Override

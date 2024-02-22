@@ -25,13 +25,15 @@ public enum ErrorStatus implements BaseCode {
     AUTH_MISMATCH_REFRESH_TOKEN(BAD_REQUEST, 4051, "리프레시 토큰과 사용자 정보가 일치하지 않습니다."),
     AUTH_INVALID_TOKEN(UNAUTHORIZED, 4052, "유효하지 않은 인증 토큰입니다."),
     AUTH_UNAUTHORIZED_MEMBER(UNAUTHORIZED, 4053, "계정 정보를 찾을 수 없습니다."),
-    AUTH_TOKEN_NO_AUTHORITY(UNAUTHORIZED, 4054, "권한 정보가 없는 토큰입니다."),
+    AUTH_TOKEN_HAS_EXPIRED(UNAUTHORIZED, 4054, "토큰의 유효기간이 만료되었습니다."),
     AUTH_REDIRECT_NOT_MATCHING(BAD_REQUEST, 4055, "redirect uri가 서버 내 설정과 매칭되지 않습니다."),
     AUTH_ROLE_CANNOT_EXECUTE_URI(BAD_REQUEST, 4056, "사용자는 해당 로직을 수행할 수 없는 역할군입니다."),
     AUTH_MUST_AUTHORIZED_URI(UNAUTHORIZED, 4057, "해당 uri는 권한 인증이 필수입니다. 만료된 토큰이거나 인증 정보가 없습니다."),
     AUTH_REFRESH_NOT_EXIST_IN_COOKIE(UNAUTHORIZED, 4058, "cookie에 refresh token이 존재하지 않습니다"),
     AUTH_MISMATCH_EMAIL_AND_PASSWORD(UNAUTHORIZED, 4059, "이메일과 패스워드가 일치하는 회원정보가 존재하지 않습니다"),
     AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER(UNAUTHORIZED, 4060, "provider로부터 받아올 email의 정보가 존재하지 않습티다"),
+    AUTH_TOKEN_IS_UNSUPPORTED(UNAUTHORIZED, 4061, "토큰 형식이 jwt와는 다른 형식입니다."),
+    AUTH_IS_NULL(BAD_REQUEST, 4062, "토큰 정보가 null입니다."),
 
     // 회원 관련 오류 (4100 ~ 4149)
     MEMBER_DUPLICATE_USER_URL(CONFLICT, 4100, "이미 존재하는 사용자 url 입니다."),

@@ -1,9 +1,10 @@
 package com.example.waggle.global.config;
 
 
-import com.example.waggle.global.security.JwtAuthenticationFilter;
 import com.example.waggle.global.security.exception.JwtAccessDeniedHandler;
 import com.example.waggle.global.security.exception.JwtAuthenticationEntryPoint;
+import com.example.waggle.global.security.filter.JwtAuthenticationFilter;
+import com.example.waggle.global.security.filter.JwtExceptionFilter;
 import com.example.waggle.global.security.oauth2.CustomOAuth2UserService;
 import com.example.waggle.global.security.oauth2.handler.OAuth2AuthenticationFailureHandler;
 import com.example.waggle.global.security.oauth2.handler.OAuth2AuthenticationSuccessHandler;
@@ -35,6 +36,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
 
     @Bean
@@ -45,12 +47,14 @@ public class SecurityConfig {
         addFilter(httpSecurity);
         configureExceptionHandling(httpSecurity);
 
-
         return httpSecurity.build();
     }
 
     private void addFilter(HttpSecurity httpSecurity) {
-        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+
     }
 
     private void configureExceptionHandling(HttpSecurity httpSecurity) throws Exception {
