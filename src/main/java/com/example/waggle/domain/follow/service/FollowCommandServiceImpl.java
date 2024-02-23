@@ -29,10 +29,17 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         Member followee = memberRepository.findByNickname(to)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         validateFollowing(member, followee);
-        Follow follow = Follow.builder()
-                .fromMember(member)
-                .toMember(followee)
-                .build();
+        Follow follow = buildFollow(member, followee);
+        followRepository.save(follow);
+        return follow.getId();
+    }
+
+    @Override
+    public Long follow(Member from, Long to) {
+        Member followee = memberRepository.findById(to)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        validateFollowing(from, followee);
+        Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
         return follow.getId();
     }
@@ -49,6 +56,15 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         followRepository.delete(follow);
     }
 
+    @Override
+    public void unFollow(Member from, Long to) {
+        Member followee = memberRepository.findById(to)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Follow follow = followRepository.findByToMemberAndFromMember(followee, from)
+                .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
+        followRepository.delete(follow);
+    }
+
     private void validateFollowing(Member member, Member followee) {
         boolean isFollowExists = followRepository.existsFollowByFromMemberAndToMember(member, followee);
         if (isFollowExists) {
@@ -57,5 +73,13 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         if (member == followee) {
             throw new FollowHandler(ErrorStatus.FOLLOW_NOT_ALLOWED_MYSELF);
         }
+    }
+
+    private static Follow buildFollow(Member member, Member followee) {
+        Follow follow = Follow.builder()
+                .fromMember(member)
+                .toMember(followee)
+                .build();
+        return follow;
     }
 }

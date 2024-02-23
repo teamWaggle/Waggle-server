@@ -4,8 +4,8 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -42,10 +41,10 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 생성 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 작성에 실패했습니다.")
     @PostMapping("/{teamId}")
-    public ApiResponseDto<Long> createSchedule(@AuthUser UserDetails userDetails,
+    public ApiResponseDto<Long> createSchedule(@AuthUser Member member,
                                                @PathVariable Long teamId,
                                                @RequestBody Post request) {
-        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request, userDetails.getUsername());
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, member, request);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -53,9 +52,9 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 저장에 실패했습니다.")
     @PostMapping("/members/{scheduleId}")
-    public ApiResponseDto<Long> addSchedule(@AuthUser UserDetails userDetails,
+    public ApiResponseDto<Long> addSchedule(@AuthUser Member member,
                                             @PathVariable Long scheduleId) {
-        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, userDetails.getUsername());
+        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, member);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -73,8 +72,9 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 수정에 실패했습니다.")
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<Long> updateSchedule(@PathVariable Long scheduleId,
-                                               @RequestBody Post request) {
-        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, request);
+                                               @RequestBody Post request,
+                                               @AuthUser Member member) {
+        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, member, request);
         return ApiResponseDto.onSuccess(updatedScheduleId);
     }
 
@@ -82,8 +82,9 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
     @DeleteMapping("/teams")
-    public ApiResponseDto<Boolean> deleteScheduleInTeam(@RequestParam("boardId") Long boardId) {
-        scheduleCommandService.deleteSchedule(boardId);
+    public ApiResponseDto<Boolean> deleteScheduleInTeam(@RequestParam("boardId") Long boardId,
+                                                        @AuthUser Member member) {
+        scheduleCommandService.deleteSchedule(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -91,9 +92,9 @@ public class ScheduleApiController {
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
     @DeleteMapping("/members/{boardId}")
-    public ApiResponseDto<Boolean> deleteScheduleInMember(@AuthUser UserDetails userDetails,
+    public ApiResponseDto<Boolean> deleteScheduleInMember(@AuthUser Member member,
                                                           @RequestParam("boardId") Long boardId) {
-        scheduleCommandService.deleteMemberSchedule(boardId, userDetails.getUsername());
+        scheduleCommandService.deleteMemberSchedule(boardId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
