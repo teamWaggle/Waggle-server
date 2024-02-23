@@ -13,8 +13,8 @@ public class MemberConverter {
     public static MemberResponse.SummaryDto toMemberSummaryDto(Member member) {
         return MemberResponse.SummaryDto.builder()
                 .id(member.getId())
-                .userUrl(member.getUserUrl())
                 .nickname(member.getNickname())
+                .userUrl(member.getUserUrl())
                 .profileImgUrl(MediaUtil.getProfileImg(member))
                 .build();
     }

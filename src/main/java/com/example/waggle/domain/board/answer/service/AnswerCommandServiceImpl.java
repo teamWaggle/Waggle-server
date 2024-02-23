@@ -43,10 +43,10 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long createAnswer(Long questionId,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerRequest.Post request,
                              List<MultipartFile> multiPartFiles) {
         Member signInMember = memberQueryService.getSignInMember();
-        Answer answer = buildAnswer(questionId, answerWriteDto, signInMember);
+        Answer answer = buildAnswer(questionId, request, signInMember);
         answerRepository.save(answer);
 
         mediaCommandService.createMedia(multiPartFiles, answer);
@@ -54,12 +54,11 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public Long createAnswerByUsername(Long questionId,
-                                       AnswerRequest.Post answerWriteDto,
-                                       List<MultipartFile> multipartFiles,
-                                       String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-        Answer answer = buildAnswer(questionId, answerWriteDto, member);
+    public Long createAnswer(Long questionId,
+                             Member member,
+                             AnswerRequest.Post request,
+                             List<MultipartFile> multipartFiles) {
+        Answer answer = buildAnswer(questionId, request, member);
         answerRepository.save(answer);
 
         mediaCommandService.createMedia(multipartFiles, answer);
@@ -69,13 +68,13 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long updateAnswer(Long boardId,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerRequest.Post request,
                              List<MultipartFile> multipartFiles,
                              List<String> deleteFiles) {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        answer.changeAnswer(answerWriteDto.getContent());
+        answer.changeAnswer(request.getContent());
         mediaCommandService.updateMedia(multipartFiles, deleteFiles, answer);
         return answer.getId();
     }
@@ -100,22 +99,23 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public Long updateAnswerByUsername(Long boardId, String username, AnswerRequest.Post request, MediaRequest.Put mediaUpdateDto, List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public Long updateAnswer(Long boardId,
+                             Member member,
+                             AnswerRequest.Post request,
+                             MediaRequest.Put mediaUpdateDto,
+                             List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-
         answer.changeAnswer(request.getContent());
-
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, answer);
 
         return answer.getId();
     }
+
 
     @Override
     public void deleteAnswer(Long boardId) {
@@ -132,9 +132,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public void deleteAnswerByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public void deleteAnswer(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }

@@ -1,9 +1,8 @@
 package com.example.waggle.global.security.oauth2.handler;
 
-import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.global.security.TokenService;
+import com.example.waggle.global.security.object.JwtToken;
+import com.example.waggle.global.security.service.TokenService;
 import com.example.waggle.global.util.CookieUtil;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws ServletException, IOException {
+                                        Authentication authentication) throws IOException {
         JwtToken jwtToken = tokenService.generateToken(authentication);
         if (response.isCommitted()) {
             return;

@@ -32,15 +32,12 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         Member member = memberQueryService.getSignInMember();
         //boardWriter.equals(user)
-        if (board.getMember().equals(member)) {
-            log.info("can't recommend mine");
-            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
-        }
+        validateRecommendMyself(member, board);
 
         boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
         if (isRecommended) {
             log.info("cancel recommend");
-            cancelRecommendation(member.getId(), boardId);
+            cancelRecommendation(board, member);
         } else {
             log.info("click recommend");
             createRecommendation(board, member);
@@ -48,26 +45,29 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     }
 
     @Override
-    public void handleRecommendationByUsername(Long boardId, String username) {
+    public void handleRecommendation(Long boardId, Member member) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-        Member member = memberQueryService.getMemberByUsername(username);
-        //boardWriter.equals(user)
-        if (board.getMember().equals(member)) {
-            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
-        }
+        validateRecommendMyself(member, board);
 
         boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
         if (isRecommended) {
-            cancelRecommendation(member.getId(), boardId);
+            cancelRecommendation(board, member);
         } else {
             createRecommendation(board, member);
         }
     }
 
-    private void cancelRecommendation(Long memberId, Long boardId) {
+    private static void validateRecommendMyself(Member member, Board board) {
+        if (board.getMember().equals(member)) {
+            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
+        }
+    }
+
+
+    private void cancelRecommendation(Board board, Member member) {
         Recommend recommend = recommendRepository
-                .findRecommendByMemberIdAndBoardId(memberId, boardId)
+                .findRecommendByMemberAndBoard(member, board)
                 .orElseThrow(() -> new RecommendHandler(ErrorStatus.RECOMMEND_NOT_FOUND));
         recommendRepository.delete(recommend);
     }

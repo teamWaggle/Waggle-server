@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
-import com.example.waggle.global.security.annotation.AuthUser;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,9 +33,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 멤버 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 이미 팔로잉이 된 상대입니다.")
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@RequestParam String nickname,
-                                              @AuthUser UserDetails userDetails) {
-        Long follow = followCommandService.follow(userDetails.getUsername(), nickname);
+    public ApiResponseDto<Long> requestFollow(@RequestParam Long toMember,
+                                              @AuthUser Member member) {
+        Long follow = followCommandService.follow(member, toMember);
         return ApiResponseDto.onSuccess(follow);
     }
 
@@ -42,9 +43,9 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "언팔로우 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 팔로잉이 되지 않은 상대입니다.")
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam String nickname,
-                                                   @AuthUser UserDetails userDetails) {
-        followCommandService.unFollow(userDetails.getUsername(), nickname);
+    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam Long toMember,
+                                                   @AuthUser Member member) {
+        followCommandService.unFollow(member, toMember);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -52,8 +53,8 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/following")
-    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowingMemberListByUsername(@AuthUser UserDetails userDetails) {
-        List<Follow> followings = followQueryService.getFollowingsByUsername(userDetails.getUsername());
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowingMemberListByUsername() {
+        List<Follow> followings = followQueryService.getFollowingsByUsername(SecurityUtil.getCurrentUsername());
         List<MemberResponse.SummaryDto> collect = followings.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
@@ -74,8 +75,8 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/follower")
-    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowerMemberListByUsername(@AuthUser UserDetails userDetails) {
-        List<Follow> followers = followQueryService.getFollowersByUsername(userDetails.getUsername());
+    public ApiResponseDto<List<MemberResponse.SummaryDto>> getFollowerMemberListByUsername() {
+        List<Follow> followers = followQueryService.getFollowersByUsername(SecurityUtil.getCurrentUsername());
         List<MemberResponse.SummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);

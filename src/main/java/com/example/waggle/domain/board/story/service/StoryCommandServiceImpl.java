@@ -49,8 +49,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     }
 
     @Override
-    public Long createStoryByUsername(StoryRequest.Post request, List<MultipartFile> multipartFiles, String username) {
-        Story createdStory = buildStory(request, username);
+    public Long createStory(Member member, StoryRequest.Post request, List<MultipartFile> multipartFiles) {
+        Story createdStory = buildStory(request, member);
 
         Story story = storyRepository.save(createdStory);
 
@@ -59,7 +59,6 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
         return story.getId();
-
     }
 
     @Override
@@ -107,12 +106,11 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     }
 
     @Override
-    public Long updateStoryByUsername(Long boardId,
-                                      String username,
-                                      StoryRequest.Post storyWriteDto,
-                                      MediaRequest.Put mediaListDto,
-                                      List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long updateStory(Long boardId,
+                            Member member,
+                            StoryRequest.Post storyWriteDto,
+                            MediaRequest.Put mediaListDto,
+                            List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -120,7 +118,6 @@ public class StoryCommandServiceImpl implements StoryCommandService {
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         story.changeContent(storyWriteDto.getContent());
-
         mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
 
         story.getBoardHashtags().clear();
@@ -145,8 +142,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     }
 
     @Override
-    public void deleteStoryByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public void deleteStory(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -167,8 +163,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         return createdStory;
     }
 
-    private Story buildStory(StoryRequest.Post request, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    private Story buildStory(StoryRequest.Post request, Member member) {
         Story createdStory = Story.builder()
                 .member(member)
                 .content(request.getContent())

@@ -1,4 +1,4 @@
-package com.example.waggle.global.security.annotation;
+package com.example.waggle.global.annotation.auth;
 
 import io.swagger.v3.oas.annotations.Parameter;
 

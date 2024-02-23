@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
 
@@ -91,9 +92,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long registerMemberInfo(String username, MemberRequest.RegisterDto request) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public Long registerMemberInfo(Member member, MemberRequest.RegisterDto request) {
         if (member.getRole() == Role.GUEST) {
             member.changeRole(Role.USER);
         }
@@ -106,8 +105,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberInfo(String username, MemberRequest.Put request) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long updateMemberInfo(Member member, MemberRequest.Put request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {
@@ -135,6 +133,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         // TODO boardHashtag, teamMember, scheduleMember ➡️ 삭제 시 고아 객체 처리 필요 (참조 카운팅, 스케줄링・・・)
         Member member = memberQueryService.getMemberById(memberId);
 
+        deleteAllDataLinkedToMember(member);
+        deleteMemberContent(member);
+        deleteMemberTeams(member);
+
+        memberRepository.delete(member);
+    }
+
+    @Override
+    public void deleteMember(Member member) {
         deleteAllDataLinkedToMember(member);
         deleteMemberContent(member);
         deleteMemberTeams(member);
@@ -217,7 +224,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String generateAutoUsername() {
         String username;
         do {
-            username = NameUtil.generateAuto(NameType.USERNAME);
+            username = UUID.randomUUID().toString();
         } while (memberRepository.existsByUsername(username));
         return username;
     }
