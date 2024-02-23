@@ -44,7 +44,6 @@ public class PetResponse {
     @AllArgsConstructor
     @Builder
     public static class ListDto {
-        @Builder.Default
         private List<DetailDto> petList = new ArrayList<>();
     }
 
