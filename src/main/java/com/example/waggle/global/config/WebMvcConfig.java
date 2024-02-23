@@ -1,8 +1,8 @@
 package com.example.waggle.global.config;
 
-import com.example.waggle.global.security.annotation.CustomAuthenticationPrincipalArgumentResolver;
-import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
-import org.springframework.context.annotation.Bean;
+import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.global.annotation.auth.CustomAuthenticationPrincipalArgumentResolver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,12 +11,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
     private final long MAX_AGE_SECS = 3600;
+    private final MemberQueryService memberQueryService;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(new CustomAuthenticationPrincipalArgumentResolver());
+        argumentResolvers.add(new CustomAuthenticationPrincipalArgumentResolver(memberQueryService));
     }
 
     //CORS setting
@@ -29,10 +31,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") //요청 허용 헤더
                 .allowCredentials(true) //요청 허용 쿠키
                 .maxAge(MAX_AGE_SECS);
-    }
-
-    @Bean
-    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
-        return CookieSameSiteSupplier.ofNone();
     }
 }

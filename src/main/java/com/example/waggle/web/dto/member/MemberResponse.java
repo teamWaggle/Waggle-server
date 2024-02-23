@@ -16,8 +16,8 @@ public class MemberResponse {
     @AllArgsConstructor
     public static class SummaryDto {
         private Long id;
-        private String userUrl;
         private String nickname;
+        private String userUrl;
         private String profileImgUrl;
     }
 

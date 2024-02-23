@@ -4,17 +4,13 @@ import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.siren.SirenRequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -45,7 +41,7 @@ public class Siren extends Board {
         this.title = request.getTitle();
         this.petKind = request.getPetKind();
         this.petAge = request.getPetAge();
-        this.petGender = request.getPetGender();
+        this.petGender = Gender.valueOf(request.getPetGender());
         this.lostDate = request.getLostDate();
         this.lostLocate = request.getLostLocate();
         this.contact = request.getContact();

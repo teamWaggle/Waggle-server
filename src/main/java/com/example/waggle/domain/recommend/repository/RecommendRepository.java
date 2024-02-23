@@ -14,7 +14,7 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
 
     boolean existsByMemberIdAndBoardId(Long memberId, Long boardId);
 
-    Optional<Recommend> findRecommendByMemberIdAndBoardId(Long memberId, Long boardId);
+    Optional<Recommend> findRecommendByMemberAndBoard(Member member, Board board);
 
     List<Recommend> findByBoardId(Long boardId);
 

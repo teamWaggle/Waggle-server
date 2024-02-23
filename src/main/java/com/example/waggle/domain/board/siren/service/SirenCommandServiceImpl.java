@@ -1,13 +1,13 @@
 package com.example.waggle.domain.board.siren.service;
 
-import static com.example.waggle.domain.board.service.BoardType.SIREN;
-
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
+import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
@@ -15,12 +15,15 @@ import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.siren.SirenRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.SIREN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,14 +48,14 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
-    public Long createSirenByUsername(SirenRequest.Post sirenWriteDto, List<MultipartFile> multipartFiles,
-                                      String username) {
-        Siren build = buildSiren(sirenWriteDto, username);
+    public Long createSiren(Member member,
+                            SirenRequest.Post sirenWriteDto,
+                            List<MultipartFile> multipartFiles) {
+        Siren build = buildSiren(sirenWriteDto, member);
         sirenRepository.save(build);
         mediaCommandService.createMedia(multipartFiles, build);
         return build.getId();
     }
-
 
     @Override
     public Long updateSiren(Long boardId,
@@ -90,12 +93,11 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
-    public Long updateSirenByUsername(Long boardId,
-                                      String username,
-                                      SirenRequest.Post request,
-                                      MediaRequest.Put mediaUpdateDto,
-                                      List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long updateSiren(Long boardId,
+                            Member member,
+                            SirenRequest.Post request,
+                            MediaRequest.Put mediaUpdateDto,
+                            List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -103,11 +105,11 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         siren.changeSiren(request);
-
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, siren);
 
         return siren.getId();
     }
+
 
     @Override
     public void deleteSiren(Long boardId) {
@@ -124,9 +126,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
-    public void deleteSirenByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public void deleteSiren(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -146,7 +146,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .contact(sirenWriteDto.getContact())
                 .content(sirenWriteDto.getContent())
                 .petKind(sirenWriteDto.getPetKind())
-                .petGender(sirenWriteDto.getPetGender())
+                .petGender(Gender.valueOf(sirenWriteDto.getPetGender()))
                 .petAge(sirenWriteDto.getPetAge())
                 .lostDate(sirenWriteDto.getLostDate())
                 .lostLocate(sirenWriteDto.getLostLocate())
@@ -156,19 +156,19 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         return build;
     }
 
-    private Siren buildSiren(SirenRequest.Post sirenWriteDto, String username) {
-        Member signInMember = memberQueryService.getMemberByUsername(username);
+    private Siren buildSiren(SirenRequest.Post sirenWriteDto, Member member) {
         Siren build = Siren.builder()
                 .title(sirenWriteDto.getTitle())
                 .contact(sirenWriteDto.getContact())
                 .content(sirenWriteDto.getContent())
                 .petKind(sirenWriteDto.getPetKind())
-                .petGender(sirenWriteDto.getPetGender())
+                .petGender(Gender.valueOf(sirenWriteDto.getPetGender()))
                 .petAge(sirenWriteDto.getPetAge())
                 .lostDate(sirenWriteDto.getLostDate())
                 .lostLocate(sirenWriteDto.getLostLocate())
                 .category(SirenCategory.valueOf(sirenWriteDto.getCategory()))
-                .member(signInMember)
+                .status(ResolutionStatus.valueOf(sirenWriteDto.getStatus()))
+                .member(member)
                 .build();
         return build;
     }
