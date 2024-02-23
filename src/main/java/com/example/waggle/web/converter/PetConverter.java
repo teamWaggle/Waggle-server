@@ -22,13 +22,23 @@ public class PetConverter {
                 .id(pet.getId())
                 .breed(pet.getBreed())
                 .age(pet.getAge())
+                .description(pet.getDescription())
                 .gender(pet.getGender())
                 .name(pet.getName())
                 .profileImgUrl(MediaUtil.getProfileImg(pet))
                 .build();
     }
 
-    public static List<PetResponse.SummaryDto> toListDto(List<Pet> pets) {
-        return pets.stream().map(PetConverter::toSummaryDto).collect(Collectors.toList());
+//    public static List<PetResponse.SummaryDto> toListDto(List<Pet> pets) {
+//        return pets.stream().map(PetConverter::toSummaryDto).collect(Collectors.toList());
+//    }
+
+    public static PetResponse.ListDto toListDto(List<Pet> petList) {
+        List<PetResponse.DetailDto> collect = petList.stream()
+                .map(PetConverter::toDetailDto).collect(Collectors.toList());
+        return PetResponse.ListDto.builder()
+                .petList(collect)
+                .build();
+
     }
 }

@@ -3,14 +3,10 @@ package com.example.waggle.web.dto.pet;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 public class PetRequest {
 
@@ -25,9 +21,8 @@ public class PetRequest {
         private String name;
         private String breed;
         private String age;
+        private String description;
         private String profileImgUrl;
-        private boolean isUploadProfile;
-
         @ValidEnum(target = Gender.class)
         private String gender;
     }
