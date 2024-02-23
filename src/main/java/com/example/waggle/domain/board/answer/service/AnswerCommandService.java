@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.answer.service;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.media.MediaRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,16 +9,16 @@ import java.util.List;
 
 public interface AnswerCommandService {
     Long createAnswer(Long questionId,
-                      AnswerRequest.Post answerWriteDto,
+                      AnswerRequest.Post request,
                       List<MultipartFile> multipartFiles);
 
-    Long createAnswerByUsername(Long questionId,
-                                AnswerRequest.Post answerWriteDto,
-                                List<MultipartFile> multipartFiles,
-                                String username);
+    Long createAnswer(Long questionId,
+                      Member member,
+                      AnswerRequest.Post request,
+                      List<MultipartFile> multipartFiles);
 
     Long updateAnswer(Long boardId,
-                      AnswerRequest.Post answerWriteDto,
+                      AnswerRequest.Post request,
                       List<MultipartFile> multipartFiles,
                       List<String> deleteFiles);
 
@@ -26,13 +27,13 @@ public interface AnswerCommandService {
                         MediaRequest.Put mediaUpdateDto,
                         List<MultipartFile> multipartFiles);
 
-    Long updateAnswerByUsername(Long boardId,
-                                String username,
-                                AnswerRequest.Post request,
-                                MediaRequest.Put mediaUpdateDto,
-                                List<MultipartFile> multipartFiles);
+    Long updateAnswer(Long boardId,
+                      Member member,
+                      AnswerRequest.Post request,
+                      MediaRequest.Put mediaUpdateDto,
+                      List<MultipartFile> multipartFiles);
 
     void deleteAnswer(Long boardId);
 
-    void deleteAnswerByUsername(Long boardId, String username);
+    void deleteAnswer(Long boardId, Member member);
 }

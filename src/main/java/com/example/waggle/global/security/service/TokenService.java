@@ -1,5 +1,6 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.security.service;
 
+import com.example.waggle.global.security.object.JwtToken;
 import com.example.waggle.web.dto.member.MemberRequest;
 import org.springframework.security.core.Authentication;
 

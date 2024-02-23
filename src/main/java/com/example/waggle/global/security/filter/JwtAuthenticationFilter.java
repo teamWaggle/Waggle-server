@@ -1,5 +1,6 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.security.filter;
 
+import com.example.waggle.global.security.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
         token = resolveToken(request);
 
-        // 2. validateToken으로 토큰 유효성 검사
         if (token != null && tokenService.validateToken(token)) {
             // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
             Authentication authentication = tokenService.getAuthentication(token);

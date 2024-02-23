@@ -1,5 +1,6 @@
 package com.example.waggle.domain.board.question.service;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,9 +12,9 @@ public interface QuestionCommandService {
     Long createQuestion(QuestionRequest.Post request,
                         List<MultipartFile> multipartFiles);
 
-    Long createQuestionByUsername(QuestionRequest.Post request,
-                                  List<MultipartFile> multipartFiles,
-                                  String username);
+    Long createQuestion(Member member,
+                        QuestionRequest.Post request,
+                        List<MultipartFile> multipartFiles);
 
     Long updateQuestion(Long boardId,
                         QuestionRequest.Post request,
@@ -25,14 +26,14 @@ public interface QuestionCommandService {
                           MediaRequest.Put mediaUpdateDto,
                           List<MultipartFile> multipartFiles);
 
-    Long updateQuestionByUsername(Long boardId,
-                                  String username,
-                                  QuestionRequest.Post request,
-                                  MediaRequest.Put mediaUpdateDto,
-                                  List<MultipartFile> multipartFiles);
+    Long updateQuestion(Long boardId,
+                        Member member,
+                        QuestionRequest.Post request,
+                        MediaRequest.Put mediaUpdateDto,
+                        List<MultipartFile> multipartFiles);
 
     void deleteQuestion(Long boardId);
 
-    void deleteQuestionByUsername(Long boardId, String username);
+    void deleteQuestion(Long boardId, Member member);
 
 }

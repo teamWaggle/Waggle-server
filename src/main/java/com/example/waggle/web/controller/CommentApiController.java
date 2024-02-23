@@ -3,6 +3,8 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.service.comment.CommentQueryService;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.CommentConverter;
 import com.example.waggle.web.dto.comment.CommentRequest;
@@ -46,8 +48,9 @@ public class CommentApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> createScheduleComment(@PathVariable Long boardId,
-                                                      @RequestBody CommentRequest.Post commentWriteDto) {
-        Long commentId = commentCommandService.createComment(boardId, commentWriteDto);
+                                                      @RequestBody CommentRequest.Post request,
+                                                      @AuthUser Member member) {
+        Long commentId = commentCommandService.createComment(boardId, member, request);
         return ApiResponseDto.onSuccess(commentId);
     }
 
@@ -56,8 +59,9 @@ public class CommentApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable Long commentId,
-                                              @RequestBody CommentRequest.Post commentWriteDto) {
-        Long updatedCommentId = commentCommandService.updateComment(commentId, commentWriteDto);
+                                              @RequestBody CommentRequest.Post request,
+                                              @AuthUser Member member) {
+        Long updatedCommentId = commentCommandService.updateComment(commentId, member, request);
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 
@@ -65,8 +69,9 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "댓글 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없거나 인증 정보가 댓글을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping
-    public ApiResponseDto<Boolean> deleteComment(@RequestParam("commentId") Long commentId) {
-        commentCommandService.deleteComment(commentId);
+    public ApiResponseDto<Boolean> deleteComment(@RequestParam("commentId") Long commentId,
+                                                 @AuthUser Member member) {
+        commentCommandService.deleteComment(commentId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

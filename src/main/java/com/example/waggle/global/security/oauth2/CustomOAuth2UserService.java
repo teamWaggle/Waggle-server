@@ -3,14 +3,17 @@ package com.example.waggle.global.security.oauth2;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.global.security.CustomUserDetails;
+import com.example.waggle.global.exception.handler.AuthenticationHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.global.security.oauth2.info.OAuth2UserInfo;
+import com.example.waggle.global.security.object.CustomUserDetails;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.global.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Transactional
@@ -29,6 +33,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -44,13 +49,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, oAuth2User.getAttributes());
 
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
-            throw new RuntimeException("Email not found from OAuth2 provider");
+            throw new AuthenticationHandler(ErrorStatus.AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER);
         }
-
         Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
         Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
-        //이미 가입된 경우
-        //많은 프로젝트 대부분이 플랫폼의 정보를 업데이트 했지만 우리 프로젝트에서는 단순히 '권한'만 발급받을 것
 
         return CustomUserDetails.create(member);
     }
@@ -59,7 +61,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member register = Member.builder()
                 .email(oAuth2UserInfo.getEmail())
                 .username(generateAutoUsername())
-                .password(PasswordUtil.generateRandomPassword(10))
+                .password(passwordEncoder.encode(PasswordUtil.generateRandomPassword(10)))
                 .nickname(generateAutoNickname())
                 .userUrl(generateAutoUserUrl())
                 .authProvider(authProvider)
@@ -72,7 +74,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private String generateAutoUsername() {
         String username;
         do {
-            username = NameUtil.generateAuto(NameType.USERNAME);
+            username = UUID.randomUUID().toString();
         } while (memberRepository.existsByUsername(username));
         return username;
     }

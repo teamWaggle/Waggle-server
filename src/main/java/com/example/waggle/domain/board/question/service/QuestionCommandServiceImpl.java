@@ -1,7 +1,5 @@
 package com.example.waggle.domain.board.question.service;
 
-import static com.example.waggle.domain.board.service.BoardType.QUESTION;
-
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
@@ -17,12 +15,15 @@ import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,10 +54,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long createQuestionByUsername(QuestionRequest.Post request,
-                                         List<MultipartFile> multipartFiles,
-                                         String username) {
-        Question createdQuestion = buildQuestion(request, username);
+    public Long createQuestion(Member member,
+                               QuestionRequest.Post request,
+                               List<MultipartFile> multipartFiles) {
+        Question createdQuestion = buildQuestion(request, member);
         Question question = questionRepository.save(createdQuestion);
 
         for (String hashtag : request.getHashtags()) {
@@ -107,13 +108,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long updateQuestionByUsername(Long boardId,
-                                         String username,
-                                         QuestionRequest.Post request,
-                                         MediaRequest.Put mediaUpdateDto,
-                                         List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public Long updateQuestion(Long boardId, Member member, QuestionRequest.Post request, MediaRequest.Put mediaUpdateDto, List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -121,7 +116,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         question.changeQuestion(request);
-
         mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, question);
 
         question.getBoardHashtags().clear();
@@ -130,6 +124,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         }
         return question.getId();
     }
+
 
     @Override
     public void deleteQuestion(Long boardId) {
@@ -148,8 +143,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public void deleteQuestionByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public void deleteQuestion(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -158,7 +152,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
         answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
-
         recommendRepository.deleteAllByBoardId(question.getId());
 
         questionRepository.delete(question);
@@ -175,8 +168,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return createdQuestion;
     }
 
-    private Question buildQuestion(QuestionRequest.Post request, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    private Question buildQuestion(QuestionRequest.Post request, Member member) {
 
         Question createdQuestion = Question.builder()
                 .title(request.getTitle())
