@@ -25,7 +25,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public Member getMemberByUsername(String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        log.info("member = {}", member.getUsername());
         return member;
     }
 

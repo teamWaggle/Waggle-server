@@ -48,9 +48,9 @@ public class CommentApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> createScheduleComment(@PathVariable Long boardId,
-                                                      @RequestBody CommentRequest.Post commentWriteDto,
+                                                      @RequestBody CommentRequest.Post request,
                                                       @AuthUser Member member) {
-        Long commentId = commentCommandService.createComment(boardId, member, commentWriteDto);
+        Long commentId = commentCommandService.createComment(boardId, member, request);
         return ApiResponseDto.onSuccess(commentId);
     }
 
@@ -59,9 +59,9 @@ public class CommentApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable Long commentId,
-                                              @RequestBody CommentRequest.Post commentWriteDto,
+                                              @RequestBody CommentRequest.Post request,
                                               @AuthUser Member member) {
-        Long updatedCommentId = commentCommandService.updateComment(commentId, member, commentWriteDto);
+        Long updatedCommentId = commentCommandService.updateComment(commentId, member, request);
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 

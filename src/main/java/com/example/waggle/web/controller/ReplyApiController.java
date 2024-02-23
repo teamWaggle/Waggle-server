@@ -36,10 +36,10 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공. 작성한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("{commentId}")
-    public ApiResponseDto<Long> createReply(@RequestBody ReplyRequest.Post replyWriteDto,
+    public ApiResponseDto<Long> createReply(@RequestBody ReplyRequest.Post request,
                                             @PathVariable Long commentId,
                                             @AuthUser Member member) {
-        Long replyId = replyCommandService.createReply(commentId, member, replyWriteDto);
+        Long replyId = replyCommandService.createReply(commentId, member, request);
         return ApiResponseDto.onSuccess(replyId);
     }
 
@@ -48,9 +48,9 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{replyId}")
     public ApiResponseDto<Long> updateReply(@PathVariable Long replyId,
-                                            @RequestBody ReplyRequest.Post replyWriteDto,
+                                            @RequestBody ReplyRequest.Post request,
                                             @AuthUser Member member) {
-        Long updatedReplyId = replyCommandService.updateReply(replyId, member, replyWriteDto);
+        Long updatedReplyId = replyCommandService.updateReply(replyId, member, request);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
 

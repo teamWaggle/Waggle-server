@@ -43,10 +43,10 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long createAnswer(Long questionId,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerRequest.Post request,
                              List<MultipartFile> multiPartFiles) {
         Member signInMember = memberQueryService.getSignInMember();
-        Answer answer = buildAnswer(questionId, answerWriteDto, signInMember);
+        Answer answer = buildAnswer(questionId, request, signInMember);
         answerRepository.save(answer);
 
         mediaCommandService.createMedia(multiPartFiles, answer);
@@ -56,9 +56,9 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     @Override
     public Long createAnswer(Long questionId,
                              Member member,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerRequest.Post request,
                              List<MultipartFile> multipartFiles) {
-        Answer answer = buildAnswer(questionId, answerWriteDto, member);
+        Answer answer = buildAnswer(questionId, request, member);
         answerRepository.save(answer);
 
         mediaCommandService.createMedia(multipartFiles, answer);
@@ -68,13 +68,13 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long updateAnswer(Long boardId,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerRequest.Post request,
                              List<MultipartFile> multipartFiles,
                              List<String> deleteFiles) {
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        answer.changeAnswer(answerWriteDto.getContent());
+        answer.changeAnswer(request.getContent());
         mediaCommandService.updateMedia(multipartFiles, deleteFiles, answer);
         return answer.getId();
     }

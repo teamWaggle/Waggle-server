@@ -46,10 +46,10 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 작성 성공. 작성한 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createSiren(@RequestPart @Validated SirenRequest.Post sirenWriteDto,
+    public ApiResponseDto<Long> createSiren(@RequestPart @Validated SirenRequest.Post request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
                                             @AuthUser Member member) {
-        Long boardId = sirenCommandService.createSiren(member, sirenWriteDto, multipartFiles);
+        Long boardId = sirenCommandService.createSiren(member, request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 

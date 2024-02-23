@@ -36,29 +36,28 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final BoardRepository boardRepository;
 
     @Override
-    public Long createComment(Long boardId, CommentRequest.Post commentWriteDto) {
+    public Long createComment(Long boardId, CommentRequest.Post request) {
         Member signInMember = memberQueryService.getSignInMember();
         validateAccessSchedule(boardId, signInMember);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         Comment build = Comment.builder()
-                .content(commentWriteDto.getContent())
+                .content(request.getContent())
                 .board(board)
                 .member(signInMember)
                 .build();
         commentRepository.save(build);
-        mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
+        mentionCommandService.createMentions(build, request.getMentionedNickname());
         return build.getId();
     }
 
     @Override
-    public Long createComment(Long boardId, Member member, CommentRequest.Post commentWriteDto) {
+    public Long createComment(Long boardId, Member member, CommentRequest.Post request) {
         validateAccessSchedule(boardId, member);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-        Comment build = buildComment(member, commentWriteDto, board);
-        commentRepository.save(build);
-        mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
+        Comment build = buildComment(member, request, board);
+        mentionCommandService.createMentions(build, request.getMentionedNickname());
         return build.getId();
     }
 
@@ -128,12 +127,13 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         }
     }
 
-    private static Comment buildComment(Member member, CommentRequest.Post commentWriteDto, Board board) {
+    private Comment buildComment(Member member, CommentRequest.Post commentWriteDto, Board board) {
         Comment build = Comment.builder()
                 .content(commentWriteDto.getContent())
                 .board(board)
                 .member(member)
                 .build();
+        commentRepository.save(build);
         return build;
     }
 

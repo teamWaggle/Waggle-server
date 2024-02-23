@@ -9,16 +9,16 @@ import java.util.List;
 
 public interface AnswerCommandService {
     Long createAnswer(Long questionId,
-                      AnswerRequest.Post answerWriteDto,
+                      AnswerRequest.Post request,
                       List<MultipartFile> multipartFiles);
 
     Long createAnswer(Long questionId,
                       Member member,
-                      AnswerRequest.Post answerWriteDto,
+                      AnswerRequest.Post request,
                       List<MultipartFile> multipartFiles);
 
     Long updateAnswer(Long boardId,
-                      AnswerRequest.Post answerWriteDto,
+                      AnswerRequest.Post request,
                       List<MultipartFile> multipartFiles,
                       List<String> deleteFiles);
 

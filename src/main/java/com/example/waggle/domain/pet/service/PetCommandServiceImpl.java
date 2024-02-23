@@ -64,7 +64,7 @@ public class PetCommandServiceImpl implements PetCommandService {
     public Long updatePet(Long petId, Member member, PetRequest.Post petDto) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        validateIsMaster(member, pet);
+        validateIsOwner(member, pet);
         pet.update(petDto);
         return pet.getId();
     }
@@ -80,7 +80,7 @@ public class PetCommandServiceImpl implements PetCommandService {
     public void deletePet(Long petId, Member member) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        validateIsMaster(member, pet);
+        validateIsOwner(member, pet);
         petRepository.delete(pet);
     }
 
@@ -92,7 +92,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         pets.stream().forEach(pet -> petRepository.delete(pet));
     }
 
-    private static void validateIsMaster(Member member, Pet pet) {
+    private static void validateIsOwner(Member member, Pet pet) {
         if (!pet.getMember().equals(member)) {
             throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
         }
