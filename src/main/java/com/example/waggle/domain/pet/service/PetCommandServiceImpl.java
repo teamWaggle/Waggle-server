@@ -104,6 +104,7 @@ public class PetCommandServiceImpl implements PetCommandService {
                 .name(petDto.getName())
                 .breed(petDto.getBreed())
                 .gender(Gender.valueOf(petDto.getGender()))
+                .description(petDto.getDescription())
                 .member(member)
                 .profileImgUrl(petDto.getProfileImgUrl())
                 .build();
