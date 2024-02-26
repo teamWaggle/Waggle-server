@@ -2,6 +2,7 @@ package com.example.waggle.web.dto.pet;
 
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ public class PetRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class PetCreateDto {
         @NotNull
         private String name;
@@ -31,6 +33,7 @@ public class PetRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class PetListCreateDto {
         private List<PetCreateDto> petList;
     }

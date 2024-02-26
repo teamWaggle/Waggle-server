@@ -2,6 +2,7 @@ package com.example.waggle.web.dto.schedule;
 
 import com.example.waggle.domain.schedule.entity.TeamColor;
 import com.example.waggle.global.annotation.valid.ValidEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ public class TeamRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class TeamCreateDto {
         private String name;
         private String description;

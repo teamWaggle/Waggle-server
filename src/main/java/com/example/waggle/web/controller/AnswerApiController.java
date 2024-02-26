@@ -53,7 +53,7 @@ public class AnswerApiController {
     })
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
-                                             @RequestPart AnswerCreateDto request,
+                                             @RequestPart("request") AnswerCreateDto request,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
@@ -64,8 +64,8 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 대답 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateAnswer(@PathVariable("boardId") Long boardId,
-                                             @RequestPart AnswerCreateDto request,
-                                             @RequestPart MediaUpdateDto mediaUpdateDto,
+                                             @RequestPart("request") AnswerCreateDto request,
+                                             @RequestPart("mediaUpdateDto") MediaUpdateDto mediaUpdateDto,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()

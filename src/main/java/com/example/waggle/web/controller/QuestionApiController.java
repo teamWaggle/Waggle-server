@@ -50,7 +50,7 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 작성 성공. 작성한 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createQuestion(@RequestPart @Validated QuestionCreateDto request,
+    public ApiResponseDto<Long> createQuestion(@RequestPart("request") @Validated QuestionCreateDto request,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = questionCommandService.createQuestion(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -61,8 +61,8 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable("boardId") Long boardId,
-                                               @RequestPart @Validated QuestionCreateDto request,
-                                               @RequestPart MediaUpdateDto mediaUpdateDto,
+                                               @RequestPart("request") @Validated QuestionCreateDto request,
+                                               @RequestPart("mediaUpdateDto") MediaUpdateDto mediaUpdateDto,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()

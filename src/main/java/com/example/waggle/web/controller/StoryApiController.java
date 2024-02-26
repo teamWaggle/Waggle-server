@@ -47,7 +47,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "200", description = "스토리 작성 성공. 작성한 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createStory(@RequestPart StoryCreateDto request,
+    public ApiResponseDto<Long> createStory(@RequestPart("request") StoryCreateDto request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = storyCommandService.createStory(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -58,8 +58,8 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateStory(@PathVariable("boardId") Long boardId,
-                                            @RequestPart StoryCreateDto request,
-                                            @RequestPart MediaUpdateDto mediaUpdateDto,
+                                            @RequestPart("request") StoryCreateDto request,
+                                            @RequestPart("mediaUpdateDo") MediaUpdateDto mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()

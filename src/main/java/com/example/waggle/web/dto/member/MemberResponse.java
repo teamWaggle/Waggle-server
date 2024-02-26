@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.member;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ public class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class MemberSummaryDto {
         private Long memberId;
         private String userUrl;
@@ -24,6 +26,7 @@ public class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class MemberDetailDto {
         private Long memberId;
         private String userUrl;
@@ -37,6 +40,7 @@ public class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class MemberSummaryListDto {
         private List<MemberSummaryDto> memberList;
         private int memberCount;
@@ -46,6 +50,7 @@ public class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class EmailListDto {
         private List<String> emailList;
     }

@@ -2,6 +2,7 @@ package com.example.waggle.web.dto.question;
 
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.global.annotation.valid.ValidEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,6 +19,7 @@ public class QuestionRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class QuestionCreateDto {
 
         @NotEmpty(message = "질문 내용을 작성해주세요.")

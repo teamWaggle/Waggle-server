@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.member;
 
 import com.example.waggle.global.validation.ValidationGroups;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -14,6 +15,7 @@ public class MemberRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class TemporaryRegisterDto {
         @NotBlank
         private String email;
@@ -27,6 +29,7 @@ public class MemberRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class MemberUpdateDto {
         private String nickname;
         private String name;
@@ -41,6 +44,7 @@ public class MemberRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class RegisterDto {
         private String nickname;
         private String name;
@@ -53,6 +57,7 @@ public class MemberRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class PasswordDto {
         private String password;
     }

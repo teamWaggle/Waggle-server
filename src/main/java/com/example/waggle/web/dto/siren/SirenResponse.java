@@ -3,6 +3,7 @@ package com.example.waggle.web.dto.siren;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class SirenResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class SirenSummaryDto {
         private Long boardId;
         private String title;
@@ -34,6 +36,7 @@ public class SirenResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class SirenDetailDto {
         private Long boardId;
         private String title;
@@ -57,6 +60,7 @@ public class SirenResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class SirenListDto {
         private List<SirenSummaryDto> sirenList;
         private long sirenCount;

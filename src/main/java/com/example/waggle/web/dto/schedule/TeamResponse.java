@@ -2,6 +2,7 @@ package com.example.waggle.web.dto.schedule;
 
 import com.example.waggle.domain.schedule.entity.TeamColor;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ public class TeamResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class TeamDetailDto {
         private Long teamId;
         private String name;
@@ -30,6 +32,7 @@ public class TeamResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class TeamSummaryDto {
         private Long teamId;
         private String name;
@@ -44,6 +47,7 @@ public class TeamResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class TeamSummaryListDto {
         private List<TeamSummaryDto> teamList;
         private long teamCount;

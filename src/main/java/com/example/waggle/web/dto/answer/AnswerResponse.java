@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.answer;
 
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ public class AnswerResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class AnswerViewDto {
         private Long boardId;
         private String content;
@@ -30,6 +32,7 @@ public class AnswerResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class AnswerListDto {
         private List<AnswerViewDto> answerList;
         private long answerCount;
