@@ -43,7 +43,8 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 수정 성공. 수정한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{replyId}")
-    public ApiResponseDto<Long> updateReply(@PathVariable Long replyId, @RequestBody ReplyCreateDto request) {
+    public ApiResponseDto<Long> updateReply(@PathVariable("replyId") Long replyId,
+                                            @RequestBody ReplyCreateDto request) {
         Long updatedReplyId = replyCommandService.updateReply(replyId, request);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
@@ -52,8 +53,8 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 목록 조회 성공. 댓글의 대댓글 목록을 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/{commentId}")
-    public ApiResponseDto<ReplyListDto> getReplies(@RequestParam(defaultValue = "0") int currentPage,
-                                                   @PathVariable Long commentId) {
+    public ApiResponseDto<ReplyListDto> getReplies(@PathVariable("commentId") Long commentId,
+                                                   @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Reply> pagedReplies = replyQueryService.getPagedReplies(commentId, pageable);
         ReplyListDto listDto = ReplyConverter.toListDto(pagedReplies);

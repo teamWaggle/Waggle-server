@@ -77,11 +77,10 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원정보 수정 성공.")
     @ApiResponse(responseCode = "400", description = "회원정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateInfo(
-            @RequestPart MemberUpdateDto request,
-            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
-            @RequestParam boolean allowUpload,
-            @AuthUser UserDetails userDetails) {
+    public ApiResponseDto<Long> updateInfo(@AuthUser UserDetails userDetails,
+                                           @RequestPart MemberUpdateDto request,
+                                           @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+                                           @RequestParam("allowUpload") boolean allowUpload) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
@@ -97,7 +96,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
     @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
     @GetMapping("/{username}")
-    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable String username) {
+    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("username") String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
@@ -133,7 +132,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
     @PutMapping("/{memberId}/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId,
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable("memberId") Long memberId,
                                                               @RequestBody MemberRequest.PasswordDto request) {
         memberCommandService.updatePassword(memberId, request.getPassword());
         return ApiResponseDto.onSuccess(memberId);
@@ -143,8 +142,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 반환")
     @ApiResponse(responseCode = "400", description = "회원 검색 실패.")
     @GetMapping("/email/find")
-    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam String name,
-                                                                 @RequestParam LocalDate birthday) {
+    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam("name") String name,
+                                                                 @RequestParam("birthday") LocalDate birthday) {
         List<Member> members = memberQueryService.getMembersByNameAndBirthday(name, birthday);
         return ApiResponseDto.onSuccess(MemberConverter.toEmailListDto(members));
     }
@@ -152,15 +151,15 @@ public class MemberApiController {
     @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")
     @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
     @GetMapping("/check-email")
-    public ApiResponseDto<Boolean> checkEmail(@RequestParam String email) {
+    public ApiResponseDto<Boolean> checkEmail(@RequestParam("email") String email) {
         memberQueryService.validateEmailDuplication(email);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "유저네임 중복 검사", description = "제공된 유저네임이 이미 사용 중인지 확인합니다.")
+    @Operation(summary = "회원 URL 중복 검사", description = "제공된 회원 URL이 이미 사용 중인지 확인합니다.")
     @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
     @GetMapping("/check-user-url")
-    public ApiResponseDto<Boolean> checkUsername(@RequestParam String userUrl) {
+    public ApiResponseDto<Boolean> checkUsername(@RequestParam("userUrl") String userUrl) {
         memberQueryService.validateUserUrlDuplication(userUrl);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
@@ -168,7 +167,7 @@ public class MemberApiController {
     @Operation(summary = "닉네임 중복 검사", description = "제공된 닉네임이 이미 사용 중인지 확인합니다.")
     @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
     @GetMapping("/check-nickname")
-    public ApiResponseDto<Boolean> checkNickname(@RequestParam String nickname) {
+    public ApiResponseDto<Boolean> checkNickname(@RequestParam("nickname") String nickname) {
         memberQueryService.validateNicknameDuplication(nickname);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
@@ -176,7 +175,7 @@ public class MemberApiController {
     @Operation(summary = "회원 삭제", description = "특정 회원을 삭제합니다. 회원과 관련된 데이터가 모두 삭제됩니다.")
     @ApiResponse(responseCode = "200", description = "회원 삭제 성공.")
     @DeleteMapping("/{memberId}")
-    public ApiResponseDto<Boolean> deleteMember(@PathVariable Long memberId) {
+    public ApiResponseDto<Boolean> deleteMember(@PathVariable("memberId") Long memberId) {
         memberCommandService.deleteMember(memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

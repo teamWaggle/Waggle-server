@@ -56,10 +56,8 @@ public class TokenApiController {
         String refreshToken = getRefreshInCookie(request, response);
         JwtToken newTokens = tokenService.issueTokens(refreshToken);
         CookieUtil.addCookie(response, "refresh_token", newTokens.getRefreshToken(), week);
-
         return ApiResponseDto.onSuccess(newTokens);
     }
-
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다. 현재 사용자의 엑세스 토큰을 무효화하고 인증 정보를 제거합니다.")
     @ApiResponse(responseCode = "200", description = "로그아웃 성공. 'success' 반환.")
@@ -82,7 +80,7 @@ public class TokenApiController {
         if (!tokenService.existsRefreshToken(refreshToken)) {
             throw new GeneralException(ErrorStatus.AUTH_INVALID_REFRESH_TOKEN);
         } else {
-            tokenService.logout(refreshToken);      //refresh delete in redis
+            tokenService.logout(refreshToken);
         }
         CookieUtil.deleteCookie(request, response, "refresh_token");
     }

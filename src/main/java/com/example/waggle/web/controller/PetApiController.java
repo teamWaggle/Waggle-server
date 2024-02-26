@@ -55,10 +55,10 @@ public class PetApiController {
     @ApiResponse(responseCode = "200", description = "반려견 정보 수정 성공. 입력한 반려견 고유의 ID를 반환.")
     @ApiResponse(responseCode = "400", description = "정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updatePet(@PathVariable Long petId,
+    public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
                                           @RequestPart @Validated PetCreateDto request,
                                           @RequestPart(value = "file", required = false) MultipartFile profileImg,
-                                          @RequestParam boolean allowUpload) {
+                                          @RequestParam("allowUpload") boolean allowUpload) {
         String removePrefixProfileUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixProfileUrl);
@@ -75,7 +75,7 @@ public class PetApiController {
     @ApiResponse(responseCode = "200", description = "반려견 정보 조회 성공. 반려견 정보들을 목록으로 반환.")
     @ApiResponse(responseCode = "400", description = "정보 조회 실패. 잘못된 요청 혹은 존재하지 않는 유저")
     @GetMapping("/{memberId}")
-    public ApiResponseDto<List<PetSummaryDto>> findPets(@PathVariable Long memberId) {
+    public ApiResponseDto<List<PetSummaryDto>> findPets(@PathVariable("memberId") Long memberId) {
         List<Pet> petsByUsername = petQueryService.getPetsByMemberId(memberId);
         return ApiResponseDto.onSuccess(PetConverter.toListDto(petsByUsername));
     }

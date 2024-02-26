@@ -60,7 +60,7 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 수정 성공. 수정한 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
+    public ApiResponseDto<Long> updateQuestion(@PathVariable("boardId") Long boardId,
                                                @RequestPart @Validated QuestionCreateDto request,
                                                @RequestPart MediaUpdateDto mediaUpdateDto,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
@@ -75,7 +75,7 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 전체 질문 목록을 반환합니다.")
     @GetMapping
     public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
-            @RequestParam(defaultValue = "0") int currentPage) {
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
@@ -87,8 +87,8 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 사용자가 작성한 질문 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(
-            @RequestParam(defaultValue = "0") int currentPage, @PathVariable Long memberId) {
+    public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(@PathVariable("memberId") Long memberId,
+                                                                         @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
@@ -100,7 +100,8 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 특정 질문의 상세 정보를 반환합니다.")
     @ApiResponse(responseCode = "404", description = "질문을 찾을 수 없음. 지정된 질문 ID에 해당하는 질문을 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
-    public ApiResponseDto<QuestionResponse.QuestionDetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
+    public ApiResponseDto<QuestionResponse.QuestionDetailDto> getQuestionByBoardId(
+            @PathVariable("boardId") Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
         QuestionResponse.QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
         recommendQueryService.getRecommendValues(detailDto);

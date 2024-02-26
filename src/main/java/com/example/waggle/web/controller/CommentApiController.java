@@ -32,8 +32,8 @@ public class CommentApiController {
     @Operation(summary = "특정 게시글(로그, 질답, 사이렌) 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 조회 성공. 게시글 댓글 목록을 반환합니다.")
     @GetMapping("/page/{boardId}")
-    public ApiResponseDto<CommentListDto> getCommentsByPage(@RequestParam(defaultValue = "0") int currentPage,
-                                                            @PathVariable Long boardId) {
+    public ApiResponseDto<CommentListDto> getCommentsByPage(@PathVariable("boardId") Long boardId,
+                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
         CommentListDto listDto = CommentConverter.toListDto(pagedComments);
@@ -45,7 +45,7 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> createScheduleComment(@PathVariable Long boardId,
+    public ApiResponseDto<Long> createScheduleComment(@PathVariable("boardId") Long boardId,
                                                       @RequestBody CommentCreateDto request) {
         Long commentId = commentCommandService.createComment(boardId, request);
         return ApiResponseDto.onSuccess(commentId);
@@ -55,7 +55,7 @@ public class CommentApiController {
     @ApiResponse(responseCode = "200", description = "댓글 수정 성공. 수정한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{commentId}")
-    public ApiResponseDto<Long> updateComment(@PathVariable Long commentId,
+    public ApiResponseDto<Long> updateComment(@PathVariable("commentId") Long commentId,
                                               @RequestBody CommentCreateDto request) {
         Long updatedCommentId = commentCommandService.updateComment(commentId, request);
         return ApiResponseDto.onSuccess(updatedCommentId);

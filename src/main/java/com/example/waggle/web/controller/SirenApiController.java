@@ -55,7 +55,7 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 수정 성공. 수정한 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateSiren(@PathVariable Long boardId,
+    public ApiResponseDto<Long> updateSiren(@PathVariable("boardId") Long boardId,
                                             @RequestPart @Validated SirenCreateDto request,
                                             @RequestPart MediaUpdateDto mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
@@ -71,7 +71,8 @@ public class SirenApiController {
     @Operation(summary = "전체 사이렌 목록 조회", description = "전체 사이렌 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 전체 사이렌 목록을 반환합니다.")
     @GetMapping
-    public ApiResponseDto<SirenListDto> getAllSiren(@RequestParam(defaultValue = "0") int currentPage) {
+    public ApiResponseDto<SirenListDto> getAllSiren(
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenListDto listDto = SirenConverter.toListDto(pagedSirenList);
@@ -83,9 +84,8 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 사용자가 작성한 사이렌 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<SirenListDto> getSirenListByUsername(
-            @RequestParam(defaultValue = "0") int currentPage,
-            @PathVariable Long memberId) {
+    public ApiResponseDto<SirenListDto> getSirenListByUsername(@PathVariable("memberId") Long memberId,
+                                                               @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenListDto listDto = SirenConverter.toListDto(pagedSirenList);
@@ -97,7 +97,7 @@ public class SirenApiController {
     @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 특정 사이렌의 상세 정보를 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사이렌을 찾을 수 없음. 지정된 사이렌 ID에 해당하는 사이렌을 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
-    public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable Long boardId) {
+    public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("boardId") Long boardId) {
         Siren siren = sirenQueryService.getSirenByBoardId(boardId);
         SirenDetailDto detailDto = SirenConverter.toDetailDto(siren);
         recommendQueryService.getRecommendValues(detailDto);

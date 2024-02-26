@@ -32,8 +32,8 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 멤버 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 이미 팔로잉이 된 상대입니다.")
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@RequestParam String nickname,
-                                              @AuthUser UserDetails userDetails) {
+    public ApiResponseDto<Long> requestFollow(@AuthUser UserDetails userDetails,
+                                              @RequestParam("nickname") String nickname) {
         Long follow = followCommandService.follow(userDetails.getUsername(), nickname);
         return ApiResponseDto.onSuccess(follow);
     }
@@ -42,8 +42,8 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "언팔로우 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 팔로잉이 되지 않은 상대입니다.")
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam String nickname,
-                                                   @AuthUser UserDetails userDetails) {
+    public ApiResponseDto<Boolean> requestUnFollow(@AuthUser UserDetails userDetails,
+                                                   @RequestParam("nickname") String nickname) {
         followCommandService.unFollow(userDetails.getUsername(), nickname);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
@@ -63,7 +63,7 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로잉 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/following/{memberId}")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberList(@PathVariable Long memberId) {
+    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberList(@PathVariable("memberId") Long memberId) {
         List<Follow> followings = followQueryService.getFollowings(memberId);
         List<MemberSummaryDto> collect = followings.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
@@ -85,7 +85,7 @@ public class FollowApiController {
     @ApiResponse(responseCode = "200", description = "팔로워 목록 조회 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/list/follower/{memberId}")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberList(@PathVariable Long memberId) {
+    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberList(@PathVariable("memberId") Long memberId) {
         List<Follow> followers = followQueryService.getFollowers(memberId);
         List<MemberSummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());

@@ -29,7 +29,7 @@ public class RecommendApiController {
     @ApiResponse(responseCode = "200", description = "좋아요 추가 혹은 취소 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 자신의 게시글에는 좋아요를 누를 수 없습니다.")
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> recommendStory(@PathVariable Long boardId) {
+    public ApiResponseDto<Long> recommendStory(@PathVariable("boardId") Long boardId) {
         recommendCommandService.handleRecommendation(boardId);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -38,7 +38,7 @@ public class RecommendApiController {
     @ApiResponse(responseCode = "200", description = "게시글 좋아요 활성화 멤버 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청.")
     @GetMapping("{boardId}")
-    public ApiResponseDto<List<MemberSummaryDto>> findRecommendingMembers(@PathVariable Long boardId) {
+    public ApiResponseDto<List<MemberSummaryDto>> findRecommendingMembers(@PathVariable("boardId") Long boardId) {
         List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(boardId);
         List<MemberSummaryDto> collect = recommendingMembers.stream()
                 .map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList());

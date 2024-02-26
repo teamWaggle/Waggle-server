@@ -12,7 +12,9 @@ import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +22,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,12 +47,14 @@ public class AnswerApiController {
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "대답 작성", description = "사용자가 대답 작성합니다. 작성한 대답의 정보를 저장하고 대답의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "대답 작성 성공. 작성한 대답의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "대답 작성 성공. 작성한 대답의 고유 ID를 반환합니다."),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
+    })
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createAnswer(@RequestPart AnswerCreateDto request,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles,
-                                             @PathVariable Long questionId) {
+    public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
+                                             @RequestPart AnswerCreateDto request,
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
     }
@@ -53,7 +63,7 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "200", description = "대답 수정 성공. 수정한 대답의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 대답 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateAnswer(@PathVariable Long boardId,
+    public ApiResponseDto<Long> updateAnswer(@PathVariable("boardId") Long boardId,
                                              @RequestPart AnswerCreateDto request,
                                              @RequestPart MediaUpdateDto mediaUpdateDto,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
@@ -67,9 +77,8 @@ public class AnswerApiController {
     @Operation(summary = "질문의 대답 목록 조회", description = "질문의 전체 대답 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "대답 조회 성공. 질문의 전체 대답 목록을 반환합니다.")
     @GetMapping("/question/{questionId}")
-    public ApiResponseDto<AnswerListDto> getAllAnswerByPage(
-            @RequestParam(defaultValue = "0") int currentPage,
-            @PathVariable Long questionId) {
+    public ApiResponseDto<AnswerListDto> getAllAnswerByPage(@PathVariable("questionId") Long questionId,
+                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(questionId, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswers);
@@ -82,12 +91,11 @@ public class AnswerApiController {
     @ApiResponse(responseCode = "200", description = "대답 조회 성공. 사용자가 작성한 대답 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<AnswerListDto> getAnswerByMemberId(
-            @RequestParam(defaultValue = "0") int currentPage, @PathVariable Long memberId) {
+    public ApiResponseDto<AnswerListDto> getAnswerByMemberId(@PathVariable("memberId") Long memberId,
+                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswerByUsername);
-
         recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
