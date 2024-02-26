@@ -17,7 +17,7 @@ import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.ScheduleUtil;
-import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,13 +37,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
 
     @Override
-    public Long createSchedule(Long teamId, Post request, String username) {
+    public Long createSchedule(Long teamId, ScheduleCreateDto request, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
 
         validateTeamMember(team, member);
         ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
@@ -69,7 +68,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
-    public Long updateSchedule(Long scheduleId, Post request) {
+    public Long updateSchedule(Long scheduleId, ScheduleCreateDto request) {
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -83,7 +82,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
-    public Long updateScheduleByUsername(Long scheduleId, String username, Post request) {
+    public Long updateScheduleByUsername(Long scheduleId, String username, ScheduleCreateDto request) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
@@ -130,7 +129,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public void deleteScheduleForHardReset(Long scheduleId) {
         scheduleRepository.findById(scheduleId).ifPresent(
                 schedule -> {
-                    schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+                    schedule.getComments()
+                            .forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
                     memberScheduleRepository.deleteAllByScheduleId(scheduleId);
                     scheduleRepository.delete(schedule);
                 }

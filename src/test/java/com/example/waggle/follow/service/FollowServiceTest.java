@@ -8,7 +8,7 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.FollowHandler;
-import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,10 @@ public class FollowServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    MemberRequest.AccessDto signUpDto1;
-    MemberRequest.AccessDto signUpDto2;
-    MemberRequest.AccessDto signUpDto3;
-    MemberRequest.AccessDto signUpDto4;
+    TemporaryRegisterDto signUpDto1;
+    TemporaryRegisterDto signUpDto2;
+    TemporaryRegisterDto signUpDto3;
+    TemporaryRegisterDto signUpDto4;
 
     Long memberId1;
     Long memberId2;
@@ -49,22 +49,22 @@ public class FollowServiceTest {
     }
 
     void setUp() {
-        signUpDto1 = MemberRequest.AccessDto.builder()
+        signUpDto1 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("wjdgks3264@naver.com")
                 .build();
 
-        signUpDto2 = MemberRequest.AccessDto.builder()
+        signUpDto2 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("wjdgks2972@naver.com")
                 .build();
 
-        signUpDto3 = MemberRequest.AccessDto.builder()
+        signUpDto3 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("wjdgksdfs@naver.com")
                 .build();
 
-        signUpDto4 = MemberRequest.AccessDto.builder()
+        signUpDto4 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("hi@naver.com")
                 .build();
@@ -114,7 +114,8 @@ public class FollowServiceTest {
         Member B = memberQueryService.getMemberById(memberId2);
         followCommandService.follow(A.getUsername(), B.getNickname());
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow(A.getUsername(), B.getNickname()));
+        Assertions.assertThrows(FollowHandler.class,
+                () -> followCommandService.follow(A.getUsername(), B.getNickname()));
     }
 
     @Test
@@ -129,6 +130,7 @@ public class FollowServiceTest {
         followCommandService.follow(A.getUsername(), C.getNickname());
         followCommandService.unFollow(A.getUsername(), B.getNickname());
         //then
-        Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow(A.getUsername(), B.getNickname()));
+        Assertions.assertThrows(FollowHandler.class,
+                () -> followCommandService.unFollow(A.getUsername(), B.getNickname()));
     }
 }

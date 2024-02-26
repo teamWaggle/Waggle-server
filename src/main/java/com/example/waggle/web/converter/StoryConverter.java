@@ -3,7 +3,9 @@ package com.example.waggle.web.converter;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.story.StoryResponse;
+import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
+import com.example.waggle.web.dto.story.StoryResponse.StorySummaryDto;
+import com.example.waggle.web.dto.story.StoryResponse.StorySummaryListDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -11,34 +13,34 @@ import java.util.stream.Collectors;
 
 public class StoryConverter {
 
-    public static StoryResponse.SummaryDto toSummaryDto(Story story) {
-        return StoryResponse.SummaryDto.builder()
-                .id(story.getId())
+    public static StorySummaryDto toSummaryDto(Story story) {
+        return StorySummaryDto.builder()
+                .boardId(story.getId())
                 .thumbnail(MediaUtil.getThumbnail(story))
                 .build();
     }
 
-    public static StoryResponse.ListDto toListDto(Page<Story> storyPage) {
-        List<StoryResponse.SummaryDto> stories = storyPage.stream()
+    public static StorySummaryListDto toListDto(Page<Story> storyPage) {
+        List<StorySummaryDto> stories = storyPage.stream()
                 .map(StoryConverter::toSummaryDto).collect(Collectors.toList());
-        return StoryResponse.ListDto.builder()
+        return StorySummaryListDto.builder()
                 .storyList(stories)
-                .totalStories(storyPage.getTotalElements())
+                .storyCount(storyPage.getTotalElements())
                 .isFirst(storyPage.isFirst())
                 .isLast(storyPage.isLast())
                 .build();
     }
 
-    public static StoryResponse.DetailDto toDetailDto(Story story) {
-        return StoryResponse.DetailDto.builder()
-                .id(story.getId())
+    public static StoryDetailDto toDetailDto(Story story) {
+        return StoryDetailDto.builder()
+                .boardId(story.getId())
                 .content(story.getContent())
                 .createdDate(story.getCreatedDate())
-                .hashtags(story.getBoardHashtags().stream()
+                .hashtagList(story.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
-                .medias(MediaUtil.getBoardMedias(story))
+                .mediaList(MediaUtil.getBoardMedias(story))
                 .member(MemberConverter.toMemberSummaryDto(story.getMember()))
-                .isMine(story.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
+                .isOwner(story.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }

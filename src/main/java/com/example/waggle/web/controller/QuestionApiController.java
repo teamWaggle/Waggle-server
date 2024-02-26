@@ -7,9 +7,10 @@ import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.QuestionConverter;
-import com.example.waggle.web.dto.media.MediaRequest;
-import com.example.waggle.web.dto.question.QuestionRequest;
+import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
+import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
 import com.example.waggle.web.dto.question.QuestionResponse;
+import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,7 +50,7 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 작성 성공. 작성한 질문의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createQuestion(@RequestPart @Validated QuestionRequest.Post request,
+    public ApiResponseDto<Long> createQuestion(@RequestPart @Validated QuestionCreateDto request,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = questionCommandService.createQuestion(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -60,8 +61,8 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 질문 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable Long boardId,
-                                               @RequestPart @Validated QuestionRequest.Post request,
-                                               @RequestPart MediaRequest.Put mediaUpdateDto,
+                                               @RequestPart @Validated QuestionCreateDto request,
+                                               @RequestPart MediaUpdateDto mediaUpdateDto,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()
@@ -73,11 +74,11 @@ public class QuestionApiController {
     @Operation(summary = "전체 질문 목록 조회", description = "전체 질문 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 전체 질문 목록을 반환합니다.")
     @GetMapping
-    public ApiResponseDto<QuestionResponse.ListDto> getAllQuestions(
+    public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
             @RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
-        QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
+        QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
@@ -86,11 +87,11 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 사용자가 작성한 질문 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<QuestionResponse.ListDto> getQuestionsByUsername(
+    public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(
             @RequestParam(defaultValue = "0") int currentPage, @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
-        QuestionResponse.ListDto listDto = QuestionConverter.toListDto(questions);
+        QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
@@ -99,9 +100,9 @@ public class QuestionApiController {
     @ApiResponse(responseCode = "200", description = "질문 조회 성공. 특정 질문의 상세 정보를 반환합니다.")
     @ApiResponse(responseCode = "404", description = "질문을 찾을 수 없음. 지정된 질문 ID에 해당하는 질문을 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
-    public ApiResponseDto<QuestionResponse.DetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
+    public ApiResponseDto<QuestionResponse.QuestionDetailDto> getQuestionByBoardId(@PathVariable Long boardId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
-        QuestionResponse.DetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
+        QuestionResponse.QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
         recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }

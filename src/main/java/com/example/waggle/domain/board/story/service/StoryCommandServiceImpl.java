@@ -10,8 +10,8 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.media.MediaRequest;
-import com.example.waggle.web.dto.story.StoryRequest;
+import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,26 +36,26 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     private final CommentCommandService commentCommandService;
 
     @Override
-    public Long createStory(StoryRequest.Post request, List<MultipartFile> multipartFiles) {
+    public Long createStory(StoryCreateDto request, List<MultipartFile> multipartFiles) {
         Story createdStory = buildStory(request);
 
         Story story = storyRepository.save(createdStory);
 
-        if (!request.getHashtags().isEmpty()) {
-            request.getHashtags().stream().forEach(h -> boardService.saveHashtag(story, h));
+        if (!request.getHashtagList().isEmpty()) {
+            request.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
         return story.getId();
     }
 
     @Override
-    public Long createStoryByUsername(StoryRequest.Post request, List<MultipartFile> multipartFiles, String username) {
+    public Long createStoryByUsername(StoryCreateDto request, List<MultipartFile> multipartFiles, String username) {
         Story createdStory = buildStory(request, username);
 
         Story story = storyRepository.save(createdStory);
 
-        if (!request.getHashtags().isEmpty()) {
-            request.getHashtags().stream().forEach(h -> boardService.saveHashtag(story, h));
+        if (!request.getHashtagList().isEmpty()) {
+            request.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
         return story.getId();
@@ -64,7 +64,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryRequest.Post storyWriteDto,
+                            StoryCreateDto storyWriteDto,
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFile) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
@@ -73,12 +73,11 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-
         story.changeContent(storyWriteDto.getContent());
 
         mediaCommandService.updateMedia(multipartFiles, deleteFile, story);
         story.getBoardHashtags().clear();
-        for (String hashtag : storyWriteDto.getHashtags()) {
+        for (String hashtag : storyWriteDto.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
@@ -86,8 +85,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStoryV2(Long boardId,
-                              StoryRequest.Post storyWriteDto,
-                              MediaRequest.Put mediaListDto,
+                              StoryCreateDto storyWriteDto,
+                              MediaUpdateDto mediaListDto,
                               List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -100,7 +99,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
 
         story.getBoardHashtags().clear();
-        for (String hashtag : storyWriteDto.getHashtags()) {
+        for (String hashtag : storyWriteDto.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
@@ -109,8 +108,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     @Override
     public Long updateStoryByUsername(Long boardId,
                                       String username,
-                                      StoryRequest.Post storyWriteDto,
-                                      MediaRequest.Put mediaListDto,
+                                      StoryCreateDto storyWriteDto,
+                                      MediaUpdateDto mediaListDto,
                                       List<MultipartFile> multipartFiles) {
         Member member = memberQueryService.getMemberByUsername(username);
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
@@ -124,7 +123,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
 
         story.getBoardHashtags().clear();
-        for (String hashtag : storyWriteDto.getHashtags()) {
+        for (String hashtag : storyWriteDto.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
@@ -158,7 +157,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         storyRepository.delete(story);
     }
 
-    private Story buildStory(StoryRequest.Post request) {
+    private Story buildStory(StoryCreateDto request) {
         Member member = memberQueryService.getSignInMember();
         Story createdStory = Story.builder()
                 .member(member)
@@ -167,7 +166,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         return createdStory;
     }
 
-    private Story buildStory(StoryRequest.Post request, String username) {
+    private Story buildStory(StoryCreateDto request, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         Story createdStory = Story.builder()
                 .member(member)

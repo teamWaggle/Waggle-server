@@ -11,7 +11,7 @@ import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.reply.ReplyRequest;
+import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     private final MentionCommandService mentionCommandService;
 
     @Override
-    public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto) {
+    public Long createReply(Long commentId, ReplyCreateDto replyWriteDto) {
         Member member = memberQueryService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
@@ -37,12 +37,12 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
         replyRepository.save(reply);
 
-        mentionCommandService.createMentions(reply, replyWriteDto.getMentionedNickname());
+        mentionCommandService.createMentions(reply, replyWriteDto.getMentionedMemberList());
         return reply.getId();
     }
 
     @Override
-    public Long createReplyByUsername(Long commentId, ReplyRequest.Post replyWriteDto, String username) {
+    public Long createReplyByUsername(Long commentId, ReplyCreateDto replyWriteDto, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
@@ -50,31 +50,31 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         Reply reply = Reply.builder().member(member).comment(comment).content(replyWriteDto.getContent()).build();
         replyRepository.save(reply);
 
-        mentionCommandService.createMentions(reply, replyWriteDto.getMentionedNickname());
+        mentionCommandService.createMentions(reply, replyWriteDto.getMentionedMemberList());
         return reply.getId();
     }
 
     @Override
-    public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
+    public Long updateReply(Long replyId, ReplyCreateDto replyWriteDto) {
         if (!validateMember(replyId, SecurityUtil.getCurrentUsername())) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
 
-        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
+        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedMemberList());
         return reply.getId();
     }
 
     @Override
-    public Long updateReplyByUsername(Long replyId, String username, ReplyRequest.Post replyWriteDto) {
+    public Long updateReplyByUsername(Long replyId, String username, ReplyCreateDto replyWriteDto) {
         if (!validateMember(replyId, username)) {
             throw new ReplyHandler(ErrorStatus.REPLY_CANNOT_EDIT_OTHERS);
         }
         Reply reply = getReplyById(replyId);
         reply.changeContent(replyWriteDto.getContent());
 
-        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
+        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedMemberList());
         return reply.getId();
     }
 

@@ -27,7 +27,9 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.member.VerifyMailRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -72,7 +74,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(MemberRequest.AccessDto request) {
+    public Long signUp(TemporaryRegisterDto request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         Member createdMember = Member.builder()
@@ -106,7 +108,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberInfo(String username, MemberRequest.Put request) {
+    public Long updateMemberInfo(String username, MemberUpdateDto request) {
         Member member = memberQueryService.getMemberByUsername(username);
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
@@ -125,7 +127,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long verifyEmailForPasswordChange(VerifyMailRequest.AuthDto request) {
+    public Long verifyEmailForPasswordChange(EmailVerificationDto request) {
         verifyMail(request);
         return memberQueryService.getMemberByEmail(request.getEmail()).getId();
     }
@@ -206,7 +208,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void verifyMail(VerifyMailRequest.AuthDto request) {
+    public void verifyMail(EmailVerificationDto request) {
         String authNum = redisService.getValue(AUTH_CODE_PREFIX + request.getEmail());
         boolean isSuccess = authNum.equals(request.getAuthCode());
         if (!isSuccess) {

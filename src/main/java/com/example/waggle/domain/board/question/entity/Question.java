@@ -2,7 +2,7 @@ package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
-import com.example.waggle.web.dto.question.QuestionRequest;
+import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,10 +24,10 @@ public class Question extends Board {
     @Column(nullable = false)
     private ResolutionStatus status;
 
-    public void changeQuestion(QuestionRequest.Post request) {
+    public void changeQuestion(QuestionCreateDto request) {
         this.content = request.getContent();
         this.title = request.getTitle();
-        this.status = request.getStatus();
+        this.status = ResolutionStatus.valueOf(request.getStatus());
     }
 
     public void changeStatus(ResolutionStatus status) {

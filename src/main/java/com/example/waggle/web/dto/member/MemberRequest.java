@@ -10,13 +10,11 @@ import java.time.LocalDate;
 
 public class MemberRequest {
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AccessDto {
+    public static class TemporaryRegisterDto {
         @NotBlank
         private String email;
 
@@ -25,14 +23,11 @@ public class MemberRequest {
         private String password;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Put {
-
+    public static class MemberUpdateDto {
         private String nickname;
         private String name;
         @NotBlank(message = "비밀번호를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
@@ -42,20 +37,16 @@ public class MemberRequest {
         private String profileImgUrl;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RegisterDto {
-
         private String nickname;
         private String name;
         private LocalDate birthday;
         private String userUrl;
         private String profileImgUrl;
-
     }
 
     @Data

@@ -5,8 +5,8 @@ import com.example.waggle.domain.conversation.service.comment.CommentCommandServ
 import com.example.waggle.domain.conversation.service.comment.CommentQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.CommentConverter;
-import com.example.waggle.web.dto.comment.CommentRequest;
-import com.example.waggle.web.dto.comment.CommentResponse;
+import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,11 +32,11 @@ public class CommentApiController {
     @Operation(summary = "특정 게시글(로그, 질답, 사이렌) 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 조회 성공. 게시글 댓글 목록을 반환합니다.")
     @GetMapping("/page/{boardId}")
-    public ApiResponseDto<CommentResponse.ListDto> getCommentsByPage(@RequestParam(defaultValue = "0") int currentPage,
-                                                                     @PathVariable Long boardId) {
+    public ApiResponseDto<CommentListDto> getCommentsByPage(@RequestParam(defaultValue = "0") int currentPage,
+                                                            @PathVariable Long boardId) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
-        CommentResponse.ListDto listDto = CommentConverter.toListDto(pagedComments);
+        CommentListDto listDto = CommentConverter.toListDto(pagedComments);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -46,8 +46,8 @@ public class CommentApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> createScheduleComment(@PathVariable Long boardId,
-                                                      @RequestBody CommentRequest.Post commentWriteDto) {
-        Long commentId = commentCommandService.createComment(boardId, commentWriteDto);
+                                                      @RequestBody CommentCreateDto request) {
+        Long commentId = commentCommandService.createComment(boardId, request);
         return ApiResponseDto.onSuccess(commentId);
     }
 
@@ -56,8 +56,8 @@ public class CommentApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable Long commentId,
-                                              @RequestBody CommentRequest.Post commentWriteDto) {
-        Long updatedCommentId = commentCommandService.updateComment(commentId, commentWriteDto);
+                                              @RequestBody CommentCreateDto request) {
+        Long updatedCommentId = commentCommandService.updateComment(commentId, request);
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 

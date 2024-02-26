@@ -10,8 +10,12 @@ import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
 import com.example.waggle.web.dto.member.MemberResponse;
-import com.example.waggle.web.dto.member.VerifyMailRequest;
+import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
+import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
+import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +56,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody MemberRequest.AccessDto request) {
+    public ApiResponseDto<Long> signUp(@RequestBody TemporaryRegisterDto request) {
         Long memberId = memberCommandService.signUp(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -74,7 +78,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "400", description = "회원정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateInfo(
-            @RequestPart MemberRequest.Put request,
+            @RequestPart MemberUpdateDto request,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
             @RequestParam boolean allowUpload,
             @AuthUser UserDetails userDetails) {
@@ -93,7 +97,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
     @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
     @GetMapping("/{username}")
-    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable String username) {
+    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
@@ -102,8 +106,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 전송 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 전송 실패. 잘못된 이메일 형식 등.")
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated VerifyMailRequest.ConfirmationDto confirmationDto) {
-        emailService.sendMail(confirmationDto.getEmail(), "email");
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto request) {
+        emailService.sendMail(request.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -111,8 +115,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
     @PostMapping("/email/verify")
-    public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest.AuthDto authDto) {
-        memberCommandService.verifyMail(authDto);
+    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto request) {
+        memberCommandService.verifyMail(request);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -120,7 +124,7 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
     @PostMapping("/email/verify/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody VerifyMailRequest.AuthDto request) {
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody EmailVerificationDto request) {
         Long memberId = memberCommandService.verifyEmailForPasswordChange(request);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -129,7 +133,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
     @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
     @PutMapping("/{memberId}/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId, @RequestBody MemberRequest.PasswordDto request) {
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId,
+                                                              @RequestBody MemberRequest.PasswordDto request) {
         memberCommandService.updatePassword(memberId, request.getPassword());
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -138,7 +143,8 @@ public class MemberApiController {
     @ApiResponse(responseCode = "200", description = "이메일 반환")
     @ApiResponse(responseCode = "400", description = "회원 검색 실패.")
     @GetMapping("/email/find")
-    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam String name, @RequestParam LocalDate birthday) {
+    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam String name,
+                                                                 @RequestParam LocalDate birthday) {
         List<Member> members = memberQueryService.getMembersByNameAndBirthday(name, birthday);
         return ApiResponseDto.onSuccess(MemberConverter.toEmailListDto(members));
     }

@@ -1,34 +1,31 @@
 package com.example.waggle.web.dto.member;
 
-import lombok.*;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class MemberResponse {
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SummaryDto {
-        private Long id;
+    public static class MemberSummaryDto {
+        private Long memberId;
         private String userUrl;
         private String nickname;
         private String profileImgUrl;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DetailDto {
-        private Long id;
+    public static class MemberDetailDto {
+        private Long memberId;
         private String userUrl;
         private String nickname;
         private String name;
@@ -40,10 +37,9 @@ public class MemberResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ListDto {
-        @Builder.Default
-        private List<SummaryDto> members = new ArrayList<>();
-        private int totalSize;
+    public static class MemberSummaryListDto {
+        private List<MemberSummaryDto> memberList;
+        private int memberCount;
     }
 
     @Data
@@ -51,7 +47,7 @@ public class MemberResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EmailListDto {
-        @Builder.Default
-        private List<String> emails = new ArrayList<>();
+        private List<String> emailList;
     }
+
 }

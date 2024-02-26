@@ -1,21 +1,20 @@
 package com.example.waggle.web.dto.schedule;
 
 import com.example.waggle.domain.schedule.entity.TeamColor;
-import com.example.waggle.web.dto.member.MemberResponse;
-import lombok.*;
-
-import java.util.ArrayList;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class TeamResponse {
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class DetailDto {
+    public static class TeamDetailDto {
         private Long teamId;
         private String name;
         private String description;
@@ -23,17 +22,15 @@ public class TeamResponse {
         private TeamColor teamColor;
         private Integer maxTeamSize;
         private Integer teamSize;
-        private MemberResponse.SummaryDto leader;
-        private List<MemberResponse.SummaryDto> teamMember;
+        private MemberSummaryDto leader;
+        private List<MemberSummaryDto> teamMemberList;
     }
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class SummaryDto {
+    public static class TeamSummaryDto {
         private Long teamId;
         private String name;
         private String coverImageUrl;
@@ -43,17 +40,15 @@ public class TeamResponse {
     }
 
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class ListDto {
-        @Builder.Default
-        private List<SummaryDto> teams = new ArrayList<>();
-        private long totalQuestions;
+    public static class TeamSummaryListDto {
+        private List<TeamSummaryDto> teamList;
+        private long teamCount;
         private Boolean isFirst;
         private Boolean isLast;
     }
+
 }

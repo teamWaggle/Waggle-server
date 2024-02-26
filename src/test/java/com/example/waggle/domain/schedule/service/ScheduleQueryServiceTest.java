@@ -9,9 +9,9 @@ import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.schedule.ScheduleRequest;
-import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
+import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,11 +49,11 @@ class ScheduleQueryServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
-        MemberRequest.AccessDto A = MemberRequest.AccessDto.builder()
+        TemporaryRegisterDto A = TemporaryRegisterDto.builder()
                 .password("password")
                 .email("email")
                 .build();
-        MemberRequest.AccessDto B = MemberRequest.AccessDto.builder()
+        TemporaryRegisterDto B = TemporaryRegisterDto.builder()
                 .password("password")
                 .email("email1")
                 .build();
@@ -61,14 +61,14 @@ class ScheduleQueryServiceTest {
         Long memberB = memberCommandService.signUp(B);
         member1 = memberQueryService.getMemberById(memberA);
         member2 = memberQueryService.getMemberById(memberB);
-        TeamRequest.Post build = TeamRequest.Post.builder()
+        TeamCreateDto build = TeamCreateDto.builder()
                 .teamColor("team_3")
                 .maxTeamSize(5)
                 .name("team")
                 .description("hello")
                 .build();
         teamId = teamCommandService.createTeam(build, member1.getUsername());
-        ScheduleRequest.Post schedule = ScheduleRequest.Post.builder()
+        ScheduleCreateDto schedule = ScheduleCreateDto.builder()
                 .title("schedule1")
                 .content("hi")
                 .startTime(LocalDateTime.now())
@@ -95,7 +95,7 @@ class ScheduleQueryServiceTest {
     @Test
     void getSchedulesByTeamId() {
         // given
-        ScheduleRequest.Post schedule2 = ScheduleRequest.Post.builder()
+        ScheduleCreateDto schedule2 = ScheduleCreateDto.builder()
                 .title("schedule1")
                 .content("hi")
                 .startTime(LocalDateTime.now())
@@ -113,7 +113,7 @@ class ScheduleQueryServiceTest {
     @Test
     void getSchedulesByMember() {
         // given
-        ScheduleRequest.Post schedule2 = ScheduleRequest.Post.builder()
+        ScheduleCreateDto schedule2 = ScheduleCreateDto.builder()
                 .title("schedule1")
                 .content("hi")
                 .startTime(LocalDateTime.now())
@@ -134,7 +134,7 @@ class ScheduleQueryServiceTest {
 
         // Setup team1 schedules
         for (int i = 2; i <= 10; i++) {
-            ScheduleRequest.Post newSchedule = ScheduleRequest.Post.builder()
+            ScheduleCreateDto newSchedule = ScheduleCreateDto.builder()
                     .title("team1 schedule" + i)
                     .content("team1 schedule" + i + " content")
                     .startTime(LocalDateTime.of(2023, i, 12, 9, 30))

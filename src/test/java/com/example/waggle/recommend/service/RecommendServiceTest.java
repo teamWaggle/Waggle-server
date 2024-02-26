@@ -9,8 +9,8 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.story.StoryRequest;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,11 +44,11 @@ class RecommendServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    MemberRequest.AccessDto signUpDto1;
-    MemberRequest.AccessDto signUpDto2;
+    TemporaryRegisterDto signUpDto1;
+    TemporaryRegisterDto signUpDto2;
 
-    StoryRequest.Post storyWriteDto1;
-    StoryRequest.Post storyWriteDto2;
+    StoryCreateDto storyWriteDto1;
+    StoryCreateDto storyWriteDto2;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -70,24 +70,24 @@ class RecommendServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = MemberRequest.AccessDto.builder()
+        signUpDto1 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("hi")
                 .build();
 
-        signUpDto2 = MemberRequest.AccessDto.builder()
+        signUpDto2 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("hoe")
                 .build();
 
-        storyWriteDto1 = StoryRequest.Post.builder()
+        storyWriteDto1 = StoryCreateDto.builder()
                 .content("i love my choco")
-                .hashtags(tags1)
+                .hashtagList(tags1)
                 .build();
 
-        storyWriteDto2 = StoryRequest.Post.builder()
+        storyWriteDto2 = StoryCreateDto.builder()
                 .content("how can i do make he is happy?")
-                .hashtags(tags2)
+                .hashtagList(tags2)
                 .build();
 
 
@@ -158,7 +158,7 @@ class RecommendServiceTest {
         Member memberById = memberQueryService.getMemberById(member1Id);
         Member memberById1 = memberQueryService.getMemberById(member2Id);
 
-        StoryRequest.Post request = StoryRequest.Post.builder()
+        StoryCreateDto request = StoryCreateDto.builder()
                 .content("hi")
                 .build();
 

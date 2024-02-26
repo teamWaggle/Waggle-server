@@ -5,7 +5,7 @@ import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.MemberConverter;
-import com.example.waggle.web.dto.member.MemberResponse;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,9 +38,9 @@ public class RecommendApiController {
     @ApiResponse(responseCode = "200", description = "게시글 좋아요 활성화 멤버 조회 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청.")
     @GetMapping("{boardId}")
-    public ApiResponseDto<List<MemberResponse.SummaryDto>> findRecommendingMembers(@PathVariable Long boardId) {
+    public ApiResponseDto<List<MemberSummaryDto>> findRecommendingMembers(@PathVariable Long boardId) {
         List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(boardId);
-        List<MemberResponse.SummaryDto> collect = recommendingMembers.stream()
+        List<MemberSummaryDto> collect = recommendingMembers.stream()
                 .map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }

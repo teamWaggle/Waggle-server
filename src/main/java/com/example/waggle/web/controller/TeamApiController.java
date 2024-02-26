@@ -8,8 +8,9 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
-import com.example.waggle.web.dto.schedule.TeamRequest.Post;
-import com.example.waggle.web.dto.schedule.TeamResponse;
+import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
+import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
+import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +48,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 생성 성공. 작성한 팀의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 팀 생성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createTeam(@RequestPart @Validated Post request,
+    public ApiResponseDto<Long> createTeam(@RequestPart @Validated TeamCreateDto request,
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long createdTeamId = teamCommandService.createTeam(request);
@@ -59,7 +60,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable Long teamId,
-                                           @RequestPart @Validated Post request,
+                                           @RequestPart @Validated TeamCreateDto request,
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                            @RequestParam boolean allowUpload) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(request.getCoverImageUrl());
@@ -139,7 +140,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 조회 성공.")
     @ApiResponse(responseCode = "404", description = "팀을 찾을 수 없습니다.")
     @GetMapping("/{teamId}")
-    public ApiResponseDto<TeamResponse.DetailDto> getTeam(@PathVariable Long teamId) {
+    public ApiResponseDto<TeamDetailDto> getTeam(@PathVariable Long teamId) {
         Team team = teamQueryService.getTeamById(teamId);
         return ApiResponseDto.onSuccess(TeamConverter.toDetailDto(team));
     }
@@ -149,7 +150,7 @@ public class TeamApiController {
     @ApiResponse(responseCode = "200", description = "팀 조회 성공.")
     @ApiResponse(responseCode = "404", description = "사용자 또는 팀을 찾을 수 없습니다.")
     @GetMapping("/user/{memberId}/teams")
-    public ApiResponseDto<TeamResponse.ListDto> getTeamsByMemberId(
+    public ApiResponseDto<TeamSummaryListDto> getTeamsByMemberId(
             @PathVariable Long memberId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

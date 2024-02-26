@@ -13,8 +13,8 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.answer.AnswerRequest;
-import com.example.waggle.web.dto.media.MediaRequest;
+import com.example.waggle.web.dto.answer.AnswerRequest.AnswerCreateDto;
+import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long createAnswer(Long questionId,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerCreateDto answerWriteDto,
                              List<MultipartFile> multiPartFiles) {
         Member signInMember = memberQueryService.getSignInMember();
         Answer answer = buildAnswer(questionId, answerWriteDto, signInMember);
@@ -55,7 +55,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long createAnswerByUsername(Long questionId,
-                                       AnswerRequest.Post answerWriteDto,
+                                       AnswerCreateDto answerWriteDto,
                                        List<MultipartFile> multipartFiles,
                                        String username) {
         Member member = memberQueryService.getMemberByUsername(username);
@@ -69,7 +69,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long updateAnswer(Long boardId,
-                             AnswerRequest.Post answerWriteDto,
+                             AnswerCreateDto answerWriteDto,
                              List<MultipartFile> multipartFiles,
                              List<String> deleteFiles) {
         Answer answer = answerRepository.findById(boardId)
@@ -82,15 +82,14 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
 
     @Override
     public Long updateAnswerV2(Long boardId,
-                               AnswerRequest.Post request,
-                               MediaRequest.Put mediaUpdateDto,
+                               AnswerCreateDto request,
+                               MediaUpdateDto mediaUpdateDto,
                                List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-
 
         answer.changeAnswer(request.getContent());
 
@@ -100,7 +99,8 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     }
 
     @Override
-    public Long updateAnswerByUsername(Long boardId, String username, AnswerRequest.Post request, MediaRequest.Put mediaUpdateDto, List<MultipartFile> multipartFiles) {
+    public Long updateAnswerByUsername(Long boardId, String username, AnswerCreateDto request,
+                                       MediaUpdateDto mediaUpdateDto, List<MultipartFile> multipartFiles) {
         Member member = memberQueryService.getMemberByUsername(username);
 
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
@@ -108,7 +108,6 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-
 
         answer.changeAnswer(request.getContent());
 
@@ -147,7 +146,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
         answerRepository.delete(answer);
     }
 
-    private Answer buildAnswer(Long questionId, AnswerRequest.Post answerWriteDto, Member signInMember) {
+    private Answer buildAnswer(Long questionId, AnswerCreateDto answerWriteDto, Member signInMember) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
         Answer answer = Answer.builder()

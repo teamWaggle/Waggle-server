@@ -11,7 +11,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.schedule.TeamRequest.Post;
+import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,19 +37,19 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final int teamCapacityLimit = 50;
 
     @Override
-    public Long createTeam(Post request) {
+    public Long createTeam(TeamCreateDto request) {
         Member loginMember = memberQueryService.getSignInMember();
         return buildTeam(request, loginMember);
     }
 
     @Override
-    public Long createTeam(Post request, String username) {
+    public Long createTeam(TeamCreateDto request, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         return buildTeam(request, member);
     }
 
-    private Long buildTeam(Post request, Member member) {
+    private Long buildTeam(TeamCreateDto request, Member member) {
         Team createdTeam = Team.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -66,7 +66,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public Long updateTeam(Long teamId, Post request) {
+    public Long updateTeam(Long teamId, TeamCreateDto request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, SecurityUtil.getCurrentUsername());
@@ -77,7 +77,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public Long updateTeam(Long teamId, String username, Post request) {
+    public Long updateTeam(Long teamId, String username, TeamCreateDto request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, username);
@@ -237,7 +237,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateTeamMemberIsOverRequestSize(Post request, Team team) {
+    private static void validateTeamMemberIsOverRequestSize(TeamCreateDto request, Team team) {
         if (team.getTeamMembers().size() > request.getMaxTeamSize()) {
             throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE);
         }

@@ -14,7 +14,7 @@ import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.comment.CommentRequest;
+import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final BoardRepository boardRepository;
 
     @Override
-    public Long createComment(Long boardId, CommentRequest.Post commentWriteDto) {
+    public Long createComment(Long boardId, CommentCreateDto commentWriteDto) {
         Member signInMember = memberQueryService.getSignInMember();
         validateAccessSchedule(boardId, signInMember);
         Board board = boardRepository.findById(boardId)
@@ -47,12 +47,12 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .member(signInMember)
                 .build();
         commentRepository.save(build);
-        mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
+        mentionCommandService.createMentions(build, commentWriteDto.getMentionedMemberList());
         return build.getId();
     }
 
     @Override
-    public Long createCommentByUsername(Long boardId, CommentRequest.Post commentWriteDto, String username) {
+    public Long createCommentByUsername(Long boardId, CommentCreateDto commentWriteDto, String username) {
         Member memberByUsername = memberQueryService.getMemberByUsername(username);
         validateAccessSchedule(boardId, memberByUsername);
         Board board = boardRepository.findById(boardId)
@@ -63,31 +63,31 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .member(memberByUsername)
                 .build();
         commentRepository.save(build);
-        mentionCommandService.createMentions(build, commentWriteDto.getMentionedNickname());
+        mentionCommandService.createMentions(build, commentWriteDto.getMentionedMemberList());
         return build.getId();
     }
 
     @Override
-    public Long updateComment(Long commentId, CommentRequest.Post commentWriteDto) {
+    public Long updateComment(Long commentId, CommentCreateDto commentWriteDto) {
         Member signInMember = memberQueryService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         validateMember(comment, signInMember);
 
         comment.changeContent(commentWriteDto.getContent());
-        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedNickname());
+        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedMemberList());
         return comment.getId();
     }
 
     @Override
-    public Long updateCommentByUsername(Long commentId, String username, CommentRequest.Post commentWriteDto) {
+    public Long updateCommentByUsername(Long commentId, String username, CommentCreateDto commentWriteDto) {
         Member signInMember = memberQueryService.getMemberByUsername(username);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         validateMember(comment, signInMember);
 
         comment.changeContent(commentWriteDto.getContent());
-        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedNickname());
+        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedMemberList());
         return comment.getId();
     }
 
@@ -130,7 +130,8 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     private void validateAccessSchedule(Long boardId, Member signInMember) {
-        if (scheduleRepository.existsById(boardId) && memberScheduleRepository.existsByMemberIdAndScheduleId(signInMember.getId(), boardId)) {
+        if (scheduleRepository.existsById(boardId) && memberScheduleRepository.existsByMemberIdAndScheduleId(
+                signInMember.getId(), boardId)) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS);
         }
     }

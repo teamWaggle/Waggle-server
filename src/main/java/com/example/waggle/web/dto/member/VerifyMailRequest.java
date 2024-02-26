@@ -9,17 +9,17 @@ public class VerifyMailRequest {
 
     @Data
     @Builder
-    @AllArgsConstructor
     @NoArgsConstructor
-    public static class ConfirmationDto {
+    @AllArgsConstructor
+    public static class EmailSendDto {
         private String email;
     }
 
     @Data
     @Builder
-    @AllArgsConstructor
     @NoArgsConstructor
-    public static class AuthDto {
+    @AllArgsConstructor
+    public static class EmailVerificationDto {
         private String email;
         private String authCode;
     }

@@ -1,43 +1,38 @@
 package com.example.waggle.web.dto.media;
 
-import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class MediaRequest {
+
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SaveDto {
+    public static class MediaCreateDto {
         public String imageUrl;
-        //0~4(maxSize=5)
         public boolean allowUpload;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeleteDto {
+    public static class MediaDeleteDto {
         public String imageUrl;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Put {
-        public List<SaveDto> mediaList = new ArrayList<>();
-        public List<DeleteDto> deleteMediaList = new ArrayList<>();
+    public static class MediaUpdateDto {
         public Long boardId;
+        public List<MediaCreateDto> mediaList;
+        public List<MediaDeleteDto> deleteMediaList;
     }
 
 }

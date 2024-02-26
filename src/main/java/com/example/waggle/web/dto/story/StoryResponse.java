@@ -1,60 +1,50 @@
 package com.example.waggle.web.dto.story;
 
-import com.example.waggle.web.dto.member.MemberResponse;
-import lombok.*;
-
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class StoryResponse {
-    @Getter
-    @Setter
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class DetailDto {
-
-        private Long id;
+    public static class StoryDetailDto {
+        private Long boardId;
         private String content;
         private String profileImg;
         private LocalDateTime createdDate;
         private int recommendCount;
         private Boolean isRecommend;
-
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-        @Builder.Default
-        private List<String> medias = new ArrayList<>();
-
-        private MemberResponse.SummaryDto member;
-        private Boolean isMine;
-
+        private List<String> hashtagList;
+        private List<String> mediaList;
+        private MemberSummaryDto member;
+        private Boolean isOwner;
     }
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    public static class SummaryDto {
-
-        private Long id;
+    public static class StorySummaryDto {
+        private Long boardId;
         private String thumbnail;
-
     }
 
-    @Getter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    public static class ListDto {
-        @Builder.Default
-        private List<StoryResponse.SummaryDto> storyList = new ArrayList<>();
-        private long totalStories;
+    public static class StorySummaryListDto {
+        private List<StorySummaryDto> storyList;
+        private long storyCount;
         private Boolean isFirst;
         private Boolean isLast;
-
     }
+
 }

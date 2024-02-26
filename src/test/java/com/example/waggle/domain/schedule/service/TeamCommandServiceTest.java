@@ -14,8 +14,8 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,13 +51,13 @@ class TeamCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    private MemberRequest.AccessDto member1;
+    private TemporaryRegisterDto member1;
 
-    private MemberRequest.AccessDto member2;
+    private TemporaryRegisterDto member2;
 
-    private MemberRequest.AccessDto member3;
+    private TemporaryRegisterDto member3;
 
-    private TeamRequest.Post team;
+    private TeamCreateDto team;
 
     private Long teamId;
     private Long member2Id;
@@ -68,22 +68,22 @@ class TeamCommandServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = MemberRequest.AccessDto.builder()
+        member1 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("dasfk")
                 .build();
 
-        member2 = MemberRequest.AccessDto.builder()
+        member2 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("aksdfhsafa")
                 .build();
 
-        member3 = MemberRequest.AccessDto.builder()
+        member3 = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("wldkfjk")
                 .build();
 
-        team = TeamRequest.Post.builder()
+        team = TeamCreateDto.builder()
                 .teamColor("team_4")
                 .maxTeamSize(4)
                 .name("team")
@@ -114,7 +114,7 @@ class TeamCommandServiceTest {
     @Test
     void createTeam() {
         // given
-        TeamRequest.Post createRequest = TeamRequest.Post.builder()
+        TeamCreateDto createRequest = TeamCreateDto.builder()
                 .name("test name")
                 .description("test description")
                 .maxTeamSize(10)
@@ -136,7 +136,7 @@ class TeamCommandServiceTest {
     @Test
     void updateTeam() {
         // given
-        TeamRequest.Post updateRequest = TeamRequest.Post.builder()
+        TeamCreateDto updateRequest = TeamCreateDto.builder()
                 .name("updated name")
                 .description("updated description")
                 .teamColor("team_3")

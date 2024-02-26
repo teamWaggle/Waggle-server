@@ -7,21 +7,18 @@ import com.example.waggle.global.annotation.valid.ValidEnum;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 public class SirenRequest {
-    @Getter
-    @Setter
+    
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Post {
+    public static class SirenCreateDto {
         private String title;
-        private String petKind;
+        private String petBreed;
         private String petAge;
         private Gender petGender;
         private String contact;
@@ -35,4 +32,5 @@ public class SirenRequest {
         @ValidEnum(target = ResolutionStatus.class)
         private String status;
     }
+
 }

@@ -3,7 +3,7 @@ package com.example.waggle.domain.board.siren.entity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.member.entity.Gender;
-import com.example.waggle.web.dto.siren.SirenRequest;
+import com.example.waggle.web.dto.siren.SirenRequest.SirenCreateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class Siren extends Board {
 
     @Column(nullable = false)
     private String title;
-    private String petKind;
+    private String petBreed;
     private String petAge;
     @Enumerated(EnumType.STRING)
     private Gender petGender;
@@ -37,17 +37,17 @@ public class Siren extends Board {
     @Column(nullable = false)
     private ResolutionStatus status;
 
-    public void changeSiren(SirenRequest.Post request) {
+    public void changeSiren(SirenCreateDto request) {
         this.title = request.getTitle();
-        this.petKind = request.getPetKind();
+        this.petBreed = request.getPetBreed();
         this.petAge = request.getPetAge();
         this.petGender = request.getPetGender();
         this.lostDate = request.getLostDate();
         this.lostLocate = request.getLostLocate();
         this.contact = request.getContact();
         this.content = request.getContent();
-        this.category = request.getCategory();
-        this.status = request.getStatus();
+        this.category = SirenCategory.valueOf(request.getCategory());
+        this.status = ResolutionStatus.valueOf(request.getStatus());
     }
 
 }

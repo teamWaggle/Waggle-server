@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,7 +27,7 @@ public class Schedule extends Board {
 
     private LocalDateTime endTime;
 
-    public void update(Post request) {
+    public void update(ScheduleCreateDto request) {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.startTime = request.getStartTime();

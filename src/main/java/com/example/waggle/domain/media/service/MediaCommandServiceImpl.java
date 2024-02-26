@@ -5,7 +5,8 @@ import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.media.repository.MediaRepository;
 import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.media.MediaRequest;
+import com.example.waggle.web.dto.media.MediaRequest.MediaCreateDto;
+import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,7 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     }
 
     @Override
-    public void updateMediaV2(MediaRequest.Put request, List<MultipartFile> uploadFiles, Board board) {
+    public void updateMediaV2(MediaUpdateDto request, List<MultipartFile> uploadFiles, Board board) {
         board.getMedias().clear();
 
         if (validateUpdateMedia(uploadFiles, request)) {
@@ -81,7 +82,7 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         }
     }
 
-    private void forEachMediaUpdate(List<MultipartFile> uploadFiles, Board board, MediaRequest.SaveDto media) {
+    private void forEachMediaUpdate(List<MultipartFile> uploadFiles, Board board, MediaCreateDto media) {
         if (media.allowUpload) {
             String url = awsS3Service.uploadFile(uploadFiles.get(0));
             media.setImageUrl(url);
@@ -99,9 +100,10 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         mediaRepository.deleteMediaByBoardId(board.getId());
     }
 
-    private boolean validateUpdateMedia(List<MultipartFile> multipartFiles, MediaRequest.Put request) {
+    private boolean validateUpdateMedia(List<MultipartFile> multipartFiles, MediaUpdateDto request) {
         long requestCount =
-                (request != null && request.getMediaList() != null) ? request.getMediaList().stream().filter(media -> media.allowUpload).count() : 0;
+                (request != null && request.getMediaList() != null) ? request.getMediaList().stream()
+                        .filter(media -> media.allowUpload).count() : 0;
         long mediaCount = (multipartFiles != null) ? multipartFiles.size() : 0;
 
         if (requestCount != mediaCount) {

@@ -10,9 +10,9 @@ import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.PetHandler;
-import com.example.waggle.web.dto.member.MemberRequest;
-import com.example.waggle.web.dto.member.MemberResponse;
-import com.example.waggle.web.dto.pet.PetRequest;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +43,7 @@ class PetServiceTest {
     PetQueryService petQueryService;
 
 
-    private MemberResponse.SummaryDto memberSummaryDto;
+    private MemberSummaryDto memberSummaryDto;
     private Long savedPetId;
     Member member;
 
@@ -51,7 +51,7 @@ class PetServiceTest {
     @BeforeEach
     void beforeEach() {
         // member 저장
-        MemberRequest.AccessDto signUpDto = MemberRequest.AccessDto.builder()
+        TemporaryRegisterDto signUpDto = TemporaryRegisterDto.builder()
                 .password("12345678")
                 .email("dslkajflk")
                 .build();
@@ -59,7 +59,7 @@ class PetServiceTest {
         member = memberQueryService.getMemberById(memberId);
 
         // pet 저장
-        PetRequest.Post petDto = PetRequest.Post.builder()
+        PetCreateDto petDto = PetCreateDto.builder()
                 .name("루이")
                 .breed("포메라니안")
                 .gender(Gender.MALE)
@@ -83,7 +83,7 @@ class PetServiceTest {
     @Test
     void findByUsername() {
         //given
-        PetRequest.Post build = PetRequest.Post.builder()
+        PetCreateDto build = PetCreateDto.builder()
                 .name("hi")
                 .gender(Gender.MALE)
                 .build();
@@ -98,7 +98,7 @@ class PetServiceTest {
     @Test
     void updatePet() {
         // pet 수정 (변경 사항만 수정하는 건 컨트롤러 계층에서 처리)
-        PetRequest.Post updatePetDto = PetRequest.Post.builder()
+        PetCreateDto updatePetDto = PetCreateDto.builder()
                 .name("루이2")
                 .breed("포메라니안2")
                 .gender(Gender.MALE)
@@ -127,7 +127,7 @@ class PetServiceTest {
     @Test
     void remove_All_Pet_user_have() {
         //given
-        PetRequest.Post build = PetRequest.Post.builder()
+        PetCreateDto build = PetCreateDto.builder()
                 .name("hi")
                 .gender(Gender.MALE)
                 .build();

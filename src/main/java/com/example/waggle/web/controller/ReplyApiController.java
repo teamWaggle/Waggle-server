@@ -5,8 +5,8 @@ import com.example.waggle.domain.conversation.service.reply.ReplyCommandService;
 import com.example.waggle.domain.conversation.service.reply.ReplyQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.web.converter.ReplyConverter;
-import com.example.waggle.web.dto.reply.ReplyRequest;
-import com.example.waggle.web.dto.reply.ReplyResponse;
+import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
+import com.example.waggle.web.dto.reply.ReplyResponse.ReplyListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,8 +34,8 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공. 작성한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping
-    public ApiResponseDto<Long> createReply(@RequestBody ReplyRequest.Post replyWriteDto) {
-        Long replyId = replyCommandService.createReply(replyWriteDto.getCommentId(), replyWriteDto);
+    public ApiResponseDto<Long> createReply(@RequestBody ReplyCreateDto request) {
+        Long replyId = replyCommandService.createReply(request.getCommentId(), request);
         return ApiResponseDto.onSuccess(replyId);
     }
 
@@ -43,8 +43,8 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 수정 성공. 수정한 대댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{replyId}")
-    public ApiResponseDto<Long> updateReply(@PathVariable Long replyId, @RequestBody ReplyRequest.Post replyWriteDto) {
-        Long updatedReplyId = replyCommandService.updateReply(replyId, replyWriteDto);
+    public ApiResponseDto<Long> updateReply(@PathVariable Long replyId, @RequestBody ReplyCreateDto request) {
+        Long updatedReplyId = replyCommandService.updateReply(replyId, request);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
 
@@ -52,11 +52,11 @@ public class ReplyApiController {
     @ApiResponse(responseCode = "200", description = "대댓글 목록 조회 성공. 댓글의 대댓글 목록을 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청")
     @GetMapping("/{commentId}")
-    public ApiResponseDto<ReplyResponse.ListDto> getReplies(@RequestParam(defaultValue = "0") int currentPage,
-                                                            @PathVariable Long commentId) {
+    public ApiResponseDto<ReplyListDto> getReplies(@RequestParam(defaultValue = "0") int currentPage,
+                                                   @PathVariable Long commentId) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Reply> pagedReplies = replyQueryService.getPagedReplies(commentId, pageable);
-        ReplyResponse.ListDto listDto = ReplyConverter.toListDto(pagedReplies);
+        ReplyListDto listDto = ReplyConverter.toListDto(pagedReplies);
         return ApiResponseDto.onSuccess(listDto);
     }
 

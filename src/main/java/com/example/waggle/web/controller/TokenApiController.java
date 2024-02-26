@@ -6,7 +6,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.TokenService;
 import com.example.waggle.global.util.CookieUtil;
-import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +31,7 @@ public class TokenApiController {
     @ApiResponse(responseCode = "200", description = "로그인 성공. 엑세스 토큰을 반환합니다.")
     @ApiResponse(responseCode = "401", description = "로그인 실패. 인증되지 않음.")
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody MemberRequest.AccessDto request, HttpServletResponse response) {
+    public ApiResponseDto<JwtToken> login(@RequestBody TemporaryRegisterDto request, HttpServletResponse response) {
         JwtToken jwtToken = tokenService.login(request);
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         return ApiResponseDto.onSuccess(jwtToken);

@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 public class PetResponse {
-    @Getter
-    @Setter
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class DetailDto {
-        private Long id;
+    public static class PetDetailDto {
+        private Long petId;
         @NotNull
         private String name;
         private String breed;
@@ -21,14 +20,12 @@ public class PetResponse {
         private String profileImgUrl;
     }
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class SummaryDto {
-        private Long id;
+    public static class PetSummaryDto {
+        private Long petId;
         @NotNull
         private String name;
         private Gender gender;

@@ -5,25 +5,20 @@ import com.example.waggle.global.annotation.valid.ValidEnum;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 public class QuestionRequest {
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Post {
+    public static class QuestionCreateDto {
 
         @NotEmpty(message = "질문 내용을 작성해주세요.")
         @Max(1500)
@@ -33,10 +28,10 @@ public class QuestionRequest {
         @Length(min = 5, max = 30)
         private String title;
 
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
+        private List<String> hashtagList;
 
         @ValidEnum(target = ResolutionStatus.class)
         private String status;
     }
+
 }

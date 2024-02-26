@@ -1,23 +1,23 @@
 package com.example.waggle.web.dto.story;
 
 import jakarta.validation.constraints.Max;
-import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class StoryRequest {
-    @Getter
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString(of = {"content"})
-    public static class Post {
+    public static class StoryCreateDto {
         @Max(500)
         private String content;
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-        @Builder.Default
-        private List<String> medias = new ArrayList<>();
+        private List<String> hashtagList;
+        private List<String> mediaList;
     }
+
 }

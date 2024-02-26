@@ -3,24 +3,19 @@ package com.example.waggle.web.dto.pet;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
 import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 public class PetRequest {
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Post {
+    public static class PetCreateDto {
         @NotNull
         private String name;
         private String breed;
@@ -32,14 +27,12 @@ public class PetRequest {
         private String gender;
     }
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class PostList {
-        @Builder.Default
-        private List<Post> petList = new ArrayList<>();
+    public static class PetListCreateDto {
+        private List<PetCreateDto> petList;
     }
+
 }

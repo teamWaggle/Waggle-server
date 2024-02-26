@@ -7,13 +7,13 @@ import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.StoryConverter;
-import com.example.waggle.web.dto.media.MediaRequest;
-import com.example.waggle.web.dto.story.StoryRequest;
-import com.example.waggle.web.dto.story.StoryResponse;
+import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
+import com.example.waggle.web.dto.story.StoryResponse.StorySummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +32,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/stories")
@@ -50,7 +47,7 @@ public class StoryApiController {
     @ApiResponse(responseCode = "200", description = "스토리 작성 성공. 작성한 스토리의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createStory(@RequestPart StoryRequest.Post request,
+    public ApiResponseDto<Long> createStory(@RequestPart StoryCreateDto request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = storyCommandService.createStory(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -61,8 +58,8 @@ public class StoryApiController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스토리 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateStory(@PathVariable Long boardId,
-                                            @RequestPart StoryRequest.Post request,
-                                            @RequestPart MediaRequest.Put mediaUpdateDto,
+                                            @RequestPart StoryCreateDto request,
+                                            @RequestPart MediaUpdateDto mediaUpdateDto,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateDto.getDeleteMediaList()
@@ -75,7 +72,7 @@ public class StoryApiController {
     @Operation(summary = "전체 스토리 목록 조회", description = "전체 스토리 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "스토리 조회 성공. 전체 스토리 목록을 반환합니다.")
     @GetMapping
-    public ApiResponseDto<StoryResponse.ListDto> getAllStories(@RequestParam(defaultValue = "0") int currentPage) {
+    public ApiResponseDto<StorySummaryListDto> getAllStories(@RequestParam(defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         return ApiResponseDto.onSuccess(
                 StoryConverter.toListDto(storyQueryService.getPagedStories(pageable)));
@@ -85,8 +82,8 @@ public class StoryApiController {
     @ApiResponse(responseCode = "200", description = "스토리 조회 성공. 사용자가 작성한 스토리 목록을 반환합니다.")
     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
     @GetMapping("/member/{memberId}")
-    public ApiResponseDto<StoryResponse.ListDto> getStoriesByUsername(@RequestParam(defaultValue = "0") int currentPage,
-                                                                      @PathVariable Long memberId) {
+    public ApiResponseDto<StorySummaryListDto> getStoriesByUsername(@RequestParam(defaultValue = "0") int currentPage,
+                                                                    @PathVariable Long memberId) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         return ApiResponseDto.onSuccess(
                 StoryConverter.toListDto(storyQueryService.getPagedStoriesByMemberId(memberId, pageable)));
@@ -96,9 +93,9 @@ public class StoryApiController {
     @ApiResponse(responseCode = "200", description = "스토리 조회 성공. 특정 스토리의 상세 정보를 반환합니다.")
     @ApiResponse(responseCode = "404", description = "스토리를 찾을 수 없음. 지정된 스토리 ID에 해당하는 스토리를 찾을 수 없습니다.")
     @GetMapping("/{boardId}")
-    public ApiResponseDto<StoryResponse.DetailDto> getStoryByBoardId(@PathVariable Long boardId) {
+    public ApiResponseDto<StoryDetailDto> getStoryByBoardId(@PathVariable Long boardId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
-        StoryResponse.DetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
+        StoryDetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
         recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }

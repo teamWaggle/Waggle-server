@@ -6,16 +6,15 @@ import java.time.LocalDateTime;
 
 public class ScheduleRequest {
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Post {
+    public static class ScheduleCreateDto {
         private String title;
         private String content;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
     }
+
 }
