@@ -4,7 +4,9 @@ import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
+import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.SirenConverter;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
@@ -39,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/sirens")
 @RestController
+@ApiResponse(responseCode = "2000", description = "성공")
 @Tag(name = "Siren API", description = "사이렌 API")
 public class SirenApiController {
 
@@ -48,8 +51,9 @@ public class SirenApiController {
     private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "사이렌 작성 🔑", description = "사용자가 사이렌을 작성합니다. 작성한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "사이렌 작성 성공. 작성한 사이렌의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createSiren(@RequestPart("request") @Validated SirenCreateDto request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
@@ -58,8 +62,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 수정 🔑", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "사이렌 수정 성공. 수정한 사이렌의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateSiren(@PathVariable("boardId") Long boardId,
                                             @RequestPart("request") @Validated SirenCreateDto request,
@@ -75,7 +80,9 @@ public class SirenApiController {
 
 
     @Operation(summary = "전체 사이렌 목록 조회", description = "전체 사이렌 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 전체 사이렌 목록을 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping
     public ApiResponseDto<SirenListDto> getAllSiren(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -87,8 +94,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사용자의 사이렌 목록 조회", description = "특정 사용자가 작성한 사이렌 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 사용자가 작성한 사이렌 목록을 반환합니다.")
-    @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/member/{memberId}")
     public ApiResponseDto<SirenListDto> getSirenListByUsername(@PathVariable("memberId") Long memberId,
                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -100,8 +108,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "특정 사이렌 조회", description = "특정 사이렌의 상세 정보를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "사이렌 조회 성공. 특정 사이렌의 상세 정보를 반환합니다.")
-    @ApiResponse(responseCode = "404", description = "사이렌을 찾을 수 없음. 지정된 사이렌 ID에 해당하는 사이렌을 찾을 수 없습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/{boardId}")
     public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("boardId") Long boardId) {
         Siren siren = sirenQueryService.getSirenByBoardId(boardId);
@@ -111,8 +120,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 삭제 🔑", description = "특정 사이렌을 삭제합니다.게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
-    @ApiResponse(responseCode = "200", description = "사이렌 삭제 성공.")
-    @ApiResponse(responseCode = "404", description = "사이렌을 찾을 수 없거나 인증 정보가 사이렌을 작성한 유저와 일치하지 않습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteSiren(@PathVariable("boardId") Long boardId) {
         sirenCommandService.deleteSiren(boardId);

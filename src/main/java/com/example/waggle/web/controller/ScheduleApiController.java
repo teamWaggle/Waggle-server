@@ -4,7 +4,9 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
+import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
@@ -15,6 +17,8 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,15 +27,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/schedules")
 @RestController
+@ApiResponse(responseCode = "2000", description = "성공")
 @Tag(name = "Schedule API", description = "일정 API")
 public class ScheduleApiController {
 
@@ -40,8 +50,9 @@ public class ScheduleApiController {
     private Sort latestStart = Sort.by("startTime").descending();
 
     @Operation(summary = "일정 생성 🔑", description = "새로운 일정을 생성합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 생성 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 작성에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@AuthUser UserDetails userDetails,
                                                @PathVariable("teamId") Long teamId,
@@ -51,8 +62,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "일정 추가 🔑", description = "사용자의 팀내 일정을 선택하여 추가합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 추가 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 저장에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping("/members/{scheduleId}")
     public ApiResponseDto<Long> addSchedule(@AuthUser UserDetails userDetails,
                                             @PathVariable("scheduleId") Long scheduleId) {
@@ -61,8 +73,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 일정 조회", description = "특정 일정의 정보를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/{scheduleId}")
     public ApiResponseDto<ScheduleDetailDto> getSchedule(@PathVariable("scheduleId") Long scheduleId) {
         Schedule schedule = scheduleQueryService.getScheduleById(scheduleId);
@@ -70,8 +83,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "일정 수정 🔑", description = "특정 일정의 정보를 수정합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 수정 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 수정에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<Long> updateSchedule(@PathVariable("scheduleId") Long scheduleId,
                                                @RequestBody ScheduleCreateDto request) {
@@ -81,8 +95,9 @@ public class ScheduleApiController {
 
     @Deprecated
     @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @DeleteMapping("/teams")
     public ApiResponseDto<Boolean> deleteScheduleInTeam(@RequestParam("boardId") Long boardId) {
         scheduleCommandService.deleteSchedule(boardId);
@@ -90,8 +105,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "일정 삭제 🔑", description = "특정 일정을 삭제합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @DeleteMapping("/members/{boardId}")
     public ApiResponseDto<Boolean> deleteScheduleInMember(@AuthUser UserDetails userDetails,
                                                           @RequestParam("boardId") Long boardId) {
@@ -100,8 +116,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 팀의 모든 일정 조회", description = "특정 팀의 모든 일정을 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/teams/{teamId}")
     public ApiResponseDto<ScheduleListDto> getSchedulesByTeam(@PathVariable("teamId") Long teamId) {
         List<Schedule> schedules = scheduleQueryService.getTeamSchedules(teamId);
@@ -109,8 +126,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 팀의 모든 일정 조회", description = "특정 팀의 모든 일정을 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/teams/{teamId}/page")
     public ApiResponseDto<ScheduleListDto> getPagedSchedulesByTeam(@PathVariable("teamId") Long teamId,
                                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -120,8 +138,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 사용자의 모든 일정 조회", description = "특정 사용자가 선택한 모든 일정을 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/members/{memberId}")
     public ApiResponseDto<ScheduleListDto> getSchedulesByMember(@PathVariable("memberId") Long memberId) {
         List<Schedule> schedules = scheduleQueryService.getSchedulesByMember(memberId);
@@ -129,8 +148,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 사용자가 작성한 일정 조회", description = "특정 사용자가 작성한 모든 일정을 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/writers/{memberId}")
     public ApiResponseDto<ScheduleListDto> getSchedulesByWriter(@PathVariable("memberId") Long memberId) {
         List<Schedule> schedules = scheduleQueryService.getSchedulesByWriter(memberId);
@@ -138,8 +158,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 팀의 월 일정 조회", description = "특정 팀의 스케줄 전체를 월 단위로 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/teams/{teamId}/monthly")
     public ApiResponseDto<ScheduleListDto> getMonthlySchedulesForTeam(@PathVariable("teamId") Long teamId,
                                                                       @RequestParam("year") int year,
@@ -149,8 +170,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "특정 사용자의 월 일정 조회", description = "특정 사용자가 선택한 팀 스케줄 전체를 월단위로 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/members/{memberId}/monthly")
     public ApiResponseDto<ScheduleListDto> getMonthlySchedulesForMember(@PathVariable("memberId") Long memberId,
                                                                         @RequestParam("year") int year,
@@ -160,8 +182,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "기간 해당 팀 일정 조회", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/teams/{teamId}/period")
     public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriod(@PathVariable("teamId") Long teamId,
                                                                    @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
@@ -171,8 +194,9 @@ public class ScheduleApiController {
     }
 
     @Operation(summary = "스케줄 선택 멤버 조회", description = "특정한 팀 스케줄을 선택한 멤버들을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "일정 조회 성공.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 멤버 조회에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/{scheduleId}/members")
     public ApiResponseDto<MemberSummaryListDto> getMembersBySchedules(@PathVariable("scheduleId") Long scheduleId) {
         List<Member> memberBySchedule = scheduleQueryService.getMemberBySchedule(scheduleId);

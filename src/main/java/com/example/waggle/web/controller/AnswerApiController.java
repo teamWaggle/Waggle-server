@@ -4,7 +4,9 @@ import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.answer.service.AnswerQueryService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
+import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest.AnswerCreateDto;
@@ -12,7 +14,6 @@ import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/answers")
 @RestController
+@ApiResponse(responseCode = "2000", description = "성공")
 @Tag(name = "Answer API", description = "답변 API")
 public class AnswerApiController {
 
@@ -47,9 +49,8 @@ public class AnswerApiController {
     private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "답변 작성 🔑", description = "사용자가 답변을 작성합니다. 작성한 답변의 정보를 저장하고 답변의 고유 ID를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "답변 작성 성공. 작성한 답변의 고유 ID를 반환합니다."),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 답변 작성에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
@@ -60,8 +61,9 @@ public class AnswerApiController {
     }
 
     @Operation(summary = "답변 수정 🔑", description = "사용자가 답변을 수정합니다. 수정한 답변의 정보를 저장하고 답변의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "답변 수정 성공. 수정한 답변의 고유 ID를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 답변 수정에 실패했습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateAnswer(@PathVariable("boardId") Long boardId,
                                              @RequestPart("request") AnswerCreateDto request,
@@ -75,7 +77,9 @@ public class AnswerApiController {
     }
 
     @Operation(summary = "질문의 답변 목록 조회", description = "질문의 전체 답변 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "답변 목록 조회 성공. 페이징 된 질문의 답변 목록을 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/question/{questionId}")
     public ApiResponseDto<AnswerListDto> getAllAnswerByPage(@PathVariable("questionId") Long questionId,
                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -88,8 +92,9 @@ public class AnswerApiController {
     }
 
     @Operation(summary = "사용자의 답변 목록 조회", description = "특정 사용자가 작성한 답변 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "답변 목록 조회 성공. 사용자가 작성한 답변 목록을 반환합니다.")
-    @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음. 지정된 사용자 이름에 해당하는 사용자를 찾을 수 없습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/member/{memberId}")
     public ApiResponseDto<AnswerListDto> getAnswerByMemberId(@PathVariable("memberId") Long memberId,
                                                              @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -101,8 +106,9 @@ public class AnswerApiController {
     }
 
     @Operation(summary = "답변 삭제 🔑", description = "특정 답변을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등이 모두 삭제됩니다.")
-    @ApiResponse(responseCode = "200", description = "답변 삭제 성공.")
-    @ApiResponse(responseCode = "404", description = "답변을 찾을 수 없거나 인증 정보가 답변을 작성한 유저와 일치하지 않습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @DeleteMapping
     public ApiResponseDto<Boolean> deleteAnswer(@RequestParam("boardId") Long boardId) {
         answerCommandService.deleteAnswer(boardId);
