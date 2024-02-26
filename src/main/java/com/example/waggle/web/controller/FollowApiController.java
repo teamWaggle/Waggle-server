@@ -28,7 +28,7 @@ public class FollowApiController {
     private final FollowCommandService followCommandService;
     private final FollowQueryService followQueryService;
 
-    @Operation(summary = "팔로우 신청", description = "사용자가 다른 유저에게 팔로우를 신청합니다. 해당 유저는 사용자의 팔로잉 멤버가 됩니다.")
+    @Operation(summary = "팔로우 신청 🔑", description = "사용자가 다른 유저에게 팔로우를 신청합니다. 해당 유저는 사용자의 팔로잉 멤버가 됩니다.")
     @ApiResponse(responseCode = "200", description = "팔로잉 멤버 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 이미 팔로잉이 된 상대입니다.")
     @PostMapping("/follow")
@@ -38,7 +38,7 @@ public class FollowApiController {
         return ApiResponseDto.onSuccess(follow);
     }
 
-    @Operation(summary = "언팔로우 신청", description = "사용자의 팔로잉 멤버를 언팔로우 신청합니다. 해당 유저는 사용자와 팔로잉 멤버에서 제외됩니다.")
+    @Operation(summary = "언팔로우 신청 🔑", description = "사용자의 팔로잉 멤버를 언팔로우 신청합니다. 해당 유저는 사용자와 팔로잉 멤버에서 제외됩니다.")
     @ApiResponse(responseCode = "200", description = "언팔로우 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 팔로잉이 되지 않은 상대입니다.")
     @PostMapping("/unfollow")

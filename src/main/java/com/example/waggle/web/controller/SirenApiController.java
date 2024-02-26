@@ -47,7 +47,7 @@ public class SirenApiController {
     private final RecommendQueryService recommendQueryService;
     private Sort latestSorting = Sort.by("createdDate").descending();
 
-    @Operation(summary = "사이렌 작성", description = "사용자가 사이렌을 작성합니다. 작성한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
+    @Operation(summary = "사이렌 작성 🔑", description = "사용자가 사이렌을 작성합니다. 작성한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "사이렌 작성 성공. 작성한 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌 작성에 실패했습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,7 +57,7 @@ public class SirenApiController {
         return ApiResponseDto.onSuccess(boardId);
     }
 
-    @Operation(summary = "사이렌 수정", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
+    @Operation(summary = "사이렌 수정 🔑", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "사이렌 수정 성공. 수정한 사이렌의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 사이렌의 수정에 실패했습니다.")
     @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -110,7 +110,7 @@ public class SirenApiController {
         return ApiResponseDto.onSuccess(detailDto);
     }
 
-    @Operation(summary = "사이렌 삭제", description = "특정 사이렌을 삭제합니다.게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
+    @Operation(summary = "사이렌 삭제 🔑", description = "특정 사이렌을 삭제합니다.게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "사이렌 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "사이렌을 찾을 수 없거나 인증 정보가 사이렌을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping

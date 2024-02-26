@@ -61,19 +61,19 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 등록", description = "회원가입 후 회원정보를 처음 등록합니다. 서버에서 임의로 설정해둔 정보들을 수정합니다.")
+    @Operation(summary = "회원 정보 등록 🔑", description = "회원가입 후 회원정보를 처음 등록합니다. 서버에서 임의로 설정해둔 정보들을 수정합니다.")
     @ApiResponse(responseCode = "200", description = "회원정보 등록 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "회원정보 등록 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> registerInfo(@AuthUser UserDetails userDetails,
-                                             @RequestPart MemberRequest.RegisterDto request,
+                                             @RequestPart("request") MemberRequest.RegisterDto request,
                                              @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long memberId = memberCommandService.registerMemberInfo(userDetails.getUsername(), request);
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 수정", description = "회원정보를 수정합니다.")
+    @Operation(summary = "회원 정보 수정 🔑", description = "회원정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "회원정보 수정 성공.")
     @ApiResponse(responseCode = "400", description = "회원정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

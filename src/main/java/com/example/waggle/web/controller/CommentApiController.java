@@ -41,7 +41,7 @@ public class CommentApiController {
     }
 
 
-    @Operation(summary = "댓글 작성", description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
+    @Operation(summary = "댓글 작성 🔑", description = "사용자가 댓글을 작성합니다. 작성한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 작성 성공. 작성한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PostMapping("/{boardId}")
@@ -51,7 +51,7 @@ public class CommentApiController {
         return ApiResponseDto.onSuccess(commentId);
     }
 
-    @Operation(summary = "댓글 수정", description = "사용자가 댓글을 수정합니다. 수정한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
+    @Operation(summary = "댓글 수정 🔑", description = "사용자가 댓글을 수정합니다. 수정한 댓글의 정보를 저장하고 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 수정 성공. 수정한 댓글의 고유 ID를 반환합니다.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 댓글 작성에 실패했습니다.")
     @PutMapping("/{commentId}")
@@ -61,7 +61,7 @@ public class CommentApiController {
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 
-    @Operation(summary = "댓글 삭제", description = "특정 댓글을 삭제합니다. 하위 대댓글들도 모두 삭제됩니다.")
+    @Operation(summary = "댓글 삭제 🔑", description = "특정 댓글을 삭제합니다. 하위 대댓글들도 모두 삭제됩니다.")
     @ApiResponse(responseCode = "200", description = "댓글 삭제 성공.")
     @ApiResponse(responseCode = "404", description = "댓글을 찾을 수 없거나 인증 정보가 댓글을 작성한 유저와 일치하지 않습니다.")
     @DeleteMapping

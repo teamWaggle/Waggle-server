@@ -39,7 +39,7 @@ public class ScheduleApiController {
     private final ScheduleQueryService scheduleQueryService;
     private Sort latestStart = Sort.by("startTime").descending();
 
-    @Operation(summary = "일정 생성", description = "새로운 일정을 생성합니다.")
+    @Operation(summary = "일정 생성 🔑", description = "새로운 일정을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "일정 생성 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 작성에 실패했습니다.")
     @PostMapping("/{teamId}")
@@ -50,7 +50,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
-    @Operation(summary = "일정 추가", description = "사용자의 팀내 일정을 선택하여 추가합니다.")
+    @Operation(summary = "일정 추가 🔑", description = "사용자의 팀내 일정을 선택하여 추가합니다.")
     @ApiResponse(responseCode = "200", description = "일정 추가 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 저장에 실패했습니다.")
     @PostMapping("/members/{scheduleId}")
@@ -69,7 +69,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleResponseDto(schedule));
     }
 
-    @Operation(summary = "일정 수정", description = "특정 일정의 정보를 수정합니다.")
+    @Operation(summary = "일정 수정 🔑", description = "특정 일정의 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "일정 수정 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 수정에 실패했습니다.")
     @PutMapping("/{scheduleId}")
@@ -79,6 +79,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(updatedScheduleId);
     }
 
+    @Deprecated
     @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
@@ -88,7 +89,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
+    @Operation(summary = "일정 삭제 🔑", description = "특정 일정을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "일정 삭제 성공.")
     @ApiResponse(responseCode = "400", description = "잘못된 요청. 입력 데이터 유효성 검사 실패 등의 이유로 스케줄 삭제에 실패했습니다.")
     @DeleteMapping("/members/{boardId}")
