@@ -4,38 +4,24 @@ import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class PetRequest {
+    @NotNull
+    private String name;
+    private String breed;
+    private String age;
+    private String profileImgUrl;
+    private boolean isUploadProfile;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class PetCreateDto {
-        @NotNull
-        private String name;
-        private String breed;
-        private String age;
-        private String profileImgUrl;
-        private boolean isUploadProfile;
-
-        @ValidEnum(target = Gender.class)
-        private String gender;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class PetListCreateDto {
-        private List<PetCreateDto> petList;
-    }
-
+    @ValidEnum(target = Gender.class)
+    private String gender;
 }

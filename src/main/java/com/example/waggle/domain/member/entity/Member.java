@@ -5,7 +5,7 @@ import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.global.component.auditing.BaseTimeEntity;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
-import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -104,7 +104,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.profileImgUrl = request.getProfileImgUrl();
     }
 
-    public void registerInfo(MemberRequest.RegisterDto request) {
+    public void registerInfo(MemberProfileDto request) {
         this.userUrl = request.getUserUrl();
         this.name = request.getName();
         this.nickname = request.getNickname();

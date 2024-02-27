@@ -9,7 +9,7 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
-import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
+import com.example.waggle.web.dto.pet.PetRequest;
 import com.example.waggle.web.dto.pet.PetResponse.PetSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,10 +47,10 @@ public class PetApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createPet(@RequestPart @Validated PetCreateDto request,
+    public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest createPetRequest,
                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long petId = petCommandService.createPet(request);
+        createPetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+        Long petId = petCommandService.createPet(createPetRequest);
         return ApiResponseDto.onSuccess(petId);
     }
 
@@ -61,18 +61,18 @@ public class PetApiController {
     })
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
-                                          @RequestPart @Validated PetCreateDto request,
+                                          @RequestPart @Validated PetRequest updatePetRequest,
                                           @RequestPart(value = "file", required = false) MultipartFile profileImg,
                                           @RequestParam("allowUpload") boolean allowUpload) {
-        String removePrefixProfileUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
+        String removePrefixProfileUrl = MediaUtil.removePrefix(updatePetRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixProfileUrl);
-            request.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            updatePetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
         } else {
-            request.setProfileImgUrl(removePrefixProfileUrl);
+            updatePetRequest.setProfileImgUrl(removePrefixProfileUrl);
         }
 
-        Long result = petCommandService.updatePet(petId, request);
+        Long result = petCommandService.updatePet(petId, updatePetRequest);
         return ApiResponseDto.onSuccess(result);
     }
 
@@ -90,8 +90,8 @@ public class PetApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deletePet(@RequestParam("petId") Long petId) {
+    @DeleteMapping("/{petId}")
+    public ApiResponseDto<Boolean> deletePet(@PathVariable("petId") Long petId) {
         petCommandService.deletePet(petId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

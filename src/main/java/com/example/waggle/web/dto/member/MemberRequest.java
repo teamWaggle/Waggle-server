@@ -16,7 +16,7 @@ public class MemberRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public static class TemporaryRegisterDto {
+    public static class MemberCredentialsDto {
         @NotBlank
         private String email;
 
@@ -45,7 +45,7 @@ public class MemberRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public static class RegisterDto {
+    public static class MemberProfileDto {
         private String nickname;
         private String name;
         private LocalDate birthday;

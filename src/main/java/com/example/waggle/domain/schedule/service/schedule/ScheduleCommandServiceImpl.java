@@ -17,7 +17,7 @@ import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.ScheduleUtil;
-import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
+import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
 
     @Override
-    public Long createSchedule(Long teamId, ScheduleCreateDto request, String username) {
+    public Long createSchedule(Long teamId, ScheduleRequest createScheduleRequest, String username) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
@@ -45,15 +45,15 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         validateTeamMember(team, member);
-        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
+        ScheduleUtil.validateSchedule(createScheduleRequest.getStartTime(), createScheduleRequest.getEndTime());
 
         Schedule createdSchedule = Schedule.builder()
                 .team(team)
-                .title(request.getTitle())
-                .content(request.getContent())
+                .title(createScheduleRequest.getTitle())
+                .content(createScheduleRequest.getContent())
                 .member(member)
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
+                .startTime(createScheduleRequest.getStartTime())
+                .endTime(createScheduleRequest.getEndTime())
                 .build();
 
         team.addSchedule(createdSchedule);
@@ -68,31 +68,31 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
-    public Long updateSchedule(Long scheduleId, ScheduleCreateDto request) {
+    public Long updateSchedule(Long scheduleId, ScheduleRequest updateScheduleRequest) {
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
+        ScheduleUtil.validateSchedule(updateScheduleRequest.getStartTime(), updateScheduleRequest.getEndTime());
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.update(request);
+        schedule.update(updateScheduleRequest);
 
         return schedule.getId();
     }
 
     @Override
-    public Long updateScheduleByUsername(Long scheduleId, String username, ScheduleCreateDto request) {
+    public Long updateScheduleByUsername(Long scheduleId, String username, ScheduleRequest updateScheduleRequest) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
+        ScheduleUtil.validateSchedule(updateScheduleRequest.getStartTime(), updateScheduleRequest.getEndTime());
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.update(request);
+        schedule.update(updateScheduleRequest);
 
         return schedule.getId();
     }

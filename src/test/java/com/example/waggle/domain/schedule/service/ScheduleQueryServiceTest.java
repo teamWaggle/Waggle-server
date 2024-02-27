@@ -9,7 +9,7 @@ import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
 import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
 import org.junit.jupiter.api.AfterEach;
@@ -49,11 +49,11 @@ class ScheduleQueryServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
-        TemporaryRegisterDto A = TemporaryRegisterDto.builder()
+        MemberCredentialsDto A = MemberCredentialsDto.builder()
                 .password("password")
                 .email("email")
                 .build();
-        TemporaryRegisterDto B = TemporaryRegisterDto.builder()
+        MemberCredentialsDto B = MemberCredentialsDto.builder()
                 .password("password")
                 .email("email1")
                 .build();

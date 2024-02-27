@@ -7,7 +7,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.converter.ReplyConverter;
-import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
+import com.example.waggle.web.dto.reply.ReplyRequest;
 import com.example.waggle.web.dto.reply.ReplyResponse.ReplyListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,9 +45,10 @@ public class ReplyApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
-    public ApiResponseDto<Long> createReply(@RequestBody ReplyCreateDto request) {
-        Long replyId = replyCommandService.createReply(request.getCommentId(), request);
+    @PostMapping("/{commentId}")
+    public ApiResponseDto<Long> createReply(@PathVariable("commentId") Long commentId,
+                                            @RequestBody ReplyRequest createReplyRequest) {
+        Long replyId = replyCommandService.createReply(commentId, createReplyRequest);
         return ApiResponseDto.onSuccess(replyId);
     }
 
@@ -57,8 +58,8 @@ public class ReplyApiController {
     })
     @PutMapping("/{replyId}")
     public ApiResponseDto<Long> updateReply(@PathVariable("replyId") Long replyId,
-                                            @RequestBody ReplyCreateDto request) {
-        Long updatedReplyId = replyCommandService.updateReply(replyId, request);
+                                            @RequestBody ReplyRequest updateReplyRequest) {
+        Long updatedReplyId = replyCommandService.updateReply(replyId, updateReplyRequest);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
 
@@ -79,8 +80,8 @@ public class ReplyApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteReply(@RequestParam("replyId") Long replyId) {
+    @DeleteMapping("/{replyId}")
+    public ApiResponseDto<Boolean> deleteReply(@PathVariable("replyId") Long replyId) {
         replyCommandService.deleteReply(replyId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

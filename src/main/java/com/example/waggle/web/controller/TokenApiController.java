@@ -7,7 +7,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.JwtToken;
 import com.example.waggle.global.security.TokenService;
 import com.example.waggle.global.util.CookieUtil;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,8 +39,9 @@ public class TokenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody TemporaryRegisterDto request, HttpServletResponse response) {
-        JwtToken jwtToken = tokenService.login(request);
+    public ApiResponseDto<JwtToken> login(@RequestBody MemberCredentialsDto memberLoginRequest,
+                                          HttpServletResponse response) {
+        JwtToken jwtToken = tokenService.login(memberLoginRequest);
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         return ApiResponseDto.onSuccess(jwtToken);
     }

@@ -7,17 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StoryRequest {
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class StoryCreateDto {
-        @Max(500)
-        private String content;
-        private List<String> hashtagList;
-        private List<String> mediaList;
-    }
-
+    @Max(500)
+    private String content;
+    private List<String> hashtagList;
+    private List<String> mediaList;
 }

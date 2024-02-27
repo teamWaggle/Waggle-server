@@ -1,15 +1,15 @@
 package com.example.waggle.domain.conversation.service.comment;
 
-import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.comment.CommentRequest;
 
 public interface CommentCommandService {
-    Long createComment(Long boardId, CommentCreateDto commentWriteDto);
+    Long createComment(Long boardId, CommentRequest createCommentRequest);
 
-    Long createCommentByUsername(Long boardId, CommentCreateDto commentWriteDto, String username);
+    Long createCommentByUsername(Long boardId, CommentRequest createCommentRequest, String username);
 
-    Long updateComment(Long commentId, CommentCreateDto commentWriteDto);
+    Long updateComment(Long commentId, CommentRequest updateCommentRequest);
 
-    Long updateCommentByUsername(Long commentId, String username, CommentCreateDto commentWriteDto);
+    Long updateCommentByUsername(Long commentId, String username, CommentRequest updateCommentRequest);
 
     void deleteComment(Long commentId);
 

@@ -11,7 +11,7 @@ import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
-import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
+import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,8 +56,9 @@ public class ScheduleApiController {
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@AuthUser UserDetails userDetails,
                                                @PathVariable("teamId") Long teamId,
-                                               @RequestBody ScheduleCreateDto request) {
-        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, request, userDetails.getUsername());
+                                               @RequestBody ScheduleRequest createScheduleRequest) {
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest,
+                userDetails.getUsername());
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -88,8 +89,8 @@ public class ScheduleApiController {
     })
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<Long> updateSchedule(@PathVariable("scheduleId") Long scheduleId,
-                                               @RequestBody ScheduleCreateDto request) {
-        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, request);
+                                               @RequestBody ScheduleRequest updateScheduleRequest) {
+        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, updateScheduleRequest);
         return ApiResponseDto.onSuccess(updatedScheduleId);
     }
 
@@ -98,20 +99,20 @@ public class ScheduleApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping("/teams")
-    public ApiResponseDto<Boolean> deleteScheduleInTeam(@RequestParam("boardId") Long boardId) {
-        scheduleCommandService.deleteSchedule(boardId);
+    @DeleteMapping("/{scheduleId}")
+    public ApiResponseDto<Boolean> deleteScheduleInTeam(@PathVariable("scheduleId") Long scheduleId) {
+        scheduleCommandService.deleteSchedule(scheduleId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "일정 삭제 🔑", description = "특정 일정을 삭제합니다.")
+    @Operation(summary = "일정 취소 🔑", description = "특정 일정을 취소합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping("/members/{boardId}")
-    public ApiResponseDto<Boolean> deleteScheduleInMember(@AuthUser UserDetails userDetails,
-                                                          @RequestParam("boardId") Long boardId) {
-        scheduleCommandService.deleteMemberSchedule(boardId, userDetails.getUsername());
+    @DeleteMapping("/{scheduleId}/members")
+    public ApiResponseDto<Boolean> deleteScheduleInMember(@PathVariable("scheduleId") Long scheduleId,
+                                                          @AuthUser UserDetails userDetails) {
+        scheduleCommandService.deleteMemberSchedule(scheduleId, userDetails.getUsername());
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

@@ -7,16 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class CommentRequest {
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class CommentCreateDto {
-        private String content;
-        List<String> mentionedMemberList;
-    }
-
+    private String content;
+    List<String> mentionedMemberList;
 }

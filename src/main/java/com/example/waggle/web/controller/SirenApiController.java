@@ -10,7 +10,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.SirenConverter;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.siren.SirenRequest.SirenCreateDto;
+import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,7 +55,7 @@ public class SirenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createSiren(@RequestPart("request") @Validated SirenCreateDto request,
+    public ApiResponseDto<Long> createSiren(@RequestPart("request") @Validated SirenRequest request,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
         Long boardId = sirenCommandService.createSiren(request, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
@@ -65,17 +65,18 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateSiren(@PathVariable("boardId") Long boardId,
-                                            @RequestPart("request") @Validated SirenCreateDto request,
-                                            @RequestPart("mediaUpdateDto") MediaUpdateDto mediaUpdateDto,
+    @PutMapping(value = "/{sirenId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
+                                            @RequestPart("updateSirenRequest") @Validated SirenRequest updateSirenRequest,
+                                            @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList()
+        updateMediaRequest.getMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
-        sirenCommandService.updateSirenV2(boardId, request, mediaUpdateDto, multipartFiles);
-        return ApiResponseDto.onSuccess(boardId);
+        sirenCommandService.updateSirenV2(sirenId, updateSirenRequest, updateMediaRequest, multipartFiles);
+        return ApiResponseDto.onSuccess(sirenId);
     }
 
 
@@ -111,9 +112,9 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{boardId}")
-    public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("boardId") Long boardId) {
-        Siren siren = sirenQueryService.getSirenByBoardId(boardId);
+    @GetMapping("/{sirenId}")
+    public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("sirenId") Long sirenId) {
+        Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
         SirenDetailDto detailDto = SirenConverter.toDetailDto(siren);
         recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
@@ -123,9 +124,9 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteSiren(@PathVariable("boardId") Long boardId) {
-        sirenCommandService.deleteSiren(boardId);
+    @DeleteMapping("/{sirenId}")
+    public ApiResponseDto<Boolean> deleteSiren(@PathVariable("sirenId") Long sirenId) {
+        sirenCommandService.deleteSiren(sirenId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

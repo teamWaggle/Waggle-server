@@ -3,6 +3,7 @@ package com.example.waggle.domain.pet.entity;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
+import com.example.waggle.web.dto.pet.PetRequest;
 import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -38,7 +39,7 @@ public class Pet extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void update(PetCreateDto petDto) {
+    public void update(PetRequest petDto) {
         this.name = petDto.getName();
         this.breed = petDto.getBreed();
         this.gender = Gender.valueOf(petDto.getGender());

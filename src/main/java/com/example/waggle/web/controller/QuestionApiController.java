@@ -10,7 +10,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
+import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,9 +54,10 @@ public class QuestionApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createQuestion(@RequestPart("request") @Validated QuestionCreateDto request,
-                                               @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        Long boardId = questionCommandService.createQuestion(request, multipartFiles);
+    public ApiResponseDto<Long> createQuestion(
+            @RequestPart("createQuestionRequest") @Validated QuestionRequest createQuestionRequest,
+            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+        Long boardId = questionCommandService.createQuestion(createQuestionRequest, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -64,16 +65,17 @@ public class QuestionApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateQuestion(@PathVariable("boardId") Long boardId,
-                                               @RequestPart("request") @Validated QuestionCreateDto request,
-                                               @RequestPart("mediaUpdateDto") MediaUpdateDto mediaUpdateDto,
+    @PutMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
+                                               @RequestPart("updateQuestionRequest") @Validated QuestionRequest updateQuestionRequest,
+                                               @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
                                                @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList()
+        updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        questionCommandService.updateQuestionV2(boardId, request, mediaUpdateDto, multipartFiles);
-        return ApiResponseDto.onSuccess(boardId);
+        updateMediaRequest.getDeleteMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        questionCommandService.updateQuestionV2(questionId, updateQuestionRequest, updateMediaRequest, multipartFiles);
+        return ApiResponseDto.onSuccess(questionId);
     }
 
     @Operation(summary = "전체 질문 목록 조회", description = "전체 질문 목록을 조회합니다.")
@@ -108,10 +110,10 @@ public class QuestionApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{boardId}")
+    @GetMapping("/{questionId}")
     public ApiResponseDto<QuestionResponse.QuestionDetailDto> getQuestionByBoardId(
-            @PathVariable("boardId") Long boardId) {
-        Question questionByBoardId = questionQueryService.getQuestionByBoardId(boardId);
+            @PathVariable("questionId") Long questionId) {
+        Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
         QuestionResponse.QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
         recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
@@ -121,11 +123,11 @@ public class QuestionApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteQuestion(@RequestParam("boardId") Long boardId) {
-        questionCommandService.deleteQuestion(boardId);
+    @DeleteMapping("/{questionId}")
+    public ApiResponseDto<Boolean> deleteQuestion(@PathVariable("questionId") Long questionId) {
+        questionCommandService.deleteQuestion(questionId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    //TODO 사용자가 작성한 대답과 관련된 question list 가져오기
+    // TODO 사용자가 작성한 대답과 관련된 question list 가져오기
 }

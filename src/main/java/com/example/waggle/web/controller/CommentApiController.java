@@ -7,7 +7,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.converter.CommentConverter;
-import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -59,9 +59,9 @@ public class CommentApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> createScheduleComment(@PathVariable("boardId") Long boardId,
-                                                      @RequestBody CommentCreateDto request) {
-        Long commentId = commentCommandService.createComment(boardId, request);
+    public ApiResponseDto<Long> createComment(@PathVariable("boardId") Long boardId,
+                                              @RequestBody CommentRequest createCommentRequest) {
+        Long commentId = commentCommandService.createComment(boardId, createCommentRequest);
         return ApiResponseDto.onSuccess(commentId);
     }
 
@@ -71,8 +71,8 @@ public class CommentApiController {
     })
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable("commentId") Long commentId,
-                                              @RequestBody CommentCreateDto request) {
-        Long updatedCommentId = commentCommandService.updateComment(commentId, request);
+                                              @RequestBody CommentRequest updateCommentRequest) {
+        Long updatedCommentId = commentCommandService.updateComment(commentId, updateCommentRequest);
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 
@@ -80,8 +80,8 @@ public class CommentApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteComment(@RequestParam("commentId") Long commentId) {
+    @DeleteMapping("/{commentId}")
+    public ApiResponseDto<Boolean> deleteComment(@PathVariable("commentId") Long commentId) {
         commentCommandService.deleteComment(commentId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

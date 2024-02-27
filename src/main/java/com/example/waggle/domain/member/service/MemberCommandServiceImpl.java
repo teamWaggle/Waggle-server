@@ -1,5 +1,7 @@
 package com.example.waggle.domain.member.service;
 
+import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
@@ -21,25 +23,26 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
-import com.example.waggle.domain.schedule.repository.*;
+import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.repository.ParticipationRepository;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
-import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,15 +77,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(TemporaryRegisterDto request) {
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+    public Long signUp(MemberCredentialsDto memberRegisterRequest) {
+        String encodedPassword = passwordEncoder.encode(memberRegisterRequest.getPassword());
 
         Member createdMember = Member.builder()
                 .username(generateAutoUsername())
                 .password(encodedPassword)
                 .nickname(generateAutoNickname())
                 .userUrl(generateAutoUserUrl())
-                .email(request.getEmail())
+                .email(memberRegisterRequest.getEmail())
                 .authProvider(WAGGLE)
                 .role(Role.GUEST)
                 .build();
@@ -93,29 +96,30 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long registerMemberInfo(String username, MemberRequest.RegisterDto request) {
+    public Long initializeMemberProfile(String username, MemberProfileDto memberProfileRequest) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        // TODO GUEST 외의 role을 가진 사용자가 접근하면 throw exception
         if (member.getRole() == Role.GUEST) {
             member.changeRole(Role.USER);
         }
         if (member.getProfileImgUrl() != null) {
             awsS3Service.deleteFile(member.getProfileImgUrl());
         }
-        member.registerInfo(request);
+        member.registerInfo(memberProfileRequest);
         return member.getId();
     }
 
 
     @Override
-    public Long updateMemberInfo(String username, MemberUpdateDto request) {
+    public Long updateMemberProfile(String username, MemberUpdateDto memberUpdateRequest) {
         Member member = memberQueryService.getMemberByUsername(username);
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        String encodedPassword = passwordEncoder.encode(memberUpdateRequest.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {
             awsS3Service.deleteFile(member.getProfileImgUrl());
         }
-        member.updateInfo(request, encodedPassword);
+        member.updateInfo(memberUpdateRequest, encodedPassword);
         return member.getId();
     }
 
@@ -127,9 +131,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long verifyEmailForPasswordChange(EmailVerificationDto request) {
-        verifyMail(request);
-        return memberQueryService.getMemberByEmail(request.getEmail()).getId();
+    public Long verifyEmailForPasswordChange(EmailVerificationDto emailVerificationRequest) {
+        verifyMail(emailVerificationRequest);
+        return memberQueryService.getMemberByEmail(emailVerificationRequest.getEmail()).getId();
     }
 
     @Override
@@ -208,9 +212,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void verifyMail(EmailVerificationDto request) {
-        String authNum = redisService.getValue(AUTH_CODE_PREFIX + request.getEmail());
-        boolean isSuccess = authNum.equals(request.getAuthCode());
+    public void verifyMail(EmailVerificationDto emailVerificationRequest) {
+        String authNum = redisService.getValue(AUTH_CODE_PREFIX + emailVerificationRequest.getEmail());
+        boolean isSuccess = authNum.equals(emailVerificationRequest.getAuthCode());
         if (!isSuccess) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
         }

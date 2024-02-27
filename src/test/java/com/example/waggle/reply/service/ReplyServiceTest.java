@@ -15,7 +15,7 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
 import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
 import lombok.extern.slf4j.Slf4j;
@@ -56,11 +56,11 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    TemporaryRegisterDto signUpDto1;
-    TemporaryRegisterDto signUpDto2;
-    TemporaryRegisterDto signUpDto3;
-    TemporaryRegisterDto signUpDto4;
-    TemporaryRegisterDto signUpDto5;
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
+    MemberCredentialsDto signUpDto3;
+    MemberCredentialsDto signUpDto4;
+    MemberCredentialsDto signUpDto5;
 
 
     StoryCreateDto storyWriteDto1;
@@ -83,24 +83,24 @@ class ReplyServiceTest {
         mentions2.add("user3");
         mentions2.add("user4");
 
-        signUpDto1 = TemporaryRegisterDto.builder()
+        signUpDto1 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("hi")
                 .build();
-        signUpDto2 = TemporaryRegisterDto.builder()
+        signUpDto2 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("hoe")
                 .build();
-        signUpDto3 = TemporaryRegisterDto.builder()
+        signUpDto3 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("zz")
                 .build();
 
-        signUpDto4 = TemporaryRegisterDto.builder()
+        signUpDto4 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("haha")
                 .build();
-        signUpDto5 = TemporaryRegisterDto.builder()
+        signUpDto5 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("ez")
                 .build();

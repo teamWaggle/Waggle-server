@@ -16,7 +16,7 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
+import com.example.waggle.web.dto.question.QuestionRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +40,12 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
 
     @Override
-    public Long createQuestion(QuestionCreateDto request,
+    public Long createQuestion(QuestionRequest createQuestionRequest,
                                List<MultipartFile> multipartFiles) {
-        Question createdQuestion = buildQuestion(request);
+        Question createdQuestion = buildQuestion(createQuestionRequest);
         Question question = questionRepository.save(createdQuestion);
 
-        for (String hashtag : request.getHashtagList()) {
+        for (String hashtag : createQuestionRequest.getHashtagList()) {
             boardService.saveHashtag(question, hashtag);
         }
         mediaCommandService.createMedia(multipartFiles, question);
@@ -53,13 +53,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long createQuestionByUsername(QuestionCreateDto request,
+    public Long createQuestionByUsername(QuestionRequest createQuestionRequest,
                                          List<MultipartFile> multipartFiles,
                                          String username) {
-        Question createdQuestion = buildQuestion(request, username);
+        Question createdQuestion = buildQuestion(createQuestionRequest, username);
         Question question = questionRepository.save(createdQuestion);
 
-        for (String hashtag : request.getHashtagList()) {
+        for (String hashtag : createQuestionRequest.getHashtagList()) {
             boardService.saveHashtag(question, hashtag);
         }
         mediaCommandService.createMedia(multipartFiles, question);
@@ -69,7 +69,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public Long updateQuestion(Long boardId,
-                               QuestionCreateDto request,
+                               QuestionRequest updateQuestionRequest,
                                List<MultipartFile> multipartFiles,
                                List<String> deleteFiles) {
         Question question = questionRepository.findById(boardId)
@@ -78,7 +78,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         mediaCommandService.updateMedia(multipartFiles, deleteFiles, question);
 
         question.getBoardHashtags().clear();
-        for (String hashtag : request.getHashtagList()) {
+        for (String hashtag : updateQuestionRequest.getHashtagList()) {
             boardService.saveHashtag(question, hashtag);
         }
         return question.getId();
@@ -86,8 +86,8 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public Long updateQuestionV2(Long boardId,
-                                 QuestionCreateDto request,
-                                 MediaUpdateDto mediaUpdateDto,
+                                 QuestionRequest updateQuestionRequest,
+                                 MediaUpdateDto updateMediaRequest,
                                  List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -95,12 +95,12 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        question.changeQuestion(request);
+        question.changeQuestion(updateQuestionRequest);
 
-        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, question);
+        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, question);
 
         question.getBoardHashtags().clear();
-        for (String hashtag : request.getHashtagList()) {
+        for (String hashtag : updateQuestionRequest.getHashtagList()) {
             boardService.saveHashtag(question, hashtag);
         }
         return question.getId();
@@ -109,8 +109,8 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Override
     public Long updateQuestionByUsername(Long boardId,
                                          String username,
-                                         QuestionCreateDto request,
-                                         MediaUpdateDto mediaUpdateDto,
+                                         QuestionRequest updateQuestionRequest,
+                                         MediaUpdateDto updateMediaRequest,
                                          List<MultipartFile> multipartFiles) {
         Member member = memberQueryService.getMemberByUsername(username);
 
@@ -120,12 +120,12 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        question.changeQuestion(request);
+        question.changeQuestion(updateQuestionRequest);
 
-        mediaCommandService.updateMediaV2(mediaUpdateDto, multipartFiles, question);
+        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, question);
 
         question.getBoardHashtags().clear();
-        for (String hashtag : request.getHashtagList()) {
+        for (String hashtag : updateQuestionRequest.getHashtagList()) {
             boardService.saveHashtag(question, hashtag);
         }
         return question.getId();
@@ -164,24 +164,24 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         questionRepository.delete(question);
     }
 
-    private Question buildQuestion(QuestionCreateDto request) {
+    private Question buildQuestion(QuestionRequest createQuestionRequest) {
         Member member = memberQueryService.getSignInMember();
 
         Question createdQuestion = Question.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .status(ResolutionStatus.valueOf(request.getStatus()))
+                .title(createQuestionRequest.getTitle())
+                .content(createQuestionRequest.getContent())
+                .status(ResolutionStatus.valueOf(createQuestionRequest.getStatus()))
                 .member(member).build();
         return createdQuestion;
     }
 
-    private Question buildQuestion(QuestionCreateDto request, String username) {
+    private Question buildQuestion(QuestionRequest createQuestionRequest, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
 
         Question createdQuestion = Question.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .status(ResolutionStatus.valueOf(request.getStatus()))
+                .title(createQuestionRequest.getTitle())
+                .content(createQuestionRequest.getContent())
+                .status(ResolutionStatus.valueOf(createQuestionRequest.getStatus()))
                 .member(member).build();
         return createdQuestion;
     }

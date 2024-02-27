@@ -11,28 +11,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class SirenRequest {
+    private String title;
+    private String petBreed;
+    private String petAge;
+    private Gender petGender;
+    private String contact;
+    private String lostLocate;
+    private LocalDateTime lostDate;
+    private String content;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class SirenCreateDto {
-        private String title;
-        private String petBreed;
-        private String petAge;
-        private Gender petGender;
-        private String contact;
-        private String lostLocate;
-        private LocalDateTime lostDate;
-        private String content;
+    @ValidEnum(target = SirenCategory.class)
+    private String category;
 
-        @ValidEnum(target = SirenCategory.class)
-        private String category;
-
-        @ValidEnum(target = ResolutionStatus.class)
-        private String status;
-    }
-
+    @ValidEnum(target = ResolutionStatus.class)
+    private String status;
 }

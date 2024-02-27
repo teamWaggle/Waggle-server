@@ -14,7 +14,7 @@ import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.comment.CommentRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,58 +36,58 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final BoardRepository boardRepository;
 
     @Override
-    public Long createComment(Long boardId, CommentCreateDto commentWriteDto) {
+    public Long createComment(Long boardId, CommentRequest createCommentRequest) {
         Member signInMember = memberQueryService.getSignInMember();
         validateAccessSchedule(boardId, signInMember);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         Comment build = Comment.builder()
-                .content(commentWriteDto.getContent())
+                .content(createCommentRequest.getContent())
                 .board(board)
                 .member(signInMember)
                 .build();
         commentRepository.save(build);
-        mentionCommandService.createMentions(build, commentWriteDto.getMentionedMemberList());
+        mentionCommandService.createMentions(build, createCommentRequest.getMentionedMemberList());
         return build.getId();
     }
 
     @Override
-    public Long createCommentByUsername(Long boardId, CommentCreateDto commentWriteDto, String username) {
+    public Long createCommentByUsername(Long boardId, CommentRequest createCommentRequest, String username) {
         Member memberByUsername = memberQueryService.getMemberByUsername(username);
         validateAccessSchedule(boardId, memberByUsername);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         Comment build = Comment.builder()
-                .content(commentWriteDto.getContent())
+                .content(createCommentRequest.getContent())
                 .board(board)
                 .member(memberByUsername)
                 .build();
         commentRepository.save(build);
-        mentionCommandService.createMentions(build, commentWriteDto.getMentionedMemberList());
+        mentionCommandService.createMentions(build, createCommentRequest.getMentionedMemberList());
         return build.getId();
     }
 
     @Override
-    public Long updateComment(Long commentId, CommentCreateDto commentWriteDto) {
+    public Long updateComment(Long commentId, CommentRequest updateCommentRequest) {
         Member signInMember = memberQueryService.getSignInMember();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         validateMember(comment, signInMember);
 
-        comment.changeContent(commentWriteDto.getContent());
-        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedMemberList());
+        comment.changeContent(updateCommentRequest.getContent());
+        mentionCommandService.updateMentions(comment, updateCommentRequest.getMentionedMemberList());
         return comment.getId();
     }
 
     @Override
-    public Long updateCommentByUsername(Long commentId, String username, CommentCreateDto commentWriteDto) {
+    public Long updateCommentByUsername(Long commentId, String username, CommentRequest updateCommentRequest) {
         Member signInMember = memberQueryService.getMemberByUsername(username);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         validateMember(comment, signInMember);
 
-        comment.changeContent(commentWriteDto.getContent());
-        mentionCommandService.updateMentions(comment, commentWriteDto.getMentionedMemberList());
+        comment.changeContent(updateCommentRequest.getContent());
+        mentionCommandService.updateMentions(comment, updateCommentRequest.getMentionedMemberList());
         return comment.getId();
     }
 

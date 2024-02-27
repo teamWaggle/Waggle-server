@@ -1,5 +1,7 @@
 package com.example.waggle.domain.board.story.service;
 
+import static com.example.waggle.domain.board.service.BoardType.STORY;
+
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
@@ -11,16 +13,13 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+import com.example.waggle.web.dto.story.StoryRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-
-import static com.example.waggle.domain.board.service.BoardType.STORY;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,26 +35,27 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     private final CommentCommandService commentCommandService;
 
     @Override
-    public Long createStory(StoryCreateDto request, List<MultipartFile> multipartFiles) {
-        Story createdStory = buildStory(request);
+    public Long createStory(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles) {
+        Story createdStory = buildStory(createStoryRequest);
 
         Story story = storyRepository.save(createdStory);
 
-        if (!request.getHashtagList().isEmpty()) {
-            request.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
+        if (!createStoryRequest.getHashtagList().isEmpty()) {
+            createStoryRequest.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
         return story.getId();
     }
 
     @Override
-    public Long createStoryByUsername(StoryCreateDto request, List<MultipartFile> multipartFiles, String username) {
-        Story createdStory = buildStory(request, username);
+    public Long createStoryByUsername(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles,
+                                      String username) {
+        Story createdStory = buildStory(createStoryRequest, username);
 
         Story story = storyRepository.save(createdStory);
 
-        if (!request.getHashtagList().isEmpty()) {
-            request.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
+        if (!createStoryRequest.getHashtagList().isEmpty()) {
+            createStoryRequest.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
         return story.getId();
@@ -64,7 +64,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryCreateDto storyWriteDto,
+                            StoryRequest updateStoryRequest,
                             List<MultipartFile> multipartFiles,
                             List<String> deleteFile) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
@@ -73,11 +73,11 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        story.changeContent(storyWriteDto.getContent());
+        story.changeContent(updateStoryRequest.getContent());
 
         mediaCommandService.updateMedia(multipartFiles, deleteFile, story);
         story.getBoardHashtags().clear();
-        for (String hashtag : storyWriteDto.getHashtagList()) {
+        for (String hashtag : updateStoryRequest.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
@@ -85,8 +85,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStoryV2(Long boardId,
-                              StoryCreateDto storyWriteDto,
-                              MediaUpdateDto mediaListDto,
+                              StoryRequest updateStoryRequest,
+                              MediaUpdateDto updateMediaRequest,
                               List<MultipartFile> multipartFiles) {
         if (!boardService.validateMemberUseBoard(boardId, STORY)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -94,12 +94,12 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        story.changeContent(storyWriteDto.getContent());
+        story.changeContent(updateStoryRequest.getContent());
 
-        mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
+        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, story);
 
         story.getBoardHashtags().clear();
-        for (String hashtag : storyWriteDto.getHashtagList()) {
+        for (String hashtag : updateStoryRequest.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
@@ -108,8 +108,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     @Override
     public Long updateStoryByUsername(Long boardId,
                                       String username,
-                                      StoryCreateDto storyWriteDto,
-                                      MediaUpdateDto mediaListDto,
+                                      StoryRequest createStoryRequest,
+                                      MediaUpdateDto updateMediaRequest,
                                       List<MultipartFile> multipartFiles) {
         Member member = memberQueryService.getMemberByUsername(username);
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
@@ -118,12 +118,12 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        story.changeContent(storyWriteDto.getContent());
+        story.changeContent(createStoryRequest.getContent());
 
-        mediaCommandService.updateMediaV2(mediaListDto, multipartFiles, story);
+        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, story);
 
         story.getBoardHashtags().clear();
-        for (String hashtag : storyWriteDto.getHashtagList()) {
+        for (String hashtag : createStoryRequest.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
@@ -157,20 +157,20 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         storyRepository.delete(story);
     }
 
-    private Story buildStory(StoryCreateDto request) {
+    private Story buildStory(StoryRequest createStoryRequest) {
         Member member = memberQueryService.getSignInMember();
         Story createdStory = Story.builder()
                 .member(member)
-                .content(request.getContent())
+                .content(createStoryRequest.getContent())
                 .build();
         return createdStory;
     }
 
-    private Story buildStory(StoryCreateDto request, String username) {
+    private Story buildStory(StoryRequest createStoryRequest, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         Story createdStory = Story.builder()
                 .member(member)
-                .content(request.getContent())
+                .content(createStoryRequest.getContent())
                 .build();
         return createdStory;
     }

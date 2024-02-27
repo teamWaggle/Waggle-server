@@ -2,8 +2,13 @@ package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
-import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
-import jakarta.persistence.*;
+import com.example.waggle.web.dto.oauth.OAuthToken.request;
+import com.example.waggle.web.dto.question.QuestionRequest;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +29,10 @@ public class Question extends Board {
     @Column(nullable = false)
     private ResolutionStatus status;
 
-    public void changeQuestion(QuestionCreateDto request) {
-        this.content = request.getContent();
-        this.title = request.getTitle();
-        this.status = ResolutionStatus.valueOf(request.getStatus());
+    public void changeQuestion(QuestionRequest questionUpdateRequest) {
+        this.content = questionUpdateRequest.getContent();
+        this.title = questionUpdateRequest.getTitle();
+        this.status = ResolutionStatus.valueOf(questionUpdateRequest.getStatus());
     }
 
     public void changeStatus(ResolutionStatus status) {

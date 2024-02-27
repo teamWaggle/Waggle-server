@@ -11,7 +11,7 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -45,8 +45,8 @@ class CommentServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
-    TemporaryRegisterDto signUpDto1;
-    TemporaryRegisterDto signUpDto2;
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
 
 
     StoryCreateDto storyWriteDto1;
@@ -76,12 +76,12 @@ class CommentServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
-        signUpDto1 = TemporaryRegisterDto.builder()
+        signUpDto1 = MemberCredentialsDto.builder()
                 .email("ertyuio")
                 .password("string")
                 .build();
 
-        signUpDto2 = TemporaryRegisterDto.builder()
+        signUpDto2 = MemberCredentialsDto.builder()
                 .email("78347dj")
                 .password("string")
                 .build();

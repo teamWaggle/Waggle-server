@@ -10,7 +10,7 @@ import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
 import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
 import jakarta.persistence.EntityManager;
@@ -48,8 +48,8 @@ class ScheduleCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    private TemporaryRegisterDto member1;
-    private TemporaryRegisterDto member2;
+    private MemberCredentialsDto member1;
+    private MemberCredentialsDto member2;
     private TeamCreateDto team;
     private ScheduleCreateDto schedule;
 
@@ -61,12 +61,12 @@ class ScheduleCommandServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = TemporaryRegisterDto.builder()
+        member1 = MemberCredentialsDto.builder()
                 .email("member1")
                 .password("12345678")
                 .build();
 
-        member2 = TemporaryRegisterDto.builder()
+        member2 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("email2")
                 .build();

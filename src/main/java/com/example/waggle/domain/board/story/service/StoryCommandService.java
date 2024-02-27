@@ -1,31 +1,30 @@
 package com.example.waggle.domain.board.story.service;
 
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.example.waggle.web.dto.story.StoryRequest;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface StoryCommandService {
 
-    Long createStory(StoryCreateDto request, List<MultipartFile> multipartFiles);
+    Long createStory(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles);
 
-    Long createStoryByUsername(StoryCreateDto request, List<MultipartFile> multipartFiles, String username);
+    Long createStoryByUsername(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles, String username);
 
     Long updateStory(Long boardId,
-                     StoryCreateDto storyWriteDto,
+                     StoryRequest updateStoryRequest,
                      List<MultipartFile> multipartFiles,
                      List<String> deleteFiles);
 
     Long updateStoryV2(Long boardId,
-                       StoryCreateDto storyWriteDto,
-                       MediaUpdateDto mediaListDto,
+                       StoryRequest updateStoryRequest,
+                       MediaUpdateDto updateMediaRequest,
                        List<MultipartFile> multipartFiles);
 
     Long updateStoryByUsername(Long boardId,
                                String username,
-                               StoryCreateDto storyWriteDto,
-                               MediaUpdateDto mediaListDto,
+                               StoryRequest createStoryRequest,
+                               MediaUpdateDto updateMediaRequest,
                                List<MultipartFile> multipartFiles);
 
     void deleteStory(Long boardId);

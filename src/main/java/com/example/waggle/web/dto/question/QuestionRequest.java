@@ -13,27 +13,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class QuestionRequest {
+    @NotEmpty(message = "질문 내용을 작성해주세요.")
+    @Max(1500)
+    private String content;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class QuestionCreateDto {
+    @NotBlank(message = "질문 제목을 작성해주세요.")
+    @Length(min = 5, max = 30)
+    private String title;
 
-        @NotEmpty(message = "질문 내용을 작성해주세요.")
-        @Max(1500)
-        private String content;
+    private List<String> hashtagList;
 
-        @NotBlank(message = "질문 제목을 작성해주세요.")
-        @Length(min = 5, max = 30)
-        private String title;
-
-        private List<String> hashtagList;
-
-        @ValidEnum(target = ResolutionStatus.class)
-        private String status;
-    }
-
+    @ValidEnum(target = ResolutionStatus.class)
+    private String status;
 }

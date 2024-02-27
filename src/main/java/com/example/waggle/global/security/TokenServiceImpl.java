@@ -5,7 +5,7 @@ import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -53,10 +53,10 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public JwtToken login(TemporaryRegisterDto request) {
-        UserDetails userDetails = memberQueryService.getMemberByEmail(request.getEmail());
+    public JwtToken login(MemberCredentialsDto memberLoginRequest) {
+        UserDetails userDetails = memberQueryService.getMemberByEmail(memberLoginRequest.getEmail());
         Authentication authentication;
-        if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+        if (!passwordEncoder.matches(memberLoginRequest.getPassword(), userDetails.getPassword())) {
             throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
         authentication = new UsernamePasswordAuthenticationToken(userDetails, "",

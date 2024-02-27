@@ -8,17 +8,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class AnswerRequest {
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class AnswerCreateDto {
-        @NotNull(message = "답변 내용을 작성해주세요.")
-        @Max(1500)
-        private String content;
-    }
-
+    @NotNull(message = "답변 내용을 작성해주세요.")
+    @Max(1500)
+    private String content;
 }

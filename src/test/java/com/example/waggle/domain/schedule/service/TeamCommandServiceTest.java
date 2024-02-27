@@ -14,7 +14,7 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -51,11 +51,11 @@ class TeamCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    private TemporaryRegisterDto member1;
+    private MemberCredentialsDto member1;
 
-    private TemporaryRegisterDto member2;
+    private MemberCredentialsDto member2;
 
-    private TemporaryRegisterDto member3;
+    private MemberCredentialsDto member3;
 
     private TeamCreateDto team;
 
@@ -68,17 +68,17 @@ class TeamCommandServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
-        member1 = TemporaryRegisterDto.builder()
+        member1 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("dasfk")
                 .build();
 
-        member2 = TemporaryRegisterDto.builder()
+        member2 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("aksdfhsafa")
                 .build();
 
-        member3 = TemporaryRegisterDto.builder()
+        member3 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("wldkfjk")
                 .build();

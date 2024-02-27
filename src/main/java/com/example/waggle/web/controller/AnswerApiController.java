@@ -9,7 +9,7 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.AnswerConverter;
-import com.example.waggle.web.dto.answer.AnswerRequest.AnswerCreateDto;
+import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,9 +54,9 @@ public class AnswerApiController {
     })
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
-                                             @RequestPart("request") AnswerCreateDto request,
+                                             @RequestPart("createAnswerRequest") AnswerRequest createAnswerRequest,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        Long answer = answerCommandService.createAnswer(questionId, request, multipartFiles);
+        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, multipartFiles);
         return ApiResponseDto.onSuccess(answer);
     }
 
@@ -64,16 +64,17 @@ public class AnswerApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateAnswer(@PathVariable("boardId") Long boardId,
-                                             @RequestPart("request") AnswerCreateDto request,
-                                             @RequestPart("mediaUpdateDto") MediaUpdateDto mediaUpdateDto,
+    @PutMapping(value = "/{answerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateAnswer(@PathVariable("answerId") Long answerId,
+                                             @RequestPart("updateAnswerRequest") AnswerRequest updateAnswerRequest,
+                                             @RequestPart("mediaUpdateRequest") MediaUpdateDto mediaUpdateRequest,
                                              @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList()
+        mediaUpdateRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        answerCommandService.updateAnswerV2(boardId, request, mediaUpdateDto, multipartFiles);
-        return ApiResponseDto.onSuccess(boardId);
+        mediaUpdateRequest.getDeleteMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        answerCommandService.updateAnswerV2(answerId, updateAnswerRequest, mediaUpdateRequest, multipartFiles);
+        return ApiResponseDto.onSuccess(answerId);
     }
 
     @Operation(summary = "질문의 답변 목록 조회", description = "질문의 전체 답변 목록을 조회합니다.")
@@ -109,9 +110,9 @@ public class AnswerApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteAnswer(@RequestParam("boardId") Long boardId) {
-        answerCommandService.deleteAnswer(boardId);
+    @DeleteMapping("/{answerId}")
+    public ApiResponseDto<Boolean> deleteAnswer(@PathVariable("answerId") Long answerId) {
+        answerCommandService.deleteAnswer(answerId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

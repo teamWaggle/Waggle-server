@@ -1,19 +1,16 @@
 package com.example.waggle.domain.pet.service;
 
-import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
-import com.example.waggle.web.dto.pet.PetRequest.PetListCreateDto;
+import com.example.waggle.web.dto.pet.PetRequest;
 
 public interface PetCommandService {
 
-    Long createPet(PetCreateDto petDto);
+    Long createPet(PetRequest createPetRequest);
 
-    Long createPetByUsername(PetCreateDto petDto, String username);
+    Long createPetByUsername(PetRequest createPetRequest, String username);
 
-    void createPets(PetListCreateDto petDto, String username);
+    Long updatePet(Long petId, PetRequest updatePetRequest);
 
-    Long updatePet(Long petId, PetCreateDto petDto);
-
-    Long updatePetByUsername(Long petId, String username, PetCreateDto petDto);
+    Long updatePetByUsername(Long petId, String username, PetRequest updatePetRequest);
 
     void deletePet(Long petId);
 

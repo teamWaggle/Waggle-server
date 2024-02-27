@@ -8,7 +8,7 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.FollowHandler;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,10 @@ public class FollowServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    TemporaryRegisterDto signUpDto1;
-    TemporaryRegisterDto signUpDto2;
-    TemporaryRegisterDto signUpDto3;
-    TemporaryRegisterDto signUpDto4;
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
+    MemberCredentialsDto signUpDto3;
+    MemberCredentialsDto signUpDto4;
 
     Long memberId1;
     Long memberId2;
@@ -49,22 +49,22 @@ public class FollowServiceTest {
     }
 
     void setUp() {
-        signUpDto1 = TemporaryRegisterDto.builder()
+        signUpDto1 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("wjdgks3264@naver.com")
                 .build();
 
-        signUpDto2 = TemporaryRegisterDto.builder()
+        signUpDto2 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("wjdgks2972@naver.com")
                 .build();
 
-        signUpDto3 = TemporaryRegisterDto.builder()
+        signUpDto3 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("wjdgksdfs@naver.com")
                 .build();
 
-        signUpDto4 = TemporaryRegisterDto.builder()
+        signUpDto4 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("hi@naver.com")
                 .build();

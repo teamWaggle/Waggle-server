@@ -3,14 +3,18 @@ package com.example.waggle.domain.board.siren.entity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.member.entity.Gender;
-import com.example.waggle.web.dto.siren.SirenRequest.SirenCreateDto;
-import jakarta.persistence.*;
+import com.example.waggle.web.dto.siren.SirenRequest;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -37,17 +41,17 @@ public class Siren extends Board {
     @Column(nullable = false)
     private ResolutionStatus status;
 
-    public void changeSiren(SirenCreateDto request) {
-        this.title = request.getTitle();
-        this.petBreed = request.getPetBreed();
-        this.petAge = request.getPetAge();
-        this.petGender = request.getPetGender();
-        this.lostDate = request.getLostDate();
-        this.lostLocate = request.getLostLocate();
-        this.contact = request.getContact();
-        this.content = request.getContent();
-        this.category = SirenCategory.valueOf(request.getCategory());
-        this.status = ResolutionStatus.valueOf(request.getStatus());
+    public void changeSiren(SirenRequest updateSirenRequest) {
+        this.title = updateSirenRequest.getTitle();
+        this.petBreed = updateSirenRequest.getPetBreed();
+        this.petAge = updateSirenRequest.getPetAge();
+        this.petGender = updateSirenRequest.getPetGender();
+        this.lostDate = updateSirenRequest.getLostDate();
+        this.lostLocate = updateSirenRequest.getLostLocate();
+        this.contact = updateSirenRequest.getContact();
+        this.content = updateSirenRequest.getContent();
+        this.category = SirenCategory.valueOf(updateSirenRequest.getCategory());
+        this.status = ResolutionStatus.valueOf(updateSirenRequest.getStatus());
     }
 
 }

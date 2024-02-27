@@ -22,7 +22,7 @@ import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
 import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
 import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
@@ -81,9 +81,9 @@ class MemberServiceImplTest {
     EntityManager entityManager;
 
 
-    private TemporaryRegisterDto signUpDto1;
-    private TemporaryRegisterDto signUpDto2;
-    private TemporaryRegisterDto signUpDto3;
+    private MemberCredentialsDto signUpDto1;
+    private MemberCredentialsDto signUpDto2;
+    private MemberCredentialsDto signUpDto3;
     private PetCreateDto petRequest;
 
     private StoryCreateDto storyRequest;
@@ -97,17 +97,17 @@ class MemberServiceImplTest {
     @BeforeEach
     void beforeEach() {
         // Member 회원가입
-        signUpDto1 = TemporaryRegisterDto.builder()
+        signUpDto1 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("asdklfj")
                 .build();
 
-        signUpDto2 = TemporaryRegisterDto.builder()
+        signUpDto2 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("sdlfkjsalkfj")
                 .build();
 
-        signUpDto3 = TemporaryRegisterDto.builder()
+        signUpDto3 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("asdklfj")
                 .build();
@@ -162,7 +162,7 @@ class MemberServiceImplTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
-        TemporaryRegisterDto signInDto = TemporaryRegisterDto.builder()
+        MemberCredentialsDto signInDto = MemberCredentialsDto.builder()
                 .email("member1")
                 .password("12345678").build();
 
@@ -188,7 +188,7 @@ class MemberServiceImplTest {
         Long aLong = memberService.signUp(signUpDto1);
         Member member1 = memberQueryService.getMemberById(aLong);
         //when
-        Long aLong1 = memberService.updateMemberInfo(member1.getUsername(), updateDto);
+        Long aLong1 = memberService.updateMemberProfile(member1.getUsername(), updateDto);
         Member member = memberQueryService.getMemberById(aLong);
         Member memberByUsername = memberQueryService.getMemberByUsername(member.getUsername());
         //then

@@ -12,7 +12,7 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.answer.AnswerRequest.AnswerCreateDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +47,8 @@ class QuestionServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    TemporaryRegisterDto signUpDto1;
-    TemporaryRegisterDto signUpDto2;
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
 
     QuestionCreateDto questionWriteDto1;
     QuestionCreateDto questionWriteDto2;
@@ -75,12 +75,12 @@ class QuestionServiceTest {
         tags1.add("poodle");
         tags2.add("poodle");
 
-        signUpDto1 = TemporaryRegisterDto.builder()
+        signUpDto1 = MemberCredentialsDto.builder()
                 .email("email1@naver.com")
                 .password("password1")
                 .build();
 
-        signUpDto2 = TemporaryRegisterDto.builder()
+        signUpDto2 = MemberCredentialsDto.builder()
                 .email("email2@naver.com")
                 .password("password2")
                 .build();

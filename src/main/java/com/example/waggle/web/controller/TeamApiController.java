@@ -10,7 +10,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
-import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
+import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,7 +52,7 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createTeam(@RequestPart("request") @Validated TeamCreateDto request,
+    public ApiResponseDto<Long> createTeam(@RequestPart("request") @Validated TeamRequest request,
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
         Long createdTeamId = teamCommandService.createTeam(request);
@@ -65,7 +65,7 @@ public class TeamApiController {
     })
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
-                                           @RequestPart("request") @Validated TeamCreateDto request,
+                                           @RequestPart("request") @Validated TeamRequest request,
                                            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
                                            @RequestParam boolean allowUpload) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(request.getCoverImageUrl());
@@ -83,8 +83,8 @@ public class TeamApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteTeam(@RequestParam("teamId") Long teamId) {
+    @DeleteMapping("/{teamId}")
+    public ApiResponseDto<Boolean> deleteTeam(@PathVariable("teamId") Long teamId) {
         teamCommandService.deleteTeam(teamId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

@@ -12,8 +12,9 @@ import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
@@ -59,8 +60,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody TemporaryRegisterDto request) {
-        Long memberId = memberCommandService.signUp(request);
+    public ApiResponseDto<Long> signUp(@RequestBody MemberCredentialsDto memberRegisterRequest) {
+        Long memberId = memberCommandService.signUp(memberRegisterRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -69,11 +70,11 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> registerInfo(@AuthUser UserDetails userDetails,
-                                             @RequestPart("request") MemberRequest.RegisterDto request,
-                                             @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long memberId = memberCommandService.registerMemberInfo(userDetails.getUsername(), request);
+    public ApiResponseDto<Long> initializeMemberProfile(@AuthUser UserDetails userDetails,
+                                                        @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
+                                                        @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        memberProfileRequest.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+        Long memberId = memberCommandService.initializeMemberProfile(userDetails.getUsername(), memberProfileRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -83,17 +84,17 @@ public class MemberApiController {
     })
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateInfo(@AuthUser UserDetails userDetails,
-                                           @RequestPart MemberUpdateDto request,
+                                           @RequestPart MemberUpdateDto memberUpdateRequest,
                                            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
                                            @RequestParam("allowUpload") boolean allowUpload) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
+        String removePrefixCoverUrl = MediaUtil.removePrefix(memberUpdateRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
-            request.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            memberUpdateRequest.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
         } else {
-            request.setProfileImgUrl(removePrefixCoverUrl);
+            memberUpdateRequest.setProfileImgUrl(removePrefixCoverUrl);
         }
-        Long memberId = memberCommandService.updateMemberInfo(userDetails.getUsername(), request);
+        Long memberId = memberCommandService.updateMemberProfile(userDetails.getUsername(), memberUpdateRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -112,8 +113,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto request) {
-        emailService.sendMail(request.getEmail(), "email");
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto emailSendRequest) {
+        emailService.sendMail(emailSendRequest.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -122,8 +123,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/email/verify")
-    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto request) {
-        memberCommandService.verifyMail(request);
+    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto emailVerificationRequest) {
+        memberCommandService.verifyMail(emailVerificationRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -132,8 +133,9 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/email/verify/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody EmailVerificationDto request) {
-        Long memberId = memberCommandService.verifyEmailForPasswordChange(request);
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(
+            @RequestBody EmailVerificationDto emailVerificationRequest) {
+        Long memberId = memberCommandService.verifyEmailForPasswordChange(emailVerificationRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -143,8 +145,8 @@ public class MemberApiController {
     })
     @PutMapping("/{memberId}/password")
     public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable("memberId") Long memberId,
-                                                              @RequestBody MemberRequest.PasswordDto request) {
-        memberCommandService.updatePassword(memberId, request.getPassword());
+                                                              @RequestBody MemberRequest.PasswordDto updatePasswordRequest) {
+        memberCommandService.updatePassword(memberId, updatePasswordRequest.getPassword());
         return ApiResponseDto.onSuccess(memberId);
     }
 

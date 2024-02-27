@@ -7,17 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class ReplyRequest {
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class ReplyCreateDto {
-        private Long commentId;
-        private String content;
-        private List<String> mentionedMemberList;
-    }
-
+    private String content;
+    private List<String> mentionedMemberList;
 }

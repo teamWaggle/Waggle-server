@@ -10,7 +10,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.StoryConverter;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,9 +51,9 @@ public class StoryApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createStory(@RequestPart("request") StoryCreateDto request,
+    public ApiResponseDto<Long> createStory(@RequestPart("createStoryRequest") StoryRequest createStoryRequest,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        Long boardId = storyCommandService.createStory(request, multipartFiles);
+        Long boardId = storyCommandService.createStory(createStoryRequest, multipartFiles);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -61,16 +61,17 @@ public class StoryApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{boardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateStory(@PathVariable("boardId") Long boardId,
-                                            @RequestPart("request") StoryCreateDto request,
-                                            @RequestPart("mediaUpdateDo") MediaUpdateDto mediaUpdateDto,
+    @PutMapping(value = "/{storyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
+                                            @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
+                                            @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        mediaUpdateDto.getMediaList().forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateDto.getDeleteMediaList()
+        updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        storyCommandService.updateStoryV2(boardId, request, mediaUpdateDto, multipartFiles);
-        return ApiResponseDto.onSuccess(boardId);
+        updateMediaRequest.getDeleteMediaList()
+                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
+        storyCommandService.updateStoryV2(storyId, updateStoryRequest, updateMediaRequest, multipartFiles);
+        return ApiResponseDto.onSuccess(storyId);
     }
 
 
@@ -102,9 +103,9 @@ public class StoryApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{boardId}")
-    public ApiResponseDto<StoryDetailDto> getStoryByBoardId(@PathVariable("boardId") Long boardId) {
-        Story storyByBoardId = storyQueryService.getStoryByBoardId(boardId);
+    @GetMapping("/{storyId}")
+    public ApiResponseDto<StoryDetailDto> getStoryByBoardId(@PathVariable("storyId") Long storyId) {
+        Story storyByBoardId = storyQueryService.getStoryByBoardId(storyId);
         StoryDetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
         recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
@@ -114,9 +115,9 @@ public class StoryApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping
-    public ApiResponseDto<Boolean> deleteStory(@RequestParam("boardId") Long boardId) {
-        storyCommandService.deleteStory(boardId);
+    @DeleteMapping("/{storyId}")
+    public ApiResponseDto<Boolean> deleteStory(@PathVariable("storyId") Long storyId) {
+        storyCommandService.deleteStory(storyId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

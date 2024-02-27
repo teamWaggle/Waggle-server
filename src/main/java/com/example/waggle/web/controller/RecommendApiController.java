@@ -7,12 +7,11 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.converter.MemberConverter;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +35,7 @@ public class RecommendApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> recommendStory(@PathVariable("boardId") Long boardId) {
+    public ApiResponseDto<Long> recommendBoard(@PathVariable("boardId") Long boardId) {
         recommendCommandService.handleRecommendation(boardId);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -46,10 +45,8 @@ public class RecommendApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/{boardId}")
-    public ApiResponseDto<List<MemberSummaryDto>> findRecommendingMembers(@PathVariable("boardId") Long boardId) {
+    public ApiResponseDto<MemberSummaryListDto> getRecommendingMembers(@PathVariable("boardId") Long boardId) {
         List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(boardId);
-        List<MemberSummaryDto> collect = recommendingMembers.stream()
-                .map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(collect);
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(recommendingMembers));
     }
 }

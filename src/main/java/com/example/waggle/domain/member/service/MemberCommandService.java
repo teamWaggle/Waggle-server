@@ -1,24 +1,24 @@
 package com.example.waggle.domain.member.service;
 
-import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 
 public interface MemberCommandService {
 
-    Long signUp(TemporaryRegisterDto request);
+    Long signUp(MemberCredentialsDto memberRegisterRequest);
 
-    Long registerMemberInfo(String username, MemberRequest.RegisterDto request);
+    Long initializeMemberProfile(String username, MemberProfileDto memberProfileRequest);
 
-    Long updateMemberInfo(String username, MemberUpdateDto request);
+    Long updateMemberProfile(String username, MemberUpdateDto memberUpdateRequest);
 
     Long updatePassword(Long memberId, String password);
 
-    Long verifyEmailForPasswordChange(EmailVerificationDto request);
+    Long verifyEmailForPasswordChange(EmailVerificationDto emailVerificationRequest);
 
     void deleteMember(Long memberId);
 
-    void verifyMail(EmailVerificationDto request);
+    void verifyMail(EmailVerificationDto emailVerificationRequest);
 
 }

@@ -11,7 +11,7 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
+import com.example.waggle.web.dto.schedule.TeamRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,25 +37,25 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final int teamCapacityLimit = 50;
 
     @Override
-    public Long createTeam(TeamCreateDto request) {
+    public Long createTeam(TeamRequest createTeamRequest) {
         Member loginMember = memberQueryService.getSignInMember();
-        return buildTeam(request, loginMember);
+        return buildTeam(createTeamRequest, loginMember);
     }
 
     @Override
-    public Long createTeam(TeamCreateDto request, String username) {
+    public Long createTeam(TeamRequest createTeamRequest, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        return buildTeam(request, member);
+        return buildTeam(createTeamRequest, member);
     }
 
-    private Long buildTeam(TeamCreateDto request, Member member) {
+    private Long buildTeam(TeamRequest createTeamRequest, Member member) {
         Team createdTeam = Team.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .coverImageUrl(request.getCoverImageUrl())
-                .teamColor(TeamColor.valueOf(request.getTeamColor()))
-                .maxTeamSize(request.getMaxTeamSize())
+                .name(createTeamRequest.getName())
+                .description(createTeamRequest.getDescription())
+                .coverImageUrl(createTeamRequest.getCoverImageUrl())
+                .teamColor(TeamColor.valueOf(createTeamRequest.getTeamColor()))
+                .maxTeamSize(createTeamRequest.getMaxTeamSize())
                 .leader(member)
                 .build();
 
@@ -66,24 +66,24 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public Long updateTeam(Long teamId, TeamCreateDto request) {
+    public Long updateTeam(Long teamId, TeamRequest updateTeamRequest) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, SecurityUtil.getCurrentUsername());
-        validateTeamMemberIsOverRequestSize(request, team);
+        validateTeamMemberIsOverRequestSize(updateTeamRequest, team);
 
-        team.update(request);
+        team.update(updateTeamRequest);
         return team.getId();
     }
 
     @Override
-    public Long updateTeam(Long teamId, String username, TeamCreateDto request) {
+    public Long updateTeam(Long teamId, String username, TeamRequest updateTeamRequest) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, username);
-        validateTeamMemberIsOverRequestSize(request, team);
+        validateTeamMemberIsOverRequestSize(updateTeamRequest, team);
 
-        team.update(request);
+        team.update(updateTeamRequest);
         return team.getId();
     }
 
@@ -237,7 +237,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateTeamMemberIsOverRequestSize(TeamCreateDto request, Team team) {
+    private static void validateTeamMemberIsOverRequestSize(TeamRequest request, Team team) {
         if (team.getTeamMembers().size() > request.getMaxTeamSize()) {
             throw new TeamHandler(ErrorStatus.TEAM_SIZE_IS_OVER_THAN_REQUEST_SIZE);
         }

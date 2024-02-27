@@ -5,18 +5,14 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class ScheduleRequest {
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class ScheduleCreateDto {
-        private String title;
-        private String content;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
-    }
-
+    private String title;
+    private String content;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

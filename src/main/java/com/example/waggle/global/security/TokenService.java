@@ -1,12 +1,12 @@
 package com.example.waggle.global.security;
 
-import com.example.waggle.web.dto.member.MemberRequest.TemporaryRegisterDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import org.springframework.security.core.Authentication;
 
 public interface TokenService {
 
 
-    JwtToken login(TemporaryRegisterDto request);
+    JwtToken login(MemberCredentialsDto memberLoginRequest);
 
     JwtToken issueTokens(String refreshToken);
 

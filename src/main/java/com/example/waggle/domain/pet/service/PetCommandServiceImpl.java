@@ -6,17 +6,14 @@ import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.repository.PetRepository;
-import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.PetHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
-import com.example.waggle.web.dto.pet.PetRequest.PetListCreateDto;
+import com.example.waggle.web.dto.pet.PetRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -29,47 +26,40 @@ public class PetCommandServiceImpl implements PetCommandService {
     private final MemberQueryService memberQueryService;
 
     @Override
-    public Long createPet(PetCreateDto petDto) {
+    public Long createPet(PetRequest createPetRequest) {
         Member member = memberQueryService.getSignInMember();
-        Pet build = buildPet(petDto, member);
+        Pet build = buildPet(createPetRequest, member);
         Pet pet = petRepository.save(build);
         return pet.getId();
     }
 
     @Override
-    public Long createPetByUsername(PetCreateDto petDto, String username) {
+    public Long createPetByUsername(PetRequest createPetRequest, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
-        Pet build = buildPet(petDto, member);
+        Pet build = buildPet(createPetRequest, member);
         Pet pet = petRepository.save(build);
         return pet.getId();
     }
 
     @Override
-    public void createPets(PetListCreateDto petList, String username) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        petList.getPetList().stream().forEach(pet -> petRepository.save(buildPet(pet, member)));
-    }
-
-    @Override
-    public Long updatePet(Long petId, PetCreateDto petDto) {
+    public Long updatePet(Long petId, PetRequest updatePetRequest) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         if (!pet.getMember().getUsername().equals(SecurityUtil.getCurrentUsername())) {
             throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
         }
-        pet.update(petDto);
+        pet.update(updatePetRequest);
         return pet.getId();
     }
 
     @Override
-    public Long updatePetByUsername(Long petId, String username, PetCreateDto petDto) {
+    public Long updatePetByUsername(Long petId, String username, PetRequest updatePetRequest) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         if (!pet.getMember().getUsername().equals(username)) {
             throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
         }
-        pet.update(petDto);
+        pet.update(updatePetRequest);
         return pet.getId();
     }
 
@@ -98,7 +88,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         pets.stream().forEach(pet -> petRepository.delete(pet));
     }
 
-    private static Pet buildPet(PetCreateDto petDto, Member member) {
+    private static Pet buildPet(PetRequest petDto, Member member) {
         Pet build = Pet.builder()
                 .age(petDto.getAge())
                 .name(petDto.getName())
