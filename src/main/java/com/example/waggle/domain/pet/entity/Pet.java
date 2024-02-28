@@ -4,7 +4,6 @@ import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import com.example.waggle.web.dto.pet.PetRequest;
-import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

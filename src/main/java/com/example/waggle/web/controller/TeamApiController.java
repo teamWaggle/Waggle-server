@@ -52,10 +52,10 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createTeam(@RequestPart("request") @Validated TeamRequest request,
-                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long createdTeamId = teamCommandService.createTeam(request);
+    public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
+                                           @RequestPart(value = "file", required = false) MultipartFile teamCoverImg) {
+        createTeamRequest.setCoverImageUrl(MediaUtil.saveProfileImg(teamCoverImg, awsS3Service));
+        Long createdTeamId = teamCommandService.createTeam(createTeamRequest);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
 
@@ -65,17 +65,17 @@ public class TeamApiController {
     })
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
-                                           @RequestPart("request") @Validated TeamRequest request,
-                                           @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                           @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
+                                           @RequestPart(value = "file", required = false) MultipartFile teamCoverImg,
                                            @RequestParam boolean allowUpload) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getCoverImageUrl());
+        String removePrefixCoverUrl = MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
-            request.setCoverImageUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+            updateTeamRequest.setCoverImageUrl(MediaUtil.saveProfileImg(teamCoverImg, awsS3Service));
         } else {
-            request.setCoverImageUrl(removePrefixCoverUrl);
+            updateTeamRequest.setCoverImageUrl(removePrefixCoverUrl);
         }
-        Long updatedTeamId = teamCommandService.updateTeam(teamId, request);
+        Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
 

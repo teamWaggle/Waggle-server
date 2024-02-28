@@ -83,6 +83,16 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleResponseDto(schedule));
     }
 
+    @Operation(summary = "일정 삭제 🔑", description = "특정 일정을 삭제합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{scheduleId}")
+    public ApiResponseDto<Boolean> deleteScheduleInTeam(@PathVariable("scheduleId") Long scheduleId) {
+        scheduleCommandService.deleteSchedule(scheduleId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
     @Operation(summary = "일정 수정 🔑", description = "특정 일정의 정보를 수정합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
@@ -92,17 +102,6 @@ public class ScheduleApiController {
                                                @RequestBody ScheduleRequest updateScheduleRequest) {
         Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, updateScheduleRequest);
         return ApiResponseDto.onSuccess(updatedScheduleId);
-    }
-
-    @Deprecated
-    @Operation(summary = "일정 삭제", description = "특정 일정을 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @DeleteMapping("/{scheduleId}")
-    public ApiResponseDto<Boolean> deleteScheduleInTeam(@PathVariable("scheduleId") Long scheduleId) {
-        scheduleCommandService.deleteSchedule(scheduleId);
-        return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "일정 취소 🔑", description = "특정 일정을 취소합니다.")
@@ -158,7 +157,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
-    @Operation(summary = "특정 팀의 월 일정 조회", description = "특정 팀의 스케줄 전체를 월 단위로 가져옵니다.")
+    @Operation(summary = "특정 팀의 월간 일정 조회", description = "특정 팀의 스케줄 전체를 월 단위로 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
@@ -170,7 +169,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
     }
 
-    @Operation(summary = "특정 사용자의 월 일정 조회", description = "특정 사용자가 선택한 팀 스케줄 전체를 월단위로 가져옵니다.")
+    @Operation(summary = "특정 사용자의 월간 일정 조회", description = "특정 사용자가 선택한 팀 스케줄 전체를 월단위로 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })

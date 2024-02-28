@@ -48,8 +48,8 @@ public class PetApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest createPetRequest,
-                                          @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        createPetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+                                          @RequestPart(value = "file", required = false) MultipartFile petProfileImg) {
+        createPetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(petProfileImg, awsS3Service));
         Long petId = petCommandService.createPet(createPetRequest);
         return ApiResponseDto.onSuccess(petId);
     }
@@ -62,12 +62,12 @@ public class PetApiController {
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
                                           @RequestPart @Validated PetRequest updatePetRequest,
-                                          @RequestPart(value = "file", required = false) MultipartFile profileImg,
+                                          @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
                                           @RequestParam("allowUpload") boolean allowUpload) {
         String removePrefixProfileUrl = MediaUtil.removePrefix(updatePetRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixProfileUrl);
-            updatePetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            updatePetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(petProfileImg, awsS3Service));
         } else {
             updatePetRequest.setProfileImgUrl(removePrefixProfileUrl);
         }

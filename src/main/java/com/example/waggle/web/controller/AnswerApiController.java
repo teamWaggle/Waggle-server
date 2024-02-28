@@ -55,8 +55,8 @@ public class AnswerApiController {
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
                                              @RequestPart("createAnswerRequest") AnswerRequest createAnswerRequest,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, multipartFiles);
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, files);
         return ApiResponseDto.onSuccess(answer);
     }
 
@@ -68,12 +68,12 @@ public class AnswerApiController {
     public ApiResponseDto<Long> updateAnswer(@PathVariable("answerId") Long answerId,
                                              @RequestPart("updateAnswerRequest") AnswerRequest updateAnswerRequest,
                                              @RequestPart("mediaUpdateRequest") MediaUpdateDto mediaUpdateRequest,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> files) {
         mediaUpdateRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        answerCommandService.updateAnswerV2(answerId, updateAnswerRequest, mediaUpdateRequest, multipartFiles);
+        answerCommandService.updateAnswerV2(answerId, updateAnswerRequest, mediaUpdateRequest, files);
         return ApiResponseDto.onSuccess(answerId);
     }
 

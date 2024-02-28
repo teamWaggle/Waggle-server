@@ -52,8 +52,8 @@ public class StoryApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createStory(@RequestPart("createStoryRequest") StoryRequest createStoryRequest,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        Long boardId = storyCommandService.createStory(createStoryRequest, multipartFiles);
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+        Long boardId = storyCommandService.createStory(createStoryRequest, files);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -65,12 +65,12 @@ public class StoryApiController {
     public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
                                             @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
                                             @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
         updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        storyCommandService.updateStoryV2(storyId, updateStoryRequest, updateMediaRequest, multipartFiles);
+        storyCommandService.updateStoryV2(storyId, updateStoryRequest, updateMediaRequest, files);
         return ApiResponseDto.onSuccess(storyId);
     }
 

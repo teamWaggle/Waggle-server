@@ -56,8 +56,8 @@ public class QuestionApiController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createQuestion(
             @RequestPart("createQuestionRequest") @Validated QuestionRequest createQuestionRequest,
-            @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
-        Long boardId = questionCommandService.createQuestion(createQuestionRequest, multipartFiles);
+            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+        Long boardId = questionCommandService.createQuestion(createQuestionRequest, files);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -69,12 +69,12 @@ public class QuestionApiController {
     public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
                                                @RequestPart("updateQuestionRequest") @Validated QuestionRequest updateQuestionRequest,
                                                @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
-                                               @RequestPart(required = false, value = "files") List<MultipartFile> multipartFiles) {
+                                               @RequestPart(required = false, value = "files") List<MultipartFile> files) {
         updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        questionCommandService.updateQuestionV2(questionId, updateQuestionRequest, updateMediaRequest, multipartFiles);
+        questionCommandService.updateQuestionV2(questionId, updateQuestionRequest, updateMediaRequest, files);
         return ApiResponseDto.onSuccess(questionId);
     }
 

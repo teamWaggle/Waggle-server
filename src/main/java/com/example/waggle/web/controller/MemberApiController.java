@@ -72,8 +72,8 @@ public class MemberApiController {
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> initializeMemberProfile(@AuthUser UserDetails userDetails,
                                                         @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
-                                                        @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        memberProfileRequest.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
+                                                        @RequestPart(value = "file", required = false) MultipartFile memberProfileImg) {
+        memberProfileRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
         Long memberId = memberCommandService.initializeMemberProfile(userDetails.getUsername(), memberProfileRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -85,12 +85,12 @@ public class MemberApiController {
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateInfo(@AuthUser UserDetails userDetails,
                                            @RequestPart MemberUpdateDto updateMemberRequest,
-                                           @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+                                           @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
                                            @RequestParam("allowUpload") boolean allowUpload) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(updateMemberRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
-            updateMemberRequest.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            updateMemberRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
         } else {
             updateMemberRequest.setProfileImgUrl(removePrefixCoverUrl);
         }
