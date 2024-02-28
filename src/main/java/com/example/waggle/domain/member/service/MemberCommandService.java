@@ -7,18 +7,18 @@ import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 
 public interface MemberCommandService {
 
-    Long signUp(MemberCredentialsDto memberRegisterRequest);
+    Long signUp(MemberCredentialsDto registerMemberRequest);
 
     Long initializeMemberProfile(String username, MemberProfileDto memberProfileRequest);
 
-    Long updateMemberProfile(String username, MemberUpdateDto memberUpdateRequest);
+    Long updateMemberProfile(String username, MemberUpdateDto updateMemberRequest);
 
     Long updatePassword(Long memberId, String password);
 
-    Long verifyEmailForPasswordChange(EmailVerificationDto emailVerificationRequest);
+    Long verifyEmailForPasswordChange(EmailVerificationDto verifyEmailRequest);
 
     void deleteMember(Long memberId);
 
-    void verifyMail(EmailVerificationDto emailVerificationRequest);
+    void verifyMail(EmailVerificationDto verifyEmailRequest);
 
 }

@@ -7,27 +7,27 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface QuestionCommandService {
 
-    Long createQuestion(QuestionRequest questionCreateRequest,
+    Long createQuestion(QuestionRequest createQuestionRequest,
                         List<MultipartFile> multipartFiles);
 
-    Long createQuestionByUsername(QuestionRequest questionCreateRequest,
+    Long createQuestionByUsername(QuestionRequest createQuestionRequest,
                                   List<MultipartFile> multipartFiles,
                                   String username);
 
     Long updateQuestion(Long boardId,
-                        QuestionRequest questionUpdateRequest,
+                        QuestionRequest updateQuestionRequest,
                         List<MultipartFile> multipartFiles,
                         List<String> deleteFiles);
 
     Long updateQuestionV2(Long boardId,
-                          QuestionRequest questionUpdateRequest,
-                          MediaUpdateDto mediaUpdateRequest,
+                          QuestionRequest updateQuestionRequest,
+                          MediaUpdateDto updateMediaRequest,
                           List<MultipartFile> multipartFiles);
 
     Long updateQuestionByUsername(Long boardId,
                                   String username,
-                                  QuestionRequest questionUpdateRequest,
-                                  MediaUpdateDto mediaUpdateRequest,
+                                  QuestionRequest updateQuestionRequest,
+                                  MediaUpdateDto updateMediaRequest,
                                   List<MultipartFile> multipartFiles);
 
     void deleteQuestion(Long boardId);

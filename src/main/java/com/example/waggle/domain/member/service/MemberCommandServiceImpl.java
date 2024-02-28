@@ -77,15 +77,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long signUp(MemberCredentialsDto memberRegisterRequest) {
-        String encodedPassword = passwordEncoder.encode(memberRegisterRequest.getPassword());
+    public Long signUp(MemberCredentialsDto registerMemberRequest) {
+        String encodedPassword = passwordEncoder.encode(registerMemberRequest.getPassword());
 
         Member createdMember = Member.builder()
                 .username(generateAutoUsername())
                 .password(encodedPassword)
                 .nickname(generateAutoNickname())
                 .userUrl(generateAutoUserUrl())
-                .email(memberRegisterRequest.getEmail())
+                .email(registerMemberRequest.getEmail())
                 .authProvider(WAGGLE)
                 .role(Role.GUEST)
                 .build();
@@ -112,14 +112,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberProfile(String username, MemberUpdateDto memberUpdateRequest) {
+    public Long updateMemberProfile(String username, MemberUpdateDto updateMemberRequest) {
         Member member = memberQueryService.getMemberByUsername(username);
-        String encodedPassword = passwordEncoder.encode(memberUpdateRequest.getPassword());
+        String encodedPassword = passwordEncoder.encode(updateMemberRequest.getPassword());
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {
             awsS3Service.deleteFile(member.getProfileImgUrl());
         }
-        member.updateInfo(memberUpdateRequest, encodedPassword);
+        member.updateInfo(updateMemberRequest, encodedPassword);
         return member.getId();
     }
 
@@ -131,9 +131,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long verifyEmailForPasswordChange(EmailVerificationDto emailVerificationRequest) {
-        verifyMail(emailVerificationRequest);
-        return memberQueryService.getMemberByEmail(emailVerificationRequest.getEmail()).getId();
+    public Long verifyEmailForPasswordChange(EmailVerificationDto verifyEmailRequest) {
+        verifyMail(verifyEmailRequest);
+        return memberQueryService.getMemberByEmail(verifyEmailRequest.getEmail()).getId();
     }
 
     @Override
@@ -212,9 +212,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void verifyMail(EmailVerificationDto emailVerificationRequest) {
-        String authNum = redisService.getValue(AUTH_CODE_PREFIX + emailVerificationRequest.getEmail());
-        boolean isSuccess = authNum.equals(emailVerificationRequest.getAuthCode());
+    public void verifyMail(EmailVerificationDto verifyEmailRequest) {
+        String authNum = redisService.getValue(AUTH_CODE_PREFIX + verifyEmailRequest.getEmail());
+        boolean isSuccess = authNum.equals(verifyEmailRequest.getAuthCode());
         if (!isSuccess) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);  // TODO 인증 실패 에러 코드
         }

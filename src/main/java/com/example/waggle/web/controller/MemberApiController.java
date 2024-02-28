@@ -60,8 +60,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody MemberCredentialsDto memberRegisterRequest) {
-        Long memberId = memberCommandService.signUp(memberRegisterRequest);
+    public ApiResponseDto<Long> signUp(@RequestBody MemberCredentialsDto registerMemberRequest) {
+        Long memberId = memberCommandService.signUp(registerMemberRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -84,17 +84,17 @@ public class MemberApiController {
     })
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateInfo(@AuthUser UserDetails userDetails,
-                                           @RequestPart MemberUpdateDto memberUpdateRequest,
+                                           @RequestPart MemberUpdateDto updateMemberRequest,
                                            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
                                            @RequestParam("allowUpload") boolean allowUpload) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(memberUpdateRequest.getProfileImgUrl());
+        String removePrefixCoverUrl = MediaUtil.removePrefix(updateMemberRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
-            memberUpdateRequest.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            updateMemberRequest.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
         } else {
-            memberUpdateRequest.setProfileImgUrl(removePrefixCoverUrl);
+            updateMemberRequest.setProfileImgUrl(removePrefixCoverUrl);
         }
-        Long memberId = memberCommandService.updateMemberProfile(userDetails.getUsername(), memberUpdateRequest);
+        Long memberId = memberCommandService.updateMemberProfile(userDetails.getUsername(), updateMemberRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -113,8 +113,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto emailSendRequest) {
-        emailService.sendMail(emailSendRequest.getEmail(), "email");
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto sendEmailRequest) {
+        emailService.sendMail(sendEmailRequest.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -123,8 +123,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/email/verify")
-    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto emailVerificationRequest) {
-        memberCommandService.verifyMail(emailVerificationRequest);
+    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto verifyEmailRequest) {
+        memberCommandService.verifyMail(verifyEmailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

@@ -53,10 +53,10 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public JwtToken login(MemberCredentialsDto memberLoginRequest) {
-        UserDetails userDetails = memberQueryService.getMemberByEmail(memberLoginRequest.getEmail());
+    public JwtToken login(MemberCredentialsDto loginRequest) {
+        UserDetails userDetails = memberQueryService.getMemberByEmail(loginRequest.getEmail());
         Authentication authentication;
-        if (!passwordEncoder.matches(memberLoginRequest.getPassword(), userDetails.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
             throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
         authentication = new UsernamePasswordAuthenticationToken(userDetails, "",

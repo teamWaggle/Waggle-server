@@ -39,9 +39,9 @@ public class TokenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody MemberCredentialsDto memberLoginRequest,
+    public ApiResponseDto<JwtToken> login(@RequestBody MemberCredentialsDto loginRequest,
                                           HttpServletResponse response) {
-        JwtToken jwtToken = tokenService.login(memberLoginRequest);
+        JwtToken jwtToken = tokenService.login(loginRequest);
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         return ApiResponseDto.onSuccess(jwtToken);
     }
