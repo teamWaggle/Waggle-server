@@ -35,9 +35,11 @@ import com.example.waggle.global.util.NameUtil.NameType;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
+import com.example.waggle.web.dto.member.VerifyMailRequest;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -96,9 +98,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long initializeMemberProfile(String username, MemberProfileDto memberProfileRequest) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public Long initializeMemberProfile(MemberProfileDto memberProfileRequest, Member member) {
         // TODO GUEST 외의 role을 가진 사용자가 접근하면 throw exception
         if (member.getRole() == Role.GUEST) {
             member.changeRole(Role.USER);
@@ -112,9 +112,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
     @Override
-    public Long updateMemberProfile(String username, MemberUpdateDto updateMemberRequest) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public Long updateMemberProfile(MemberUpdateDto updateMemberRequest, Member member) {
         String encodedPassword = passwordEncoder.encode(updateMemberRequest.getPassword());
+
         //기존 프로필 존재 시 s3에서 삭제
         if (member.getProfileImgUrl() != null) {
             awsS3Service.deleteFile(member.getProfileImgUrl());
@@ -138,8 +138,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         // TODO boardHashtag, teamMember, scheduleMember ➡️ 삭제 시 고아 객체 처리 필요 (참조 카운팅, 스케줄링・・・)
-        Member member = memberQueryService.getMemberById(memberId);
 
         deleteAllDataLinkedToMember(member);
         deleteMemberContent(member);
@@ -223,7 +225,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String generateAutoUsername() {
         String username;
         do {
-            username = NameUtil.generateAuto(NameType.USERNAME);
+            username = UUID.randomUUID().toString();
         } while (memberRepository.existsByUsername(username));
         return username;
     }

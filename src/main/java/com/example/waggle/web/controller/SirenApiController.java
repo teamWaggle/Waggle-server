@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
@@ -36,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/sirens")
@@ -56,8 +57,9 @@ public class SirenApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createSiren(@RequestPart("request") @Validated SirenRequest request,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
-        Long boardId = sirenCommandService.createSiren(request, files);
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                            @AuthUser Member member) {
+        Long boardId = sirenCommandService.createSiren(request, files, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -69,13 +71,14 @@ public class SirenApiController {
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
                                             @RequestPart("updateSirenRequest") @Validated SirenRequest updateSirenRequest,
                                             @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                            @AuthUser Member member) {
         updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
-        sirenCommandService.updateSirenV2(sirenId, updateSirenRequest, updateMediaRequest, files);
+        sirenCommandService.updateSiren(sirenId, updateSirenRequest, updateMediaRequest, files, member);
         return ApiResponseDto.onSuccess(sirenId);
     }
 
@@ -89,7 +92,7 @@ public class SirenApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
-        SirenListDto listDto = SirenConverter.toListDto(pagedSirenList);
+        SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
         recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
@@ -103,7 +106,7 @@ public class SirenApiController {
                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
-        SirenListDto listDto = SirenConverter.toListDto(pagedSirenList);
+        SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
         recommendQueryService.getRecommendValues(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
@@ -115,7 +118,7 @@ public class SirenApiController {
     @GetMapping("/{sirenId}")
     public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("sirenId") Long sirenId) {
         Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
-        SirenDetailDto detailDto = SirenConverter.toDetailDto(siren);
+        SirenDetailDto detailDto = SirenConverter.toSirenDetailDto(siren);
         recommendQueryService.getRecommendValues(detailDto);
         return ApiResponseDto.onSuccess(detailDto);
     }
@@ -125,8 +128,9 @@ public class SirenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{sirenId}")
-    public ApiResponseDto<Boolean> deleteSiren(@PathVariable("sirenId") Long sirenId) {
-        sirenCommandService.deleteSiren(sirenId);
+    public ApiResponseDto<Boolean> deleteSiren(@PathVariable("sirenId") Long sirenId,
+                                               @AuthUser Member member) {
+        sirenCommandService.deleteSiren(sirenId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

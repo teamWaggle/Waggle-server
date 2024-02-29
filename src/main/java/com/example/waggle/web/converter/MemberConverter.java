@@ -4,7 +4,6 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.util.EmailUtil;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.member.MemberResponse;
-
 import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;

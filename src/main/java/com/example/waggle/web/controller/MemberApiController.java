@@ -8,7 +8,7 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.annotation.AuthUser;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -39,7 +39,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,11 +78,12 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> initializeMemberProfile(@AuthUser UserDetails userDetails,
-                                                        @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
-                                                        @RequestPart(value = "file", required = false) MultipartFile memberProfileImg) {
+    public ApiResponseDto<Long> initializeMemberProfile(
+            @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
+            @RequestPart(value = "file", required = false) MultipartFile memberProfileImg,
+            @AuthUser Member member) {
         memberProfileRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
-        Long memberId = memberCommandService.initializeMemberProfile(userDetails.getUsername(), memberProfileRequest);
+        Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -83,10 +92,10 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateInfo(@AuthUser UserDetails userDetails,
-                                           @RequestPart MemberUpdateDto updateMemberRequest,
+    public ApiResponseDto<Long> updateInfo(@RequestPart MemberUpdateDto updateMemberRequest,
                                            @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
-                                           @RequestParam("allowUpload") boolean allowUpload) {
+                                           @RequestParam("allowUpload") boolean allowUpload,
+                                           @AuthUser Member member) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(updateMemberRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
@@ -94,7 +103,7 @@ public class MemberApiController {
         } else {
             updateMemberRequest.setProfileImgUrl(removePrefixCoverUrl);
         }
-        Long memberId = memberCommandService.updateMemberProfile(userDetails.getUsername(), updateMemberRequest);
+        Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 

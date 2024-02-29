@@ -42,5 +42,4 @@ public class NameUtil {
         usernameBuilder.append(prefix).append(uniqueValue);
         return usernameBuilder;
     }
-
 }

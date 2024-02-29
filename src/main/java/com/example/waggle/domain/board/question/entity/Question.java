@@ -2,7 +2,6 @@ package com.example.waggle.domain.board.question.entity;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
-import com.example.waggle.web.dto.oauth.OAuthToken.request;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;

@@ -9,8 +9,13 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +49,13 @@ class RecommendServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
     MemberCredentialsDto signUpDto1;
     MemberCredentialsDto signUpDto2;
+=======
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
+>>>>>>> develop
 
     StoryCreateDto storyWriteDto1;
     StoryCreateDto storyWriteDto2;
@@ -70,12 +80,20 @@ class RecommendServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
+<<<<<<< HEAD
         signUpDto1 = MemberCredentialsDto.builder()
+=======
+        signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("hi")
                 .build();
 
+<<<<<<< HEAD
         signUpDto2 = MemberCredentialsDto.builder()
+=======
+        signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("hoe")
                 .build();

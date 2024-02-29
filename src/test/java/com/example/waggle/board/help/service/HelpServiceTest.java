@@ -11,8 +11,13 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.siren.SirenRequest.SirenCreateDto;
+=======
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.siren.SirenRequest;
+>>>>>>> develop
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,7 +50,11 @@ class HelpServiceTest {
     SirenCreateDto hwd3;
     SirenCreateDto hwd4;
 
+<<<<<<< HEAD
     MemberCredentialsDto signUpDto1;
+=======
+    MemberRequest.AccessDto signUpDto1;
+>>>>>>> develop
 
 
     void setting() {
@@ -85,7 +94,11 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(SirenCategory.FIND_PET)
                 .build();
+<<<<<<< HEAD
         signUpDto1 = MemberCredentialsDto.builder()
+=======
+        signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("email1@naver.com")
                 .password("password1")
                 .build();

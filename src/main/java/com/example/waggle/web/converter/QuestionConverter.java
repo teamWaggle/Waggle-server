@@ -15,6 +15,7 @@ public class QuestionConverter {
         return QuestionSummaryDto.builder()
                 .boardId(question.getId())
                 .title(question.getTitle())
+                .status(question.getStatus())
                 .createdDate(question.getCreatedDate())
                 .hashtagList(question.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
@@ -39,8 +40,9 @@ public class QuestionConverter {
     public static QuestionResponse.QuestionDetailDto toDetailDto(Question question) {
         return QuestionResponse.QuestionDetailDto.builder()
                 .boardId(question.getId())
-                .content(question.getContent())
                 .title(question.getTitle())
+                .status(question.getStatus())
+                .content(question.getContent())
                 .createdDate(question.getCreatedDate())
                 .hashtagList(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))

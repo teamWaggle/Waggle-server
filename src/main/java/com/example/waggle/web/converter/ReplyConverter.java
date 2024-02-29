@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReplyConverter {
-    public static ReplyViewDto toViewDto(Reply reply) {
+    public static ReplyViewDto toReplyViewDto(Reply reply) {
         return ReplyViewDto.builder()
                 .replyId(reply.getId())
                 .member(MemberConverter.toMemberSummaryDto(reply.getMember()))
@@ -22,9 +22,9 @@ public class ReplyConverter {
                 .build();
     }
 
-    public static ReplyListDto toListDto(Page<Reply> pagedReply) {
+    public static ReplyListDto toReplyListDto(Page<Reply> pagedReply) {
         List<ReplyViewDto> collect = pagedReply.stream()
-                .map(ReplyConverter::toViewDto).collect(Collectors.toList());
+                .map(ReplyConverter::toReplyViewDto).collect(Collectors.toList());
         return ReplyListDto.builder()
                 .replyList(collect)
                 .isFirst(pagedReply.isFirst())

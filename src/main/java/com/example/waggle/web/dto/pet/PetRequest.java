@@ -17,11 +17,12 @@ import lombok.NoArgsConstructor;
 public class PetRequest {
     @NotNull
     private String name;
+    private String description;
     private String breed;
     private String age;
     private String profileImgUrl;
     private boolean isUploadProfile;
-
     @ValidEnum(target = Gender.class)
     private String gender;
+
 }

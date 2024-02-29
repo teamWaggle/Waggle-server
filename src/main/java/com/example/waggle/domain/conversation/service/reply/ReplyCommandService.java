@@ -1,19 +1,14 @@
 package com.example.waggle.domain.conversation.service.reply;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 
 public interface ReplyCommandService {
-    Long createReply(Long commentId, ReplyRequest createReplyRequest);
 
-    Long createReplyByUsername(Long commentId, ReplyRequest createReplyRequest, String username);
+    Long createReply(Long commentId, ReplyRequest createReplyRequest, Member member);
 
-    Long updateReply(Long replyId, ReplyRequest updateReplyRequest);
+    Long updateReply(Long replyId, ReplyRequest updateReplyRequest, Member member);
 
-    Long updateReplyByUsername(Long replyId, String username, ReplyRequest updateReplyRequest);
-
-    void deleteReply(Long replyId);
-
-    void deleteReply(Long replyId, String username);
-
+    void deleteReply(Long replyId, Member member);
 
 }

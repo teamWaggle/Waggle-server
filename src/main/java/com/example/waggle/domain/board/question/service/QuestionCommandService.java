@@ -2,36 +2,23 @@ package com.example.waggle.domain.board.question.service;
 
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import java.util.List;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.web.dto.media.MediaRequest;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 public interface QuestionCommandService {
 
     Long createQuestion(QuestionRequest createQuestionRequest,
-                        List<MultipartFile> multipartFiles);
-
-    Long createQuestionByUsername(QuestionRequest createQuestionRequest,
-                                  List<MultipartFile> multipartFiles,
-                                  String username);
+                        List<MultipartFile> multipartFiles,
+                        Member member);
 
     Long updateQuestion(Long boardId,
                         QuestionRequest updateQuestionRequest,
+                        MediaUpdateDto updateMediaRequest,
                         List<MultipartFile> multipartFiles,
-                        List<String> deleteFiles);
+                        Member member);
 
-    Long updateQuestionV2(Long boardId,
-                          QuestionRequest updateQuestionRequest,
-                          MediaUpdateDto updateMediaRequest,
-                          List<MultipartFile> multipartFiles);
-
-    Long updateQuestionByUsername(Long boardId,
-                                  String username,
-                                  QuestionRequest updateQuestionRequest,
-                                  MediaUpdateDto updateMediaRequest,
-                                  List<MultipartFile> multipartFiles);
-
-    void deleteQuestion(Long boardId);
-
-    void deleteQuestionByUsername(Long boardId, String username);
+    void deleteQuestion(Long boardId, Member member);
 
 }

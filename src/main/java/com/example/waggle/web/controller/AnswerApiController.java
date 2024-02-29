@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.answer.service.AnswerQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
@@ -55,8 +57,9 @@ public class AnswerApiController {
     @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
                                              @RequestPart("createAnswerRequest") AnswerRequest createAnswerRequest,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> files) {
-        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, files);
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                             @AuthUser Member member) {
+        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, files, member);
         return ApiResponseDto.onSuccess(answer);
     }
 
@@ -68,12 +71,13 @@ public class AnswerApiController {
     public ApiResponseDto<Long> updateAnswer(@PathVariable("answerId") Long answerId,
                                              @RequestPart("updateAnswerRequest") AnswerRequest updateAnswerRequest,
                                              @RequestPart("mediaUpdateRequest") MediaUpdateDto mediaUpdateRequest,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+                                             @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                             @AuthUser Member member) {
         mediaUpdateRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         mediaUpdateRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        answerCommandService.updateAnswerV2(answerId, updateAnswerRequest, mediaUpdateRequest, files);
+        answerCommandService.updateAnswer(answerId, updateAnswerRequest, mediaUpdateRequest, files, member);
         return ApiResponseDto.onSuccess(answerId);
     }
 
@@ -111,8 +115,9 @@ public class AnswerApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{answerId}")
-    public ApiResponseDto<Boolean> deleteAnswer(@PathVariable("answerId") Long answerId) {
-        answerCommandService.deleteAnswer(answerId);
+    public ApiResponseDto<Boolean> deleteAnswer(@PathVariable("answerId") Long answerId,
+                                                @AuthUser Member member) {
+        answerCommandService.deleteAnswer(answerId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

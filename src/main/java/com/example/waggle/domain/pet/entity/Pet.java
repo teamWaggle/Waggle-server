@@ -26,6 +26,8 @@ public class Pet extends BaseEntity {
 
     private String breed;
 
+    private String description;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -38,12 +40,13 @@ public class Pet extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void update(PetRequest petDto) {
-        this.name = petDto.getName();
-        this.breed = petDto.getBreed();
-        this.gender = Gender.valueOf(petDto.getGender());
-        this.age = petDto.getAge();
-        this.profileImgUrl = petDto.getProfileImgUrl();
+    public void update(PetRequest updatePetRequest) {
+        this.name = updatePetRequest.getName();
+        this.breed = updatePetRequest.getBreed();
+        this.description = updatePetRequest.getDescription();
+        this.gender = Gender.valueOf(updatePetRequest.getGender());
+        this.age = updatePetRequest.getAge();
+        this.profileImgUrl = updatePetRequest.getProfileImgUrl();
     }
 
 }

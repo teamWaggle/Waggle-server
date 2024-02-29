@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.question;
 
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class QuestionResponse {
     public static class QuestionSummaryDto {
         private Long boardId;
         private String title;
+        private ResolutionStatus status;
         private LocalDateTime createdDate;
         private int recommendCount;
         private Boolean isRecommend;
@@ -46,8 +48,9 @@ public class QuestionResponse {
     @Schema
     public static class QuestionDetailDto {
         private Long boardId;
-        private String content;
         private String title;
+        private ResolutionStatus status;
+        private String content;
         private LocalDateTime createdDate;
         private int recommendCount;
         private Boolean isRecommend;

@@ -4,6 +4,8 @@ import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.domain.conversation.service.reply.ReplyCommandService;
 import com.example.waggle.domain.conversation.service.reply.ReplyQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.converter.ReplyConverter;
@@ -47,8 +49,9 @@ public class ReplyApiController {
     })
     @PostMapping("/{commentId}")
     public ApiResponseDto<Long> createReply(@PathVariable("commentId") Long commentId,
-                                            @RequestBody ReplyRequest createReplyRequest) {
-        Long replyId = replyCommandService.createReply(commentId, createReplyRequest);
+                                            @RequestBody ReplyRequest createReplyRequest,
+                                            @AuthUser Member member) {
+        Long replyId = replyCommandService.createReply(commentId, createReplyRequest, member);
         return ApiResponseDto.onSuccess(replyId);
     }
 
@@ -58,8 +61,9 @@ public class ReplyApiController {
     })
     @PutMapping("/{replyId}")
     public ApiResponseDto<Long> updateReply(@PathVariable("replyId") Long replyId,
-                                            @RequestBody ReplyRequest updateReplyRequest) {
-        Long updatedReplyId = replyCommandService.updateReply(replyId, updateReplyRequest);
+                                            @RequestBody ReplyRequest updateReplyRequest,
+                                            @AuthUser Member member) {
+        Long updatedReplyId = replyCommandService.updateReply(replyId, updateReplyRequest, member);
         return ApiResponseDto.onSuccess(updatedReplyId);
     }
 
@@ -72,17 +76,19 @@ public class ReplyApiController {
                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Reply> pagedReplies = replyQueryService.getPagedReplies(commentId, pageable);
-        ReplyListDto listDto = ReplyConverter.toListDto(pagedReplies);
+        ReplyListDto listDto = ReplyConverter.toReplyListDto(pagedReplies);
         return ApiResponseDto.onSuccess(listDto);
     }
+
 
     @Operation(summary = "대댓글 삭제 🔑", description = "특정 대댓글을 삭제합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{replyId}")
-    public ApiResponseDto<Boolean> deleteReply(@PathVariable("replyId") Long replyId) {
-        replyCommandService.deleteReply(replyId);
+    public ApiResponseDto<Boolean> deleteReply(@PathVariable("replyId") Long replyId,
+                                               @AuthUser Member member) {
+        replyCommandService.deleteReply(replyId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

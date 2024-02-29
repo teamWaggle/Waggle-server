@@ -14,10 +14,17 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
 import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
+import com.example.waggle.web.dto.comment.CommentRequest;
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.reply.ReplyRequest;
+import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,11 +63,19 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
     MemberCredentialsDto signUpDto1;
     MemberCredentialsDto signUpDto2;
     MemberCredentialsDto signUpDto3;
     MemberCredentialsDto signUpDto4;
     MemberCredentialsDto signUpDto5;
+=======
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
+    MemberRequest.AccessDto signUpDto3;
+    MemberRequest.AccessDto signUpDto4;
+    MemberRequest.AccessDto signUpDto5;
+>>>>>>> develop
 
 
     StoryCreateDto storyWriteDto1;
@@ -83,6 +98,7 @@ class ReplyServiceTest {
         mentions2.add("user3");
         mentions2.add("user4");
 
+<<<<<<< HEAD
         signUpDto1 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("hi")
@@ -92,15 +108,34 @@ class ReplyServiceTest {
                 .email("hoe")
                 .build();
         signUpDto3 = MemberCredentialsDto.builder()
+=======
+        signUpDto1 = MemberRequest.AccessDto.builder()
+                .password("12345678")
+                .email("hi")
+                .build();
+        signUpDto2 = MemberRequest.AccessDto.builder()
+                .password("12345678")
+                .email("hoe")
+                .build();
+        signUpDto3 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("zz")
                 .build();
 
+<<<<<<< HEAD
         signUpDto4 = MemberCredentialsDto.builder()
                 .password("12345678")
                 .email("haha")
                 .build();
         signUpDto5 = MemberCredentialsDto.builder()
+=======
+        signUpDto4 = MemberRequest.AccessDto.builder()
+                .password("12345678")
+                .email("haha")
+                .build();
+        signUpDto5 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("ez")
                 .build();

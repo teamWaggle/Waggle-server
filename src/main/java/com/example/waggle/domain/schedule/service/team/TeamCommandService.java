@@ -1,31 +1,26 @@
 package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.domain.member.entity.Member;
 
 public interface TeamCommandService {
 
-    Long createTeam(TeamRequest createTeamRequest);
+    Long createTeam(TeamRequest createTeamRequest, Member member);
 
-    Long createTeam(TeamRequest createTeamRequest, String username);
+    Long updateTeam(Long teamId, TeamRequest updateTeamRequest, Member member);
 
-    Long updateTeam(Long teamId, TeamRequest updateTeamRequest);
+    void deleteTeam(Long teamId, Member member);
 
-    Long updateTeam(Long teamId, String username, TeamRequest updateTeamRequest);
+    Long addTeamMember(Long teamId, Long newMemberId, Member member);
 
-    void deleteTeam(Long teamId);
+    void deleteTeamMemberByLeader(Long teamId, Long memberId, Member leader);
 
-    void deleteTeam(Long teamId, String username);
+    void deleteTeamMemberByMyself(Long teamId, Member member);
 
-    Long addTeamMember(Long teamId, Long memberId);
+    void changeTeamLeader(Long teamId, Long newLeaderId, Member leader);
 
-    void deleteTeamMemberByLeader(Long teamId, Long memberId, String username);
+    void requestParticipation(Long teamId, Member member);
 
-    void deleteTeamMemberByMyself(Long teamId, String username);
-
-    void changeTeamLeader(Long teamId, Long memberId, String leaderUsername);
-
-    void requestParticipation(Long teamId, String username);
-
-    void respondToParticipation(Long teamId, Long memberId, String leaderUsername, boolean accept);
+    void respondToParticipation(Long teamId, Long memberId, Member leader, boolean accept);
 
 }

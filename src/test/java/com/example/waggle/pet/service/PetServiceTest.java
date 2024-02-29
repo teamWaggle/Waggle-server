@@ -12,8 +12,13 @@ import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.PetHandler;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+=======
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberResponse;
+>>>>>>> develop
 import com.example.waggle.web.dto.pet.PetRequest;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +55,11 @@ class PetServiceTest {
     @BeforeEach
     void beforeEach() {
         // member 저장
+<<<<<<< HEAD
         MemberCredentialsDto signUpDto = MemberCredentialsDto.builder()
+=======
+        MemberRequest.AccessDto signUpDto = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("dslkajflk")
                 .build();

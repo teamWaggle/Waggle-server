@@ -14,8 +14,13 @@ import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
+=======
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,11 +56,19 @@ class TeamCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
+<<<<<<< HEAD
     private MemberCredentialsDto member1;
 
     private MemberCredentialsDto member2;
 
     private MemberCredentialsDto member3;
+=======
+    private MemberRequest.AccessDto member1;
+
+    private MemberRequest.AccessDto member2;
+
+    private MemberRequest.AccessDto member3;
+>>>>>>> develop
 
     private TeamCreateDto team;
 
@@ -68,22 +81,38 @@ class TeamCommandServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
+<<<<<<< HEAD
         member1 = MemberCredentialsDto.builder()
+=======
+        member1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("dasfk")
                 .build();
 
+<<<<<<< HEAD
         member2 = MemberCredentialsDto.builder()
+=======
+        member2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("aksdfhsafa")
                 .build();
 
+<<<<<<< HEAD
         member3 = MemberCredentialsDto.builder()
+=======
+        member3 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("wldkfjk")
                 .build();
 
+<<<<<<< HEAD
         team = TeamCreateDto.builder()
+=======
+        team = TeamRequest.Post.builder()
+>>>>>>> develop
                 .teamColor("team_4")
                 .maxTeamSize(4)
                 .name("team")

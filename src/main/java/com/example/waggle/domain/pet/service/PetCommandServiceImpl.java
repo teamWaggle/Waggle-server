@@ -26,78 +26,53 @@ public class PetCommandServiceImpl implements PetCommandService {
     private final MemberQueryService memberQueryService;
 
     @Override
-    public Long createPet(PetRequest createPetRequest) {
-        Member member = memberQueryService.getSignInMember();
-        Pet build = buildPet(createPetRequest, member);
-        Pet pet = petRepository.save(build);
+    public Long createPet(PetRequest createPetRequest, Member member) {
+        Pet pet = buildPet(createPetRequest, member);
+        petRepository.save(pet);
         return pet.getId();
     }
 
     @Override
-    public Long createPetByUsername(PetRequest createPetRequest, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-        Pet build = buildPet(createPetRequest, member);
-        Pet pet = petRepository.save(build);
-        return pet.getId();
-    }
-
-    @Override
-    public Long updatePet(Long petId, PetRequest updatePetRequest) {
+    public Long updatePet(Long petId, PetRequest updatePetRequest, Member member) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        if (!pet.getMember().getUsername().equals(SecurityUtil.getCurrentUsername())) {
-            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
-        }
+        validateIsOwner(member, pet);
         pet.update(updatePetRequest);
         return pet.getId();
     }
 
     @Override
-    public Long updatePetByUsername(Long petId, String username, PetRequest updatePetRequest) {
+    public void deletePet(Long petId, Member member) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        if (!pet.getMember().getUsername().equals(username)) {
-            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
-        }
-        pet.update(updatePetRequest);
-        return pet.getId();
-    }
-
-    @Override
-    public void deletePet(Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        petRepository.delete(pet);
-    }
-
-    @Override
-    public void deletePetByUsername(Long petId, String username) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
-        if (!pet.getMember().getUsername().equals(username)) {
-            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
-        }
+        validateIsOwner(member, pet);
         petRepository.delete(pet);
     }
 
     @Override
     public void deleteAllPetByUser(String username) {
         Member member = memberQueryService.getMemberByUsername(username);
-        List<Pet> pets =
-                petRepository.findByMemberUsername(member.getUsername());
+        List<Pet> pets = petRepository.findByMemberUsername(member.getUsername());
         pets.stream().forEach(pet -> petRepository.delete(pet));
     }
 
-    private static Pet buildPet(PetRequest petDto, Member member) {
-        Pet build = Pet.builder()
-                .age(petDto.getAge())
-                .name(petDto.getName())
-                .breed(petDto.getBreed())
-                .gender(Gender.valueOf(petDto.getGender()))
+
+    private void validateIsOwner(Member member, Pet pet) {
+        if (!pet.getMember().equals(member)) {
+            throw new PetHandler(ErrorStatus.PET_INFO_CANNOT_EDIT_OTHERS);
+        }
+    }
+
+    private Pet buildPet(PetRequest createPetRequest, Member member) {
+        return Pet.builder()
+                .age(createPetRequest.getAge())
+                .name(createPetRequest.getName())
+                .description(createPetRequest.getDescription())
+                .breed(createPetRequest.getBreed())
+                .gender(Gender.valueOf(createPetRequest.getGender()))
+                .profileImgUrl(createPetRequest.getProfileImgUrl())
                 .member(member)
-                .profileImgUrl(petDto.getProfileImgUrl())
                 .build();
-        return build;
     }
 
 }

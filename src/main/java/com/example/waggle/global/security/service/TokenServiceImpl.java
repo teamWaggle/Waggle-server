@@ -1,11 +1,16 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.security.service;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.global.exception.JwtAuthenticationException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.global.security.object.JwtToken;
+import com.example.waggle.web.converter.MemberConverter;
+import com.example.waggle.web.dto.member.MemberRequest;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -54,15 +59,17 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public JwtToken login(MemberCredentialsDto loginRequest) {
-        UserDetails userDetails = memberQueryService.getMemberByEmail(loginRequest.getEmail());
+        Member member = memberQueryService.getMemberByEmail(loginRequest.getEmail());
         Authentication authentication;
-        if (!passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
+
             throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
-        authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
-                userDetails.getAuthorities());
+        authentication = new UsernamePasswordAuthenticationToken(member, "",
+                member.getAuthorities());
 
         JwtToken jwtToken = generateToken(authentication);
+        jwtToken.setMember(MemberConverter.toMemberSummaryDto(member));
         return jwtToken;
     }
 
@@ -155,14 +162,17 @@ public class TokenServiceImpl implements TokenService {
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_TOKEN_HAS_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_TOKEN_IS_UNSUPPORTED);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
+            throw new JwtAuthenticationException(ErrorStatus.AUTH_IS_NULL);
         }
-        return false;
     }
 
     @Override

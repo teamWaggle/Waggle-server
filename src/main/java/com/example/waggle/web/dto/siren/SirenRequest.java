@@ -20,7 +20,10 @@ public class SirenRequest {
     private String title;
     private String petBreed;
     private String petAge;
-    private Gender petGender;
+
+    @ValidEnum(target = Gender.class)
+    private String petGender;
+
     private String contact;
     private String lostLocate;
     private LocalDateTime lostDate;

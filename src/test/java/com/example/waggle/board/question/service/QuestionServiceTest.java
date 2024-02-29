@@ -10,10 +10,17 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.answer.AnswerRequest.AnswerCreateDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.question.QuestionRequest.QuestionCreateDto;
+=======
+import com.example.waggle.web.dto.answer.AnswerRequest;
+import com.example.waggle.web.dto.media.MediaRequest;
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.question.QuestionRequest;
+>>>>>>> develop
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -47,8 +54,13 @@ class QuestionServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
+<<<<<<< HEAD
     MemberCredentialsDto signUpDto1;
     MemberCredentialsDto signUpDto2;
+=======
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
+>>>>>>> develop
 
     QuestionCreateDto questionWriteDto1;
     QuestionCreateDto questionWriteDto2;
@@ -75,12 +87,20 @@ class QuestionServiceTest {
         tags1.add("poodle");
         tags2.add("poodle");
 
+<<<<<<< HEAD
         signUpDto1 = MemberCredentialsDto.builder()
+=======
+        signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("email1@naver.com")
                 .password("password1")
                 .build();
 
+<<<<<<< HEAD
         signUpDto2 = MemberCredentialsDto.builder()
+=======
+        signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("email2@naver.com")
                 .password("password2")
                 .build();
@@ -136,10 +156,15 @@ class QuestionServiceTest {
         Member member1 = memberQueryService.getMemberById(memberId1);
         Member member2 = memberQueryService.getMemberById(memberId2);
 
+<<<<<<< HEAD
         Long question1 = questionCommandService.createQuestionByUsername(questionWriteDto1, null,
                 member1.getUsername());
         Long question2 = questionCommandService.createQuestionByUsername(questionWriteDto2, null,
                 member1.getUsername());
+=======
+        Long question1 = questionCommandService.createQuestionByUsername(questionWriteDto1, null, member1.getUsername());
+        Long question2 = questionCommandService.createQuestionByUsername(questionWriteDto2, null, member1.getUsername());
+>>>>>>> develop
 
         answerService.createAnswerByUsername(question1, answerWriteDto1, null, member2.getUsername());
         answerService.createAnswerByUsername(question1, answerWriteDto2, null, member1.getUsername());
@@ -180,7 +205,11 @@ class QuestionServiceTest {
                 .updateQuestionByUsername(pagedQuestions.getContent().get(0).getId(),
                         member1,
                         questionEditDto1,
+<<<<<<< HEAD
                         new MediaUpdateDto(),
+=======
+                        new MediaRequest.Put(),
+>>>>>>> develop
                         null);
         //then
         Question question = questionQueryService.getQuestionByBoardId(aLong);

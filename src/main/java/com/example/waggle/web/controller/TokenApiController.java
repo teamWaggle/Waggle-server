@@ -4,8 +4,9 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.JwtToken;
-import com.example.waggle.global.security.TokenService;
+import com.example.waggle.global.security.object.CookieStatus;
+import com.example.waggle.global.security.object.JwtToken;
+import com.example.waggle.global.security.service.TokenService;
 import com.example.waggle.global.util.CookieUtil;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,10 +78,12 @@ public class TokenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping
-    public ApiResponseDto<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = getRefreshInCookie(request, response);
-        removeRefreshInRedis(request, response, refreshToken);
-        return ApiResponseDto.onSuccess(true);
+    public ApiResponseDto<CookieStatus> logout(HttpServletRequest request, HttpServletResponse response) {
+        Optional<String> refreshToken = CookieUtil.getCookie(request, "refresh_token")
+                .map(cookie -> cookie.getValue());
+        refreshToken.ifPresent(token -> removeRefreshInRedis(request, response, token));
+        CookieStatus cookieStatus = refreshToken.isPresent() ? CookieStatus.EXIST_REFRESH : CookieStatus.NOT_EXIST_REFRESH;
+        return ApiResponseDto.onSuccess(cookieStatus);
     }
 
     private static String getRefreshInCookie(HttpServletRequest request, HttpServletResponse response) {

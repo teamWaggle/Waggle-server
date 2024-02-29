@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class ScheduleConverter {
 
-    public static ScheduleDetailDto toScheduleResponseDto(Schedule schedule) {
+    public static ScheduleDetailDto toScheduleDetailDto(Schedule schedule) {
         return ScheduleDetailDto.builder()
                 .boardId(schedule.getId())
                 .teamId(schedule.getTeam().getId())
@@ -28,9 +28,9 @@ public class ScheduleConverter {
                 .build();
     }
 
-    public static ScheduleListDto toListDto(Page<Schedule> pagedSchedules) {
+    public static ScheduleListDto toScheduleListDto(Page<Schedule> pagedSchedules) {
         List<ScheduleDetailDto> schedules = pagedSchedules.stream()
-                .map(ScheduleConverter::toScheduleResponseDto).collect(Collectors.toList());
+                .map(ScheduleConverter::toScheduleDetailDto).collect(Collectors.toList());
         return ScheduleListDto.builder()
                 .scheduleList(schedules)
                 .scheduleCount(pagedSchedules.getTotalElements())
@@ -39,10 +39,10 @@ public class ScheduleConverter {
                 .build();
     }
 
-    public static ScheduleListDto toListDto(List<Schedule> schedules) {
+    public static ScheduleListDto toScheduleListDto(List<Schedule> schedules) {
         return ScheduleListDto.builder()
                 .scheduleList(
-                        schedules.stream().map(ScheduleConverter::toScheduleResponseDto).collect(Collectors.toList()))
+                        schedules.stream().map(ScheduleConverter::toScheduleDetailDto).collect(Collectors.toList()))
                 .scheduleCount(schedules.size())
                 .build();
     }

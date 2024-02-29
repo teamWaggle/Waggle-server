@@ -6,7 +6,6 @@ import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.mention.service.MentionCommandService;
 import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
@@ -29,50 +28,28 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final MemberQueryService memberQueryService;
     private final MemberScheduleRepository memberScheduleRepository;
     private final ScheduleRepository scheduleRepository;
     private final MentionCommandService mentionCommandService;
     private final BoardRepository boardRepository;
 
     @Override
-    public Long createComment(Long boardId, CommentRequest createCommentRequest) {
-        Member signInMember = memberQueryService.getSignInMember();
-        validateAccessSchedule(boardId, signInMember);
+    public Long createComment(Long boardId, CommentRequest createCommentRequest, Member member) {
+        validateAccessSchedule(boardId, member);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-        Comment build = Comment.builder()
-                .content(createCommentRequest.getContent())
-                .board(board)
-                .member(signInMember)
-                .build();
-        commentRepository.save(build);
-        mentionCommandService.createMentions(build, createCommentRequest.getMentionedMemberList());
-        return build.getId();
+
+        Comment comment = buildComment(board, createCommentRequest, member);
+        commentRepository.save(comment);
+        mentionCommandService.createMentions(comment, createCommentRequest.getMentionedMemberList());
+        return comment.getId();
     }
 
     @Override
-    public Long createCommentByUsername(Long boardId, CommentRequest createCommentRequest, String username) {
-        Member memberByUsername = memberQueryService.getMemberByUsername(username);
-        validateAccessSchedule(boardId, memberByUsername);
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-        Comment build = Comment.builder()
-                .content(createCommentRequest.getContent())
-                .board(board)
-                .member(memberByUsername)
-                .build();
-        commentRepository.save(build);
-        mentionCommandService.createMentions(build, createCommentRequest.getMentionedMemberList());
-        return build.getId();
-    }
-
-    @Override
-    public Long updateComment(Long commentId, CommentRequest updateCommentRequest) {
-        Member signInMember = memberQueryService.getSignInMember();
+    public Long updateComment(Long commentId, CommentRequest updateCommentRequest, Member member) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        validateMember(comment, signInMember);
+        validateMember(comment, member);
 
         comment.changeContent(updateCommentRequest.getContent());
         mentionCommandService.updateMentions(comment, updateCommentRequest.getMentionedMemberList());
@@ -80,34 +57,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
-    public Long updateCommentByUsername(Long commentId, String username, CommentRequest updateCommentRequest) {
-        Member signInMember = memberQueryService.getMemberByUsername(username);
+    public void deleteComment(Long commentId, Member member) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        validateMember(comment, signInMember);
-
-        comment.changeContent(updateCommentRequest.getContent());
-        mentionCommandService.updateMentions(comment, updateCommentRequest.getMentionedMemberList());
-        return comment.getId();
-    }
-
-    @Override
-    public void deleteComment(Long commentId) {
-        Member signInMember = memberQueryService.getSignInMember();
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        validateMember(comment, signInMember);
-
-        replyRepository.deleteAllByCommentId(commentId);
-        commentRepository.delete(comment);
-    }
-
-    @Override
-    public void deleteCommentByUsername(Long commentId, String username) {
-        Member signInMember = memberQueryService.getMemberByUsername(username);
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-        validateMember(comment, signInMember);
+        validateMember(comment, member);
 
         replyRepository.deleteAllByCommentId(commentId);
         commentRepository.delete(comment);
@@ -130,10 +83,17 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     private void validateAccessSchedule(Long boardId, Member signInMember) {
-        if (scheduleRepository.existsById(boardId) && memberScheduleRepository.existsByMemberIdAndScheduleId(
+        if (scheduleRepository.existsById(boardId) && !memberScheduleRepository.existsByMemberIdAndScheduleId(
                 signInMember.getId(), boardId)) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS);
         }
     }
 
+    private Comment buildComment(Board board, CommentRequest createCommentRequest, Member member) {
+        return Comment.builder()
+                .content(createCommentRequest.getContent())
+                .board(board)
+                .member(member)
+                .build();
+    }
 }

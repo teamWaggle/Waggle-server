@@ -1,23 +1,20 @@
 package com.example.waggle.domain.schedule.service.schedule;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
 
 public interface ScheduleCommandService {
 
-    Long createSchedule(Long teamId, ScheduleRequest createScheduleRequest, String username);
+    Long createSchedule(Long teamId, ScheduleRequest createScheduleRequest, Member member);
 
-    Long updateSchedule(Long scheduleId, ScheduleRequest updateScheduleRequest);
+    Long updateSchedule(Long scheduleId, ScheduleRequest updateScheduleRequest, Member member);
 
-    Long updateScheduleByUsername(Long scheduleId, String username, ScheduleRequest updateScheduleRequest);
-
-    void deleteSchedule(Long scheduleId);
-
-    void deleteScheduleByUsername(Long scheduleId, String username);
+    void deleteSchedule(Long scheduleId, Member member);
 
     void deleteScheduleForHardReset(Long scheduleId);
 
-    Long addMemberSchedule(Long scheduleId, String username);
+    Long addMemberSchedule(Long scheduleId, Member member);
 
-    void deleteMemberSchedule(Long scheduleId, String username);
+    void deleteMemberSchedule(Long scheduleId, Member member);
 
 }

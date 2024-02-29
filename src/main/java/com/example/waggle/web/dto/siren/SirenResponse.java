@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.siren;
 
+import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
@@ -30,6 +31,7 @@ public class SirenResponse {
         private SirenCategory category;
         private MemberSummaryDto member;
         private Boolean isOwner;
+        private ResolutionStatus status;
     }
 
     @Data
@@ -52,6 +54,7 @@ public class SirenResponse {
         private List<String> mediaList;
         private MemberSummaryDto member;
         private Boolean isOwner;
+        private ResolutionStatus status;
         private Boolean isRecommend;
         private int recommendCount;
     }

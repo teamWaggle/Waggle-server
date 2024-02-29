@@ -34,10 +34,11 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     private final MediaCommandService mediaCommandService;
     private final CommentCommandService commentCommandService;
 
-    @Override
-    public Long createStory(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles) {
-        Story createdStory = buildStory(createStoryRequest);
 
+    @Override
+    public Long createStory(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles,
+                            Member member) {
+        Story createdStory = buildStory(createStoryRequest, member);
         Story story = storyRepository.save(createdStory);
 
         if (!createStoryRequest.getHashtagList().isEmpty()) {
@@ -45,73 +46,14 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         }
         boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
         return story.getId();
-    }
-
-    @Override
-    public Long createStoryByUsername(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles,
-                                      String username) {
-        Story createdStory = buildStory(createStoryRequest, username);
-
-        Story story = storyRepository.save(createdStory);
-
-        if (!createStoryRequest.getHashtagList().isEmpty()) {
-            createStoryRequest.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
-        }
-        boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
-        return story.getId();
-
     }
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryRequest updateStoryRequest,
+                            StoryRequest createStoryRequest,
+                            MediaUpdateDto updateMediaRequest,
                             List<MultipartFile> multipartFiles,
-                            List<String> deleteFile) {
-        if (!boardService.validateMemberUseBoard(boardId, STORY)) {
-            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        story.changeContent(updateStoryRequest.getContent());
-
-        mediaCommandService.updateMedia(multipartFiles, deleteFile, story);
-        story.getBoardHashtags().clear();
-        for (String hashtag : updateStoryRequest.getHashtagList()) {
-            boardService.saveHashtag(story, hashtag);
-        }
-        return story.getId();
-    }
-
-    @Override
-    public Long updateStoryV2(Long boardId,
-                              StoryRequest updateStoryRequest,
-                              MediaUpdateDto updateMediaRequest,
-                              List<MultipartFile> multipartFiles) {
-        if (!boardService.validateMemberUseBoard(boardId, STORY)) {
-            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        story.changeContent(updateStoryRequest.getContent());
-
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, story);
-
-        story.getBoardHashtags().clear();
-        for (String hashtag : updateStoryRequest.getHashtagList()) {
-            boardService.saveHashtag(story, hashtag);
-        }
-        return story.getId();
-    }
-
-    @Override
-    public Long updateStoryByUsername(Long boardId,
-                                      String username,
-                                      StoryRequest createStoryRequest,
-                                      MediaUpdateDto updateMediaRequest,
-                                      List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
+                            Member member) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -119,7 +61,6 @@ public class StoryCommandServiceImpl implements StoryCommandService {
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         story.changeContent(createStoryRequest.getContent());
-
         mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, story);
 
         story.getBoardHashtags().clear();
@@ -129,50 +70,24 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         return story.getId();
     }
 
-
     @Override
-    public void deleteStory(Long boardId) {
-        if (!boardService.validateMemberUseBoard(boardId, STORY)) {
-            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-        story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-        recommendRepository.deleteAllByBoardId(story.getId());
-
-        storyRepository.delete(story);
-    }
-
-    @Override
-    public void deleteStoryByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public void deleteStory(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+
         story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(story.getId());
-
         storyRepository.delete(story);
     }
 
-    private Story buildStory(StoryRequest createStoryRequest) {
-        Member member = memberQueryService.getSignInMember();
-        Story createdStory = Story.builder()
+    private Story buildStory(StoryRequest createStoryRequest, Member member) {
+        return Story.builder()
                 .member(member)
                 .content(createStoryRequest.getContent())
                 .build();
-        return createdStory;
-    }
-
-    private Story buildStory(StoryRequest createStoryRequest, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-        Story createdStory = Story.builder()
-                .member(member)
-                .content(createStoryRequest.getContent())
-                .build();
-        return createdStory;
     }
 
 }

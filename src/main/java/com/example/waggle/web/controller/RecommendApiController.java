@@ -4,6 +4,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendCommandService;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.converter.MemberConverter;
@@ -35,8 +36,9 @@ public class RecommendApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> recommendBoard(@PathVariable("boardId") Long boardId) {
-        recommendCommandService.handleRecommendation(boardId);
+    public ApiResponseDto<Long> recommendStory(@PathVariable Long boardId,
+                                               @AuthUser Member member) {
+        recommendCommandService.handleRecommendation(boardId, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 

@@ -1,10 +1,12 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
@@ -48,9 +50,10 @@ public class PetApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest createPetRequest,
-                                          @RequestPart(value = "file", required = false) MultipartFile petProfileImg) {
+                                          @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
+                                          @AuthUser Member member) {
         createPetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(petProfileImg, awsS3Service));
-        Long petId = petCommandService.createPet(createPetRequest);
+        Long petId = petCommandService.createPet(createPetRequest, member);
         return ApiResponseDto.onSuccess(petId);
     }
 
@@ -63,7 +66,8 @@ public class PetApiController {
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
                                           @RequestPart @Validated PetRequest updatePetRequest,
                                           @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
-                                          @RequestParam("allowUpload") boolean allowUpload) {
+                                          @RequestParam("allowUpload") boolean allowUpload,
+                                          @AuthUser Member member) {
         String removePrefixProfileUrl = MediaUtil.removePrefix(updatePetRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixProfileUrl);
@@ -72,7 +76,8 @@ public class PetApiController {
             updatePetRequest.setProfileImgUrl(removePrefixProfileUrl);
         }
 
-        Long result = petCommandService.updatePet(petId, updatePetRequest);
+        Long result = petCommandService.updatePet(petId, updatePetRequest, member);
+
         return ApiResponseDto.onSuccess(result);
     }
 
@@ -83,7 +88,7 @@ public class PetApiController {
     @GetMapping("/{memberId}")
     public ApiResponseDto<List<PetSummaryDto>> findPets(@PathVariable("memberId") Long memberId) {
         List<Pet> petsByUsername = petQueryService.getPetsByMemberId(memberId);
-        return ApiResponseDto.onSuccess(PetConverter.toListDto(petsByUsername));
+        return ApiResponseDto.onSuccess(PetConverter.toPetSummaryListDto(petsByUsername));
     }
 
     @Operation(summary = "반려견 삭제 🔑", description = "회원의 특정 반려견의 정보를 삭제합니다.")
@@ -91,8 +96,9 @@ public class PetApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{petId}")
-    public ApiResponseDto<Boolean> deletePet(@PathVariable("petId") Long petId) {
-        petCommandService.deletePet(petId);
+    public ApiResponseDto<Boolean> deletePet(@PathVariable("petId") Long petId,
+                                             @AuthUser Member member) {
+        petCommandService.deletePet(petId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

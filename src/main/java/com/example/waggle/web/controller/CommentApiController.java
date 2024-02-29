@@ -3,7 +3,9 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.service.comment.CommentQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.converter.CommentConverter;
@@ -49,7 +51,7 @@ public class CommentApiController {
                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
-        CommentListDto listDto = CommentConverter.toListDto(pagedComments);
+        CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -60,8 +62,9 @@ public class CommentApiController {
     })
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> createComment(@PathVariable("boardId") Long boardId,
-                                              @RequestBody CommentRequest createCommentRequest) {
-        Long commentId = commentCommandService.createComment(boardId, createCommentRequest);
+                                              @RequestBody CommentRequest createCommentRequest,
+                                              @AuthUser Member member) {
+        Long commentId = commentCommandService.createComment(boardId, createCommentRequest, member);
         return ApiResponseDto.onSuccess(commentId);
     }
 
@@ -71,8 +74,9 @@ public class CommentApiController {
     })
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable("commentId") Long commentId,
-                                              @RequestBody CommentRequest updateCommentRequest) {
-        Long updatedCommentId = commentCommandService.updateComment(commentId, updateCommentRequest);
+                                              @RequestBody CommentRequest updateCommentRequest,
+                                              @AuthUser Member member) {
+        Long updatedCommentId = commentCommandService.updateComment(commentId, updateCommentRequest, member);
         return ApiResponseDto.onSuccess(updatedCommentId);
     }
 
@@ -81,8 +85,9 @@ public class CommentApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{commentId}")
-    public ApiResponseDto<Boolean> deleteComment(@PathVariable("commentId") Long commentId) {
-        commentCommandService.deleteComment(commentId);
+    public ApiResponseDto<Boolean> deleteComment(@PathVariable("commentId") Long commentId,
+                                                 @AuthUser Member member) {
+        commentCommandService.deleteComment(commentId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

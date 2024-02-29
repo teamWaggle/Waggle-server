@@ -1,9 +1,11 @@
 package com.example.waggle.domain.recommend.service;
 
-public interface RecommendCommandService {
-    void handleRecommendation(Long boardId);
+import com.example.waggle.domain.member.entity.Member;
 
-    void handleRecommendationByUsername(Long boardId, String username);
+public interface RecommendCommandService {
+
+    void handleRecommendation(Long boardId, Member member);
 
     void deleteRecommendByBoard(Long boardId);
+
 }

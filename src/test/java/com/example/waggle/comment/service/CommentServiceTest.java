@@ -10,9 +10,15 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
 import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
+import com.example.waggle.web.dto.comment.CommentRequest;
+import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,8 +51,13 @@ class CommentServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
     MemberCredentialsDto signUpDto1;
     MemberCredentialsDto signUpDto2;
+=======
+    MemberRequest.AccessDto signUpDto1;
+    MemberRequest.AccessDto signUpDto2;
+>>>>>>> develop
 
 
     StoryCreateDto storyWriteDto1;
@@ -76,12 +87,20 @@ class CommentServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
+<<<<<<< HEAD
         signUpDto1 = MemberCredentialsDto.builder()
+=======
+        signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("ertyuio")
                 .password("string")
                 .build();
 
+<<<<<<< HEAD
         signUpDto2 = MemberCredentialsDto.builder()
+=======
+        signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("78347dj")
                 .password("string")
                 .build();

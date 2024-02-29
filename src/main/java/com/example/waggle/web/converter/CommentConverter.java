@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class CommentConverter {
 
-    public static CommentViewDto toViewDto(Comment comment) {
+    public static CommentViewDto toCommentViewDto(Comment comment) {
         return CommentViewDto.builder()
                 .commentId(comment.getId())
                 .content(comment.getContent())
@@ -23,9 +23,9 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentListDto toListDto(Page<Comment> pagedComment) {
+    public static CommentListDto toCommentListDto(Page<Comment> pagedComment) {
         List<CommentViewDto> collect = pagedComment.stream()
-                .map(CommentConverter::toViewDto).collect(Collectors.toList());
+                .map(CommentConverter::toCommentViewDto).collect(Collectors.toList());
         return CommentListDto.builder()
                 .commentList(collect)
                 .isFirst(pagedComment.isFirst())

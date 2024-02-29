@@ -6,10 +6,9 @@ import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryListDto;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class StoryConverter {
 

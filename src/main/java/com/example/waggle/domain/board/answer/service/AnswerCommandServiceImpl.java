@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -34,74 +35,27 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
-    private final MemberQueryService memberQueryService;
     private final CommentCommandService commentCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
 
-
     @Override
     public Long createAnswer(Long questionId,
                              AnswerRequest createAnswerRequest,
-                             List<MultipartFile> multiPartFiles) {
-        Member signInMember = memberQueryService.getSignInMember();
-        Answer answer = buildAnswer(questionId, createAnswerRequest, signInMember);
-        answerRepository.save(answer);
-
-        mediaCommandService.createMedia(multiPartFiles, answer);
-        return answer.getId();
-    }
-
-    @Override
-    public Long createAnswerByUsername(Long questionId,
-                                       AnswerRequest createAnswerRequest,
-                                       List<MultipartFile> multipartFiles,
-                                       String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+                             List<MultipartFile> multipartFiles,
+                             Member member) {
         Answer answer = buildAnswer(questionId, createAnswerRequest, member);
         answerRepository.save(answer);
-
         mediaCommandService.createMedia(multipartFiles, answer);
         return answer.getId();
     }
 
-
     @Override
     public Long updateAnswer(Long boardId,
                              AnswerRequest updateAnswerRequest,
+                             MediaUpdateDto updateMediaRequest,
                              List<MultipartFile> multipartFiles,
-                             List<String> deleteFiles) {
-        Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        answer.changeAnswer(updateAnswerRequest.getContent());
-        mediaCommandService.updateMedia(multipartFiles, deleteFiles, answer);
-        return answer.getId();
-    }
-
-    @Override
-    public Long updateAnswerV2(Long boardId,
-                               AnswerRequest updateAnswerRequest,
-                               MediaUpdateDto updateMediaRequest,
-                               List<MultipartFile> multipartFiles) {
-        if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
-            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        answer.changeAnswer(updateAnswerRequest.getContent());
-
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, answer);
-
-        return answer.getId();
-    }
-
-    @Override
-    public Long updateAnswerByUsername(Long boardId, String username, AnswerRequest updateAnswerRequest,
-                                       MediaUpdateDto updateMediaRequest, List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+                             Member member) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -109,50 +63,32 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         answer.changeAnswer(updateAnswerRequest.getContent());
-
         mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, answer);
 
         return answer.getId();
     }
 
     @Override
-    public void deleteAnswer(Long boardId) {
-        if (!boardService.validateMemberUseBoard(boardId, ANSWER)) {
-            throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Answer answer = answerRepository.findById(boardId)
-                .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        answer.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-        recommendRepository.deleteAllByBoardId(boardId);
-
-        answerRepository.delete(answer);
-    }
-
-    @Override
-    public void deleteAnswerByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
+    public void deleteAnswer(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, ANSWER, member)) {
             throw new AnswerHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Answer answer = answerRepository.findById(boardId)
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        answer.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+        answer.getComments()
+                .forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(boardId);
-
         answerRepository.delete(answer);
     }
 
-    private Answer buildAnswer(Long questionId, AnswerRequest createAnswerRequest, Member signInMember) {
+    private Answer buildAnswer(Long questionId, AnswerRequest createAnswerRequest, Member member) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-        Answer answer = Answer.builder()
+        return Answer.builder()
                 .content(createAnswerRequest.getContent())
-                .member(signInMember)
+                .member(member)
                 .question(question)
                 .build();
-        return answer;
     }
 }

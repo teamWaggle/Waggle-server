@@ -14,8 +14,8 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        log.info("entry");
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) throws IOException {
         ErrorStatus errorStatus = ErrorStatus.AUTH_MUST_AUTHORIZED_URI;
         CustomErrorSend.handleException(response, errorStatus, authException.getMessage());
     }

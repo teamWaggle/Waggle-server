@@ -5,9 +5,9 @@ import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.annotation.AuthUser;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
@@ -56,9 +56,10 @@ public class ScheduleApiController {
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@AuthUser UserDetails userDetails,
                                                @PathVariable("teamId") Long teamId,
-                                               @RequestBody ScheduleRequest createScheduleRequest) {
+                                               @RequestBody ScheduleRequest createScheduleRequest,
+                                               @AuthUser Member member) {
         Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest,
-                userDetails.getUsername());
+                member);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -67,9 +68,9 @@ public class ScheduleApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/members/{scheduleId}")
-    public ApiResponseDto<Long> addSchedule(@AuthUser UserDetails userDetails,
-                                            @PathVariable("scheduleId") Long scheduleId) {
-        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, userDetails.getUsername());
+    public ApiResponseDto<Long> addSchedule(@PathVariable("scheduleId") Long scheduleId,
+                                            @AuthUser Member member) {
+        Long createdScheduleId = scheduleCommandService.addMemberSchedule(scheduleId, member);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -80,7 +81,7 @@ public class ScheduleApiController {
     @GetMapping("/{scheduleId}")
     public ApiResponseDto<ScheduleDetailDto> getSchedule(@PathVariable("scheduleId") Long scheduleId) {
         Schedule schedule = scheduleQueryService.getScheduleById(scheduleId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleResponseDto(schedule));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleDetailDto(schedule));
     }
 
     @Operation(summary = "일정 삭제 🔑", description = "특정 일정을 삭제합니다.")
@@ -88,8 +89,9 @@ public class ScheduleApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{scheduleId}")
-    public ApiResponseDto<Boolean> deleteScheduleInTeam(@PathVariable("scheduleId") Long scheduleId) {
-        scheduleCommandService.deleteSchedule(scheduleId);
+    public ApiResponseDto<Boolean> deleteScheduleInTeam(@PathVariable("scheduleId") Long scheduleId,
+                                                        @AuthUser Member member) {
+        scheduleCommandService.deleteSchedule(scheduleId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -99,8 +101,9 @@ public class ScheduleApiController {
     })
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<Long> updateSchedule(@PathVariable("scheduleId") Long scheduleId,
-                                               @RequestBody ScheduleRequest updateScheduleRequest) {
-        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, updateScheduleRequest);
+                                               @RequestBody ScheduleRequest updateScheduleRequest,
+                                               @AuthUser Member member) {
+        Long updatedScheduleId = scheduleCommandService.updateSchedule(scheduleId, updateScheduleRequest, member);
         return ApiResponseDto.onSuccess(updatedScheduleId);
     }
 
@@ -110,8 +113,8 @@ public class ScheduleApiController {
     })
     @DeleteMapping("/{scheduleId}/members")
     public ApiResponseDto<Boolean> deleteScheduleInMember(@PathVariable("scheduleId") Long scheduleId,
-                                                          @AuthUser UserDetails userDetails) {
-        scheduleCommandService.deleteMemberSchedule(scheduleId, userDetails.getUsername());
+                                                          @AuthUser Member member) {
+        scheduleCommandService.deleteMemberSchedule(scheduleId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -122,7 +125,7 @@ public class ScheduleApiController {
     @GetMapping("/teams/{teamId}")
     public ApiResponseDto<ScheduleListDto> getSchedulesByTeam(@PathVariable("teamId") Long teamId) {
         List<Schedule> schedules = scheduleQueryService.getTeamSchedules(teamId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
     @Operation(summary = "특정 팀의 모든 일정 조회", description = "특정 팀의 모든 일정을 가져옵니다.")
@@ -134,7 +137,7 @@ public class ScheduleApiController {
                                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 12, latestStart);
         Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(teamId, pageable);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(pagedSchedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(pagedSchedules));
     }
 
     @Operation(summary = "특정 사용자의 모든 일정 조회", description = "특정 사용자가 선택한 모든 일정을 가져옵니다.")
@@ -144,7 +147,7 @@ public class ScheduleApiController {
     @GetMapping("/members/{memberId}")
     public ApiResponseDto<ScheduleListDto> getSchedulesByMember(@PathVariable("memberId") Long memberId) {
         List<Schedule> schedules = scheduleQueryService.getSchedulesByMember(memberId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
     @Operation(summary = "특정 사용자가 작성한 일정 조회", description = "특정 사용자가 작성한 모든 일정을 가져옵니다.")
@@ -154,7 +157,7 @@ public class ScheduleApiController {
     @GetMapping("/writers/{memberId}")
     public ApiResponseDto<ScheduleListDto> getSchedulesByWriter(@PathVariable("memberId") Long memberId) {
         List<Schedule> schedules = scheduleQueryService.getSchedulesByWriter(memberId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
     @Operation(summary = "특정 팀의 월간 일정 조회", description = "특정 팀의 스케줄 전체를 월 단위로 가져옵니다.")
@@ -166,7 +169,7 @@ public class ScheduleApiController {
                                                                       @RequestParam("year") int year,
                                                                       @RequestParam("month") int month) {
         List<Schedule> schedules = scheduleQueryService.getMonthlyTeamSchedule(teamId, year, month);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
     @Operation(summary = "특정 사용자의 월간 일정 조회", description = "특정 사용자가 선택한 팀 스케줄 전체를 월단위로 가져옵니다.")
@@ -178,7 +181,7 @@ public class ScheduleApiController {
                                                                         @RequestParam("year") int year,
                                                                         @RequestParam("month") int month) {
         List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(memberId, year, month);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
     @Operation(summary = "기간 해당 팀 일정 조회", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
@@ -190,7 +193,7 @@ public class ScheduleApiController {
                                                                    @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
                                                                    @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
         List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toListDto(schedules));
+        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
     @Operation(summary = "스케줄 선택 멤버 조회", description = "특정한 팀 스케줄을 선택한 멤버들을 조회합니다.")
@@ -198,7 +201,8 @@ public class ScheduleApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/{scheduleId}/members")
-    public ApiResponseDto<MemberSummaryListDto> getMembersBySchedules(@PathVariable("scheduleId") Long scheduleId) {
+    public ApiResponseDto<MemberSummaryListDto> getMembersBySchedules(@PathVariable("scheduleId") Long
+                                                                              scheduleId) {
         List<Member> memberBySchedule = scheduleQueryService.getMemberBySchedule(scheduleId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(memberBySchedule));
     }

@@ -16,9 +16,7 @@ import java.io.IOException;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        log.info("denied");
-//        response.sendError(HttpServletResponse.SC_FORBIDDEN);
         ErrorStatus errorStatus = ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI;
-        CustomErrorSend.handleException(response,errorStatus, accessDeniedException.getMessage());
+        CustomErrorSend.handleException(response, errorStatus, accessDeniedException.getMessage());
     }
 }

@@ -45,7 +45,7 @@ public class Siren extends Board {
         this.title = updateSirenRequest.getTitle();
         this.petBreed = updateSirenRequest.getPetBreed();
         this.petAge = updateSirenRequest.getPetAge();
-        this.petGender = updateSirenRequest.getPetGender();
+        this.petGender = Gender.valueOf(updateSirenRequest.getPetGender());
         this.lostDate = updateSirenRequest.getLostDate();
         this.lostLocate = updateSirenRequest.getLostLocate();
         this.contact = updateSirenRequest.getContact();
@@ -53,5 +53,4 @@ public class Siren extends Board {
         this.category = SirenCategory.valueOf(updateSirenRequest.getCategory());
         this.status = ResolutionStatus.valueOf(updateSirenRequest.getStatus());
     }
-
 }

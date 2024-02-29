@@ -61,4 +61,5 @@ public class MemberRequest {
     public static class PasswordDto {
         private String password;
     }
+    
 }

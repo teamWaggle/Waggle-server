@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.service.StoryCommandService;
 import com.example.waggle.domain.board.story.service.StoryQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
@@ -52,8 +54,9 @@ public class StoryApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createStory(@RequestPart("createStoryRequest") StoryRequest createStoryRequest,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
-        Long boardId = storyCommandService.createStory(createStoryRequest, files);
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                            @AuthUser Member member) {
+        Long boardId = storyCommandService.createStory(createStoryRequest, files, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -65,12 +68,13 @@ public class StoryApiController {
     public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
                                             @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
                                             @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+                                            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                            @AuthUser Member member) {
         updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        storyCommandService.updateStoryV2(storyId, updateStoryRequest, updateMediaRequest, files);
+        storyCommandService.updateStory(storyId, updateStoryRequest, updateMediaRequest, files, member);
         return ApiResponseDto.onSuccess(storyId);
     }
 
@@ -116,8 +120,9 @@ public class StoryApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{storyId}")
-    public ApiResponseDto<Boolean> deleteStory(@PathVariable("storyId") Long storyId) {
-        storyCommandService.deleteStory(storyId);
+    public ApiResponseDto<Boolean> deleteStory(@PathVariable("storyId") Long storyId,
+                                               @AuthUser Member member) {
+        storyCommandService.deleteStory(storyId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

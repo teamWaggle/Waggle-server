@@ -33,16 +33,15 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final RecommendRepository recommendRepository;
-    private final MemberQueryService memberQueryService;
     private final AnswerCommandService answerCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
 
-
     @Override
     public Long createQuestion(QuestionRequest createQuestionRequest,
-                               List<MultipartFile> multipartFiles) {
-        Question createdQuestion = buildQuestion(createQuestionRequest);
+                               List<MultipartFile> multipartFiles,
+                               Member member) {
+        Question createdQuestion = buildQuestion(createQuestionRequest, member);
         Question question = questionRepository.save(createdQuestion);
 
         for (String hashtag : createQuestionRequest.getHashtagList()) {
@@ -51,52 +50,20 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         mediaCommandService.createMedia(multipartFiles, question);
         return question.getId();
     }
-
-    @Override
-    public Long createQuestionByUsername(QuestionRequest createQuestionRequest,
-                                         List<MultipartFile> multipartFiles,
-                                         String username) {
-        Question createdQuestion = buildQuestion(createQuestionRequest, username);
-        Question question = questionRepository.save(createdQuestion);
-
-        for (String hashtag : createQuestionRequest.getHashtagList()) {
-            boardService.saveHashtag(question, hashtag);
-        }
-        mediaCommandService.createMedia(multipartFiles, question);
-        return question.getId();
-    }
-
 
     @Override
     public Long updateQuestion(Long boardId,
                                QuestionRequest updateQuestionRequest,
+                               MediaUpdateDto updateMediaRequest,
                                List<MultipartFile> multipartFiles,
-                               List<String> deleteFiles) {
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        mediaCommandService.updateMedia(multipartFiles, deleteFiles, question);
-
-        question.getBoardHashtags().clear();
-        for (String hashtag : updateQuestionRequest.getHashtagList()) {
-            boardService.saveHashtag(question, hashtag);
-        }
-        return question.getId();
-    }
-
-    @Override
-    public Long updateQuestionV2(Long boardId,
-                                 QuestionRequest updateQuestionRequest,
-                                 MediaUpdateDto updateMediaRequest,
-                                 List<MultipartFile> multipartFiles) {
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION)) {
+                               Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         question.changeQuestion(updateQuestionRequest);
-
         mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, question);
 
         question.getBoardHashtags().clear();
@@ -107,49 +74,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
-    public Long updateQuestionByUsername(Long boardId,
-                                         String username,
-                                         QuestionRequest updateQuestionRequest,
-                                         MediaUpdateDto updateMediaRequest,
-                                         List<MultipartFile> multipartFiles) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
-            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        question.changeQuestion(updateQuestionRequest);
-
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, question);
-
-        question.getBoardHashtags().clear();
-        for (String hashtag : updateQuestionRequest.getHashtagList()) {
-            boardService.saveHashtag(question, hashtag);
-        }
-        return question.getId();
-    }
-
-    @Override
-    public void deleteQuestion(Long boardId) {
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION)) {
-            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
-        answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
-
-        recommendRepository.deleteAllByBoardId(question.getId());
-
-        questionRepository.delete(question);
-    }
-
-    @Override
-    public void deleteQuestionByUsername(Long boardId, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    public void deleteQuestion(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
@@ -157,32 +82,17 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
-        answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId()));
-
+        answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId(), member));
         recommendRepository.deleteAllByBoardId(question.getId());
-
         questionRepository.delete(question);
     }
 
-    private Question buildQuestion(QuestionRequest createQuestionRequest) {
-        Member member = memberQueryService.getSignInMember();
-
-        Question createdQuestion = Question.builder()
+    private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {
+        return Question.builder()
                 .title(createQuestionRequest.getTitle())
                 .content(createQuestionRequest.getContent())
                 .status(ResolutionStatus.valueOf(createQuestionRequest.getStatus()))
-                .member(member).build();
-        return createdQuestion;
-    }
-
-    private Question buildQuestion(QuestionRequest createQuestionRequest, String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-
-        Question createdQuestion = Question.builder()
-                .title(createQuestionRequest.getTitle())
-                .content(createQuestionRequest.getContent())
-                .status(ResolutionStatus.valueOf(createQuestionRequest.getStatus()))
-                .member(member).build();
-        return createdQuestion;
+                .member(member)
+                .build();
     }
 }

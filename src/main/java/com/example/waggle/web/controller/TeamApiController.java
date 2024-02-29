@@ -1,13 +1,14 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.media.service.AwsS3Service;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.annotation.AuthUser;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest;
@@ -22,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,9 +53,10 @@ public class TeamApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
-                                           @RequestPart(value = "file", required = false) MultipartFile teamCoverImg) {
+                                           @RequestPart(value = "file", required = false) MultipartFile teamCoverImg,
+                                           @AuthUser Member member) {
         createTeamRequest.setCoverImageUrl(MediaUtil.saveProfileImg(teamCoverImg, awsS3Service));
-        Long createdTeamId = teamCommandService.createTeam(createTeamRequest);
+        Long createdTeamId = teamCommandService.createTeam(createTeamRequest, member);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
 
@@ -67,7 +68,8 @@ public class TeamApiController {
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
                                            @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
                                            @RequestPart(value = "file", required = false) MultipartFile teamCoverImg,
-                                           @RequestParam boolean allowUpload) {
+                                           @RequestParam boolean allowUpload,
+                                           @AuthUser Member member) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
@@ -75,7 +77,7 @@ public class TeamApiController {
         } else {
             updateTeamRequest.setCoverImageUrl(removePrefixCoverUrl);
         }
-        Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest);
+        Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest, member);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
 
@@ -84,8 +86,9 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{teamId}")
-    public ApiResponseDto<Boolean> deleteTeam(@PathVariable("teamId") Long teamId) {
-        teamCommandService.deleteTeam(teamId);
+    public ApiResponseDto<Boolean> deleteTeam(@PathVariable("teamId") Long teamId,
+                                              @AuthUser Member member) {
+        teamCommandService.deleteTeam(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -94,10 +97,10 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{teamId}/members/{memberId}")
-    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@AuthUser UserDetails userDetails,
-                                                            @PathVariable("teamId") Long teamId,
-                                                            @PathVariable("memberId") Long memberId) {
-        teamCommandService.deleteTeamMemberByLeader(teamId, memberId, userDetails.getUsername());
+    public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable("teamId") Long teamId,
+                                                            @PathVariable("memberId") Long memberId,
+                                                            @AuthUser Member member) {
+        teamCommandService.deleteTeamMemberByLeader(teamId, memberId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -106,9 +109,9 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{teamId}/members")
-    public ApiResponseDto<Boolean> deleteTeamMemberByMyself(@AuthUser UserDetails userDetails,
-                                                            @PathVariable Long teamId) {
-        teamCommandService.deleteTeamMemberByMyself(teamId, userDetails.getUsername());
+    public ApiResponseDto<Boolean> deleteTeamMemberByMyself(@PathVariable Long teamId,
+                                                            @AuthUser Member member) {
+        teamCommandService.deleteTeamMemberByMyself(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -117,21 +120,10 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PutMapping("/{teamId}/leader/{memberId}")
-    public ApiResponseDto<Boolean> changeTeamLeader(@AuthUser UserDetails userDetails,
-                                                    @PathVariable("teamId") Long teamId,
-                                                    @PathVariable("memberId") Long memberId) {
-        teamCommandService.changeTeamLeader(teamId, memberId, userDetails.getUsername());
-        return ApiResponseDto.onSuccess(Boolean.TRUE);
-    }
-
-    @Operation(summary = "팀 참여 요청 🔑", description = "사용자가 팀에 참여 요청을 합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @PostMapping("/{teamId}/participation")
-    public ApiResponseDto<Boolean> requestParticipation(@AuthUser UserDetails userDetails,
-                                                        @PathVariable("teamId") Long teamId) {
-        teamCommandService.requestParticipation(teamId, userDetails.getUsername());
+    public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable("teamId") Long teamId,
+                                                    @PathVariable("newLeaderId") Long newLeaderId,
+                                                    @AuthUser Member member) {
+        teamCommandService.changeTeamLeader(teamId, newLeaderId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -140,11 +132,11 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PutMapping("/{teamId}/participation/{memberId}")
-    public ApiResponseDto<Boolean> respondToParticipation(@AuthUser UserDetails userDetails,
-                                                          @PathVariable("teamId") Long teamId,
+    public ApiResponseDto<Boolean> respondToParticipation(@PathVariable("teamId") Long teamId,
                                                           @PathVariable("memberId") Long memberId,
-                                                          @RequestParam("accept") boolean accept) {
-        teamCommandService.respondToParticipation(teamId, memberId, userDetails.getUsername(), accept);
+                                                          @RequestParam("accept") boolean accept,
+                                                          @AuthUser Member leader) {
+        teamCommandService.respondToParticipation(teamId, memberId, leader, accept);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -157,7 +149,6 @@ public class TeamApiController {
         Team team = teamQueryService.getTeamById(teamId);
         return ApiResponseDto.onSuccess(TeamConverter.toDetailDto(team));
     }
-
 
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
     @ApiErrorCodeExample({
@@ -172,4 +163,14 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teams));
     }
 
+    @Operation(summary = "팀 참여 요청 🔑", description = "사용자가 팀에 참여 요청을 합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PostMapping("/{teamId}/participation")
+    public ApiResponseDto<Boolean> requestParticipation(@PathVariable("teamId") Long teamId,
+                                                        @AuthUser Member member) {
+        teamCommandService.requestParticipation(teamId, member);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
 }

@@ -3,8 +3,10 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.service.RecommendQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
@@ -56,8 +58,9 @@ public class QuestionApiController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createQuestion(
             @RequestPart("createQuestionRequest") @Validated QuestionRequest createQuestionRequest,
-            @RequestPart(required = false, value = "files") List<MultipartFile> files) {
-        Long boardId = questionCommandService.createQuestion(createQuestionRequest, files);
+            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+            @AuthUser Member member) {
+        Long boardId = questionCommandService.createQuestion(createQuestionRequest, files, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -69,12 +72,13 @@ public class QuestionApiController {
     public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
                                                @RequestPart("updateQuestionRequest") @Validated QuestionRequest updateQuestionRequest,
                                                @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
-                                               @RequestPart(required = false, value = "files") List<MultipartFile> files) {
+                                               @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                               @AuthUser Member member) {
         updateMediaRequest.getMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        questionCommandService.updateQuestionV2(questionId, updateQuestionRequest, updateMediaRequest, files);
+        questionCommandService.updateQuestion(questionId, updateQuestionRequest, updateMediaRequest, files, member);
         return ApiResponseDto.onSuccess(questionId);
     }
 
@@ -119,13 +123,15 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(detailDto);
     }
 
+
     @Operation(summary = "질문 삭제 🔑", description = "특정 질문을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{questionId}")
-    public ApiResponseDto<Boolean> deleteQuestion(@PathVariable("questionId") Long questionId) {
-        questionCommandService.deleteQuestion(questionId);
+    public ApiResponseDto<Boolean> deleteQuestion(@PathVariable("questionId") Long questionId,
+                                                  @AuthUser Member member) {
+        questionCommandService.deleteQuestion(questionId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

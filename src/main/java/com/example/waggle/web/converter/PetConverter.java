@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PetConverter {
-    public static PetSummaryDto toSummaryDto(Pet pet) {
+    public static PetSummaryDto toPetSummaryDto(Pet pet) {
         return PetSummaryDto.builder()
                 .petId(pet.getId())
                 .profileImgUrl(MediaUtil.getProfileImg(pet))
@@ -18,18 +18,19 @@ public class PetConverter {
                 .build();
     }
 
-    public static PetDetailDto toDetailDto(Pet pet) {
+    public static PetDetailDto toPetDetailDto(Pet pet) {
         return PetDetailDto.builder()
                 .petId(pet.getId())
                 .breed(pet.getBreed())
                 .age(pet.getAge())
+                .description(pet.getDescription())
                 .gender(pet.getGender())
                 .name(pet.getName())
                 .profileImgUrl(MediaUtil.getProfileImg(pet))
                 .build();
     }
 
-    public static List<PetSummaryDto> toListDto(List<Pet> pets) {
-        return pets.stream().map(PetConverter::toSummaryDto).collect(Collectors.toList());
+    public static List<PetSummaryDto> toPetSummaryListDto(List<Pet> pets) {
+        return pets.stream().map(PetConverter::toPetSummaryDto).collect(Collectors.toList());
     }
 }

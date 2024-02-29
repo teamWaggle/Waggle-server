@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class SirenConverter {
 
-    public static SirenSummaryDto toSummaryDto(Siren siren) {
+    public static SirenSummaryDto toSirenSummaryDto(Siren siren) {
         return SirenSummaryDto.builder()
                 .boardId(siren.getId())
                 .thumbnail(MediaUtil.getThumbnail(siren))
@@ -22,14 +22,15 @@ public class SirenConverter {
                 .createdDate(siren.getCreatedDate())
                 .category(siren.getCategory())
                 .title(siren.getTitle())
+                .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .isOwner(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 
-    public static SirenListDto toListDto(Page<Siren> pagedSiren) {
+    public static SirenListDto toSirenListDto(Page<Siren> pagedSiren) {
         List<SirenSummaryDto> collect = pagedSiren.stream()
-                .map(SirenConverter::toSummaryDto).collect(Collectors.toList());
+                .map(SirenConverter::toSirenSummaryDto).collect(Collectors.toList());
         return SirenListDto.builder()
                 .sirenList(collect)
                 .isFirst(pagedSiren.isFirst())
@@ -38,7 +39,7 @@ public class SirenConverter {
                 .build();
     }
 
-    public static SirenDetailDto toDetailDto(Siren siren) {
+    public static SirenDetailDto toSirenDetailDto(Siren siren) {
         return SirenDetailDto.builder()
                 .boardId(siren.getId())
                 .title(siren.getTitle())
@@ -52,6 +53,7 @@ public class SirenConverter {
                 .createdDate(siren.getCreatedDate())
                 .content(siren.getContent())
                 .mediaList(MediaUtil.getBoardMedias(siren))
+                .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .isOwner(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();

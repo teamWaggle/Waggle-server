@@ -3,10 +3,12 @@ package com.example.waggle.web.controller;
 import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.security.annotation.AuthUser;
+import com.example.waggle.global.annotation.auth.AuthUser;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,9 +42,9 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@AuthUser UserDetails userDetails,
-                                              @RequestParam("nickname") String nickname) {
-        Long follow = followCommandService.follow(userDetails.getUsername(), nickname);
+    public ApiResponseDto<Long> requestFollow(@RequestParam("toMemberId") Long toMemberId,
+                                              @AuthUser Member member) {
+        Long follow = followCommandService.follow(member, toMemberId);
         return ApiResponseDto.onSuccess(follow);
     }
 
@@ -51,9 +53,9 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@AuthUser UserDetails userDetails,
-                                                   @RequestParam("nickname") String nickname) {
-        followCommandService.unFollow(userDetails.getUsername(), nickname);
+    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam("toMemberId") Long toMemberId,
+                                                   @AuthUser Member member) {
+        followCommandService.unFollow(member, toMemberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -62,6 +64,7 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/list/following")
+
     public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberListByUsername(@AuthUser UserDetails userDetails) {
         List<Follow> followings = followQueryService.getFollowingsByUsername(userDetails.getUsername());
         List<MemberSummaryDto> collect = followings.stream()
@@ -86,8 +89,8 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/list/follower")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberListByUsername(@AuthUser UserDetails userDetails) {
-        List<Follow> followers = followQueryService.getFollowersByUsername(userDetails.getUsername());
+    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberListByUsername(@AuthUser Member member) {
+        List<Follow> followers = followQueryService.getFollowersByUsername(member.getUsername());
         List<MemberSummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);

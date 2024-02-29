@@ -1,4 +1,4 @@
-package com.example.waggle.global.security;
+package com.example.waggle.global.security.object;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
