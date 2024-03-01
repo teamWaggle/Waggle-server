@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.member;
 
 import com.example.waggle.global.validation.ValidationGroups;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -10,13 +11,12 @@ import java.time.LocalDate;
 
 public class MemberRequest {
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AccessDto {
+    @Schema
+    public static class MemberCredentialsDto {
         @NotBlank
         private String email;
 
@@ -25,14 +25,12 @@ public class MemberRequest {
         private String password;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Put {
-
+    @Schema
+    public static class MemberUpdateDto {
         private String nickname;
         private String name;
         @NotBlank(message = "비밀번호를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
@@ -42,27 +40,26 @@ public class MemberRequest {
         private String profileImgUrl;
     }
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RegisterDto {
-
+    @Schema
+    public static class MemberProfileDto {
         private String nickname;
         private String name;
         private LocalDate birthday;
         private String userUrl;
         private String profileImgUrl;
-
     }
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema
     public static class PasswordDto {
         private String password;
     }
+    
 }

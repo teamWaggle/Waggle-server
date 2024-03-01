@@ -2,39 +2,27 @@ package com.example.waggle.web.dto.pet;
 
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class PetRequest {
+    @NotNull
+    private String name;
+    private String description;
+    private String breed;
+    private String age;
+    private String profileImgUrl;
+    private boolean isUploadProfile;
+    @ValidEnum(target = Gender.class)
+    private String gender;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Post {
-        @NotNull
-        private String name;
-        private String breed;
-        private String age;
-        private String description;
-        private String profileImgUrl;
-        @ValidEnum(target = Gender.class)
-        private String gender;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class PostList {
-        @Builder.Default
-        private List<Post> petList = new ArrayList<>();
-    }
 }

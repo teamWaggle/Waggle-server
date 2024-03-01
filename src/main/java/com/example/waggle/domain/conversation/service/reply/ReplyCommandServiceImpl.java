@@ -24,73 +24,36 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final MemberQueryService memberQueryService;
     private final MentionCommandService mentionCommandService;
 
     @Override
-    public Long createReply(Long commentId, ReplyRequest.Post replyWriteDto) {
-        Member member = memberQueryService.getSignInMember();
+    public Long createReply(Long commentId, ReplyRequest createReplyRequest, Member member) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        Reply reply = buildReply(member, replyWriteDto, comment);
+        Reply reply = buildReply(comment, createReplyRequest, member);
         replyRepository.save(reply);
+        mentionCommandService.createMentions(reply, createReplyRequest.getMentionedMemberList());
 
-        mentionCommandService.createMentions(reply, replyWriteDto.getMentionedNickname());
         return reply.getId();
     }
 
     @Override
-    public Long createReply(Long commentId, Member member, ReplyRequest.Post replyWriteDto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
-
-        Reply reply = buildReply(member, replyWriteDto, comment);
-        replyRepository.save(reply);
-
-        mentionCommandService.createMentions(reply, replyWriteDto.getMentionedNickname());
-        return reply.getId();
-    }
-
-    @Override
-    public Long updateReply(Long replyId, ReplyRequest.Post replyWriteDto) {
-        Reply reply = getReplyById(replyId);
-        Member member = memberQueryService.getSignInMember();
+    public Long updateReply(Long replyId, ReplyRequest updateReplyRequest, Member member) {
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
         validateMember(reply, member);
-        reply.changeContent(replyWriteDto.getContent());
-
-        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
+        reply.changeContent(updateReplyRequest.getContent());
+        mentionCommandService.updateMentions(reply, updateReplyRequest.getMentionedMemberList());
         return reply.getId();
-    }
-
-    @Override
-    public Long updateReply(Long replyId, Member member, ReplyRequest.Post replyWriteDto) {
-        Reply reply = getReplyById(replyId);
-        validateMember(reply, member);
-        reply.changeContent(replyWriteDto.getContent());
-
-        mentionCommandService.updateMentions(reply, replyWriteDto.getMentionedNickname());
-        return reply.getId();
-    }
-
-    @Override
-    public void deleteReply(Long replyId) {
-        Reply reply = getReplyById(replyId);
-        Member member = memberQueryService.getSignInMember();
-        validateMember(reply, member);
-        replyRepository.delete(reply);
     }
 
     @Override
     public void deleteReply(Long replyId, Member member) {
-        Reply reply = getReplyById(replyId);
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
         validateMember(reply, member);
         replyRepository.delete(reply);
-    }
-
-    private Reply getReplyById(Long replyId) {
-        return replyRepository.findById(replyId)
-                .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
     }
 
     public void validateMember(Reply reply, Member member) {
@@ -99,11 +62,11 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         }
     }
 
-    private static Reply buildReply(Member member, ReplyRequest.Post replyWriteDto, Comment comment) {
+    private static Reply buildReply(Comment comment, ReplyRequest createReplyRequest, Member member) {
         return Reply.builder()
                 .member(member)
                 .comment(comment)
-                .content(replyWriteDto.getContent())
+                .content(createReplyRequest.getContent())
                 .build();
     }
 }

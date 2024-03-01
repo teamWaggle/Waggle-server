@@ -4,34 +4,34 @@ import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
-import lombok.*;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class SirenRequest {
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Post {
-        private String title;
-        private String petKind;
-        private String petAge;
+    private String title;
+    private String petBreed;
+    private String petAge;
 
-        private String contact;
-        private String lostLocate;
-        private LocalDateTime lostDate;
-        private String content;
+    @ValidEnum(target = Gender.class)
+    private String petGender;
 
-        @ValidEnum(target = SirenCategory.class)
-        private String category;
+    private String contact;
+    private String lostLocate;
+    private LocalDateTime lostDate;
+    private String content;
 
-        @ValidEnum(target = ResolutionStatus.class)
-        private String status;
+    @ValidEnum(target = SirenCategory.class)
+    private String category;
 
-        @ValidEnum(target = Gender.class)
-        private String petGender;
-    }
+    @ValidEnum(target = ResolutionStatus.class)
+    private String status;
 }

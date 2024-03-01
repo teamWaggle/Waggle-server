@@ -7,6 +7,7 @@ import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.JwtAuthenticationException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.global.security.object.JwtToken;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
@@ -57,10 +58,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public JwtToken login(MemberRequest.AccessDto request) {
-        Member member = memberQueryService.getMemberByEmail(request.getEmail());
+    public JwtToken login(MemberCredentialsDto loginRequest) {
+        Member member = memberQueryService.getMemberByEmail(loginRequest.getEmail());
         Authentication authentication;
-        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
+
             throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
         authentication = new UsernamePasswordAuthenticationToken(member, "",

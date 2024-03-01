@@ -1,21 +1,18 @@
 package com.example.waggle.web.dto.comment;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class CommentRequest {
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Post {
-        private String content;
-        @Builder.Default
-        List<String> mentionedNickname = new ArrayList<>();
-    }
+    private String content;
+    List<String> mentionedMemberList;
 }

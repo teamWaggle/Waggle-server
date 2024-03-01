@@ -2,24 +2,24 @@ package com.example.waggle.web.dto.schedule;
 
 import com.example.waggle.domain.schedule.entity.ScheduleStatus;
 import com.example.waggle.domain.schedule.entity.TeamColor;
-import com.example.waggle.web.dto.member.MemberResponse;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ScheduleResponse {
 
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Data
     @Builder
-    public static class DetailDto {
-        private Long scheduleId;
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class ScheduleDetailDto {
+        private Long boardId;
         private Long teamId;
         private TeamColor teamColor;
         private String title;
@@ -28,18 +28,18 @@ public class ScheduleResponse {
         private LocalDateTime endTime;
         private LocalDateTime createdDate;
         private ScheduleStatus status;
-        private MemberResponse.SummaryDto member;
-        private Boolean isMine;
+        private MemberSummaryDto member;
+        private Boolean isOwner;
     }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Data
     @Builder
-    public static class ListDto {
-        @Builder.Default
-        private List<ScheduleResponse.DetailDto> scheduleList = new ArrayList<>();
-        private long totalSchedules;
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class ScheduleListDto {
+        private List<ScheduleDetailDto> scheduleList;
+        private long scheduleCount;
         private Boolean isFirst;
         private Boolean isLast;
     }

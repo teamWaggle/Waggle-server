@@ -1,37 +1,38 @@
 package com.example.waggle.web.dto.comment;
 
-import com.example.waggle.web.dto.member.MemberResponse;
-import lombok.*;
-
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class CommentResponse {
-    @Getter
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    public static class ViewDto {
-        private Long id;
+    @Schema
+    public static class CommentViewDto {
+        private Long commentId;
         private String content;
         private LocalDateTime createdDate;
-        @Builder.Default
-        private List<String> mentionedNickname = new ArrayList<>();
-        private MemberResponse.SummaryDto member;
-        private Boolean isMine;
+        private List<String> mentionedMemberList;
+        private MemberSummaryDto member;
+        private Boolean isOwner;
     }
 
+    @Data
     @Builder
-    @Getter
-    @Setter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ListDto {
-        @Builder.Default
-        private List<CommentResponse.ViewDto> commentList = new ArrayList<>();
-        private long totalComments;
+    @Schema
+    public static class CommentListDto {
+        private List<CommentViewDto> commentList;
+        private long commentCount;
         private Boolean isFirst;
         private Boolean isLast;
     }

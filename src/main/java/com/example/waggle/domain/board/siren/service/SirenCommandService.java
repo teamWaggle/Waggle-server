@@ -1,37 +1,23 @@
 package com.example.waggle.domain.board.siren.service;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.web.dto.media.MediaRequest;
+import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 public interface SirenCommandService {
-    Long createSiren(SirenRequest.Post sirenWriteDto,
-                     List<MultipartFile> multipartFiles);
 
-    Long createSiren(Member member,
-                     SirenRequest.Post sirenWriteDto,
-                     List<MultipartFile> multipartFiles);
-
-    Long updateSiren(Long boardId,
-                     SirenRequest.Post request,
+    Long createSiren(SirenRequest createSirenRequest,
                      List<MultipartFile> multipartFiles,
-                     List<String> deleteFiles);
-
-    Long updateSirenV2(Long boardId,
-                       SirenRequest.Post request,
-                       MediaRequest.Put mediaUpdateDto,
-                       List<MultipartFile> multipartFiles);
+                     Member member);
 
     Long updateSiren(Long boardId,
-                     Member member,
-                     SirenRequest.Post request,
-                     MediaRequest.Put mediaUpdateDto,
-                     List<MultipartFile> multipartFiles);
-
-    void deleteSiren(Long boardId);
+                     SirenRequest updateSirenRequest,
+                     MediaUpdateDto updateMediaRequest,
+                     List<MultipartFile> multipartFiles,
+                     Member member);
 
     void deleteSiren(Long boardId, Member member);
+
 }

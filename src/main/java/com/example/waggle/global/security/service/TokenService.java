@@ -1,13 +1,13 @@
 package com.example.waggle.global.security.service;
 
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.global.security.object.JwtToken;
-import com.example.waggle.web.dto.member.MemberRequest;
 import org.springframework.security.core.Authentication;
 
 public interface TokenService {
 
 
-    JwtToken login(MemberRequest.AccessDto request);
+    JwtToken login(MemberCredentialsDto loginRequest);
 
     JwtToken issueTokens(String refreshToken);
 
