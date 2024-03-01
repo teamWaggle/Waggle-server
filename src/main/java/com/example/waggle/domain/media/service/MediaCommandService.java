@@ -10,9 +10,7 @@ public interface MediaCommandService {
 
     boolean createMedia(List<MultipartFile> uploadFiles, Board board);
 
-    void updateMedia(List<MultipartFile> uploadFiles, List<String> deleteFile, Board board);
-
-    void updateMediaV2(MediaUpdateDto request, List<MultipartFile> uploadFiles, Board board);
+    void updateMedia(MediaUpdateDto updateMediaRequest, List<MultipartFile> uploadFiles, Board board);
 
     void deleteMedia(Board board);
 }

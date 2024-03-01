@@ -5,10 +5,9 @@ import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.follow.service.FollowQueryService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,8 +63,8 @@ public class FollowApiController {
     })
     @GetMapping("/list/following")
 
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberListByUsername(@AuthUser UserDetails userDetails) {
-        List<Follow> followings = followQueryService.getFollowingsByUsername(userDetails.getUsername());
+    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberListByUsername(@AuthUser Member member) {
+        List<Follow> followings = followQueryService.getFollowingsByUsername(member.getUsername());
         List<MemberSummaryDto> collect = followings.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);

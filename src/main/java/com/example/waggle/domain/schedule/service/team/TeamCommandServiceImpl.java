@@ -2,21 +2,27 @@ package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.schedule.entity.*;
+import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.ParticipationStatus;
-import com.example.waggle.domain.schedule.repository.*;
+import com.example.waggle.domain.schedule.entity.Schedule;
+import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.entity.TeamColor;
+import com.example.waggle.domain.schedule.entity.TeamMember;
+import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.repository.ParticipationRepository;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.schedule.TeamRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 @Slf4j
@@ -38,6 +44,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public Long createTeam(TeamRequest createTeamRequest, Member member) {
         Team team = buildTeam(createTeamRequest, member);
         teamRepository.save(team);
+        addMemberToTeam(team, member);
         return team.getId();
     }
 

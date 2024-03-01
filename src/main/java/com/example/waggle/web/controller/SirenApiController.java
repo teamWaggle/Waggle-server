@@ -56,10 +56,11 @@ public class SirenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createSiren(@RequestPart("request") @Validated SirenRequest request,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> files,
-                                            @AuthUser Member member) {
-        Long boardId = sirenCommandService.createSiren(request, files, member);
+    public ApiResponseDto<Long> createSiren(
+            @RequestPart("createSirenRequest") @Validated SirenRequest createSirenRequest,
+            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+            @AuthUser Member member) {
+        Long boardId = sirenCommandService.createSiren(createSirenRequest, files, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 

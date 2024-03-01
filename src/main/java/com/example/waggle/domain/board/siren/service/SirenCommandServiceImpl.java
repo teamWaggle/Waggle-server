@@ -59,7 +59,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         siren.changeSiren(updateSirenRequest);
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, siren);
+        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, siren);
 
         return siren.getId();
     }
@@ -89,6 +89,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .lostDate(createSirenRequest.getLostDate())
                 .lostLocate(createSirenRequest.getLostLocate())
                 .category(SirenCategory.valueOf(createSirenRequest.getCategory()))
+                .status(ResolutionStatus.valueOf(createSirenRequest.getStatus()))
                 .member(member)
                 .build();
     }

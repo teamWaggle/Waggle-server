@@ -26,7 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,8 +53,7 @@ public class ScheduleApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{teamId}")
-    public ApiResponseDto<Long> createSchedule(@AuthUser UserDetails userDetails,
-                                               @PathVariable("teamId") Long teamId,
+    public ApiResponseDto<Long> createSchedule(@PathVariable("teamId") Long teamId,
                                                @RequestBody ScheduleRequest createScheduleRequest,
                                                @AuthUser Member member) {
         Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest,

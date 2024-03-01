@@ -11,7 +11,6 @@ import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -64,7 +63,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         question.changeQuestion(updateQuestionRequest);
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, question);
+        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, question);
 
         question.getBoardHashtags().clear();
         for (String hashtag : updateQuestionRequest.getHashtagList()) {

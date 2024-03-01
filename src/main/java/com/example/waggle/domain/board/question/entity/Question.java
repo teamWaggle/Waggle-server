@@ -28,10 +28,10 @@ public class Question extends Board {
     @Column(nullable = false)
     private ResolutionStatus status;
 
-    public void changeQuestion(QuestionRequest questionUpdateRequest) {
-        this.content = questionUpdateRequest.getContent();
-        this.title = questionUpdateRequest.getTitle();
-        this.status = ResolutionStatus.valueOf(questionUpdateRequest.getStatus());
+    public void changeQuestion(QuestionRequest updateQuestionRequest) {
+        this.content = updateQuestionRequest.getContent();
+        this.title = updateQuestionRequest.getTitle();
+        this.status = ResolutionStatus.valueOf(updateQuestionRequest.getStatus());
     }
 
     public void changeStatus(ResolutionStatus status) {

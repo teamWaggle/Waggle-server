@@ -61,7 +61,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         story.changeContent(createStoryRequest.getContent());
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, story);
+        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, story);
 
         story.getBoardHashtags().clear();
         for (String hashtag : createStoryRequest.getHashtagList()) {

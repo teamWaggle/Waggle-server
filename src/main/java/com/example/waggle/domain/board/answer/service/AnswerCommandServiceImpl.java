@@ -10,7 +10,6 @@ import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.AnswerHandler;
 import com.example.waggle.global.exception.handler.QuestionHandler;
@@ -63,7 +62,7 @@ public class AnswerCommandServiceImpl implements AnswerCommandService {
                 .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         answer.changeAnswer(updateAnswerRequest.getContent());
-        mediaCommandService.updateMediaV2(updateMediaRequest, multipartFiles, answer);
+        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, answer);
 
         return answer.getId();
     }

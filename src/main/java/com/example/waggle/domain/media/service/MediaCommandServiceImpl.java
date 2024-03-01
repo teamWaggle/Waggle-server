@@ -7,16 +7,14 @@ import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest.MediaCreateDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional
@@ -43,36 +41,14 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     }
 
     @Override
-    public void updateMedia(List<MultipartFile> uploadFiles,
-                            List<String> deleteFiles,
-                            Board board) {
-        //TODO awsS3file how clean?
-        //first step. delete
-        //delete file check
-        if (deleteFiles != null) {
-            List<Media> collect = deleteFiles.stream()
-                    .map(f -> mediaRepository.findByUploadFile(f)
-                            .orElseThrow(() -> new MediaHandler(ErrorStatus.MEDIA_NOT_FOUND)))
-                    .collect(Collectors.toList());
-            collect.stream().forEach(m -> {
-                if (m.getBoard().equals(board)) {
-                    mediaRepository.delete(m);
-                }
-            });
-        }
-        //second step. add file
-        createMedia(uploadFiles, board);
-    }
-
-    @Override
-    public void updateMediaV2(MediaUpdateDto request, List<MultipartFile> uploadFiles, Board board) {
+    public void updateMedia(MediaUpdateDto updateMediaRequest, List<MultipartFile> uploadFiles, Board board) {
         board.getMedias().clear();
 
-        if (validateUpdateMedia(uploadFiles, request)) {
-            request.getMediaList().forEach(media -> forEachMediaUpdate(uploadFiles, board, media));
+        if (validateUpdateMedia(uploadFiles, updateMediaRequest)) {
+            updateMediaRequest.getMediaList().forEach(media -> forEachMediaUpdate(uploadFiles, board, media));
         }
-        if (request != null) {
-            Optional.ofNullable(request.getDeleteMediaList())
+        if (updateMediaRequest != null) {
+            Optional.ofNullable(updateMediaRequest.getDeleteMediaList())
                     .map(Collection::stream)
                     .orElseGet(Stream::empty)
                     .forEach(deleteFileDto -> {
