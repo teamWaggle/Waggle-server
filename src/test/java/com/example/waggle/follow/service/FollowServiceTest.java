@@ -8,7 +8,11 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.FollowHandler;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+=======
 import com.example.waggle.web.dto.member.MemberRequest;
+>>>>>>> develop
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,10 +36,17 @@ public class FollowServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
+<<<<<<< HEAD
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
+    MemberCredentialsDto signUpDto3;
+    MemberCredentialsDto signUpDto4;
+=======
     MemberRequest.AccessDto signUpDto1;
     MemberRequest.AccessDto signUpDto2;
     MemberRequest.AccessDto signUpDto3;
     MemberRequest.AccessDto signUpDto4;
+>>>>>>> develop
 
     Long memberId1;
     Long memberId2;
@@ -49,22 +60,38 @@ public class FollowServiceTest {
     }
 
     void setUp() {
+<<<<<<< HEAD
+        signUpDto1 = MemberCredentialsDto.builder()
+=======
         signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("wjdgks3264@naver.com")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto2 = MemberCredentialsDto.builder()
+=======
         signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("wjdgks2972@naver.com")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto3 = MemberCredentialsDto.builder()
+=======
         signUpDto3 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("wjdgksdfs@naver.com")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto4 = MemberCredentialsDto.builder()
+=======
         signUpDto4 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("hi@naver.com")
                 .build();
@@ -114,7 +141,12 @@ public class FollowServiceTest {
         Member B = memberQueryService.getMemberById(memberId2);
         followCommandService.follow(A.getUsername(), B.getNickname());
         //then
+<<<<<<< HEAD
+        Assertions.assertThrows(FollowHandler.class,
+                () -> followCommandService.follow(A.getUsername(), B.getNickname()));
+=======
         Assertions.assertThrows(FollowHandler.class, () -> followCommandService.follow(A.getUsername(), B.getNickname()));
+>>>>>>> develop
     }
 
     @Test
@@ -129,6 +161,11 @@ public class FollowServiceTest {
         followCommandService.follow(A.getUsername(), C.getNickname());
         followCommandService.unFollow(A.getUsername(), B.getNickname());
         //then
+<<<<<<< HEAD
+        Assertions.assertThrows(FollowHandler.class,
+                () -> followCommandService.unFollow(A.getUsername(), B.getNickname()));
+=======
         Assertions.assertThrows(FollowHandler.class, () -> followCommandService.unFollow(A.getUsername(), B.getNickname()));
+>>>>>>> develop
     }
 }

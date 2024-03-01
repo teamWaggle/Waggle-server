@@ -2,33 +2,34 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.reply.ReplyResponse;
+import com.example.waggle.web.dto.reply.ReplyResponse.ReplyListDto;
+import com.example.waggle.web.dto.reply.ReplyResponse.ReplyViewDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReplyConverter {
-    public static ReplyResponse.ViewDto toViewDto(Reply reply) {
-        return ReplyResponse.ViewDto.builder()
-                .id(reply.getId())
+    public static ReplyViewDto toReplyViewDto(Reply reply) {
+        return ReplyViewDto.builder()
+                .replyId(reply.getId())
                 .member(MemberConverter.toMemberSummaryDto(reply.getMember()))
-                .isMine(reply.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
+                .isOwner(reply.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .content(reply.getContent())
                 .createdDate(reply.getCreatedDate())
-                .mentionedNickname(reply.getMentions().stream()
+                .mentionedMemberList(reply.getMentions().stream()
                         .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .build();
     }
 
-    public static ReplyResponse.ListDto toListDto(Page<Reply> pagedReply) {
-        List<ReplyResponse.ViewDto> collect = pagedReply.stream()
-                .map(ReplyConverter::toViewDto).collect(Collectors.toList());
-        return ReplyResponse.ListDto.builder()
+    public static ReplyListDto toReplyListDto(Page<Reply> pagedReply) {
+        List<ReplyViewDto> collect = pagedReply.stream()
+                .map(ReplyConverter::toReplyViewDto).collect(Collectors.toList());
+        return ReplyListDto.builder()
                 .replyList(collect)
                 .isFirst(pagedReply.isFirst())
                 .isLast(pagedReply.isLast())
-                .totalReplies(pagedReply.getTotalElements())
+                .replyCount(pagedReply.getTotalElements())
                 .build();
     }
 }

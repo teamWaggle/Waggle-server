@@ -10,9 +10,15 @@ import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.schedule.ScheduleRequest.ScheduleCreateDto;
+import com.example.waggle.web.dto.schedule.TeamRequest.TeamCreateDto;
+=======
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import com.example.waggle.web.dto.schedule.TeamRequest;
+>>>>>>> develop
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
@@ -48,10 +54,17 @@ class ScheduleCommandServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
+<<<<<<< HEAD
+    private MemberCredentialsDto member1;
+    private MemberCredentialsDto member2;
+    private TeamCreateDto team;
+    private ScheduleCreateDto schedule;
+=======
     private MemberRequest.AccessDto member1;
     private MemberRequest.AccessDto member2;
     private TeamRequest.Post team;
     private ScheduleRequest.Post schedule;
+>>>>>>> develop
 
     private Long teamId;
     private Long scheduleId;
@@ -61,12 +74,20 @@ class ScheduleCommandServiceTest {
     @BeforeEach
     void setUp() {
         // Setup member
+<<<<<<< HEAD
+        member1 = MemberCredentialsDto.builder()
+=======
         member1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("member1")
                 .password("12345678")
                 .build();
 
+<<<<<<< HEAD
+        member2 = MemberCredentialsDto.builder()
+=======
         member2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("email2")
                 .build();
@@ -76,7 +97,7 @@ class ScheduleCommandServiceTest {
         username = member.getUsername();
 
         // Setup team
-        team = TeamRequest.Post.builder()
+        team = TeamCreateDto.builder()
                 .name("team1")
                 .description("team1 description")
                 .maxTeamSize(4)
@@ -85,7 +106,7 @@ class ScheduleCommandServiceTest {
         teamId = teamCommandService.createTeam(team, username);
 
         // Setup Schedule
-        schedule = ScheduleRequest.Post.builder()
+        schedule = ScheduleCreateDto.builder()
                 .title("schedule1")
                 .content("schedule1 content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
@@ -103,7 +124,7 @@ class ScheduleCommandServiceTest {
     @Test
     void createSchedule() {
         // given
-        ScheduleRequest.Post createRequest = ScheduleRequest.Post.builder()
+        ScheduleCreateDto createRequest = ScheduleCreateDto.builder()
                 .title("test title")
                 .content("test content")
                 .startTime(LocalDateTime.of(2023, 12, 12, 9, 30))
@@ -124,7 +145,7 @@ class ScheduleCommandServiceTest {
     @Test
     void updateSchedule() {
         // given
-        ScheduleRequest.Post updateRequest = ScheduleRequest.Post.builder()
+        ScheduleCreateDto updateRequest = ScheduleCreateDto.builder()
                 .title("updated title")
                 .content("updated content")
                 .startTime(LocalDateTime.of(2023, 12, 1, 9, 30))

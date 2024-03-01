@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.pet;
 
 import com.example.waggle.domain.member.entity.Gender;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -8,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PetResponse {
-    @Getter
-    @Setter
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class DetailDto {
-        private Long id;
+    @Schema
+    public static class PetDetailDto {
+        private Long petId;
         @NotNull
         private String name;
         private String breed;
@@ -25,14 +26,13 @@ public class PetResponse {
         private String profileImgUrl;
     }
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class SummaryDto {
-        private Long id;
+    @Schema
+    public static class PetSummaryDto {
+        private Long petId;
         @NotNull
         private String name;
         private Gender gender;
@@ -43,8 +43,8 @@ public class PetResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ListDto {
-        private List<DetailDto> petList = new ArrayList<>();
+    public static class PetListDto {
+        private List<PetDetailDto> petList = new ArrayList<>();
     }
 
 }

@@ -11,8 +11,13 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.siren.SirenRequest.SirenCreateDto;
+=======
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.siren.SirenRequest;
+>>>>>>> develop
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,16 +45,20 @@ class HelpServiceTest {
     @Autowired
     DatabaseCleanUp databaseCleanUp;
 
-    SirenRequest.Post hwd1;
-    SirenRequest.Post hwd2;
-    SirenRequest.Post hwd3;
-    SirenRequest.Post hwd4;
+    SirenCreateDto hwd1;
+    SirenCreateDto hwd2;
+    SirenCreateDto hwd3;
+    SirenCreateDto hwd4;
 
+<<<<<<< HEAD
+    MemberCredentialsDto signUpDto1;
+=======
     MemberRequest.AccessDto signUpDto1;
+>>>>>>> develop
 
 
     void setting() {
-        hwd1 = SirenRequest.Post.builder()
+        hwd1 = SirenCreateDto.builder()
                 .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
@@ -58,7 +67,7 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(SirenCategory.FIND_PET)
                 .build();
-        hwd2 = SirenRequest.Post.builder()
+        hwd2 = SirenCreateDto.builder()
                 .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
@@ -67,7 +76,7 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(SirenCategory.FIND_PET)
                 .build();
-        hwd3 = SirenRequest.Post.builder()
+        hwd3 = SirenCreateDto.builder()
                 .title("this is title")
                 .content("help page. hi")
                 .contact("01025522972")
@@ -76,7 +85,7 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(SirenCategory.FIND_PET)
                 .build();
-        hwd4 = SirenRequest.Post.builder()
+        hwd4 = SirenCreateDto.builder()
                 .title("this is title")
                 .content("help page4. hi")
                 .contact("01025522972")
@@ -85,7 +94,11 @@ class HelpServiceTest {
                 .petGender(Gender.MALE)
                 .category(SirenCategory.FIND_PET)
                 .build();
+<<<<<<< HEAD
+        signUpDto1 = MemberCredentialsDto.builder()
+=======
         signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("email1@naver.com")
                 .password("password1")
                 .build();

@@ -13,5 +13,5 @@ public class JwtToken {
     private String accessToken;
     private String refreshToken;
 
-    private MemberResponse.SummaryDto member;
+    private MemberResponse.MemberSummaryDto member;
 }

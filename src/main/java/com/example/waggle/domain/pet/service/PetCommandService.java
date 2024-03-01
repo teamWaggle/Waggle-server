@@ -5,19 +5,12 @@ import com.example.waggle.web.dto.pet.PetRequest;
 
 public interface PetCommandService {
 
-    Long createPet(PetRequest.Post petDto);
+    Long createPet(PetRequest createPetRequest, Member member);
 
-    Long createPet(Member member, PetRequest.Post petDto);
-
-    void createPets(PetRequest.PostList petDto, String username);
-
-    Long updatePet(Long petId, PetRequest.Post petDto);
-
-    Long updatePet(Long petId, Member member, PetRequest.Post petDto);
-
-    void deletePet(Long petId);
+    Long updatePet(Long petId, PetRequest updatePetRequest, Member member);
 
     void deletePet(Long petId, Member member);
 
     void deleteAllPetByUser(String username);
+
 }

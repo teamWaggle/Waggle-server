@@ -10,9 +10,15 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,15 +51,20 @@ class CommentServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
+=======
     MemberRequest.AccessDto signUpDto1;
     MemberRequest.AccessDto signUpDto2;
+>>>>>>> develop
 
 
-    StoryRequest.Post storyWriteDto1;
-    StoryRequest.Post storyWriteDto2;
+    StoryCreateDto storyWriteDto1;
+    StoryCreateDto storyWriteDto2;
 
-    CommentRequest.Post commentWriteDto1;
-    CommentRequest.Post commentWriteDto2;
+    CommentCreateDto commentWriteDto1;
+    CommentCreateDto commentWriteDto2;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -76,33 +87,41 @@ class CommentServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
+<<<<<<< HEAD
+        signUpDto1 = MemberCredentialsDto.builder()
+=======
         signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("ertyuio")
                 .password("string")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto2 = MemberCredentialsDto.builder()
+=======
         signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("78347dj")
                 .password("string")
                 .build();
 
-        storyWriteDto1 = StoryRequest.Post.builder()
+        storyWriteDto1 = StoryCreateDto.builder()
                 .content("i love my choco")
-                .hashtags(tags1)
-                .medias(medias1)
+                .hashtagList(tags1)
+                .mediaList(medias1)
                 .build();
 
-        storyWriteDto2 = StoryRequest.Post.builder()
+        storyWriteDto2 = StoryCreateDto.builder()
                 .content("how can i do make he is happy?")
-                .hashtags(tags2)
-                .medias(medias2)
+                .hashtagList(tags2)
+                .mediaList(medias2)
                 .build();
 
-        commentWriteDto1 = CommentRequest.Post.builder()
+        commentWriteDto1 = CommentCreateDto.builder()
                 .content("comment1")
                 .build();
 
-        commentWriteDto2 = CommentRequest.Post.builder()
+        commentWriteDto2 = CommentCreateDto.builder()
                 .content("comment2")
                 .build();
 

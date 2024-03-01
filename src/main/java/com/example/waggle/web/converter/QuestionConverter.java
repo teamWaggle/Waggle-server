@@ -4,48 +4,51 @@ import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.question.QuestionResponse;
-import org.springframework.data.domain.Page;
-
+import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
+import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class QuestionConverter {
-    public static QuestionResponse.SummaryDto toSummaryDto(Question question) {
-        return QuestionResponse.SummaryDto.builder()
-                .id(question.getId())
+    public static QuestionSummaryDto toSummaryDto(Question question) {
+        return QuestionSummaryDto.builder()
+                .boardId(question.getId())
                 .title(question.getTitle())
+                .status(question.getStatus())
                 .createdDate(question.getCreatedDate())
-                .hashtags(question.getBoardHashtags().stream()
+                .hashtagList(question.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
-                .isMine(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
+                .isOwner(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 
-    public static QuestionResponse.ListDto toListDto(Page<Question> questionPage) {
-        List<QuestionResponse.SummaryDto> questionsSummaryDtoList = questionPage.stream()
+    public static QuestionSummaryListDto toListDto(Page<Question> questionPage) {
+        List<QuestionSummaryDto> questionsSummaryDtoList = questionPage.stream()
                 .map(QuestionConverter::toSummaryDto)
                 .collect(Collectors.toList());
 
-        return QuestionResponse.ListDto.builder()
-                .questionsList(questionsSummaryDtoList)
-                .totalQuestions(questionPage.getTotalElements())
+        return QuestionSummaryListDto.builder()
+                .questionList(questionsSummaryDtoList)
+                .questionCount(questionPage.getTotalElements())
                 .isFirst(questionPage.isFirst())
                 .isLast(questionPage.isLast())
                 .build();
     }
 
-    public static QuestionResponse.DetailDto toDetailDto(Question question) {
-        return QuestionResponse.DetailDto.builder()
-                .id(question.getId())
-                .content(question.getContent())
+    public static QuestionResponse.QuestionDetailDto toDetailDto(Question question) {
+        return QuestionResponse.QuestionDetailDto.builder()
+                .boardId(question.getId())
                 .title(question.getTitle())
+                .status(question.getStatus())
+                .content(question.getContent())
                 .createdDate(question.getCreatedDate())
-                .hashtags(question.getBoardHashtags().stream()
+                .hashtagList(question.getBoardHashtags().stream()
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
-                .medias(MediaUtil.getBoardMedias(question))
+                .mediaList(MediaUtil.getBoardMedias(question))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
-                .isMine(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
+                .isOwner(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }

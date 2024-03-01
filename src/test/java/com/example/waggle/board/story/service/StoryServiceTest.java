@@ -9,8 +9,13 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,13 +50,18 @@ class StoryServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
+=======
     MemberRequest.AccessDto signUpDto1;
     MemberRequest.AccessDto signUpDto2;
+>>>>>>> develop
 
-    StoryRequest.Post storyWriteDto1;
-    StoryRequest.Post storyWriteDto2;
-    StoryRequest.Post storyWriteDto3;
-    StoryRequest.Post storyWriteDto4;
+    StoryCreateDto storyWriteDto1;
+    StoryCreateDto storyWriteDto2;
+    StoryCreateDto storyWriteDto3;
+    StoryCreateDto storyWriteDto4;
 
     List<String> tags1 = new ArrayList<>();
     List<String> tags2 = new ArrayList<>();
@@ -75,38 +85,46 @@ class StoryServiceTest {
         medias2.add("media2");
         medias2.add("mediamedia2");
 
+<<<<<<< HEAD
+        signUpDto1 = MemberCredentialsDto.builder()
+=======
 
         signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("email1@naver.com")
                 .password("password")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto2 = MemberCredentialsDto.builder()
+=======
         signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("email2@naver.com")
                 .password("password")
                 .build();
 
-        storyWriteDto1 = StoryRequest.Post.builder()
+        storyWriteDto1 = StoryCreateDto.builder()
                 .content("i love my choco")
-                .hashtags(tags1)
-                .medias(medias1)
+                .hashtagList(tags1)
+                .mediaList(medias1)
                 .build();
 
-        storyWriteDto2 = StoryRequest.Post.builder()
+        storyWriteDto2 = StoryCreateDto.builder()
                 .content("how can i do make he is happy?")
-                .hashtags(tags2)
-                .medias(medias2)
+                .hashtagList(tags2)
+                .mediaList(medias2)
                 .build();
 
-        storyWriteDto3 = StoryRequest.Post.builder()
+        storyWriteDto3 = StoryCreateDto.builder()
                 .content("how can i do make he is happy?")
-                .hashtags(tags2)
-                .medias(medias2)
+                .hashtagList(tags2)
+                .mediaList(medias2)
                 .build();
-        storyWriteDto4 = StoryRequest.Post.builder()
+        storyWriteDto4 = StoryCreateDto.builder()
                 .content("how can i do make he is happy?")
-                .hashtags(tags2)
-                .medias(medias2)
+                .hashtagList(tags2)
+                .mediaList(medias2)
                 .build();
 
 
@@ -177,10 +195,14 @@ class StoryServiceTest {
         List<String> tags = new ArrayList<>();
         tags.add("poodle");
         tags.add("cute");
+<<<<<<< HEAD
+        StoryCreateDto editDto = StoryCreateDto.builder()
+=======
         StoryRequest.Post editDto = StoryRequest.Post.builder()
+>>>>>>> develop
                 .content("edit edit edit")
-                .hashtags(tags)
-                .medias(medias2)
+                .hashtagList(tags)
+                .mediaList(medias2)
                 .build();
         //when
 //        boolean isSameUser = storyCommandService.validateMember(id);
