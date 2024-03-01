@@ -2,37 +2,33 @@ package com.example.waggle.web.dto.question;
 
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.global.annotation.valid.ValidEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
-import lombok.*;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class QuestionRequest {
+    @NotEmpty(message = "질문 내용을 작성해주세요.")
+    @Max(1500)
+    private String content;
 
-    @Builder
-    @Setter
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Post {
+    @NotBlank(message = "질문 제목을 작성해주세요.")
+    @Length(min = 5, max = 30)
+    private String title;
 
-        @NotEmpty(message = "질문 내용을 작성해주세요.")
-        @Size(min = 1, max = 500)
-        private String content;
+    private List<String> hashtagList;
 
-        @NotBlank(message = "질문 제목을 작성해주세요.")
-        @Length(min = 5, max = 30)
-        private String title;
-
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-
-        @ValidEnum(target = ResolutionStatus.class)
-        private String status;
-    }
+    @ValidEnum(target = ResolutionStatus.class)
+    private String status;
 }

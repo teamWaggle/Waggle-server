@@ -1,21 +1,18 @@
 package com.example.waggle.web.dto.schedule;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class ScheduleRequest {
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Post {
-        private String title;
-        private String content;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
-    }
+    private String title;
+    private String content;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

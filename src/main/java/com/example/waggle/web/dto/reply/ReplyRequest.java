@@ -1,23 +1,18 @@
 package com.example.waggle.web.dto.reply;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema
 public class ReplyRequest {
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Post {
-        private String content;
-        @Builder.Default
-        private List<String> mentionedNickname = new ArrayList<>();
-        private Long commentId;
-    }
+    private String content;
+    private List<String> mentionedMemberList;
 }

@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.member;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,17 +10,19 @@ public class VerifyMailRequest {
 
     @Data
     @Builder
-    @AllArgsConstructor
     @NoArgsConstructor
-    public static class ConfirmationDto {
+    @AllArgsConstructor
+    @Schema
+    public static class EmailSendDto {
         private String email;
     }
 
     @Data
     @Builder
-    @AllArgsConstructor
     @NoArgsConstructor
-    public static class AuthDto {
+    @AllArgsConstructor
+    @Schema
+    public static class EmailVerificationDto {
         private String email;
         private String authCode;
     }

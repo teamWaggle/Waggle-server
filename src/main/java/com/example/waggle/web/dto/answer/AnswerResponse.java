@@ -1,48 +1,43 @@
 package com.example.waggle.web.dto.answer;
 
-import com.example.waggle.web.dto.member.MemberResponse;
-import lombok.*;
-
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class AnswerResponse {
-    @Getter
-    @Setter
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
-    public static class ViewDto {
-
-        private Long id;
+    @Schema
+    public static class AnswerViewDto {
+        private Long boardId;
         private String content;
         private LocalDateTime createdDate;
         private int recommendCount;
         private Boolean isRecommend;
-        private Boolean isMine;
-
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-
-        @Builder.Default
-        private List<String> medias = new ArrayList<>();
-
-        private MemberResponse.SummaryDto member;
-
+        private Boolean isOwner;
+        private List<String> hashtagList;
+        private List<String> mediaList;
+        private MemberSummaryDto member;
     }
 
+    @Data
     @Builder
-    @Getter
-    @Setter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ListDto {
-        @Builder.Default
-        private List<AnswerResponse.ViewDto> AnswerList = new ArrayList<>();
-        private long totalAnswers;
+    @Schema
+    public static class AnswerListDto {
+        private List<AnswerViewDto> answerList;
+        private long answerCount;
         private Boolean isFirst;
         private Boolean isLast;
     }
+
 }

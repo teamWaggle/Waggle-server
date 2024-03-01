@@ -14,10 +14,17 @@ import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,19 +63,27 @@ class ReplyServiceTest {
     DatabaseCleanUp databaseCleanUp;
 
 
+<<<<<<< HEAD
+    MemberCredentialsDto signUpDto1;
+    MemberCredentialsDto signUpDto2;
+    MemberCredentialsDto signUpDto3;
+    MemberCredentialsDto signUpDto4;
+    MemberCredentialsDto signUpDto5;
+=======
     MemberRequest.AccessDto signUpDto1;
     MemberRequest.AccessDto signUpDto2;
     MemberRequest.AccessDto signUpDto3;
     MemberRequest.AccessDto signUpDto4;
     MemberRequest.AccessDto signUpDto5;
+>>>>>>> develop
 
 
-    StoryRequest.Post storyWriteDto1;
-    StoryRequest.Post storyWriteDto2;
+    StoryCreateDto storyWriteDto1;
+    StoryCreateDto storyWriteDto2;
 
-    CommentRequest.Post commentWriteDto1;
-    ReplyRequest.Post replyWriteDto1;
-    ReplyRequest.Post replyWriteDto2;
+    CommentCreateDto commentWriteDto1;
+    ReplyCreateDto replyWriteDto1;
+    ReplyCreateDto replyWriteDto2;
 
     List<String> mentions1 = new ArrayList<>();
     List<String> mentions2 = new ArrayList<>();
@@ -83,6 +98,17 @@ class ReplyServiceTest {
         mentions2.add("user3");
         mentions2.add("user4");
 
+<<<<<<< HEAD
+        signUpDto1 = MemberCredentialsDto.builder()
+                .password("12345678")
+                .email("hi")
+                .build();
+        signUpDto2 = MemberCredentialsDto.builder()
+                .password("12345678")
+                .email("hoe")
+                .build();
+        signUpDto3 = MemberCredentialsDto.builder()
+=======
         signUpDto1 = MemberRequest.AccessDto.builder()
                 .password("12345678")
                 .email("hi")
@@ -92,37 +118,45 @@ class ReplyServiceTest {
                 .email("hoe")
                 .build();
         signUpDto3 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("zz")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto4 = MemberCredentialsDto.builder()
+                .password("12345678")
+                .email("haha")
+                .build();
+        signUpDto5 = MemberCredentialsDto.builder()
+=======
         signUpDto4 = MemberRequest.AccessDto.builder()
                 .password("12345678")
                 .email("haha")
                 .build();
         signUpDto5 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("ez")
                 .build();
 
-
-        storyWriteDto1 = StoryRequest.Post.builder()
+        storyWriteDto1 = StoryCreateDto.builder()
                 .content("i love my choco")
                 .build();
 
-        storyWriteDto2 = StoryRequest.Post.builder()
+        storyWriteDto2 = StoryCreateDto.builder()
                 .content("how can i do make he is happy?")
                 .build();
 
-        commentWriteDto1 = CommentRequest.Post.builder()
+        commentWriteDto1 = CommentCreateDto.builder()
                 .content("comment1")
                 .build();
 
-        replyWriteDto1 = ReplyRequest.Post.builder()
+        replyWriteDto1 = ReplyCreateDto.builder()
                 .content("reply1")
                 .build();
 
-        replyWriteDto2 = ReplyRequest.Post.builder()
+        replyWriteDto2 = ReplyCreateDto.builder()
                 .content("reply2")
                 .build();
 

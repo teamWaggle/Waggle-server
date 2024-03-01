@@ -1,65 +1,63 @@
 package com.example.waggle.web.dto.question;
 
-import com.example.waggle.web.dto.member.MemberResponse;
-import lombok.*;
-
+import com.example.waggle.domain.board.ResolutionStatus;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class QuestionResponse {
 
+    @Data
     @Builder
-    @Setter
-    @Getter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SummaryDto {
-        private Long id;
+    @Schema
+    public static class QuestionSummaryDto {
+        private Long boardId;
         private String title;
+        private ResolutionStatus status;
         private LocalDateTime createdDate;
         private int recommendCount;
         private Boolean isRecommend;
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-
-        private MemberResponse.SummaryDto member;
-        private Boolean isMine;
+        private List<String> hashtagList;
+        private MemberSummaryDto member;
+        private Boolean isOwner;
     }
 
+    @Data
     @Builder
-    @Getter
-    @Setter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ListDto {
-        @Builder.Default
-        private List<SummaryDto> questionsList = new ArrayList<>();
-        private long totalQuestions;
+    @Schema
+    public static class QuestionSummaryListDto {
+        private List<QuestionSummaryDto> questionList;
+        private long questionCount;
         private Boolean isFirst;
         private Boolean isLast;
     }
 
+    @Data
     @Builder
-    @Getter
-    @Setter
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DetailDto {
-        private Long id;
-        private String content;
+    @Schema
+    public static class QuestionDetailDto {
+        private Long boardId;
         private String title;
+        private ResolutionStatus status;
+        private String content;
         private LocalDateTime createdDate;
         private int recommendCount;
         private Boolean isRecommend;
-        private Boolean isMine;
-        @Builder.Default
-        private List<String> medias = new ArrayList<>();
-        @Builder.Default
-        private List<String> hashtags = new ArrayList<>();
-        private MemberResponse.SummaryDto member;
+        private Boolean isOwner;
+        private List<String> mediaList;
+        private List<String> hashtagList;
+        private MemberSummaryDto member;
     }
+
 }

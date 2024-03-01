@@ -4,15 +4,10 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.comment.CommentRequest;
 
 public interface CommentCommandService {
-    Long createComment(Long boardId, CommentRequest.Post request);
 
-    Long createComment(Long boardId, Member member, CommentRequest.Post request);
+    Long createComment(Long boardId, CommentRequest createCommentRequest, Member member);
 
-    Long updateComment(Long commentId, CommentRequest.Post request);
-
-    Long updateComment(Long commentId, Member member, CommentRequest.Post request);
-
-    void deleteComment(Long commentId);
+    Long updateComment(Long commentId, CommentRequest updateCommentRequest, Member member);
 
     void deleteComment(Long commentId, Member member);
 

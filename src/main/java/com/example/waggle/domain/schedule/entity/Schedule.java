@@ -1,12 +1,19 @@
 package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
+import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
@@ -27,11 +34,11 @@ public class Schedule extends Board {
 
     private LocalDateTime endTime;
 
-    public void update(Post request) {
-        this.title = request.getTitle();
-        this.content = request.getContent();
-        this.startTime = request.getStartTime();
-        this.endTime = request.getEndTime();
+    public void update(ScheduleRequest updateScheduleRequest) {
+        this.title = updateScheduleRequest.getTitle();
+        this.content = updateScheduleRequest.getContent();
+        this.startTime = updateScheduleRequest.getStartTime();
+        this.endTime = updateScheduleRequest.getEndTime();
     }
 
 }

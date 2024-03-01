@@ -16,7 +16,7 @@ import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.ScheduleUtil;
-import com.example.waggle.web.dto.schedule.ScheduleRequest.Post;
+import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,61 +36,35 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
 
     @Override
-    public Long createSchedule(Long teamId, Member member, Post request) {
+    public Long createSchedule(Long teamId, ScheduleRequest createScheduleRequest, Member member) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
         validateTeamMember(team, member);
-        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
-        Schedule createdSchedule = buildSchedule(member, request, team);
+        ScheduleUtil.validateSchedule(createScheduleRequest.getStartTime(), createScheduleRequest.getEndTime());
 
-        team.addSchedule(createdSchedule);
+        Schedule schedule = buildSchedule(createScheduleRequest, team, member);
+        team.addSchedule(schedule);
+        scheduleRepository.save(schedule);
 
-        Schedule schedule = scheduleRepository.save(createdSchedule);
         MemberSchedule memberSchedule = buildMemberSchedule(member, schedule);
         memberScheduleRepository.save(memberSchedule);
-        return schedule.getId();
-    }
-
-    @Override
-    public Long updateSchedule(Long scheduleId, Post request) {
-        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
-            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
-
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.update(request);
 
         return schedule.getId();
     }
 
     @Override
-    public Long updateSchedule(Long scheduleId, Member member, Post request) {
+    public Long updateSchedule(Long scheduleId, ScheduleRequest updateScheduleRequest, Member member) {
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        ScheduleUtil.validateSchedule(request.getStartTime(), request.getEndTime());
+        ScheduleUtil.validateSchedule(updateScheduleRequest.getStartTime(), updateScheduleRequest.getEndTime());
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.update(request);
+        schedule.update(updateScheduleRequest);
 
         return schedule.getId();
-    }
-
-    @Override
-    public void deleteSchedule(Long scheduleId) {
-        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE)) {
-            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-
-        memberScheduleRepository.deleteAllByScheduleId(scheduleId);
-        scheduleRepository.delete(schedule);
     }
 
     @Override
@@ -110,7 +84,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public void deleteScheduleForHardReset(Long scheduleId) {
         scheduleRepository.findById(scheduleId).ifPresent(
                 schedule -> {
-                    schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
+                    schedule.getComments()
+                            .forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
                     memberScheduleRepository.deleteAllByScheduleId(scheduleId);
                     scheduleRepository.delete(schedule);
                 }
@@ -124,9 +99,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         validateScheduleIsInYourTeam(schedule, member);
 
-        MemberSchedule build = buildMemberSchedule(member, schedule);
-        memberScheduleRepository.save(build);
-        return build.getId();
+        MemberSchedule memberSchedule = buildMemberSchedule(member, schedule);
+        memberScheduleRepository.save(memberSchedule);
+        return memberSchedule.getId();
     }
 
     @Override
@@ -153,16 +128,15 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
     }
 
-    private static Schedule buildSchedule(Member member, Post request, Team team) {
-        Schedule createdSchedule = Schedule.builder()
+    private Schedule buildSchedule(ScheduleRequest createScheduleRequest, Team team, Member member) {
+        return Schedule.builder()
                 .team(team)
-                .title(request.getTitle())
-                .content(request.getContent())
+                .title(createScheduleRequest.getTitle())
+                .content(createScheduleRequest.getContent())
+                .startTime(createScheduleRequest.getStartTime())
+                .endTime(createScheduleRequest.getEndTime())
                 .member(member)
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
                 .build();
-        return createdSchedule;
     }
 
     private static MemberSchedule buildMemberSchedule(Member member, Schedule schedule) {
