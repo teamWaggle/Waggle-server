@@ -107,13 +107,14 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 조회", description = "username을 통해 username, nickname, profileImg를 조회합니다.")
+
+    @Operation(summary = "회원 정보 조회", description = "memberId를 통해 userUrl, nickname, profileImg를 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{username}")
-    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("username") String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
+    @GetMapping("/{memberId}")
+    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable Long memberId) {
+        Member member = memberQueryService.getMemberById(memberId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 
