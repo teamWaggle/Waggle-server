@@ -23,26 +23,6 @@ import java.util.List;
 public class RecommendCommandServiceImpl implements RecommendCommandService {
     private final RecommendRepository recommendRepository;
     private final BoardRepository boardRepository;
-    private final MemberQueryService memberQueryService;
-
-
-    @Override
-    public void handleRecommendation(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-        Member member = memberQueryService.getSignInMember();
-        //boardWriter.equals(user)
-        validateRecommendMyself(member, board);
-
-        boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
-        if (isRecommended) {
-            log.info("cancel recommend");
-            cancelRecommendation(board, member);
-        } else {
-            log.info("click recommend");
-            createRecommendation(board, member);
-        }
-    }
 
     @Override
     public void handleRecommendation(Long boardId, Member member) {
@@ -63,7 +43,6 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
             throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
         }
     }
-
 
     private void cancelRecommendation(Board board, Member member) {
         Recommend recommend = recommendRepository

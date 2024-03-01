@@ -20,11 +20,20 @@ import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.service.PetCommandService;
 import com.example.waggle.domain.pet.service.PetQueryService;
 import com.example.waggle.global.component.DatabaseCleanUp;
+<<<<<<< HEAD
+import com.example.waggle.web.dto.comment.CommentRequest.CommentCreateDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.web.dto.pet.PetRequest.PetCreateDto;
+import com.example.waggle.web.dto.reply.ReplyRequest.ReplyCreateDto;
+import com.example.waggle.web.dto.story.StoryRequest.StoryCreateDto;
+=======
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.pet.PetRequest;
 import com.example.waggle.web.dto.reply.ReplyRequest;
 import com.example.waggle.web.dto.story.StoryRequest;
+>>>>>>> develop
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -80,56 +89,75 @@ class MemberServiceImplTest {
     EntityManager entityManager;
 
 
+<<<<<<< HEAD
+    private MemberCredentialsDto signUpDto1;
+    private MemberCredentialsDto signUpDto2;
+    private MemberCredentialsDto signUpDto3;
+    private PetCreateDto petRequest;
+=======
     private MemberRequest.AccessDto signUpDto1;
     private MemberRequest.AccessDto signUpDto2;
     private MemberRequest.AccessDto signUpDto3;
     private PetRequest.Post petRequest;
+>>>>>>> develop
 
-    private StoryRequest.Post storyRequest;
-    private CommentRequest.Post commentRequest;
-    private CommentRequest.Post commentRequest2;
-    private ReplyRequest.Post replyRequest;
+    private StoryCreateDto storyRequest;
+    private CommentCreateDto commentRequest;
+    private CommentCreateDto commentRequest2;
+    private ReplyCreateDto replyRequest;
 
-    private MemberRequest.Put updateDto;
+    private MemberUpdateDto updateDto;
 
 
     @BeforeEach
     void beforeEach() {
         // Member 회원가입
+<<<<<<< HEAD
+        signUpDto1 = MemberCredentialsDto.builder()
+=======
         signUpDto1 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("asdklfj")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto2 = MemberCredentialsDto.builder()
+=======
 
         signUpDto2 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("sdlfkjsalkfj")
                 .build();
 
+<<<<<<< HEAD
+        signUpDto3 = MemberCredentialsDto.builder()
+=======
         signUpDto3 = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .password("12345678")
                 .email("asdklfj")
                 .build();
 
-        petRequest = PetRequest.Post.builder().name("chococococo").build();
+        petRequest = PetCreateDto.builder().name("chococococo").build();
 
-        updateDto = MemberRequest.Put.builder()
+        updateDto = MemberUpdateDto.builder()
                 .password("34567898765")
                 .nickname("hann.o_i")
                 .build();
 
-        storyRequest = StoryRequest.Post.builder()
+        storyRequest = StoryCreateDto.builder()
                 .content("hi")
                 .build();
-        commentRequest = CommentRequest.Post.builder()
+        commentRequest = CommentCreateDto.builder()
                 .content("hi this is comment")
                 .build();
-        commentRequest2 = CommentRequest.Post.builder()
+        commentRequest2 = CommentCreateDto.builder()
                 .content("member2 write comment")
                 .build();
 
-        replyRequest = ReplyRequest.Post.builder()
+        replyRequest = ReplyCreateDto.builder()
                 .content("hi this is reply")
                 .build();
     }
@@ -162,7 +190,11 @@ class MemberServiceImplTest {
         memberService.signUp(signUpDto1);
         memberService.signUp(signUpDto2);
 
+<<<<<<< HEAD
+        MemberCredentialsDto signInDto = MemberCredentialsDto.builder()
+=======
         MemberRequest.AccessDto signInDto = MemberRequest.AccessDto.builder()
+>>>>>>> develop
                 .email("member1")
                 .password("12345678").build();
 
@@ -172,10 +204,10 @@ class MemberServiceImplTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-
         // API 요청 설정
         String url = "http://localhost:" + randomServerPort + "/member/test";
-        ResponseEntity<String> responseEntity = testRestTemplate.postForEntity(url, new HttpEntity<>(httpHeaders), String.class);
+        ResponseEntity<String> responseEntity = testRestTemplate.postForEntity(url, new HttpEntity<>(httpHeaders),
+                String.class);
         log.info("responseEntity = {}", responseEntity);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -188,7 +220,11 @@ class MemberServiceImplTest {
         Long aLong = memberService.signUp(signUpDto1);
         Member member1 = memberQueryService.getMemberById(aLong);
         //when
+<<<<<<< HEAD
+        Long aLong1 = memberService.updateMemberProfile(member1.getUsername(), updateDto);
+=======
         Long aLong1 = memberService.updateMemberInfo(member1.getUsername(), updateDto);
+>>>>>>> develop
         Member member = memberQueryService.getMemberById(aLong);
         Member memberByUsername = memberQueryService.getMemberByUsername(member.getUsername());
         //then

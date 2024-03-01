@@ -5,16 +5,40 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.EmailService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.global.annotation.auth.AuthUser;
+import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.payload.ApiResponseDto;
+import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberResponse;
-import com.example.waggle.web.dto.member.VerifyMailRequest;
+import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
+import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
+import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -29,6 +53,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
 @RestController
+@ApiResponse(responseCode = "2000", description = "성공")
 @Tag(name = "Member API", description = "회원 API")
 public class MemberApiController {
 
@@ -39,129 +64,149 @@ public class MemberApiController {
 
 
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 임의의 userUrl과 nickname을 넣어줍니다.")
-    @ApiResponse(responseCode = "200", description = "회원가입 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "회원가입 실패. 잘못된 요청 또는 파일 저장 실패.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody MemberRequest.AccessDto request) {
-        Long memberId = memberCommandService.signUp(request);
+    public ApiResponseDto<Long> signUp(@RequestBody MemberCredentialsDto registerMemberRequest) {
+        Long memberId = memberCommandService.signUp(registerMemberRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 등록", description = "회원가입 후 회원정보를 처음 등록합니다. 서버에서 임의로 설정해둔 정보들을 수정합니다.")
-    @ApiResponse(responseCode = "200", description = "회원정보 등록 성공. 회원 정보 및 프로필 이미지를 반환합니다.")
-    @ApiResponse(responseCode = "400", description = "회원정보 등록 실패. 잘못된 요청 또는 파일 저장 실패.")
+    @Operation(summary = "회원 정보 등록 🔑", description = "회원가입 후 회원정보를 처음 등록합니다. 서버에서 임의로 설정해둔 정보들을 수정합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> registerInfo(@AuthUser Member member,
-                                             @RequestPart MemberRequest.RegisterDto request,
-                                             @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
-        request.setProfileImgUrl(MediaUtil.saveProfileImg(multipartFile, awsS3Service));
-        Long memberId = memberCommandService.registerMemberInfo(member, request);
+    public ApiResponseDto<Long> initializeMemberProfile(
+            @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
+            @RequestPart(value = "file", required = false) MultipartFile memberProfileImg,
+            @AuthUser Member member) {
+        memberProfileRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
+        Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 수정", description = "회원정보를 수정합니다.")
-    @ApiResponse(responseCode = "200", description = "회원정보 수정 성공.")
-    @ApiResponse(responseCode = "400", description = "회원정보 수정 실패. 잘못된 요청 또는 파일 저장 실패.")
+    @Operation(summary = "회원 정보 수정 🔑", description = "회원정보를 수정합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateInfo(
-            @RequestPart MemberRequest.Put request,
-            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
-            @RequestParam boolean allowUpload,
-            @AuthUser Member member) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(request.getProfileImgUrl());
+    public ApiResponseDto<Long> updateInfo(@RequestPart MemberUpdateDto updateMemberRequest,
+                                           @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
+                                           @RequestParam("allowUpload") boolean allowUpload,
+                                           @AuthUser Member member) {
+        String removePrefixCoverUrl = MediaUtil.removePrefix(updateMemberRequest.getProfileImgUrl());
         if (allowUpload) {
             awsS3Service.deleteFile(removePrefixCoverUrl);
-            request.setProfileImgUrl(MediaUtil.saveProfileImg(profileImg, awsS3Service));
+            updateMemberRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
         } else {
-            request.setProfileImgUrl(removePrefixCoverUrl);
+            updateMemberRequest.setProfileImgUrl(removePrefixCoverUrl);
         }
-        Long memberId = memberCommandService.updateMemberInfo(member, request);
+        Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 
     @Operation(summary = "회원 정보 조회", description = "memberId를 통해 userUrl, nickname, profileImg를 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공. username, nickname, profileImg 정보 반환.")
-    @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패. 사용자가 존재하지 않음.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/{memberId}")
-    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable Long memberId) {
+    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable Long memberId) {
         Member member = memberQueryService.getMemberById(memberId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 
     @Operation(summary = "이메일 전송", description = "사용자에게 인증 메일을 전송합니다.")
-    @ApiResponse(responseCode = "200", description = "이메일 전송 성공.")
-    @ApiResponse(responseCode = "400", description = "이메일 전송 실패. 잘못된 이메일 형식 등.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated VerifyMailRequest.ConfirmationDto confirmationDto) {
-        emailService.sendMail(confirmationDto.getEmail(), "email");
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto sendEmailRequest) {
+        emailService.sendMail(sendEmailRequest.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "이메일 인증", description = "받은 이메일을 통해 사용자의 이메일 인증을 진행합니다.")
-    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
-    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping("/email/verify")
-    public ApiResponseDto<Boolean> verifyMail(@RequestBody VerifyMailRequest.AuthDto authDto) {
-        memberCommandService.verifyMail(authDto);
+    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto verifyEmailRequest) {
+        memberCommandService.verifyMail(verifyEmailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "비밀번호 변경 시 이메일 인증", description = "비밀번호 변경 전 이메일 인증을 시도합니다. 결과값으로 member의 id를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
-    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PostMapping("/email/verify/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody VerifyMailRequest.AuthDto request) {
-        Long memberId = memberCommandService.verifyEmailForPasswordChange(request);
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(
+            @RequestBody EmailVerificationDto emailVerificationRequest) {
+        Long memberId = memberCommandService.verifyEmailForPasswordChange(emailVerificationRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
     @Operation(summary = "비밀번호 변경", description = "앞서 받은 멤버아이디와 일치하는 회원의 비밀번호를 변경합니다.")
-    @ApiResponse(responseCode = "200", description = "이메일 인증 성공.")
-    @ApiResponse(responseCode = "400", description = "이메일 인증 실패. 잘못된 인증 정보 등.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @PutMapping("/{memberId}/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable Long memberId, @RequestBody MemberRequest.PasswordDto request) {
-        memberCommandService.updatePassword(memberId, request.getPassword());
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable("memberId") Long memberId,
+                                                              @RequestBody MemberRequest.PasswordDto updatePasswordRequest) {
+        memberCommandService.updatePassword(memberId, updatePasswordRequest.getPassword());
         return ApiResponseDto.onSuccess(memberId);
     }
 
     @Operation(summary = "이메일 찾기", description = "성명과 생년월일을 통해 이메일을 찾습니다.")
-    @ApiResponse(responseCode = "200", description = "이메일 반환")
-    @ApiResponse(responseCode = "400", description = "회원 검색 실패.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/email/find")
-    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam String name, @RequestParam LocalDate birthday) {
+    public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam("name") String name,
+                                                                 @RequestParam("birthday") LocalDate birthday) {
         List<Member> members = memberQueryService.getMembersByNameAndBirthday(name, birthday);
         return ApiResponseDto.onSuccess(MemberConverter.toEmailListDto(members));
     }
 
     @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")
-    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/check-email")
-    public ApiResponseDto<Boolean> checkEmail(@RequestParam String email) {
+    public ApiResponseDto<Boolean> checkEmail(@RequestParam("email") String email) {
         memberQueryService.validateEmailDuplication(email);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "유저네임 중복 검사", description = "제공된 유저네임이 이미 사용 중인지 확인합니다.")
-    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @Operation(summary = "회원 URL 중복 검사", description = "제공된 회원 URL이 이미 사용 중인지 확인합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/check-user-url")
-    public ApiResponseDto<Boolean> checkUsername(@RequestParam String userUrl) {
+    public ApiResponseDto<Boolean> checkUsername(@RequestParam("userUrl") String userUrl) {
         memberQueryService.validateUserUrlDuplication(userUrl);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "닉네임 중복 검사", description = "제공된 닉네임이 이미 사용 중인지 확인합니다.")
-    @ApiResponse(responseCode = "200", description = "중복 검사 결과 반환")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/check-nickname")
-    public ApiResponseDto<Boolean> checkNickname(@RequestParam String nickname) {
+    public ApiResponseDto<Boolean> checkNickname(@RequestParam("nickname") String nickname) {
         memberQueryService.validateNicknameDuplication(nickname);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
     @Operation(summary = "회원 삭제", description = "특정 회원을 삭제합니다. 회원과 관련된 데이터가 모두 삭제됩니다.")
-    @ApiResponse(responseCode = "200", description = "회원 삭제 성공.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @DeleteMapping("/{memberId}")
-    public ApiResponseDto<Boolean> deleteMember(@AuthUser Member member) {
-        memberCommandService.deleteMember(member);
+    public ApiResponseDto<Boolean> deleteMember(@PathVariable("memberId") Long memberId) {
+        memberCommandService.deleteMember(memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

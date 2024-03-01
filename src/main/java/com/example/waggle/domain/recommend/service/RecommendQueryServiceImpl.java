@@ -7,17 +7,12 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
-import com.example.waggle.web.dto.answer.AnswerResponse;
-import com.example.waggle.web.dto.question.QuestionResponse;
-import com.example.waggle.web.dto.siren.SirenResponse;
-import com.example.waggle.web.dto.story.StoryResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,42 +68,43 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
     }
 
     private void handleDetailDto(Object dto) {
-        if (dto instanceof QuestionResponse.DetailDto) {
-            ((QuestionResponse.DetailDto) dto).setIsRecommend(checkRecommend(((QuestionResponse.DetailDto) dto).getId(),
-                    ((QuestionResponse.DetailDto) dto).getMember().getId()));
-            ((QuestionResponse.DetailDto) dto).setRecommendCount(
-                    countRecommend(((QuestionResponse.DetailDto) dto).getId()));
-        } else if (dto instanceof StoryResponse.DetailDto) {
-            ((StoryResponse.DetailDto) dto).setIsRecommend(checkRecommend(((StoryResponse.DetailDto) dto).getId(),
-                    ((StoryResponse.DetailDto) dto).getMember().getId()));
-            ((StoryResponse.DetailDto) dto).setRecommendCount(countRecommend(((StoryResponse.DetailDto) dto).getId()));
-        } else if (dto instanceof SirenResponse.DetailDto) {
-            ((SirenResponse.DetailDto) dto).setIsRecommend(checkRecommend(((SirenResponse.DetailDto) dto).getId(),
-                    ((SirenResponse.DetailDto) dto).getMember().getId()));
-            ((SirenResponse.DetailDto) dto).setRecommendCount(countRecommend(((SirenResponse.DetailDto) dto).getId()));
-        }
+//        if (dto instanceof QuestionResponse.QuestionDetailDto) {
+//            ((QuestionResponse.QuestionDetailDto) dto).setIsRecommend(
+//                    checkRecommend(((QuestionResponse.QuestionDetailDto) dto).getBoardId(),
+//                            ((QuestionResponse.QuestionDetailDto) dto).getMember().getMemberId()));
+//            ((QuestionResponse.QuestionDetailDto) dto).setRecommendCount(
+//                    countRecommend(((QuestionResponse.QuestionDetailDto) dto).getBoardId()));
+//        } else if (dto instanceof StoryDetailDto) {
+//            ((StoryDetailDto) dto).setIsRecommend(checkRecommend(((StoryDetailDto) dto).getBoardId(),
+//                    ((StoryDetailDto) dto).getMember().getMemberId()));
+//            ((StoryDetailDto) dto).setRecommendCount(countRecommend(((StoryDetailDto) dto).getBoardId()));
+//        } else if (dto instanceof SirenDetailDto) {
+//            ((SirenDetailDto) dto).setIsRecommend(checkRecommend(((SirenDetailDto) dto).getBoardId(),
+//                    ((SirenDetailDto) dto).getMember().getMemberId()));
+//            ((SirenDetailDto) dto).setRecommendCount(countRecommend(((SirenDetailDto) dto).getBoardId()));
+//        }
     }
 
     private void handleListDto(Object dto) {
-        if (dto instanceof AnswerResponse.ListDto) {
-            ((AnswerResponse.ListDto) dto).getAnswerList()
-                    .forEach(board -> {
-                        board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
-                        board.setRecommendCount(countRecommend(board.getId()));
-                    });
-        } else if (dto instanceof QuestionResponse.ListDto) {
-            ((QuestionResponse.ListDto) dto).getQuestionsList()
-                    .forEach(board -> {
-                        board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
-                        board.setRecommendCount(countRecommend(board.getId()));
-                    });
-        } else if (dto instanceof SirenResponse.ListDto) {
-            ((SirenResponse.ListDto) dto).getSirenList()
-                    .forEach(board -> {
-                        board.setIsRecommend(checkRecommend(board.getId(), board.getMember().getId()));
-                        board.setRecommendCount(countRecommend(board.getId()));
-                    });
-        }
+//        if (dto instanceof AnswerListDto) {
+//            ((AnswerListDto) dto).getAnswerList()
+//                    .forEach(board -> {
+//                        board.setIsRecommend(checkRecommend(board.getBoardId(), board.getMember().getMemberId()));
+//                        board.setRecommendCount(countRecommend(board.getBoardId()));
+//                    });
+//        } else if (dto instanceof QuestionSummaryListDto) {
+//            ((QuestionSummaryListDto) dto).getQuestionList()
+//                    .forEach(board -> {
+//                        board.setIsRecommend(checkRecommend(board.getBoardId(), board.getMember().getMemberId()));
+//                        board.setRecommendCount(countRecommend(board.getBoardId()));
+//                    });
+//        } else if (dto instanceof SirenListDto) {
+//            ((SirenListDto) dto).getSirenList()
+//                    .forEach(board -> {
+//                        board.setIsRecommend(checkRecommend(board.getBoardId(), board.getMember().getMemberId()));
+//                        board.setRecommendCount(countRecommend(board.getBoardId()));
+//                    });
+//        }
     }
 
 
