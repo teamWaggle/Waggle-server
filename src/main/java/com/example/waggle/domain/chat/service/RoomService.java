@@ -2,9 +2,9 @@ package com.example.waggle.domain.chat.service;
 
 import com.example.waggle.domain.chat.entity.Room;
 import com.example.waggle.domain.chat.entity.RoomMember;
-import com.example.waggle.domain.chat.repository.RoomMemberRepository;
 import com.example.waggle.domain.chat.repository.RoomRepository;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.web.dto.chat.RoomRequest;
 import java.util.List;
@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoomService {
 
     private final RoomRepository roomRepository;
-    private final RoomMemberRepository roomMemberRepository;
+    private final MemberRepository memberRepository;
     private final MemberQueryService memberQueryService;
 
     @Transactional
     public String createChatRoom(RoomRequest.Post request) {
-//        TODO Member host = memberQueryService.getSignInMember();
-        Member host = memberQueryService.getMemberByUsername("member10");
+        Member host = memberQueryService.getSignInMember();
+        memberRepository.save(host);
 
         Room createdRoom = Room.builder()
                 .id(Room.createRoomId())
@@ -35,6 +35,10 @@ public class RoomService {
                 .build();
         Room room = roomRepository.save(createdRoom);
         addMemberToRoom(room, host);
+
+//        String topicName = "chat-room-" + room.getId(); // 고유한 토픽 이름 생성
+//        NewTopic newTopic = new NewTopic(topicName, 1, (short) 1); // 파티션 1개, 복제 인자 1로 새 토픽 생성
+//        kafkaAdmin.createOrModifyTopics(newTopic);
 
         return room.getId();
     }
@@ -49,6 +53,7 @@ public class RoomService {
     public void connectChatRoom(String chatRoomId, String username) {
         Room room = roomRepository.findById(chatRoomId).get();    // TODO 예외 처리
         Member member = memberQueryService.getMemberByUsername(username);
+        memberRepository.save(member);
         addMemberToRoom(room, member);
     }
 
@@ -66,5 +71,9 @@ public class RoomService {
 
     public List<Room> getRoomList() {
         return roomRepository.findAll();
+    }
+
+    public Room getRoom(String roomId) {
+        return roomRepository.findById(roomId).get();
     }
 }

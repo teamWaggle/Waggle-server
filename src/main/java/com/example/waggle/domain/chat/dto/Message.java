@@ -10,7 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Getter
 @Builder
 @NoArgsConstructor
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class Message implements Serializable {
     private String id;
     @NotNull
-    private String chatRoomId;
+    private String roomId;
     @NotNull
     private String contentType;
     @NotNull
@@ -45,7 +47,7 @@ public class Message implements Serializable {
         return Chat.builder()
                 .senderUsername(senderUsername)
                 .senderId(senderId)
-                .chatRoomId(chatRoomId)
+                .chatRoomId(roomId)
                 .contentType(contentType)
                 .content(content)
                 .sendDate(Instant.ofEpochMilli(sendTime).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())

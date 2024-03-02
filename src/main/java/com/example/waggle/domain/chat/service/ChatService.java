@@ -1,13 +1,14 @@
 package com.example.waggle.domain.chat.service;
 
-import com.example.waggle.domain.chat.entity.Chat;
 import com.example.waggle.domain.chat.dto.Message;
+import com.example.waggle.domain.chat.entity.Chat;
 import com.example.waggle.domain.chat.repository.MongoChatRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,15 +20,14 @@ public class ChatService {
 
     private final MemberQueryService memberQueryService;
     private final MongoChatRepository mongoChatRepository;
+    private final KafkaTemplate kafkaTemplate;
     private final RoomService roomService;
     private final MessageSender sender;
 
     public void sendMessage(Message message, String username) {
         Member member = memberQueryService.getMemberByUsername(username);
-
         Integer readCount = 0; // TODO 메시지 안 읽은 사람 수
         message.setSendTimeAndSender(member.getUsername(), member.getId(), LocalDateTime.now(), readCount);
-
         sender.send("waggle-chat", message);
     }
 

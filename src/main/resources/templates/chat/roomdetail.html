@@ -71,19 +71,21 @@
                 });
             },
             sendMessage: function () {
-                ws.send("/app/chat/message", {}, JSON.stringify({
-                    type: 'TALK',
+                ws.send("/publish/chat.sendMessage", {}, JSON.stringify({
+                    contentType: 'TALK',
                     roomId: this.roomId,
-                    sender: this.sender,
-                    message: this.message
+                    senderUsername: this.sender,
+                    content: this.message
                 }));
                 this.message = '';
             },
             recvMessage: function (recv) {
+                console.log('received!!');
+                console.log('recv = ', recv);
                 this.messages.unshift({
-                    "type": recv.type,
-                    "sender": recv.type == 'ENTER' ? '[알림]' : recv.sender,
-                    "message": recv.message
+                    "type": recv.contentType,
+                    "sender": recv.contentType == 'ENTER' ? '[알림]' : recv.senderUsername,
+                    "message": recv.content
                 })
             }
         }
@@ -91,15 +93,19 @@
 
     function connect() {
         // pub/sub event
-        ws.connect({}, function (frame) {
-            ws.subscribe("/topic/chat/room/" + vm.$data.roomId, function (message) {
+        ws.connect({
+            "roomId": vm.$data.roomId,
+            "Authorization": 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzYjk5ZjYwZC1mOWY1LTQ2MmUtODg5NS0yM2E1MmVkZDI0NTEiLCJhdXRoIjoiVVNFUiIsImV4cCI6MTcwNzg0NjgxOX0.ovjnSjn0Dmm1d8AYTlL4Fklh5KhHEDNpmW-3zr3ZRks'
+        }, function (frame) {
+            ws.subscribe("/subscribe/waggle-chat", function (message) {
                 var recv = JSON.parse(message.body);
                 vm.recvMessage(recv);
             });
-            ws.send("/app/chat/message", {}, JSON.stringify({
-                type: 'ENTER',
+            ws.send("/publish/chat.sendMessage", {}, JSON.stringify({
+                contentType: 'ENTER',
                 roomId: vm.$data.roomId,
-                sender: vm.$data.sender
+                senderUsername: vm.$data.sender,
+                content: vm.$data.sender + '님이 입장하셨습니다.'
             }));
         }, function (error) {
             if (reconnect++ <= 5) {

@@ -4,7 +4,6 @@ import com.example.waggle.domain.chat.service.RoomService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.TokenService;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -28,9 +27,7 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        // StompCommand에 따라서 로직을 분기해서 처리하는 메서드를 호출한다.
         String username = verifyAccessToken(getAccessToken(accessor));
-        log.info("StompAccessor = {}", accessor);
         handleMessage(accessor.getCommand(), accessor, username);
         return message;
     }
@@ -51,7 +48,6 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void connectToChatRoom(StompHeaderAccessor accessor, String username) {
-        // 채팅방 ID를 가져온다.
         String chatRoomId = getChatRoomId(accessor);
 
         // 채팅방에 사용자를 추가하는 처리
@@ -71,6 +67,7 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private String verifyAccessToken(String accessToken) {
+        log.info("accessToken = {}", accessToken);
         if (!tokenService.validateToken(accessToken)) {
             throw new MemberHandler(ErrorStatus.AUTH_INVALID_TOKEN);
         }
@@ -79,10 +76,6 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private String getChatRoomId(StompHeaderAccessor accessor) {
-        return
-                String.valueOf(
-                        Objects.requireNonNull(
-                                accessor.getFirstNativeHeader("chatRoomId")
-                        ));
+        return accessor.getFirstNativeHeader("roomId");
     }
 }

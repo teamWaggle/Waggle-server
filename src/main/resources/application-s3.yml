@@ -1,0 +1,11 @@
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAX3BNHSUQ7AK5W5WJ
+      secret-key: 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
+    s3:
+      bucket: waggle-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
