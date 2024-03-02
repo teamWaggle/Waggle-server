@@ -53,6 +53,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
         Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
         Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
+        if (!authProvider.equals(member.getAuthProvider())) {
+            throw new AuthenticationHandler(ErrorStatus.AUTH_PROVIDER_IS_NOT_MATCH);
+        }
 
         return CustomUserDetails.create(member);
     }
