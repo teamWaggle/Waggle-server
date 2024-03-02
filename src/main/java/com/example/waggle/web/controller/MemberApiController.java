@@ -9,7 +9,6 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
@@ -64,8 +63,7 @@ public class MemberApiController {
             @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
             @RequestPart(value = "file", required = false) MultipartFile memberProfileImg,
             @AuthUser Member member) {
-        memberProfileRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
-        Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
+        Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, memberProfileImg, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -78,14 +76,7 @@ public class MemberApiController {
                                            @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
                                            @RequestParam("allowUpload") boolean allowUpload,
                                            @AuthUser Member member) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(updateMemberRequest.getProfileImgUrl());
-        if (allowUpload) {
-            awsS3Service.deleteFile(removePrefixCoverUrl);
-            updateMemberRequest.setProfileImgUrl(MediaUtil.saveProfileImg(memberProfileImg, awsS3Service));
-        } else {
-            updateMemberRequest.setProfileImgUrl(removePrefixCoverUrl);
-        }
-        Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
+        Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, memberProfileImg, allowUpload, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 

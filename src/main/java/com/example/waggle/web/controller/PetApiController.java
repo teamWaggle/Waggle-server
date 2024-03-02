@@ -9,28 +9,20 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
 import com.example.waggle.web.dto.pet.PetRequest;
 import com.example.waggle.web.dto.pet.PetResponse.PetSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,8 +44,7 @@ public class PetApiController {
     public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest createPetRequest,
                                           @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
                                           @AuthUser Member member) {
-        createPetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(petProfileImg, awsS3Service));
-        Long petId = petCommandService.createPet(createPetRequest, member);
+        Long petId = petCommandService.createPet(createPetRequest, petProfileImg, member);
         return ApiResponseDto.onSuccess(petId);
     }
 
@@ -68,16 +59,7 @@ public class PetApiController {
                                           @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
                                           @RequestParam("allowUpload") boolean allowUpload,
                                           @AuthUser Member member) {
-        String removePrefixProfileUrl = MediaUtil.removePrefix(updatePetRequest.getProfileImgUrl());
-        if (allowUpload) {
-            awsS3Service.deleteFile(removePrefixProfileUrl);
-            updatePetRequest.setProfileImgUrl(MediaUtil.saveProfileImg(petProfileImg, awsS3Service));
-        } else {
-            updatePetRequest.setProfileImgUrl(removePrefixProfileUrl);
-        }
-
-        Long result = petCommandService.updatePet(petId, updatePetRequest, member);
-
+        Long result = petCommandService.updatePet(petId, updatePetRequest, petProfileImg, allowUpload, member);
         return ApiResponseDto.onSuccess(result);
     }
 
