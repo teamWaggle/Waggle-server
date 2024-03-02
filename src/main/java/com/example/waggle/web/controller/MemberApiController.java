@@ -6,39 +6,21 @@ import com.example.waggle.domain.member.service.EmailService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
-import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberResponse;
-import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -113,7 +95,7 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/{memberId}")
-    public ApiResponseDto<MemberResponse.DetailDto> getMemberInfo(@PathVariable Long memberId) {
+    public ApiResponseDto<MemberResponse.MemberDetailDto> getMemberInfo(@PathVariable Long memberId) {
         Member member = memberQueryService.getMemberById(memberId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }

@@ -1,6 +1,7 @@
 package com.example.waggle.web.dto.story;
 
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,12 +20,11 @@ public class StoryResponse {
         private Long boardId;
         private String content;
         private LocalDateTime createdDate;
-        private int recommendCount;
-        private Boolean isRecommend;
         private List<String> hashtagList;
         private List<String> mediaList;
         private MemberSummaryDto member;
         private Boolean isOwner;
+        private RecommendationInfo recommendationInfo;
     }
 
     @Data
