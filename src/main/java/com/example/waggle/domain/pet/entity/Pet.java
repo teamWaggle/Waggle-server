@@ -40,13 +40,13 @@ public class Pet extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void update(PetRequest updatePetRequest) {
+    public void update(PetRequest updatePetRequest, String profileImgUrl) {
         this.name = updatePetRequest.getName();
         this.breed = updatePetRequest.getBreed();
         this.description = updatePetRequest.getDescription();
         this.gender = Gender.valueOf(updatePetRequest.getGender());
         this.age = updatePetRequest.getAge();
-        this.profileImgUrl = updatePetRequest.getProfileImgUrl();
+        this.profileImgUrl = profileImgUrl;
     }
 
 }

@@ -50,7 +50,7 @@ public class MediaUtil {
     }
 
     public static String saveProfileImg(MultipartFile file, AwsS3Service awsS3Service) {
-        return (file != null && !file.isEmpty()) ? awsS3Service.uploadFile(file) : null;
+        return ObjectUtil.isPresent(file) ? awsS3Service.uploadFile(file) : null;
     }
 
     public static List<String> getBoardMedias(Board board) {

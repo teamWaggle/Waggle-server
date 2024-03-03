@@ -12,7 +12,7 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
 
     int countByBoardId(Long id);
 
-    boolean existsByMemberIdAndBoardId(Long memberId, Long boardId);
+    boolean existsByMemberAndBoard(Member member, Board board);
 
     Optional<Recommend> findRecommendByMemberAndBoard(Member member, Board board);
 

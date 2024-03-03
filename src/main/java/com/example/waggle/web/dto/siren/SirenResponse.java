@@ -4,13 +4,15 @@ import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class SirenResponse {
 
@@ -26,12 +28,11 @@ public class SirenResponse {
         private LocalDateTime lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
-        private Boolean isRecommend;
-        private int recommendCount;
         private SirenCategory category;
         private MemberSummaryDto member;
         private Boolean isOwner;
         private ResolutionStatus status;
+        private RecommendationInfo recommendationInfo;
     }
 
     @Data
@@ -55,8 +56,7 @@ public class SirenResponse {
         private MemberSummaryDto member;
         private Boolean isOwner;
         private ResolutionStatus status;
-        private Boolean isRecommend;
-        private int recommendCount;
+        private RecommendationInfo recommendationInfo;
     }
 
     @Data
