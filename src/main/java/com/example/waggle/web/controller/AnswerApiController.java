@@ -10,6 +10,7 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
@@ -17,7 +18,6 @@ import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,16 +25,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -92,7 +86,7 @@ public class AnswerApiController {
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(questionId, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswers);
         //recommend relation field
-        recommendQueryService.getRecommendValues(listDto);
+        setRecommendInList(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -106,7 +100,7 @@ public class AnswerApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswerByUsername);
-        recommendQueryService.getRecommendValues(listDto);
+        setRecommendInList(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -119,5 +113,15 @@ public class AnswerApiController {
                                                 @AuthUser Member member) {
         answerCommandService.deleteAnswer(answerId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    private void setRecommendInList(AnswerListDto listDto) {
+        listDto.getAnswerList()
+                .forEach(answer ->
+                        answer.setRecommendationInfo(
+                                recommendQueryService.getRecommendationInfo(
+                                        answer.getBoardId(),
+                                        SecurityUtil.getCurrentUsername()))
+                );
     }
 }

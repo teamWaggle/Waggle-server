@@ -7,10 +7,9 @@ import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.JwtAuthenticationException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.global.security.object.JwtToken;
 import com.example.waggle.web.converter.MemberConverter;
-import com.example.waggle.web.dto.member.MemberRequest;
+import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -32,6 +31,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
 
 @Slf4j
 @Service
@@ -60,6 +61,9 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public JwtToken login(MemberCredentialsDto loginRequest) {
         Member member = memberQueryService.getMemberByEmail(loginRequest.getEmail());
+        if (!member.getAuthProvider().equals(WAGGLE)) {
+            throw new AuthenticationHandler(ErrorStatus.AUTH_PROVIDER_IS_NOT_MATCH);
+        }
         Authentication authentication;
         if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
 

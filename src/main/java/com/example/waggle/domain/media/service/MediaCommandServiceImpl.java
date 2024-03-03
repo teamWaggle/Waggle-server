@@ -5,16 +5,17 @@ import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.media.repository.MediaRepository;
 import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.web.dto.media.MediaRequest.MediaCreateDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -44,30 +45,9 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     public void updateMedia(MediaUpdateDto updateMediaRequest, List<MultipartFile> uploadFiles, Board board) {
         board.getMedias().clear();
 
-        if (validateUpdateMedia(uploadFiles, updateMediaRequest)) {
-            updateMediaRequest.getMediaList().forEach(media -> forEachMediaUpdate(uploadFiles, board, media));
-        }
-        if (updateMediaRequest != null) {
-            Optional.ofNullable(updateMediaRequest.getDeleteMediaList())
-                    .map(Collection::stream)
-                    .orElseGet(Stream::empty)
-                    .forEach(deleteFileDto -> {
-                        awsS3Service.deleteFile(deleteFileDto.getImageUrl());
-//                    mediaRepository.deleteById(deleteFileDto.getId());
-                    });
-        }
-    }
-
-    private void forEachMediaUpdate(List<MultipartFile> uploadFiles, Board board, MediaCreateDto media) {
-        if (media.allowUpload) {
-            String url = awsS3Service.uploadFile(uploadFiles.get(0));
-            media.setImageUrl(url);
-            uploadFiles.remove(0);
-        }
-        mediaRepository.save(Media.builder()
-                .uploadFile(media.getImageUrl())
-                .board(board)
-                .build());
+        validateUpdateMedia(uploadFiles, updateMediaRequest);
+        uploadAndUpdateMedia(uploadFiles, board, updateMediaRequest);
+        deleteExistMedia(updateMediaRequest);
     }
 
     @Override
@@ -76,17 +56,39 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         mediaRepository.deleteMediaByBoardId(board.getId());
     }
 
-    private boolean validateUpdateMedia(List<MultipartFile> multipartFiles, MediaUpdateDto request) {
-        long requestCount =
-                (request != null && request.getMediaList() != null) ? request.getMediaList().stream()
-                        .filter(media -> media.allowUpload).count() : 0;
-        long mediaCount = (multipartFiles != null) ? multipartFiles.size() : 0;
+    private void validateUpdateMedia(List<MultipartFile> multipartFiles, MediaUpdateDto request) {
+        long uploadRequestCount = Optional.ofNullable(request)
+                .map(MediaUpdateDto::getMediaList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(MediaCreateDto::isAllowUpload)
+                .count();
 
-        if (requestCount != mediaCount) {
+        long uploadFileCount = Optional.ofNullable(multipartFiles)
+                .orElse(Collections.emptyList())
+                .size();
+
+        if (uploadRequestCount != uploadFileCount) {
             throw new MediaHandler(ErrorStatus.MEDIA_COUNT_IS_DIFFERENT);
         }
+    }
 
-        return requestCount > 0;
+    private void uploadAndUpdateMedia(List<MultipartFile> uploadFiles, Board board, MediaUpdateDto updateMediaRequest) {
+        if (ObjectUtil.isPresent(updateMediaRequest) && ObjectUtil.isPresent(updateMediaRequest.getMediaList())) {
+            updateMediaRequest.getMediaList().forEach(media -> {
+                if (media.allowUpload) {
+                    String url = awsS3Service.uploadFile(uploadFiles.remove(0));
+                    media.setImageUrl(url);
+                }
+                mediaRepository.save(Media.builder().uploadFile(media.getImageUrl()).board(board).build());
+            });
+        }
+    }
+
+    private void deleteExistMedia(MediaUpdateDto updateMediaRequest) {
+        Optional.ofNullable(updateMediaRequest.getDeleteMediaList())
+                .orElse(Collections.emptyList())
+                .forEach(deleteFileDto -> awsS3Service.deleteFile(deleteFileDto.getImageUrl()));
     }
 
 }

@@ -1,16 +1,10 @@
 package com.example.waggle.global.payload.code;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -40,6 +34,7 @@ public enum ErrorStatus implements BaseCode {
     AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER(UNAUTHORIZED, 4060, "provider로부터 받아올 email의 정보가 존재하지 않습티다"),
     AUTH_TOKEN_IS_UNSUPPORTED(UNAUTHORIZED, 4061, "토큰 형식이 jwt와는 다른 형식입니다."),
     AUTH_IS_NULL(BAD_REQUEST, 4062, "토큰 정보가 null입니다."),
+    AUTH_PROVIDER_IS_NOT_MATCH(BAD_REQUEST, 4063, "로그인 하려는 소셜과 회원이 회원가입한 provider가 일치하지 않습니다"),
 
     // 회원 관련 오류 (4100 ~ 4149)
     MEMBER_DUPLICATE_USER_URL(CONFLICT, 4100, "이미 존재하는 사용자 url 입니다."),
