@@ -41,7 +41,7 @@ public class PetApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest createPetRequest,
+    public ApiResponseDto<Long> createPet(@RequestPart("createPetRequest") @Validated PetRequest createPetRequest,
                                           @RequestPart(value = "petProfileImg", required = false) MultipartFile petProfileImg,
                                           @AuthUser Member member) {
         Long petId = petCommandService.createPet(createPetRequest, petProfileImg, member);
@@ -55,7 +55,7 @@ public class PetApiController {
     })
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
-                                          @RequestPart @Validated PetRequest updatePetRequest,
+                                          @RequestPart("updatePetRequest") @Validated PetRequest updatePetRequest,
                                           @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
                                           @RequestParam("allowUpload") boolean allowUpload,
                                           @AuthUser Member member) {

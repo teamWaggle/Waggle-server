@@ -81,7 +81,7 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateInfo(@RequestPart MemberUpdateDto updateMemberRequest,
+    public ApiResponseDto<Long> updateInfo(@RequestPart("updateMemberRequest") MemberUpdateDto updateMemberRequest,
                                            @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
                                            @RequestParam("allowUpload") boolean allowUpload,
                                            @AuthUser Member member) {
@@ -95,7 +95,7 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/{memberId}")
-    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable Long memberId) {
+    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("memberId") Long memberId) {
         Member member = memberQueryService.getMemberById(memberId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
