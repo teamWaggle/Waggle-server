@@ -37,10 +37,6 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
 
-//        if (username.equals(board.getMember().getUsername())) {
-//            return false;
-//        } -> 뺄까요? command에서 validate해주는데 또 검사를 할 필요가 있나 싶습니다
-
         Member signInMember = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 

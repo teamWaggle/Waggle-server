@@ -13,8 +13,7 @@ public class RecommendResponse {
     @AllArgsConstructor
     @Schema
     public static class RecommendationInfo {
-        @Builder.Default
-        private Boolean isRecommend = false;
+        private Boolean isRecommend;
         private int recommendCount;
     }
 }

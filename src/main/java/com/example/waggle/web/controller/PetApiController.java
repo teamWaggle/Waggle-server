@@ -42,7 +42,7 @@ public class PetApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart @Validated PetRequest createPetRequest,
-                                          @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
+                                          @RequestPart(value = "petProfileImg", required = false) MultipartFile petProfileImg,
                                           @AuthUser Member member) {
         Long petId = petCommandService.createPet(createPetRequest, petProfileImg, member);
         return ApiResponseDto.onSuccess(petId);
