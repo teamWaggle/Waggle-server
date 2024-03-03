@@ -56,7 +56,7 @@ public class PetApiController {
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
                                           @RequestPart("updatePetRequest") @Validated PetRequest updatePetRequest,
-                                          @RequestPart(value = "file", required = false) MultipartFile petProfileImg,
+                                          @RequestPart(value = "petProfileImg", required = false) MultipartFile petProfileImg,
                                           @RequestParam("allowUpload") boolean allowUpload,
                                           @AuthUser Member member) {
         Long result = petCommandService.updatePet(petId, updatePetRequest, petProfileImg, allowUpload, member);
