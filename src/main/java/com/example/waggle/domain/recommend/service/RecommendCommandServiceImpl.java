@@ -3,7 +3,6 @@ package com.example.waggle.domain.recommend.service;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.GeneralException;
@@ -30,7 +29,7 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
         validateRecommendMyself(member, board);
 
-        boolean isRecommended = recommendRepository.existsByMemberIdAndBoardId(member.getId(), board.getId());
+        boolean isRecommended = recommendRepository.existsByMemberAndBoard(member, board);
         if (isRecommended) {
             cancelRecommendation(board, member);
         } else {

@@ -10,15 +10,14 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import com.example.waggle.web.dto.question.QuestionResponse;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,16 +26,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -92,7 +87,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        recommendQueryService.getRecommendValues(listDto);
+        setRecommendInList(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -106,7 +101,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        recommendQueryService.getRecommendValues(listDto);
+        setRecommendInList(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -115,11 +110,14 @@ public class QuestionApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/{questionId}")
-    public ApiResponseDto<QuestionResponse.QuestionDetailDto> getQuestionByBoardId(
+    public ApiResponseDto<QuestionDetailDto> getQuestionByBoardId(
             @PathVariable("questionId") Long questionId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
-        QuestionResponse.QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        recommendQueryService.getRecommendValues(detailDto);
+        QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
+        detailDto.setRecommendationInfo(recommendQueryService.getRecommendationInfo(
+                questionId,
+                SecurityUtil.getCurrentUsername())
+        );
         return ApiResponseDto.onSuccess(detailDto);
     }
 
@@ -133,6 +131,16 @@ public class QuestionApiController {
                                                   @AuthUser Member member) {
         questionCommandService.deleteQuestion(questionId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    private void setRecommendInList(QuestionSummaryListDto listDto) {
+        listDto.getQuestionList()
+                .forEach(question ->
+                        question.setRecommendationInfo(
+                                recommendQueryService.getRecommendationInfo(
+                                        question.getBoardId(),
+                                        SecurityUtil.getCurrentUsername()))
+                );
     }
 
     // TODO 사용자가 작성한 대답과 관련된 question list 가져오기

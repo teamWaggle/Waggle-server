@@ -2,13 +2,15 @@ package com.example.waggle.web.dto.question;
 
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class QuestionResponse {
 
@@ -22,11 +24,10 @@ public class QuestionResponse {
         private String title;
         private ResolutionStatus status;
         private LocalDateTime createdDate;
-        private int recommendCount;
-        private Boolean isRecommend;
         private List<String> hashtagList;
         private MemberSummaryDto member;
         private Boolean isOwner;
+        private RecommendationInfo recommendationInfo;
     }
 
     @Data
@@ -52,12 +53,11 @@ public class QuestionResponse {
         private ResolutionStatus status;
         private String content;
         private LocalDateTime createdDate;
-        private int recommendCount;
-        private Boolean isRecommend;
         private Boolean isOwner;
         private List<String> mediaList;
         private List<String> hashtagList;
         private MemberSummaryDto member;
+        private RecommendationInfo recommendationInfo;
     }
 
 }

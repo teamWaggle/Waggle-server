@@ -96,20 +96,20 @@ public class Member extends BaseTimeEntity implements UserDetails {
         return true;
     }
 
-    public void updateInfo(MemberUpdateDto request, String encodedPassword) {
+    public void updateInfo(MemberUpdateDto request, String profileImgUrl, String encodedPassword) {
         this.password = encodedPassword;
         this.name = request.getName();
         this.nickname = request.getNickname();
         this.birthday = request.getBirthday();
-        this.profileImgUrl = request.getProfileImgUrl();
+        this.profileImgUrl = profileImgUrl;
     }
 
-    public void registerInfo(MemberProfileDto request) {
+    public void registerInfo(MemberProfileDto request, String profileImgUrl) {
         this.userUrl = request.getUserUrl();
         this.name = request.getName();
         this.nickname = request.getNickname();
         this.birthday = request.getBirthday();
-        this.profileImgUrl = request.getProfileImgUrl();
+        this.profileImgUrl = profileImgUrl;
     }
 
     public void changePassword(String encodedPassword) {

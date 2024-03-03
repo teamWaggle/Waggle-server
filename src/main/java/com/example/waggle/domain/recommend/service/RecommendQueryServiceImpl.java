@@ -1,18 +1,25 @@
 package com.example.waggle.domain.recommend.service;
 
+import com.example.waggle.domain.board.Board;
+import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
+import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.exception.handler.RecommendHandler;
+import com.example.waggle.global.exception.GeneralException;
+import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,22 +28,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class RecommendQueryServiceImpl implements RecommendQueryService {
 
     private final RecommendRepository recommendRepository;
-    private final MemberQueryService memberQueryService;
+    private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     @Override
-    public boolean checkRecommend(Long boardId, Long memberId) {
-        if (!memberQueryService.isAuthenticated()) {
+    public boolean checkRecommend(Long boardId, String username) {
+        if ("anonymousUser".equals(username)) {
             return false;
         }
-        Member signInMember = memberQueryService.getMemberByUsername(SecurityUtil.getCurrentUsername());
 
-        boolean recommendIt = false;
-        //(login user == board writer) checking
-        if (signInMember.getId() != memberId) {
-            recommendIt = recommendRepository
-                    .existsByMemberIdAndBoardId(signInMember.getId(), boardId);
-        }
-        return recommendIt;
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
+
+        Member signInMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return recommendRepository.existsByMemberAndBoard(signInMember, board);
     }
 
     @Override
@@ -51,60 +58,11 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
     }
 
     @Override
-    public void getRecommendValues(Object dto) {
-        if (dto == null) {
-            throw new RecommendHandler(ErrorStatus.BOARD_OBJECT_CANNOT_BE_NULL_WHEN_CHECK_RECOMMEND);
-        }
-        switch (dto.getClass().getSimpleName()) {
-            case "ListDto":
-                handleListDto(dto);
-                break;
-            case "DetailDto":
-                handleDetailDto(dto);
-                break;
-            default:
-                throw new RecommendHandler(ErrorStatus.BOARD_TYPE_CANNOT_BE_FOUND_WHEN_CHECK_RECOMMEND);
-        }
-    }
-
-    private void handleDetailDto(Object dto) {
-//        if (dto instanceof QuestionResponse.QuestionDetailDto) {
-//            ((QuestionResponse.QuestionDetailDto) dto).setIsRecommend(
-//                    checkRecommend(((QuestionResponse.QuestionDetailDto) dto).getBoardId(),
-//                            ((QuestionResponse.QuestionDetailDto) dto).getMember().getMemberId()));
-//            ((QuestionResponse.QuestionDetailDto) dto).setRecommendCount(
-//                    countRecommend(((QuestionResponse.QuestionDetailDto) dto).getBoardId()));
-//        } else if (dto instanceof StoryDetailDto) {
-//            ((StoryDetailDto) dto).setIsRecommend(checkRecommend(((StoryDetailDto) dto).getBoardId(),
-//                    ((StoryDetailDto) dto).getMember().getMemberId()));
-//            ((StoryDetailDto) dto).setRecommendCount(countRecommend(((StoryDetailDto) dto).getBoardId()));
-//        } else if (dto instanceof SirenDetailDto) {
-//            ((SirenDetailDto) dto).setIsRecommend(checkRecommend(((SirenDetailDto) dto).getBoardId(),
-//                    ((SirenDetailDto) dto).getMember().getMemberId()));
-//            ((SirenDetailDto) dto).setRecommendCount(countRecommend(((SirenDetailDto) dto).getBoardId()));
-//        }
-    }
-
-    private void handleListDto(Object dto) {
-//        if (dto instanceof AnswerListDto) {
-//            ((AnswerListDto) dto).getAnswerList()
-//                    .forEach(board -> {
-//                        board.setIsRecommend(checkRecommend(board.getBoardId(), board.getMember().getMemberId()));
-//                        board.setRecommendCount(countRecommend(board.getBoardId()));
-//                    });
-//        } else if (dto instanceof QuestionSummaryListDto) {
-//            ((QuestionSummaryListDto) dto).getQuestionList()
-//                    .forEach(board -> {
-//                        board.setIsRecommend(checkRecommend(board.getBoardId(), board.getMember().getMemberId()));
-//                        board.setRecommendCount(countRecommend(board.getBoardId()));
-//                    });
-//        } else if (dto instanceof SirenListDto) {
-//            ((SirenListDto) dto).getSirenList()
-//                    .forEach(board -> {
-//                        board.setIsRecommend(checkRecommend(board.getBoardId(), board.getMember().getMemberId()));
-//                        board.setRecommendCount(countRecommend(board.getBoardId()));
-//                    });
-//        }
+    public RecommendationInfo getRecommendationInfo(Long boardId, String username) {
+        return RecommendationInfo.builder()
+                .isRecommend(checkRecommend(boardId, username))
+                .recommendCount(countRecommend(boardId))
+                .build();
     }
 
 
