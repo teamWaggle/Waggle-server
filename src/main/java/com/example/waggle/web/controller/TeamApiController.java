@@ -6,9 +6,9 @@ import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest;
@@ -24,15 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -53,7 +45,7 @@ public class TeamApiController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
-                                           @RequestPart(value = "file", required = false) MultipartFile teamCoverImg,
+                                           @RequestPart(value = "teamCoverImg", required = false) MultipartFile teamCoverImg,
                                            @AuthUser Member member) {
         createTeamRequest.setCoverImageUrl(MediaUtil.saveProfileImg(teamCoverImg, awsS3Service));
         Long createdTeamId = teamCommandService.createTeam(createTeamRequest, member);
@@ -67,7 +59,7 @@ public class TeamApiController {
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
                                            @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
-                                           @RequestPart(value = "file", required = false) MultipartFile teamCoverImg,
+                                           @RequestPart(value = "teamCoverImg", required = false) MultipartFile teamCoverImg,
                                            @RequestParam boolean allowUpload,
                                            @AuthUser Member member) {
         String removePrefixCoverUrl = MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl());
