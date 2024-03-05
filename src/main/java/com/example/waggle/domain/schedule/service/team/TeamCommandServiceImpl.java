@@ -2,27 +2,21 @@ package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.schedule.entity.Participation;
-import com.example.waggle.domain.schedule.entity.ParticipationStatus;
-import com.example.waggle.domain.schedule.entity.Schedule;
-import com.example.waggle.domain.schedule.entity.Team;
-import com.example.waggle.domain.schedule.entity.TeamColor;
-import com.example.waggle.domain.schedule.entity.TeamMember;
-import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
-import com.example.waggle.domain.schedule.repository.ParticipationRepository;
-import com.example.waggle.domain.schedule.repository.ScheduleRepository;
-import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
-import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.domain.schedule.entity.*;
+import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.schedule.TeamRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.example.waggle.domain.schedule.entity.ParticipationStatus.REJECTED;
 
 
 @Slf4j
@@ -103,6 +97,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, leader);
         validateRemovedIsLeader(memberId, team);
+        Participation participation = participationRepository.findByTeamIdAndMemberId(teamId, memberId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.PARTICIPATION_NOT_FOUND));
+        participation.setStatus(REJECTED);
         memberScheduleRepository.deleteAllByMemberId(memberId);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(memberId, teamId);
     }
@@ -115,6 +112,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         validateRemovedIsLeader(member.getId(), team);
 
         memberScheduleRepository.deleteAllByMemberId(member.getId());
+        participationRepository.deleteByMemberAndTeam(member, team);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(member.getId(), teamId);
     }
 
@@ -163,7 +161,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
             participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
         } else {
-            participation.setStatus(ParticipationStatus.REJECTED);
+            participation.setStatus(REJECTED);
         }
         participationRepository.save(participation);
     }
@@ -191,8 +189,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private void validateNonExistenceOfParticipationRequest(Team team, Member
-            member) {
+    private void validateNonExistenceOfParticipationRequest(Team team, Member member) {
         if (participationRepository.existsByTeamAndMember(team, member)) {
             throw new TeamHandler(
                     ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS);
