@@ -6,7 +6,6 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +51,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday) {
         return memberRepository.findByNameAndBirthday(name, birthday);
+    }
+
+    @Override
+    public List<Member> getMembersByNicknameContaining(String nickname) {
+        return memberRepository.findByNicknameContaining(nickname);
     }
 
     @Override
