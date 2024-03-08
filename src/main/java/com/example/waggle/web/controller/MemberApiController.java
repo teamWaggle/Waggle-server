@@ -95,8 +95,8 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/by-nickname")
-    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(@RequestParam("nickname") String nickname) {
+    @GetMapping("/by-nickname/{nickname}")
+    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(@PathVariable("nickname") String nickname) {
         List<Member> members = memberQueryService.getMembersByNicknameContaining(nickname);
         return ApiResponseDto.onSuccess(MemberConverter.toMentionListDto(members));
     }
