@@ -17,6 +17,8 @@ public interface MemberQueryService {
 
     List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday);
 
+    List<Member> getMembersByNicknameContaining(String nickname);
+
     boolean isAuthenticated();
 
     void validateEmailDuplication(String email);
