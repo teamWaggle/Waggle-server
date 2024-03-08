@@ -98,6 +98,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
         validateScheduleIsInYourTeam(schedule, member);
+        validateExistMemberSchedule(scheduleId, member);
 
         MemberSchedule memberSchedule = buildMemberSchedule(member, schedule);
         memberScheduleRepository.save(memberSchedule);
@@ -125,6 +126,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     private void validateScheduleIsInYourTeam(Schedule schedule, Member member) {
         if (!teamMemberRepository.existsByMemberAndTeam(member, schedule.getTeam())) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_IN_YOUR_TEAM_SCHEDULE);
+        }
+    }
+    
+    private void validateExistMemberSchedule(Long scheduleId, Member member) {
+        if (memberScheduleRepository.existsByMemberIdAndScheduleId(member.getId(), scheduleId)) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_WAS_ALREADY_CHOSEN);
         }
     }
 
