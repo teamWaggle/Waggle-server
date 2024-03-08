@@ -15,7 +15,6 @@ import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.mention.repository.MentionRepository;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
@@ -55,7 +54,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final FollowRepository followRepository;
     private final ParticipationRepository participationRepository;
     private final RecommendRepository recommendRepository;
-    private final MentionRepository mentionRepository;
     private final BoardHashtagRepository boardHashtagRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
@@ -155,7 +153,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         followRepository.deleteAllByFromMember(member);
         participationRepository.deleteAllByMember(member);
         recommendRepository.deleteAllByMember(member);
-        mentionRepository.deleteAllByMentionedNickname(member.getNickname());
     }
 
     private void deleteMemberContent(Member member) {
@@ -186,7 +183,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private void deleteCommentsAndReplies(List<Comment> comments) {
         for (Comment comment : comments) {
-            mentionRepository.deleteAllByConversation(comment);
             deleteReplies(replyRepository.findByComment(comment));
             commentRepository.delete(comment);
         }
@@ -194,7 +190,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private void deleteReplies(List<Reply> replies) {
         for (Reply reply : replies) {
-            mentionRepository.deleteAllByConversation(reply);
             replyRepository.delete(reply);
         }
     }

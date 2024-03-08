@@ -1,6 +1,5 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.EmailService;
 import com.example.waggle.domain.member.service.MemberCommandService;
@@ -16,6 +15,7 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberMentionListDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +41,6 @@ public class MemberApiController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
-    private final AwsS3Service awsS3Service;
     private final EmailService emailService;
 
 
@@ -90,6 +89,16 @@ public class MemberApiController {
     public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("memberId") Long memberId) {
         Member member = memberQueryService.getMemberById(memberId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
+    }
+
+    @Operation(summary = "회원 검색", description = "nickname 일부 혹은 전체를 검색하여 검색어에 해당하는 모든 회원을 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/by-nickname/{nickname}")
+    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(@PathVariable("nickname") String nickname) {
+        List<Member> members = memberQueryService.getMembersByNicknameContaining(nickname);
+        return ApiResponseDto.onSuccess(MemberConverter.toMentionListDto(members));
     }
 
     @Operation(summary = "이메일 전송", description = "사용자에게 인증 메일을 전송합니다.")
