@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.waggle.domain.schedule.entity.ParticipationStatus.REJECTED;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -99,7 +97,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         validateRemovedIsLeader(memberId, team);
         Participation participation = participationRepository.findByTeamIdAndMemberId(teamId, memberId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.PARTICIPATION_NOT_FOUND));
-        participation.setStatus(REJECTED);
+        participation.setStatus(ParticipationStatus.REJECTED);
         memberScheduleRepository.deleteAllByMemberId(memberId);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(memberId, teamId);
     }
@@ -161,7 +159,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
             participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
         } else {
-            participation.setStatus(REJECTED);
+            participation.setStatus(ParticipationStatus.REJECTED);
         }
         participationRepository.save(participation);
     }
