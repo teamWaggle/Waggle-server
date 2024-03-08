@@ -6,7 +6,6 @@ import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.mention.service.MentionCommandService;
 import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.GeneralException;
@@ -30,7 +29,6 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final ReplyRepository replyRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final ScheduleRepository scheduleRepository;
-    private final MentionCommandService mentionCommandService;
     private final BoardRepository boardRepository;
 
     @Override
@@ -41,7 +39,6 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         Comment comment = buildComment(board, createCommentRequest, member);
         commentRepository.save(comment);
-        mentionCommandService.createMentions(comment, createCommentRequest.getMentionedMemberList());
         return comment.getId();
     }
 
@@ -52,7 +49,6 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         validateMember(comment, member);
 
         comment.changeContent(updateCommentRequest.getContent());
-        mentionCommandService.updateMentions(comment, updateCommentRequest.getMentionedMemberList());
         return comment.getId();
     }
 

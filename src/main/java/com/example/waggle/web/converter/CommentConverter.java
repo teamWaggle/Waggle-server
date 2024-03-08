@@ -16,8 +16,6 @@ public class CommentConverter {
                 .commentId(comment.getId())
                 .content(comment.getContent())
                 .createdDate(comment.getCreatedDate())
-                .mentionedMemberList(comment.getMentions().stream()
-                        .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .member(MemberConverter.toMemberSummaryDto(comment.getMember()))
                 .isOwner(comment.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();

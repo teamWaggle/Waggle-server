@@ -5,8 +5,6 @@ import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.mention.service.MentionCommandService;
 import com.example.waggle.global.exception.handler.CommentHandler;
 import com.example.waggle.global.exception.handler.ReplyHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -24,7 +22,6 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final MentionCommandService mentionCommandService;
 
     @Override
     public Long createReply(Long commentId, ReplyRequest createReplyRequest, Member member) {
@@ -33,7 +30,6 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
         Reply reply = buildReply(comment, createReplyRequest, member);
         replyRepository.save(reply);
-        mentionCommandService.createMentions(reply, createReplyRequest.getMentionedMemberList());
 
         return reply.getId();
     }
@@ -44,7 +40,6 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
         validateMember(reply, member);
         reply.changeContent(updateReplyRequest.getContent());
-        mentionCommandService.updateMentions(reply, updateReplyRequest.getMentionedMemberList());
         return reply.getId();
     }
 

@@ -17,8 +17,6 @@ public class ReplyConverter {
                 .isOwner(reply.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .content(reply.getContent())
                 .createdDate(reply.getCreatedDate())
-                .mentionedMemberList(reply.getMentions().stream()
-                        .map(mention -> mention.getMentionedNickname()).collect(Collectors.toList()))
                 .build();
     }
 

@@ -3,10 +3,8 @@ package com.example.waggle.web.converter;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.util.EmailUtil;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.web.dto.member.MemberResponse;
-import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
+import com.example.waggle.web.dto.member.MemberResponse.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,10 +39,24 @@ public class MemberConverter {
 
     }
 
-    public static MemberResponse.EmailListDto toEmailListDto(List<Member> memberList) {
-        return MemberResponse.EmailListDto.builder()
+    public static EmailListDto toEmailListDto(List<Member> memberList) {
+        return EmailListDto.builder()
                 .emailList(memberList.stream()
                         .map(member -> EmailUtil.maskEmail(member.getEmail())).collect(Collectors.toList()))
+                .build();
+    }
+
+    public static MemberMentionDto toMentionDto(Member member) {
+        return MemberMentionDto.builder()
+                .id(member.getUserUrl())
+                .display(member.getNickname())
+                .build();
+    }
+
+    public static MemberMentionListDto toMentionListDto(List<Member> memberList) {
+        return MemberMentionListDto.builder()
+                .mentionList(memberList.stream()
+                        .map(MemberConverter::toMentionDto).collect(Collectors.toList()))
                 .build();
     }
 
