@@ -66,7 +66,7 @@ public enum ErrorStatus implements BaseCode {
     TEAM_NOT_FOUND(NOT_FOUND, 4200, "팀 정보가 존재하지 않습니다."),
     SCHEDULE_NOT_FOUND(NOT_FOUND, 4201, "스케줄 정보가 존재하지 않습니다."),
     TEAM_MEMBER_ALREADY_EXISTS(CONFLICT, 4202, "이미 팀에 속해 있는 멤버입니다."),
-    TEAM_LEADER_UNAUTHORIZED(BAD_REQUEST, 4203, "팀 리더만 리더를 변경할 수 있습니다."),
+    TEAM_LEADER_UNAUTHORIZED(BAD_REQUEST, 4203, "팀 리더 권한 행동입니다. 사용자는 해당 팀의 리더가 아닙니다."),
     TEAM_MEMBER_NOT_IN_TEAM(NOT_FOUND, 4204, "멤버가 이 팀에 속해 있지 않습니다."),
     TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS(CONFLICT, 4205, "이미 팀 참여 요청이 존재합니다."),
     TEAM_PARTICIPATION_NOT_FOUND(NOT_FOUND, 4206, "참여 요청 정보가 존재하지 않습니다."),
@@ -79,6 +79,8 @@ public enum ErrorStatus implements BaseCode {
     SCHEDULE_WRITER_CANNOT_DELETE_MEMBER_SCHEDULE(BAD_REQUEST, 4213, "작성자는 멤버 스케줄에서 제외가 불가능합니다"),
     SCHEDULE_CANNOT_COMMENTED_BECAUSE_OF_ACCESS(BAD_REQUEST, 4214, "개인 스케줄이 아니므로 댓글을 달 수 없습니다."),
     TEAM_SIZE_IS_OVER_THAN_MAX_SIZE(BAD_REQUEST, 4215, "수용할 수 있는 팀멤버를 초과하는 요청입니다"),
+    SCHEDULE_WAS_ALREADY_CHOSEN(BAD_REQUEST, 4216, " 이미 선택하신 스케줄입니다."),
+    PARTICIPATION_NOT_FOUND(NOT_FOUND, 4217, "존재하지 않는 참가 지원입니다."),
 
 
     // 펫 관련 오류 (4250 ~ 4299)
