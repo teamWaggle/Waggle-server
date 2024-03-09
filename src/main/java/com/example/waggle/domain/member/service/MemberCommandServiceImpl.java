@@ -130,6 +130,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
+    public Long convertRole(Member member, Role from, Role to) {
+        if (!member.getRole().equals(from)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+        }
+        member.convertRole(to);
+        return member.getId();
+    }
+
+    @Override
     public Long verifyEmailForPasswordChange(EmailVerificationDto verifyEmailRequest) {
         verifyMail(verifyEmailRequest);
         return memberQueryService.getMemberByEmail(verifyEmailRequest.getEmail()).getId();
@@ -151,11 +160,19 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Scheduled(cron = "0 0 0 * * ?")
     @Override
-    public void deleteMemberAsUser() {
+    public void deleteDormantMember() {
         List<Member> memberList = memberRepository.findByRole(Role.DORMANT);
         memberList.stream()
                 .filter(member -> member.getLastModifiedDate().isBefore(LocalDateTime.now().minusDays(1)))
                 .forEach(member -> deleteMember(member.getId()));
+    }
+
+    @Override
+    public void deleteMemberAsAdmin(Member member, Long memberId) {
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+        }
+        deleteMember(memberId);
     }
 
     private void deleteAllDataLinkedToMember(Member member) {
