@@ -195,7 +195,7 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "휴면계정 등록", description = "특정 회원을 휴면계정으로 전환합니다. 하루동안 휴면계정을 풀지 않으면 회원관련 정보가 모두 삭제됩니다")
+    @Operation(summary = "🔑 휴면계정 등록", description = "특정 회원을 휴면계정으로 전환합니다. 하루동안 휴면계정을 풀지 않으면 회원관련 정보가 모두 삭제됩니다")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
@@ -205,7 +205,7 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "회원 강제 삭제", description = "특정 회원을 관리자가 강제 삭제합니다.")
+    @Operation(summary = "🔑 회원 강제 삭제", description = "특정 회원을 관리자가 강제 삭제합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
