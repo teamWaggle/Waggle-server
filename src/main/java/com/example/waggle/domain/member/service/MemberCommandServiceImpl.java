@@ -32,11 +32,13 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -145,6 +147,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         deleteMemberTeams(member);
 
         memberRepository.delete(member);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Override
+    public void deleteMemberAsUser() {
+        List<Member> memberList = memberRepository.findByRole(Role.DORMANT);
+        memberList.stream()
+                .filter(member -> member.getLastModifiedDate().isBefore(LocalDateTime.now().minusDays(1)))
+                .forEach(member -> deleteMember(member.getId()));
     }
 
     private void deleteAllDataLinkedToMember(Member member) {

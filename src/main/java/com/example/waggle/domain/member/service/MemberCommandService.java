@@ -29,4 +29,7 @@ public interface MemberCommandService {
 
     void deleteMember(Long memberId);
 
+    void deleteMemberAsUser();
+
+
 }
