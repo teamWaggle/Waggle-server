@@ -1,7 +1,5 @@
 package com.example.waggle.domain.board.question.service;
 
-import static com.example.waggle.domain.board.service.BoardType.QUESTION;
-
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
@@ -14,14 +12,18 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -64,6 +66,27 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         question.changeQuestion(updateQuestionRequest);
         mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, question);
+
+        question.getBoardHashtags().clear();
+        for (String hashtag : updateQuestionRequest.getHashtagList()) {
+            boardService.saveHashtag(question, hashtag);
+        }
+        return question.getId();
+    }
+
+    @Override
+    public Long updateQuestion(Long boardId,
+                               QuestionRequest updateQuestionRequest,
+                               MediaRequestDto updateMediaRequest,
+                               Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        question.changeQuestion(updateQuestionRequest);
+        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), question);
 
         question.getBoardHashtags().clear();
         for (String hashtag : updateQuestionRequest.getHashtagList()) {

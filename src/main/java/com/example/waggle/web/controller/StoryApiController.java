@@ -12,6 +12,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.StoryConverter;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
@@ -80,11 +81,12 @@ public class StoryApiController {
     @PutMapping(value = "/{storyId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
                                             @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
+                                            @RequestPart("updateMediaRequest") MediaRequestDto updateMediaRequest,
                                             @AuthUser Member member) {
-        updateStoryRequest.setMediaList(updateStoryRequest.getMediaList().stream()
+        updateMediaRequest.setMediaList(updateMediaRequest.getMediaList().stream()
                 .map(MediaUtil::removePrefix)
                 .collect(Collectors.toList()));
-        storyCommandService.updateStory(storyId, updateStoryRequest, member);
+        storyCommandService.updateStory(storyId, updateStoryRequest, updateMediaRequest, member);
         return ApiResponseDto.onSuccess(storyId);
     }
 

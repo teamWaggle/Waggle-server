@@ -1,7 +1,5 @@
 package com.example.waggle.domain.board.siren.service;
 
-import static com.example.waggle.domain.board.service.BoardType.SIREN;
-
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
@@ -15,14 +13,18 @@ import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.SIREN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,6 +62,23 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
         siren.changeSiren(updateSirenRequest);
         mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, siren);
+
+        return siren.getId();
+    }
+
+    @Override
+    public Long updateSiren(Long boardId,
+                            SirenRequest updateSirenRequest,
+                            MediaRequestDto updateMediaRequest,
+                            Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        siren.changeSiren(updateSirenRequest);
+        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), siren);
 
         return siren.getId();
     }

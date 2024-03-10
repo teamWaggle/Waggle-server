@@ -3,15 +3,16 @@ package com.example.waggle.web.dto.question;
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.global.annotation.valid.ValidEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Length;
-import java.util.List;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Schema
 public class QuestionRequest {
     @NotEmpty(message = "질문 내용을 작성해주세요.")
-    @Max(1500)
+    @Size(max = 1500)
     private String content;
 
     @NotBlank(message = "질문 제목을 작성해주세요.")

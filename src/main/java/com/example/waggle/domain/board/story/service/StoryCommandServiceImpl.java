@@ -9,6 +9,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
 
     @Override
-    public Long createStory(StoryRequest createStoryRequest, List<MultipartFile> multipartFiles,
+    public Long createStory(StoryRequest createStoryRequest,
+                            List<MultipartFile> multipartFiles,
                             Member member) {
         Story createdStory = buildStory(createStoryRequest, member);
         Story story = storyRepository.save(createdStory);
@@ -49,7 +51,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long updateStory(Long boardId,
-                            StoryRequest createStoryRequest,
+                            StoryRequest updateStoryRequest,
                             MediaUpdateDto updateMediaRequest,
                             List<MultipartFile> multipartFiles,
                             Member member) {
@@ -59,29 +61,32 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        story.changeContent(createStoryRequest.getContent());
+        story.changeContent(updateStoryRequest.getContent());
         mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, story);
 
         story.getBoardHashtags().clear();
-        for (String hashtag : createStoryRequest.getHashtagList()) {
+        for (String hashtag : updateStoryRequest.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();
     }
 
     @Override
-    public Long updateStory(Long boardId, StoryRequest createStoryRequest, Member member) {
+    public Long updateStory(Long boardId,
+                            StoryRequest updateStoryRequest,
+                            MediaRequestDto updateMediaRequest,
+                            Member member) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        story.changeContent(createStoryRequest.getContent());
-        mediaCommandService.updateMedia(createStoryRequest.getMediaList(), story);
+        story.changeContent(updateStoryRequest.getContent());
+        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), story);
 
         story.getBoardHashtags().clear();
-        for (String hashtag : createStoryRequest.getHashtagList()) {
+        for (String hashtag : updateStoryRequest.getHashtagList()) {
             boardService.saveHashtag(story, hashtag);
         }
         return story.getId();

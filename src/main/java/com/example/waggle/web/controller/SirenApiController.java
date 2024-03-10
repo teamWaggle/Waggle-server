@@ -12,6 +12,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.SirenConverter;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,6 +76,22 @@ public class SirenApiController {
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
 
         sirenCommandService.updateSiren(sirenId, updateSirenRequest, updateMediaRequest, files, member);
+        return ApiResponseDto.onSuccess(sirenId);
+    }
+
+    @Operation(summary = "사이렌 수정 🔑", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{sirenId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
+                                            @RequestPart("updateSirenRequest") SirenRequest updateSirenRequest,
+                                            @RequestPart("updateMediaRequest") MediaRequestDto updateMediaRequest,
+                                            @AuthUser Member member) {
+        updateMediaRequest.setMediaList(updateMediaRequest.getMediaList().stream()
+                .map(MediaUtil::removePrefix)
+                .collect(Collectors.toList()));
+        sirenCommandService.updateSiren(sirenId, updateSirenRequest, updateMediaRequest, member);
         return ApiResponseDto.onSuccess(sirenId);
     }
 
