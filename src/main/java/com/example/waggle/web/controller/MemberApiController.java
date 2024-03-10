@@ -199,9 +199,19 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/dormant")
+    @PutMapping("/role/dormant")
     public ApiResponseDto<Boolean> convertDormant(@AuthUser Member member) {
         memberCommandService.convertRole(member, Role.USER, Role.DORMANT);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "🔑 휴면계정 해제", description = "특정 회원을 휴면계정에서 일반회원으로 전환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping("/role/user")
+    public ApiResponseDto<Boolean> convertUser(@AuthUser Member member) {
+        memberCommandService.convertRole(member, Role.DORMANT, Role.USER);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
