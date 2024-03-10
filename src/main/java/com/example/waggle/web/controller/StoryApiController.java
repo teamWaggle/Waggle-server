@@ -72,6 +72,19 @@ public class StoryApiController {
         return ApiResponseDto.onSuccess(storyId);
     }
 
+    @Operation(summary = "스토리 수정 🔑", description = "사용자가 스토리를 수정합니다. 수정한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{storyId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
+                                            @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
+                                            @AuthUser Member member) {
+
+        storyCommandService.updateStory(storyId, updateStoryRequest, updateMediaRequest, files, member);
+        return ApiResponseDto.onSuccess(storyId);
+    }
+
 
     @Operation(summary = "전체 스토리 목록 조회", description = "전체 스토리 목록을 조회합니다.")
     @ApiErrorCodeExample({
