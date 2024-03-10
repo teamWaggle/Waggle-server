@@ -5,11 +5,12 @@ import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.global.annotation.valid.ValidEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -26,7 +27,7 @@ public class SirenRequest {
 
     private String contact;
     private String lostLocate;
-    private LocalDateTime lostDate;
+    private LocalDate lostDate;
     private String content;
 
     @ValidEnum(target = SirenCategory.class)
