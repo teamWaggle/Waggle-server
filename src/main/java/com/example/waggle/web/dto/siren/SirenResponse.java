@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class SirenResponse {
         private Long boardId;
         private String title;
         private String thumbnail;
-        private LocalDateTime lostDate;
+        private LocalDate lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
         private SirenCategory category;
@@ -46,7 +47,7 @@ public class SirenResponse {
         private String petAge;
         private Gender petGender;
         private String contact;
-        private LocalDateTime lostDate;
+        private LocalDate lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
         private String content;
