@@ -4,7 +4,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.global.exception.JwtAuthenticationException;
+import com.example.waggle.global.exception.filter.JwtAuthenticationException;
 import com.example.waggle.global.exception.handler.AuthenticationHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.object.JwtToken;
@@ -90,12 +90,13 @@ public class TokenServiceImpl implements TokenService {
         // 새로운 Authentication 객체 생성
         Claims claims = parseClaims(refreshToken);
         String username = claims.getSubject();
-        UserDetails userDetails = memberQueryService.getMemberByUsername(username);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "",
-                userDetails.getAuthorities());
+        Member member = memberQueryService.getMemberByUsername(username);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(member, "",
+                member.getAuthorities());
 
         // 새 토큰 생성
         JwtToken newTokens = generateToken(authentication);
+        newTokens.setMember(MemberConverter.toMemberSummaryDto(member));
 
         return newTokens;
     }

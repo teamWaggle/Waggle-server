@@ -1,6 +1,6 @@
 package com.example.waggle.global.security.filter;
 
-import com.example.waggle.global.exception.JwtAuthenticationException;
+import com.example.waggle.global.exception.filter.JwtAuthenticationException;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.exception.CustomErrorSend;
 import jakarta.servlet.FilterChain;
