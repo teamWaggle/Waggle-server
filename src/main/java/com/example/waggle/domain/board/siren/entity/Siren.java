@@ -47,6 +47,9 @@ public class Siren extends Board {
         this.contact = updateSirenRequest.getContact();
         this.content = updateSirenRequest.getContent();
         this.category = SirenCategory.valueOf(updateSirenRequest.getCategory());
-        this.status = ResolutionStatus.valueOf(updateSirenRequest.getStatus());
+    }
+
+    public void changeStatus(ResolutionStatus status) {
+        this.status = status;
     }
 }

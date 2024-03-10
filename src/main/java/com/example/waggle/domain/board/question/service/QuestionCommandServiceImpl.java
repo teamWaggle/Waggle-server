@@ -1,7 +1,5 @@
 package com.example.waggle.domain.board.question.service;
 
-import static com.example.waggle.domain.board.service.BoardType.QUESTION;
-
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
@@ -16,12 +14,15 @@ import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,6 +74,20 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
+    public void convertStatus(Long boardId, Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+        switch (question.getStatus()) {
+            case RESOLVED -> question.changeStatus(ResolutionStatus.UNRESOLVED);
+            case UNRESOLVED -> question.changeStatus(ResolutionStatus.RESOLVED);
+            default -> throw new QuestionHandler(ErrorStatus.BOARD_INVALID_TYPE);
+        }
+    }
+
+    @Override
     public void deleteQuestion(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -90,7 +105,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return Question.builder()
                 .title(createQuestionRequest.getTitle())
                 .content(createQuestionRequest.getContent())
-                .status(ResolutionStatus.valueOf(createQuestionRequest.getStatus()))
+                .status(ResolutionStatus.UNRESOLVED)
                 .member(member)
                 .build();
     }

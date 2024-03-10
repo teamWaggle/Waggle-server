@@ -77,6 +77,17 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(questionId);
     }
 
+    @Operation(summary = "질문 상태 변경 🔑", description = "사용자가 질문 상태 변경합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{questionId}/status")
+    public ApiResponseDto<Long> convertStatus(@PathVariable("questionId") Long questionId,
+                                              @AuthUser Member member) {
+        questionCommandService.convertStatus(questionId, member);
+        return ApiResponseDto.onSuccess(questionId);
+    }
+
     @Operation(summary = "전체 질문 목록 조회", description = "전체 질문 목록을 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR

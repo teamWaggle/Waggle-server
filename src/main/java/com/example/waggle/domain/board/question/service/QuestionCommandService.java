@@ -1,10 +1,10 @@
 package com.example.waggle.domain.board.question.service;
 
+import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.web.dto.media.MediaRequest;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface QuestionCommandService {
@@ -18,6 +18,8 @@ public interface QuestionCommandService {
                         MediaUpdateDto updateMediaRequest,
                         List<MultipartFile> multipartFiles,
                         Member member);
+
+    void convertStatus(Long boardId, Member member);
 
     void deleteQuestion(Long boardId, Member member);
 

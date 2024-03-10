@@ -77,6 +77,17 @@ public class SirenApiController {
         return ApiResponseDto.onSuccess(sirenId);
     }
 
+    @Operation(summary = "사이렌 상태 변경 🔑", description = "사용자가 사이렌 상태 변경합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{sirenId}/status")
+    public ApiResponseDto<Long> convertStatus(@PathVariable("sirenId") Long sirenId,
+                                              @AuthUser Member member) {
+        sirenCommandService.convertStatus(sirenId, member);
+        return ApiResponseDto.onSuccess(sirenId);
+    }
+
 
     @Operation(summary = "전체 사이렌 목록 조회", description = "전체 사이렌 목록을 조회합니다.")
     @ApiErrorCodeExample({
