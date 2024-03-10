@@ -1,5 +1,6 @@
 package com.example.waggle.web.converter;
 
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.media.MediaResponse.MediaListDto;
 import com.example.waggle.web.dto.media.MediaResponse.MediaViewDto;
 
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 public class MediaConverter {
     public static MediaViewDto toMediaViewDto(String imgUrl) {
         return MediaViewDto.builder()
-                .imgUrl(imgUrl)
+                .imgUrl(MediaUtil.appendUri(imgUrl))
                 .build();
     }
 

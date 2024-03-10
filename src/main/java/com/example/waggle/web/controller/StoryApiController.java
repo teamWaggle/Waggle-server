@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,8 +81,10 @@ public class StoryApiController {
     public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
                                             @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
                                             @AuthUser Member member) {
-
-        storyCommandService.updateStory(storyId, updateStoryRequest, updateMediaRequest, files, member);
+        updateStoryRequest.setMediaList(updateStoryRequest.getMediaList().stream()
+                .map(MediaUtil::removePrefix)
+                .collect(Collectors.toList()));
+        storyCommandService.updateStory(storyId, updateStoryRequest, member);
         return ApiResponseDto.onSuccess(storyId);
     }
 

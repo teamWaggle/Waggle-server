@@ -44,7 +44,7 @@ public class MediaApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/list", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<MediaListDto> convertMediaList(
             @RequestPart(value = "uploadImgFileList") List<MultipartFile> uploadImgFileList) {
         List<String> imgUrlList = awsS3Service.uploadFiles(uploadImgFileList);
