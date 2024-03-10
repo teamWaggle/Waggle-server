@@ -9,14 +9,16 @@ import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.web.dto.media.MediaRequest.MediaCreateDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -54,6 +56,25 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     public void deleteMedia(Board board) {
         board.getMedias().forEach(media -> awsS3Service.deleteFile(media.getUploadFile()));
         mediaRepository.deleteMediaByBoardId(board.getId());
+    }
+
+    @Scheduled(cron = "0 0 1 * * ?")
+    @Override
+    public void deleteMediaFileInS3() {
+        List<Media> dbImageList = mediaRepository.findAll();
+        Set<String> dbImageListSet = new HashSet(dbImageList);
+        List<String> imgFileList = awsS3Service.getImgFileList();
+
+        List<String> filesToDelete = imgFileList.stream()
+                .filter(file -> !dbImageListSet.contains(file))
+                .collect(Collectors.toList());
+
+        filesToDelete
+                .forEach(file -> {
+                    //log is for check scheduled
+                    log.info("delete File is = {}", file);
+                    awsS3Service.deleteFile(file);
+                });
     }
 
     private void validateUpdateMedia(List<MultipartFile> multipartFiles, MediaUpdateDto request) {

@@ -13,4 +13,6 @@ public interface MediaCommandService {
     void updateMedia(MediaUpdateDto updateMediaRequest, List<MultipartFile> uploadFiles, Board board);
 
     void deleteMedia(Board board);
+
+    void deleteMediaFileInS3();
 }
