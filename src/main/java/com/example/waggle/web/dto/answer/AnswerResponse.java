@@ -22,7 +22,6 @@ public class AnswerResponse {
         private Long boardId;
         private String content;
         private LocalDateTime createdDate;
-        private Boolean isOwner;
         private List<String> hashtagList;
         private List<String> mediaList;
         private MemberSummaryDto member;

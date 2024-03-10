@@ -30,7 +30,6 @@ public class SirenResponse {
         private String lostLocate;
         private SirenCategory category;
         private MemberSummaryDto member;
-        private Boolean isOwner;
         private ResolutionStatus status;
         private RecommendationInfo recommendationInfo;
     }
@@ -54,7 +53,6 @@ public class SirenResponse {
         private SirenCategory category;
         private List<String> mediaList;
         private MemberSummaryDto member;
-        private Boolean isOwner;
         private ResolutionStatus status;
         private RecommendationInfo recommendationInfo;
     }

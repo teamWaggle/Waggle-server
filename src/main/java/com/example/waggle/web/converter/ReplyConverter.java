@@ -1,7 +1,6 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Reply;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.reply.ReplyResponse.ReplyListDto;
 import com.example.waggle.web.dto.reply.ReplyResponse.ReplyViewDto;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,6 @@ public class ReplyConverter {
         return ReplyViewDto.builder()
                 .replyId(reply.getId())
                 .member(MemberConverter.toMemberSummaryDto(reply.getMember()))
-                .isOwner(reply.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .content(reply.getContent())
                 .createdDate(reply.getCreatedDate())
                 .build();

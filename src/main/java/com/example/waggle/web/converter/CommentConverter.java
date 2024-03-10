@@ -1,7 +1,6 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Comment;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentViewDto;
 import org.springframework.data.domain.Page;
@@ -17,7 +16,6 @@ public class CommentConverter {
                 .content(comment.getContent())
                 .createdDate(comment.getCreatedDate())
                 .member(MemberConverter.toMemberSummaryDto(comment.getMember()))
-                .isOwner(comment.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 

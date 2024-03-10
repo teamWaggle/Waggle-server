@@ -2,7 +2,6 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenListDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenSummaryDto;
@@ -24,7 +23,6 @@ public class SirenConverter {
                 .title(siren.getTitle())
                 .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
-                .isOwner(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 
@@ -55,7 +53,6 @@ public class SirenConverter {
                 .mediaList(MediaUtil.getBoardMedias(siren))
                 .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
-                .isOwner(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }
