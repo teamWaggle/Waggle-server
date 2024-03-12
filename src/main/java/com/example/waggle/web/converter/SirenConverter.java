@@ -56,6 +56,7 @@ public class SirenConverter {
                 .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .isOwner(siren.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
+                .viewCount(siren.getViewCount())
                 .build();
     }
 }
