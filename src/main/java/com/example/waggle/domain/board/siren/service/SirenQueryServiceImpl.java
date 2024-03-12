@@ -44,12 +44,9 @@ public class SirenQueryServiceImpl implements SirenQueryService {
         return sirenRepository.findByMemberId(memberId, pageable);
     }
 
-    @Transactional
     @Override
     public Siren getSirenByBoardId(Long boardId) {
-        Siren siren = sirenRepository.findById(boardId)
+        return sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
-        siren.increaseViewCount();
-        return siren;
     }
 }

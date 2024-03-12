@@ -112,6 +112,7 @@ public class SirenApiController {
     })
     @GetMapping("/{sirenId}")
     public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("sirenId") Long sirenId) {
+        sirenCommandService.increaseSirenViewCount(sirenId);
         Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
         SirenDetailDto detailDto = SirenConverter.toSirenDetailDto(siren);
         recommendQueryService.getRecommendationInfo(
