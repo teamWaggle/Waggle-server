@@ -58,6 +58,7 @@ public class QuestionResponse {
         private List<String> hashtagList;
         private MemberSummaryDto member;
         private RecommendationInfo recommendationInfo;
+        private int viewCount;
     }
 
 }
