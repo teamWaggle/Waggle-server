@@ -57,6 +57,7 @@ public class SirenResponse {
         private Boolean isOwner;
         private ResolutionStatus status;
         private RecommendationInfo recommendationInfo;
+        private int viewCount;
     }
 
     @Data

@@ -49,6 +49,7 @@ public class QuestionConverter {
                 .mediaList(MediaUtil.getBoardMedias(question))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
                 .isOwner(question.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
+                .viewCount(question.getViewCount())
                 .build();
     }
 }

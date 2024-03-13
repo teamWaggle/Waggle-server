@@ -86,6 +86,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         questionRepository.delete(question);
     }
 
+    @Override
+    public void increaseQuestionViewCount(Long boardId) {
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+        question.increaseViewCount();
+    }
+
     private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {
         return Question.builder()
                 .title(createQuestionRequest.getTitle())
