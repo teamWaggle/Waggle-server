@@ -12,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -33,6 +34,9 @@ public class Siren extends Board {
     private LocalDateTime lostDate;
     private String lostLocate;
     private String contact;
+
+    @Builder.Default
+    private int viewCount = 0;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SirenCategory category;
@@ -53,4 +57,9 @@ public class Siren extends Board {
         this.category = SirenCategory.valueOf(updateSirenRequest.getCategory());
         this.status = ResolutionStatus.valueOf(updateSirenRequest.getStatus());
     }
+
+    public void increaseViewCount() {
+        viewCount++;
+    }
+
 }

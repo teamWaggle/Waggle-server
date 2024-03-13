@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -28,6 +29,9 @@ public class Question extends Board {
     @Column(nullable = false)
     private ResolutionStatus status;
 
+    @Builder.Default
+    private int viewCount = 0;
+
     public void changeQuestion(QuestionRequest updateQuestionRequest) {
         this.content = updateQuestionRequest.getContent();
         this.title = updateQuestionRequest.getTitle();
@@ -36,6 +40,10 @@ public class Question extends Board {
 
     public void changeStatus(ResolutionStatus status) {
         this.status = status;
+    }
+
+    public void increaseViewCount() {
+        viewCount++;
     }
 
 }
