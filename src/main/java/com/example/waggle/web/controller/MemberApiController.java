@@ -201,7 +201,7 @@ public class MemberApiController {
     })
     @PutMapping("/role/dormant")
     public ApiResponseDto<Boolean> convertDormant(@AuthUser Member member) {
-        memberCommandService.convertRole(member, Role.USER, Role.DORMANT);
+        memberCommandService.convertRole(member, Role.DORMANT);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -211,7 +211,7 @@ public class MemberApiController {
     })
     @PutMapping("/role/user")
     public ApiResponseDto<Boolean> convertUser(@AuthUser Member member) {
-        memberCommandService.convertRole(member, Role.DORMANT, Role.USER);
+        memberCommandService.convertRole(member, Role.USER);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

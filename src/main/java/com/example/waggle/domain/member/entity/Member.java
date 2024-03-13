@@ -112,10 +112,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public void convertRole(Role role) {
-        this.role = role;
-    }
-
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }

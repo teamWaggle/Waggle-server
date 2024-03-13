@@ -24,7 +24,7 @@ public interface MemberCommandService {
 
     Long updatePassword(Long memberId, String password);
 
-    Long convertRole(Member member, Role from, Role to);
+    Long convertRole(Member member, Role to);
 
     Long verifyEmailForPasswordChange(EmailVerificationDto verifyEmailRequest);
 

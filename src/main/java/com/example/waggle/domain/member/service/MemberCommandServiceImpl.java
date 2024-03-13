@@ -38,7 +38,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -130,11 +132,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Long convertRole(Member member, Role from, Role to) {
-        if (!member.getRole().equals(from)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
-        }
-        member.convertRole(to);
+    public Long convertRole(Member member, Role to) {
+        member.changeRole(to);
         return member.getId();
     }
 
@@ -162,8 +161,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public void deleteDormantMember() {
         List<Member> memberList = memberRepository.findByRole(Role.DORMANT);
+        LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
         memberList.stream()
-                .filter(member -> member.getLastModifiedDate().isBefore(LocalDateTime.now().minusDays(1)))
+                .filter(member -> member.getLastModifiedDate().isBefore(today.minusDays(1)))
                 .forEach(member -> deleteMember(member.getId()));
     }
 
