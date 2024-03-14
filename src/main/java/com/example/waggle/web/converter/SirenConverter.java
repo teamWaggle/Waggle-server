@@ -17,12 +17,10 @@ public class SirenConverter {
                 .boardId(siren.getId())
                 .thumbnail(MediaUtil.getThumbnail(siren))
                 .lostLocate(siren.getLostLocate())
-                .lostDate(siren.getLostDate())
                 .createdDate(siren.getCreatedDate())
                 .category(siren.getCategory())
                 .title(siren.getTitle())
                 .status(siren.getStatus())
-                .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .build();
     }
 

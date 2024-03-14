@@ -144,10 +144,11 @@ public class SirenApiController {
         sirenCommandService.increaseSirenViewCount(sirenId);
         Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
         SirenDetailDto detailDto = SirenConverter.toSirenDetailDto(siren);
-        recommendQueryService.getRecommendationInfo(
+        detailDto.setRecommendationInfo(recommendQueryService.getRecommendationInfo(
                 sirenId,
                 SecurityUtil.getCurrentUsername()
-        );
+        ));
+
         return ApiResponseDto.onSuccess(detailDto);
     }
 
