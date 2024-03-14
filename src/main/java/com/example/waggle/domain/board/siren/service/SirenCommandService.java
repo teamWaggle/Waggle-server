@@ -25,6 +25,8 @@ public interface SirenCommandService {
                      MediaRequestDto updateMediaRequest,
                      Member member);
 
+    void convertStatus(Long boardId, Member member);
+
     void deleteSiren(Long boardId, Member member);
 
     void increaseSirenViewCount(Long boardId);

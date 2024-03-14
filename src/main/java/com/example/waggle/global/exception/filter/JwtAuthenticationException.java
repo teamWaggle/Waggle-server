@@ -1,4 +1,4 @@
-package com.example.waggle.global.exception;
+package com.example.waggle.global.exception.filter;
 
 
 import com.example.waggle.global.payload.code.ErrorStatus;

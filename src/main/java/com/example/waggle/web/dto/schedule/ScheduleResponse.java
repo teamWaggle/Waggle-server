@@ -4,12 +4,13 @@ import com.example.waggle.domain.schedule.entity.ScheduleStatus;
 import com.example.waggle.domain.schedule.entity.TeamColor;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class ScheduleResponse {
 
@@ -29,7 +30,6 @@ public class ScheduleResponse {
         private LocalDateTime createdDate;
         private ScheduleStatus status;
         private MemberSummaryDto member;
-        private Boolean isOwner;
     }
 
     @Data

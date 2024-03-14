@@ -1,7 +1,5 @@
 package com.example.waggle.web.controller;
 
-import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
-
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
@@ -21,7 +19,6 @@ import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListD
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,15 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -87,6 +76,17 @@ public class QuestionApiController {
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         questionCommandService.updateQuestion(questionId, updateQuestionRequest, updateMediaRequest, files, member);
+        return ApiResponseDto.onSuccess(questionId);
+    }
+
+    @Operation(summary = "질문 상태 변경 🔑", description = "사용자가 질문 상태 변경합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{questionId}/status")
+    public ApiResponseDto<Long> convertStatus(@PathVariable("questionId") Long questionId,
+                                              @AuthUser Member member) {
+        questionCommandService.convertStatus(questionId, member);
         return ApiResponseDto.onSuccess(questionId);
     }
 

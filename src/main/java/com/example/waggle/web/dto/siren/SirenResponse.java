@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,12 +26,11 @@ public class SirenResponse {
         private Long boardId;
         private String title;
         private String thumbnail;
-        private LocalDateTime lostDate;
+        private LocalDate lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
         private SirenCategory category;
         private MemberSummaryDto member;
-        private Boolean isOwner;
         private ResolutionStatus status;
         private RecommendationInfo recommendationInfo;
     }
@@ -47,14 +47,13 @@ public class SirenResponse {
         private String petAge;
         private Gender petGender;
         private String contact;
-        private LocalDateTime lostDate;
+        private LocalDate lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
         private String content;
         private SirenCategory category;
         private List<String> mediaList;
         private MemberSummaryDto member;
-        private Boolean isOwner;
         private ResolutionStatus status;
         private RecommendationInfo recommendationInfo;
         private int viewCount;

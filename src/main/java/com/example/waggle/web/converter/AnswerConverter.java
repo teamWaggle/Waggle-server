@@ -2,7 +2,6 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.answer.entity.Answer;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
 import com.example.waggle.web.dto.answer.AnswerResponse.AnswerViewDto;
 import org.springframework.data.domain.Page;
@@ -19,7 +18,6 @@ public class AnswerConverter {
                 .createdDate(answer.getCreatedDate())
                 .mediaList(MediaUtil.getBoardMedias(answer))
                 .member(MemberConverter.toMemberSummaryDto(answer.getMember()))
-                .isOwner(answer.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 

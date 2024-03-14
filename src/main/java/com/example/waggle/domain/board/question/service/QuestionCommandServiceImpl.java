@@ -96,6 +96,20 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
+    public void convertStatus(Long boardId, Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+        switch (question.getStatus()) {
+            case RESOLVED -> question.changeStatus(ResolutionStatus.UNRESOLVED);
+            case UNRESOLVED -> question.changeStatus(ResolutionStatus.RESOLVED);
+            default -> throw new QuestionHandler(ErrorStatus.BOARD_INVALID_TYPE);
+        }
+    }
+
+    @Override
     public void deleteQuestion(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -120,7 +134,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return Question.builder()
                 .title(createQuestionRequest.getTitle())
                 .content(createQuestionRequest.getContent())
-                .status(ResolutionStatus.valueOf(createQuestionRequest.getStatus()))
+                .status(ResolutionStatus.UNRESOLVED)
                 .member(member)
                 .build();
     }
