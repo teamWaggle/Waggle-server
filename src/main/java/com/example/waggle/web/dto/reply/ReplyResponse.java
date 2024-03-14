@@ -22,7 +22,6 @@ public class ReplyResponse {
         private String content;
         private LocalDateTime createdDate;
         private MemberSummaryDto member;
-        private Boolean isOwner;
     }
 
     @Data

@@ -23,7 +23,6 @@ public class StoryResponse {
         private List<String> hashtagList;
         private List<String> mediaList;
         private MemberSummaryDto member;
-        private Boolean isOwner;
         private RecommendationInfo recommendationInfo;
     }
 

@@ -5,8 +5,8 @@ import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface QuestionCommandService {
 
@@ -24,6 +24,8 @@ public interface QuestionCommandService {
                         QuestionRequest updateQuestionRequest,
                         MediaRequestDto updateMediaRequest,
                         Member member);
+
+    void convertStatus(Long boardId, Member member);
 
     void deleteQuestion(Long boardId, Member member);
 

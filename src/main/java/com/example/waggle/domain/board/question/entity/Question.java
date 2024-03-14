@@ -3,11 +3,7 @@ package com.example.waggle.domain.board.question.entity;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +31,6 @@ public class Question extends Board {
     public void changeQuestion(QuestionRequest updateQuestionRequest) {
         this.content = updateQuestionRequest.getContent();
         this.title = updateQuestionRequest.getTitle();
-        this.status = ResolutionStatus.valueOf(updateQuestionRequest.getStatus());
     }
 
     public void changeStatus(ResolutionStatus status) {
