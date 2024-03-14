@@ -97,6 +97,13 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         sirenRepository.delete(siren);
     }
 
+    @Override
+    public void increaseSirenViewCount(Long boardId) {
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+        siren.increaseViewCount();
+    }
+
     private Siren buildSiren(SirenRequest createSirenRequest, Member member) {
         return Siren.builder()
                 .title(createSirenRequest.getTitle())

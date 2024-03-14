@@ -27,4 +27,6 @@ public interface SirenCommandService {
 
     void deleteSiren(Long boardId, Member member);
 
+    void increaseSirenViewCount(Long boardId);
+
 }
