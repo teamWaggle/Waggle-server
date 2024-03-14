@@ -1,6 +1,7 @@
 package com.example.waggle.domain.member.repository;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByNameAndBirthday(String name, LocalDate birthday);
 
     List<Member> findByNicknameContaining(String nickname);
+
+    List<Member> findByRole(Role role);
 
     boolean existsByEmail(String email);
 

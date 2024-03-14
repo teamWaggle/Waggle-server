@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         configureCorsAndSecurity(httpSecurity);
-        configureAuthorization(httpSecurity);
+        configureAuth(httpSecurity);
         configureOAuth2(httpSecurity);
         addFilter(httpSecurity);
         configureExceptionHandling(httpSecurity);
@@ -73,12 +73,16 @@ public class SecurityConfig {
                 .failureHandler(oAuth2AuthenticationFailureHandler);
     }
 
-    private void configureAuthorization(HttpSecurity httpSecurity) throws Exception {
+    private void configureAuth(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests()
                 .requestMatchers(additionalSwaggerRequests()).permitAll()
                 .requestMatchers(authRelatedEndpoints()).permitAll()
                 .requestMatchers(permitAllRequest()).permitAll()
+                .requestMatchers(authorizationAdmin()).hasRole("ADMIN")
+                .requestMatchers(authorizationDormant()).hasRole("DORMANT")
+                .requestMatchers(authorizationGuest()).hasRole("GUEST")
+                .requestMatchers(authorizationUser()).hasRole("USER")
 //                .requestMatchers(authenticatedEndpoints()).authenticated()
                 //정적 페이지 허가
                 .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**")
@@ -141,6 +145,34 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/answers/**"),
                 antMatcher(HttpMethod.GET, "/api/follows/**"),
                 antMatcher("/api/media/**")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] authorizationAdmin() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(HttpMethod.DELETE, "/api/members/{memberId}/force")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] authorizationUser() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(HttpMethod.PUT, "/api/members/role/dormant")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] authorizationDormant() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(HttpMethod.PUT, "/api/members/role/user")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    private RequestMatcher[] authorizationGuest() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(HttpMethod.PUT, "/api/members/info")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

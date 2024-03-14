@@ -15,4 +15,6 @@ public interface MediaCommandService {
     void updateMedia(List<String> imgUrlList, Board board);
 
     void deleteMedia(Board board);
+
+    void deleteMediaFileInS3();
 }

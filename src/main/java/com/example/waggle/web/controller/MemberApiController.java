@@ -1,6 +1,7 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.service.EmailService;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
@@ -193,4 +194,35 @@ public class MemberApiController {
         memberCommandService.deleteMember(memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
+
+    @Operation(summary = "🔑 휴면계정 등록", description = "특정 회원을 휴면계정으로 전환합니다. 하루동안 휴면계정을 풀지 않으면 회원관련 정보가 모두 삭제됩니다")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping("/role/dormant")
+    public ApiResponseDto<Boolean> convertDormant(@AuthUser Member member) {
+        memberCommandService.convertRole(member, Role.DORMANT);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "🔑 휴면계정 해제", description = "특정 회원을 휴면계정에서 일반회원으로 전환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping("/role/user")
+    public ApiResponseDto<Boolean> convertUser(@AuthUser Member member) {
+        memberCommandService.convertRole(member, Role.USER);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "🔑 회원 강제 삭제", description = "특정 회원을 관리자가 강제 삭제합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{memberId}/force")
+    public ApiResponseDto<Boolean> deleteMemberForce(@AuthUser Member admin, @PathVariable Long memberId) {
+        memberCommandService.deleteMemberAsAdmin(admin, memberId);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
 }
