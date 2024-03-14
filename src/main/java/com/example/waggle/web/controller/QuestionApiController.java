@@ -14,6 +14,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.QuestionConverter;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
@@ -39,6 +40,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -81,6 +87,22 @@ public class QuestionApiController {
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         questionCommandService.updateQuestion(questionId, updateQuestionRequest, updateMediaRequest, files, member);
+        return ApiResponseDto.onSuccess(questionId);
+    }
+
+    @Operation(summary = "질문 수정 🔑", description = "사용자가 질문을 수정합니다. 수정한 질문 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{questionId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateSiren(@PathVariable("questionId") Long questionId,
+                                            @RequestPart("updateQuestionRequest") QuestionRequest updateQuestionRequest,
+                                            @RequestPart("updateMediaRequest") MediaRequestDto updateMediaRequest,
+                                            @AuthUser Member member) {
+        updateMediaRequest.getMediaList().stream()
+                .map(MediaUtil::removePrefix)
+                .collect(Collectors.toList());
+        questionCommandService.updateQuestion(questionId, updateQuestionRequest, updateMediaRequest, member);
         return ApiResponseDto.onSuccess(questionId);
     }
 
