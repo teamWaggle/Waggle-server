@@ -9,8 +9,8 @@ import com.example.waggle.domain.conversation.service.comment.CommentCommandServ
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
+import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
@@ -34,7 +34,6 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
-    private final MemberQueryService memberQueryService;
     private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
@@ -84,6 +83,20 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
+    public void convertStatus(Long boardId, Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+        switch (siren.getStatus()) {
+            case RESOLVED -> siren.changeStatus(ResolutionStatus.UNRESOLVED);
+            case UNRESOLVED -> siren.changeStatus(ResolutionStatus.RESOLVED);
+            default -> throw new QuestionHandler(ErrorStatus.BOARD_INVALID_TYPE);
+        }
+    }
+
+    @Override
     public void deleteSiren(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -115,7 +128,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .lostDate(createSirenRequest.getLostDate())
                 .lostLocate(createSirenRequest.getLostLocate())
                 .category(SirenCategory.valueOf(createSirenRequest.getCategory()))
-                .status(ResolutionStatus.valueOf(createSirenRequest.getStatus()))
+                .status(ResolutionStatus.UNRESOLVED)
                 .member(member)
                 .build();
     }

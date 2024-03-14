@@ -54,7 +54,6 @@ public class SecurityConfig {
         httpSecurity
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
-
     }
 
     private void configureExceptionHandling(HttpSecurity httpSecurity) throws Exception {

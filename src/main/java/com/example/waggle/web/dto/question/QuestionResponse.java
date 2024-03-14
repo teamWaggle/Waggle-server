@@ -26,7 +26,6 @@ public class QuestionResponse {
         private LocalDateTime createdDate;
         private List<String> hashtagList;
         private MemberSummaryDto member;
-        private Boolean isOwner;
         private RecommendationInfo recommendationInfo;
     }
 
@@ -53,7 +52,6 @@ public class QuestionResponse {
         private ResolutionStatus status;
         private String content;
         private LocalDateTime createdDate;
-        private Boolean isOwner;
         private List<String> mediaList;
         private List<String> hashtagList;
         private MemberSummaryDto member;

@@ -3,7 +3,7 @@ package com.example.waggle.global.security.oauth2;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.global.exception.handler.AuthenticationHandler;
+import com.example.waggle.global.exception.filter.OAuth2Exception;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider;
 import com.example.waggle.global.security.oauth2.info.OAuth2UserInfo;
@@ -49,12 +49,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authProvider, oAuth2User.getAttributes());
 
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
-            throw new AuthenticationHandler(ErrorStatus.AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER);
+            throw new OAuth2Exception(ErrorStatus.AUTH_OAUTH2_EMAIL_NOT_FOUND_FROM_PROVIDER);
         }
         Optional<Member> byEmail = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
         Member member = byEmail.orElseGet(() -> registerMember(authProvider, oAuth2UserInfo));
         if (!authProvider.equals(member.getAuthProvider())) {
-            throw new AuthenticationHandler(ErrorStatus.AUTH_PROVIDER_IS_NOT_MATCH);
+            throw new OAuth2Exception(ErrorStatus.AUTH_PROVIDER_IS_NOT_MATCH);
         }
 
         return CustomUserDetails.create(member);

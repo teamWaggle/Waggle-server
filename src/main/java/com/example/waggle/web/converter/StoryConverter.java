@@ -2,13 +2,13 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryListDto;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
 
 public class StoryConverter {
 
@@ -39,7 +39,6 @@ public class StoryConverter {
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .mediaList(MediaUtil.getBoardMedias(story))
                 .member(MemberConverter.toMemberSummaryDto(story.getMember()))
-                .isOwner(story.getMember().getUsername().equals(SecurityUtil.getCurrentUsername()))
                 .build();
     }
 }
