@@ -12,6 +12,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.StoryConverter;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -69,6 +71,22 @@ public class StoryApiController {
         updateMediaRequest.getDeleteMediaList()
                 .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
         storyCommandService.updateStory(storyId, updateStoryRequest, updateMediaRequest, files, member);
+        return ApiResponseDto.onSuccess(storyId);
+    }
+
+    @Operation(summary = "스토리 수정 🔑", description = "사용자가 스토리를 수정합니다. 수정한 스토리의 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{storyId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
+                                            @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
+                                            @RequestPart("updateMediaRequest") MediaRequestDto updateMediaRequest,
+                                            @AuthUser Member member) {
+        updateMediaRequest.setMediaList(updateMediaRequest.getMediaList().stream()
+                .map(MediaUtil::removePrefix)
+                .collect(Collectors.toList()));
+        storyCommandService.updateStory(storyId, updateStoryRequest, updateMediaRequest, member);
         return ApiResponseDto.onSuccess(storyId);
     }
 

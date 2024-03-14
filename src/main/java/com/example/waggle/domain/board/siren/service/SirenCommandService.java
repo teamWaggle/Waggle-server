@@ -1,6 +1,7 @@
 package com.example.waggle.domain.board.siren.service;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +20,15 @@ public interface SirenCommandService {
                      List<MultipartFile> multipartFiles,
                      Member member);
 
+    Long updateSiren(Long boardId,
+                     SirenRequest updateSirenRequest,
+                     MediaRequestDto updateMediaRequest,
+                     Member member);
+
     void convertStatus(Long boardId, Member member);
 
     void deleteSiren(Long boardId, Member member);
+
+    void increaseSirenViewCount(Long boardId);
 
 }

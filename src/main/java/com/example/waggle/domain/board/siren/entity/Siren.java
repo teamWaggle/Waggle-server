@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -29,6 +30,9 @@ public class Siren extends Board {
     private LocalDate lostDate;
     private String lostLocate;
     private String contact;
+
+    @Builder.Default
+    private int viewCount = 0;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SirenCategory category;
@@ -52,4 +56,9 @@ public class Siren extends Board {
     public void changeStatus(ResolutionStatus status) {
         this.status = status;
     }
+
+    public void increaseViewCount() {
+        viewCount++;
+    }
+
 }

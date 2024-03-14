@@ -47,6 +47,7 @@ public class QuestionConverter {
                         .map(bh -> bh.getHashtag().getContent()).collect(Collectors.toList()))
                 .mediaList(MediaUtil.getBoardMedias(question))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
+                .viewCount(question.getViewCount())
                 .build();
     }
 }

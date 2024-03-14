@@ -13,6 +13,7 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,23 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     }
 
     @Override
+    public Long updateSiren(Long boardId,
+                            SirenRequest updateSirenRequest,
+                            MediaRequestDto updateMediaRequest,
+                            Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        siren.changeSiren(updateSirenRequest);
+        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), siren);
+
+        return siren.getId();
+    }
+
+    @Override
     public void convertStatus(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -90,6 +108,13 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         recommendRepository.deleteAllByBoardId(boardId);
 
         sirenRepository.delete(siren);
+    }
+
+    @Override
+    public void increaseSirenViewCount(Long boardId) {
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+        siren.increaseViewCount();
     }
 
     private Siren buildSiren(SirenRequest createSirenRequest, Member member) {

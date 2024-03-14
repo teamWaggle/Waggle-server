@@ -1,9 +1,9 @@
 package com.example.waggle.web.dto.question;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.util.List;
 @Schema
 public class QuestionRequest {
     @NotEmpty(message = "질문 내용을 작성해주세요.")
-    @Max(1500)
+    @Size(max = 1500)
     private String content;
 
     @NotBlank(message = "질문 제목을 작성해주세요.")

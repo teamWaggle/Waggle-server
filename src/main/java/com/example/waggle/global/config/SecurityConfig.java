@@ -126,14 +126,6 @@ public class SecurityConfig {
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
-//    private RequestMatcher[] authenticatedEndpoints() {
-//        List<RequestMatcher> requestMatchers = List.of(
-//                antMatcher(HttpMethod.PUT, "/api/members"),
-//                antMatcher("/api/members/info")
-//        );
-//        return requestMatchers.toArray(RequestMatcher[]::new);
-//    }
-
     private RequestMatcher[] permitAllRequest() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(HttpMethod.GET, "/api/teams/**"),
@@ -146,7 +138,8 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/sirens/**"),
                 antMatcher(HttpMethod.GET, "/api/recommends/**"),
                 antMatcher(HttpMethod.GET, "/api/answers/**"),
-                antMatcher(HttpMethod.GET, "/api/follows/**")
+                antMatcher(HttpMethod.GET, "/api/follows/**"),
+                antMatcher("/api/media/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

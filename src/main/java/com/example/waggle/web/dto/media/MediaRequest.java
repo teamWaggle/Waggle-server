@@ -1,11 +1,12 @@
 package com.example.waggle.web.dto.media;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 public class MediaRequest {
 
@@ -37,6 +38,15 @@ public class MediaRequest {
         public Long boardId;
         public List<MediaCreateDto> mediaList;
         public List<MediaDeleteDto> deleteMediaList;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class MediaRequestDto {
+        public List<String> mediaList;
     }
 
 }

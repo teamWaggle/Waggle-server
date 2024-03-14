@@ -53,6 +53,7 @@ public class SirenConverter {
                 .mediaList(MediaUtil.getBoardMedias(siren))
                 .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
+                .viewCount(siren.getViewCount())
                 .build();
     }
 }

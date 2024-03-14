@@ -12,6 +12,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +75,27 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     }
 
     @Override
+    public Long updateQuestion(Long boardId,
+                               QuestionRequest updateQuestionRequest,
+                               MediaRequestDto updateMediaRequest,
+                               Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        question.changeQuestion(updateQuestionRequest);
+        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), question);
+
+        question.getBoardHashtags().clear();
+        for (String hashtag : updateQuestionRequest.getHashtagList()) {
+            boardService.saveHashtag(question, hashtag);
+        }
+        return question.getId();
+    }
+
+    @Override
     public void convertStatus(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -99,6 +121,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId(), member));
         recommendRepository.deleteAllByBoardId(question.getId());
         questionRepository.delete(question);
+    }
+
+    @Override
+    public void increaseQuestionViewCount(Long boardId) {
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
+        question.increaseViewCount();
     }
 
     private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {

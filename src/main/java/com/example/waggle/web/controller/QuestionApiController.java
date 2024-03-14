@@ -12,6 +12,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.QuestionConverter;
+import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
 
@@ -88,6 +90,22 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(questionId);
     }
 
+    @Operation(summary = "질문 수정 🔑", description = "사용자가 질문을 수정합니다. 수정한 질문 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping(value = "/{questionId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateSiren(@PathVariable("questionId") Long questionId,
+                                            @RequestPart("updateQuestionRequest") QuestionRequest updateQuestionRequest,
+                                            @RequestPart("updateMediaRequest") MediaRequestDto updateMediaRequest,
+                                            @AuthUser Member member) {
+        updateMediaRequest.getMediaList().stream()
+                .map(MediaUtil::removePrefix)
+                .collect(Collectors.toList());
+        questionCommandService.updateQuestion(questionId, updateQuestionRequest, updateMediaRequest, member);
+        return ApiResponseDto.onSuccess(questionId);
+    }
+
     @Operation(summary = "전체 질문 목록 조회", description = "전체 질문 목록을 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
@@ -123,6 +141,7 @@ public class QuestionApiController {
     @GetMapping("/{questionId}")
     public ApiResponseDto<QuestionDetailDto> getQuestionByBoardId(
             @PathVariable("questionId") Long questionId) {
+        questionCommandService.increaseQuestionViewCount(questionId);
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
         QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
         detailDto.setRecommendationInfo(recommendQueryService.getRecommendationInfo(
