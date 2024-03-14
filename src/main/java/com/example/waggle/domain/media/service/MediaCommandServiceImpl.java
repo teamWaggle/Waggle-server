@@ -51,6 +51,15 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     }
 
     @Override
+    public void updateMedia(List<String> imgUrlList, Board board) {
+        board.getMedias().clear();
+        imgUrlList.forEach(imgUrl -> {
+            Media build = Media.builder().uploadFile(imgUrl).board(board).build();
+            mediaRepository.save(build);
+        });
+    }
+
+    @Override
     public void deleteMedia(Board board) {
         board.getMedias().forEach(media -> awsS3Service.deleteFile(media.getUploadFile()));
         mediaRepository.deleteMediaByBoardId(board.getId());
