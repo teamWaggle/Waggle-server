@@ -32,11 +32,15 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -128,6 +132,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
+    public Long convertRole(Member member, Role to) {
+        member.changeRole(to);
+        return member.getId();
+    }
+
+    @Override
     public Long verifyEmailForPasswordChange(EmailVerificationDto verifyEmailRequest) {
         verifyMail(verifyEmailRequest);
         return memberQueryService.getMemberByEmail(verifyEmailRequest.getEmail()).getId();
@@ -145,6 +155,24 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         deleteMemberTeams(member);
 
         memberRepository.delete(member);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Override
+    public void deleteDormantMember() {
+        List<Member> memberList = memberRepository.findByRole(Role.DORMANT);
+        LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+        memberList.stream()
+                .filter(member -> member.getLastModifiedDate().isBefore(today.minusDays(1)))
+                .forEach(member -> deleteMember(member.getId()));
+    }
+
+    @Override
+    public void deleteMemberAsAdmin(Member member, Long memberId) {
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+        }
+        deleteMember(memberId);
     }
 
     private void deleteAllDataLinkedToMember(Member member) {

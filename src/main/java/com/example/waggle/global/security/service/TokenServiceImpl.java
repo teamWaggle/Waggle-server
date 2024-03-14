@@ -66,7 +66,6 @@ public class TokenServiceImpl implements TokenService {
         }
         Authentication authentication;
         if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
-
             throw new AuthenticationHandler(ErrorStatus.AUTH_MISMATCH_EMAIL_AND_PASSWORD);
         }
         authentication = new UsernamePasswordAuthenticationToken(member, "",
