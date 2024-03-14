@@ -26,11 +26,9 @@ public class SirenResponse {
         private Long boardId;
         private String title;
         private String thumbnail;
-        private LocalDate lostDate;
         private LocalDateTime createdDate;
         private String lostLocate;
         private SirenCategory category;
-        private MemberSummaryDto member;
         private ResolutionStatus status;
         private RecommendationInfo recommendationInfo;
     }
