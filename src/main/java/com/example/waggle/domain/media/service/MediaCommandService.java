@@ -12,5 +12,7 @@ public interface MediaCommandService {
 
     void updateMedia(MediaUpdateDto updateMediaRequest, List<MultipartFile> uploadFiles, Board board);
 
+    void updateMedia(List<String> imgUrlList, Board board);
+
     void deleteMedia(Board board);
 }
