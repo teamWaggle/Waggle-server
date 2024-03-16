@@ -69,4 +69,13 @@ public class SirenResponse {
         private Boolean isLast;
     }
 
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class RepresentativeSirenDto {
+        private List<SirenSummaryDto> sirenList;
+    }
+
 }

@@ -36,7 +36,7 @@ public class RecommendApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{boardId}")
-    public ApiResponseDto<Long> recommendStory(@PathVariable Long boardId,
+    public ApiResponseDto<Long> recommendStory(@PathVariable("boardId") Long boardId,
                                                @AuthUser Member member) {
         recommendCommandService.handleRecommendation(boardId, member);
         return ApiResponseDto.onSuccess(boardId);
