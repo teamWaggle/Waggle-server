@@ -67,7 +67,7 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         mediaRepository.deleteMediaByBoardId(board.getId());
     }
 
-    @Scheduled(fixedRate = 300000L)
+    @Scheduled(cron = "0 0 0 * * ?")
     @Override
     public void deleteMediaFileInS3() {
         List<String> dbImageList = mediaRepository.findAll().stream()
