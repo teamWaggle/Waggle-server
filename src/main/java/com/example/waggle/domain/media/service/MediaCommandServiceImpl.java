@@ -67,23 +67,37 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         mediaRepository.deleteMediaByBoardId(board.getId());
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(fixedRate = 300000L)
     @Override
     public void deleteMediaFileInS3() {
-        List<Media> dbImageList = mediaRepository.findAll();
+        List<String> dbImageList = mediaRepository.findAll().stream()
+                .map(media -> media.getUploadFile()).collect(Collectors.toList());
         Set<String> dbImageListSet = new HashSet(dbImageList);
         List<String> imgFileList = awsS3Service.getImgFileList();
 
         List<String> filesToDelete = imgFileList.stream()
                 .filter(file -> !dbImageListSet.contains(file))
                 .collect(Collectors.toList());
+        filesToDelete.remove("Waggle/Waggle.zip");
 
         filesToDelete
                 .forEach(file -> {
                     //log is for check scheduled
-                    log.info("delete File is = {}", file);
                     awsS3Service.deleteFile(file);
                 });
+    }
+
+    @Override
+    public List<String> checkDeleteFileInS3() {
+        List<String> dbImageList = mediaRepository.findAll().stream()
+                .map(media -> media.getUploadFile()).collect(Collectors.toList());
+        Set<String> dbImageListSet = new HashSet(dbImageList);
+        List<String> imgFileList = awsS3Service.getImgFileList();
+
+        List<String> filesToDelete = imgFileList.stream()
+                .filter(file -> !dbImageListSet.contains(file))
+                .collect(Collectors.toList());
+        return filesToDelete;
     }
 
     private void validateUpdateMedia(List<MultipartFile> multipartFiles, MediaUpdateDto request) {
