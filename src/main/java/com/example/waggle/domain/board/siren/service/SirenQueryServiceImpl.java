@@ -41,7 +41,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     @Override
     public List<Siren> getRepresentativeSirenList() {
         List<Siren> sirens = sirenRepository.findAll();
-        Map<Long, Long> recommendCountBySirenId = recommendRepository.findAll().stream()
+        Map<Long, Long> recommendCountBySirenId = recommendRepository.findRecommendsForSirens().stream()
                 .collect(Collectors.groupingBy(recommend -> recommend.getBoard().getId(), Collectors.counting()));
 
         return sirens.stream()
