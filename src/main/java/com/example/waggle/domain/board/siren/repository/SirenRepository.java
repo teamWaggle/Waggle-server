@@ -21,4 +21,6 @@ public interface SirenRepository extends JpaRepository<Siren, Long> {
 
     void deleteAllByMemberUsername(String username);
 
+    List<Siren> findAllByOrderByStatusAsc();
+
 }

@@ -15,11 +15,15 @@ import com.example.waggle.web.converter.SirenConverter;
 import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
 import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
+import com.example.waggle.web.dto.siren.SirenResponse.RepresentativeSirenDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenListDto;
+import com.example.waggle.web.dto.siren.SirenResponse.SirenSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,11 +32,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -117,7 +126,18 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
-        setRecommendInList(listDto);
+        setRecommendInList(listDto.getSirenList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "대표 사이렌 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/representative")
+    public ApiResponseDto<RepresentativeSirenDto> getRepresentativeSirenList() {
+        List<Siren> representativeSirenList = sirenQueryService.getRepresentativeSirenList();
+        RepresentativeSirenDto listDto = SirenConverter.toRepresentativeSirenDto(
+                representativeSirenList);
+        setRecommendInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -131,7 +151,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
-        setRecommendInList(listDto);
+        setRecommendInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -163,8 +183,8 @@ public class SirenApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    private void setRecommendInList(SirenListDto listDto) {
-        listDto.getSirenList()
+    private void setRecommendInList(List<SirenSummaryDto> sirenList) {
+        sirenList
                 .forEach(siren ->
                         siren.setRecommendationInfo(
                                 recommendQueryService.getRecommendationInfo(
