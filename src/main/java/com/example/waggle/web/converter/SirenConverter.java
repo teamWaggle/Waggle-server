@@ -2,13 +2,13 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.web.dto.siren.SirenResponse.RepresentativeSirenDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenListDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenSummaryDto;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class SirenConverter {
 
@@ -54,4 +54,13 @@ public class SirenConverter {
                 .viewCount(siren.getViewCount())
                 .build();
     }
+
+    public static RepresentativeSirenDto toRepresentativeSirenDto(List<Siren> sirenList) {
+        List<SirenSummaryDto> collect = sirenList.stream()
+                .map(SirenConverter::toSirenSummaryDto).collect(Collectors.toList());
+        return RepresentativeSirenDto.builder()
+                .sirenList(collect)
+                .build();
+    }
+
 }
