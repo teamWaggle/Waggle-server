@@ -11,6 +11,8 @@ public interface SirenQueryService {
 
     Page<Siren> getPagedSirenList(Pageable pageable);
 
+    List<Siren> getRepresentativeSirenList();
+
     Page<Siren> getPagedSirenListByUsername(String username, Pageable pageable);
 
     Page<Siren> getPagedSirenListByMemberId(Long memberId, Pageable pageable);
