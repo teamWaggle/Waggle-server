@@ -7,19 +7,15 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 
-import static com.example.waggle.web.dto.media.MediaRequest.MediaSingleDto;
-
 
 public interface MemberCommandService {
 
     Long signUp(MemberCredentialsDto registerMemberRequest);
 
     Long initializeMemberProfile(MemberProfileDto memberProfileRequest,
-                                 MediaSingleDto memberProfileImg,
                                  Member member);
 
     Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
-                             MediaSingleDto memberProfileImg,
                              Member member);
 
     Long updatePassword(Long memberId, String password);

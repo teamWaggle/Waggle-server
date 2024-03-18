@@ -10,7 +10,6 @@ import com.example.waggle.domain.conversation.repository.CommentRepository;
 import com.example.waggle.domain.conversation.repository.ReplyRepository;
 import com.example.waggle.domain.follow.repository.FollowRepository;
 import com.example.waggle.domain.hashtag.repository.BoardHashtagRepository;
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
@@ -23,10 +22,8 @@ import com.example.waggle.domain.schedule.entity.TeamMember;
 import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
-import com.example.waggle.web.dto.media.MediaRequest.MediaSingleDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
@@ -37,7 +34,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -71,7 +67,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberRepository memberRepository;
 
     private final MemberQueryService memberQueryService;
-    private final AwsS3Service awsS3Service;
     private final RedisService redisService;
     private final MediaCommandService mediaCommandService;
 
@@ -100,22 +95,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public Long initializeMemberProfile(MemberProfileDto memberProfileRequest,
-                                        MediaSingleDto memberProfileImg,
                                         Member member) {
         // TODO GUEST 외의 role을 가진 사용자가 접근하면 throw exception
         if (member.getRole() == Role.GUEST) {
             member.changeRole(Role.USER);
         }
-        member.registerInfo(memberProfileRequest, memberProfileImg.getMedia());
+        member.registerInfo(memberProfileRequest);
         return member.getId();
     }
 
     @Override
     public Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
-                                    MediaSingleDto memberProfileImg,
                                     Member member) {
         String encodedPassword = passwordEncoder.encode(updateMemberRequest.getPassword());
-        member.updateInfo(updateMemberRequest, memberProfileImg.getMedia(), encodedPassword);
+        member.updateInfo(updateMemberRequest, encodedPassword);
         return member.getId();
     }
 
@@ -263,13 +256,4 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return username;
     }
 
-    private String updateProfileImg(MultipartFile memberProfileImg, boolean allowUpload, Member member) {
-        if (!allowUpload) {
-            return member.getProfileImgUrl();
-        }
-        if (member.getProfileImgUrl() != null) {
-            awsS3Service.deleteFile(member.getProfileImgUrl());
-        }
-        return MediaUtil.saveProfileImg(memberProfileImg, awsS3Service);
-    }
 }

@@ -22,5 +22,6 @@ public class PetRequest {
     private String age;
     @ValidEnum(target = Gender.class)
     private String gender;
+    private String petProfileImg;
 
 }
