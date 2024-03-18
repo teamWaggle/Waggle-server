@@ -9,6 +9,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
@@ -24,10 +25,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -59,12 +58,12 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/info")
     public ApiResponseDto<Long> initializeMemberProfile(
-            @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
-            @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
+            @RequestBody MemberProfileDto memberProfileRequest,
             @AuthUser Member member) {
-        Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, memberProfileImg, member);
+        memberProfileRequest.setMemberProfileImg(MediaUtil.removePrefix(memberProfileRequest.getMemberProfileImg()));
+        Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 
@@ -72,13 +71,11 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateInfo(@RequestPart("updateMemberRequest") MemberUpdateDto updateMemberRequest,
-                                           @RequestPart(value = "memberProfileImg", required = false) MultipartFile memberProfileImg,
-                                           @RequestParam("allowUpload") boolean allowUpload,
+    @PutMapping
+    public ApiResponseDto<Long> updateInfo(@RequestBody MemberUpdateDto updateMemberRequest,
                                            @AuthUser Member member) {
-        Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, memberProfileImg, allowUpload,
-                member);
+        updateMemberRequest.setMemberProfileImg(MediaUtil.removePrefix(updateMemberRequest.getMemberProfileImg()));
+        Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
 

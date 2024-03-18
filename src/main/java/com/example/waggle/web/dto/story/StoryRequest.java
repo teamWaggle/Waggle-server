@@ -16,4 +16,5 @@ public class StoryRequest {
     @Size(max = 500)
     private String content;
     private List<String> hashtagList;
+    private List<String> mediaList;
 }

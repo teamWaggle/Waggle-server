@@ -40,6 +40,7 @@ public class MemberRequest {
         @Length(min = 10, message = "비밀번호는 최소 10자입니다.", groups = ValidationGroups.LimitCount.class)
         private String password;
         private LocalDate birthday;
+        private String memberProfileImg;
     }
 
     @Data
@@ -52,6 +53,7 @@ public class MemberRequest {
         private String name;
         private LocalDate birthday;
         private String userUrl;
+        private String memberProfileImg;
     }
 
     @Data

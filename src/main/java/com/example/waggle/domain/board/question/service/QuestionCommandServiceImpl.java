@@ -12,14 +12,11 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
-import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -40,7 +37,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public Long createQuestion(QuestionRequest createQuestionRequest,
-                               List<MultipartFile> multipartFiles,
                                Member member) {
         Question createdQuestion = buildQuestion(createQuestionRequest, member);
         Question question = questionRepository.save(createdQuestion);
@@ -48,15 +44,13 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         for (String hashtag : createQuestionRequest.getHashtagList()) {
             boardService.saveHashtag(question, hashtag);
         }
-        mediaCommandService.createMedia(multipartFiles, question);
+        mediaCommandService.createMedia(createQuestionRequest.getMediaList(), question);
         return question.getId();
     }
 
     @Override
     public Long updateQuestion(Long boardId,
                                QuestionRequest updateQuestionRequest,
-                               MediaUpdateDto updateMediaRequest,
-                               List<MultipartFile> multipartFiles,
                                Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -65,7 +59,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         question.changeQuestion(updateQuestionRequest);
-        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, question);
+        mediaCommandService.updateMedia(updateQuestionRequest.getMediaList(), question);
 
         question.getBoardHashtags().clear();
         for (String hashtag : updateQuestionRequest.getHashtagList()) {
@@ -74,26 +68,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return question.getId();
     }
 
-    @Override
-    public Long updateQuestion(Long boardId,
-                               QuestionRequest updateQuestionRequest,
-                               MediaRequestDto updateMediaRequest,
-                               Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
-            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        question.changeQuestion(updateQuestionRequest);
-        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), question);
-
-        question.getBoardHashtags().clear();
-        for (String hashtag : updateQuestionRequest.getHashtagList()) {
-            boardService.saveHashtag(question, hashtag);
-        }
-        return question.getId();
-    }
 
     @Override
     public void convertStatus(Long boardId, Member member) {

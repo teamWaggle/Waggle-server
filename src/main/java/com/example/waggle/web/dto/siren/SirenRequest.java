@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -28,6 +29,7 @@ public class SirenRequest {
     private String lostLocate;
     private LocalDate lostDate;
     private String content;
+    private List<String> mediaList;
 
     @ValidEnum(target = SirenCategory.class)
     private String category;
