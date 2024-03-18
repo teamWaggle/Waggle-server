@@ -26,6 +26,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
+import com.example.waggle.web.dto.media.MediaRequest.MediaSingleDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
@@ -99,28 +100,22 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public Long initializeMemberProfile(MemberProfileDto memberProfileRequest,
-                                        MultipartFile memberProfileImg,
+                                        MediaSingleDto memberProfileImg,
                                         Member member) {
         // TODO GUEST 외의 role을 가진 사용자가 접근하면 throw exception
         if (member.getRole() == Role.GUEST) {
             member.changeRole(Role.USER);
         }
-        String profileImgUrl = awsS3Service.uploadFile(memberProfileImg);
-        member.registerInfo(memberProfileRequest, profileImgUrl);
+        member.registerInfo(memberProfileRequest, memberProfileImg.getMedia());
         return member.getId();
     }
 
     @Override
     public Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
-                                    MultipartFile memberProfileImg,
-                                    boolean allowUpload,
+                                    MediaSingleDto memberProfileImg,
                                     Member member) {
         String encodedPassword = passwordEncoder.encode(updateMemberRequest.getPassword());
-        String profileImgUrl;
-
-        profileImgUrl = updateProfileImg(memberProfileImg, allowUpload, member);
-
-        member.updateInfo(updateMemberRequest, profileImgUrl, encodedPassword);
+        member.updateInfo(updateMemberRequest, memberProfileImg.getMedia(), encodedPassword);
         return member.getId();
     }
 

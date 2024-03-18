@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
 public class MediaRequest {
 
     @Data
@@ -15,38 +16,18 @@ public class MediaRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public static class MediaCreateDto {
-        public String imageUrl;
-        public boolean allowUpload;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class MediaDeleteDto {
-        public String imageUrl;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class MediaUpdateDto {
-        public Long boardId;
-        public List<MediaCreateDto> mediaList;
-        public List<MediaDeleteDto> deleteMediaList;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
-    public static class MediaRequestDto {
+    public static class MediaListDto {
         public List<String> mediaList;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class MediaSingleDto {
+        public String media;
+    }
+
 
 }
