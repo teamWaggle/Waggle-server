@@ -3,6 +3,9 @@ package com.example.waggle.domain.media.service;
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.media.entity.Media;
 import com.example.waggle.domain.media.repository.MediaRepository;
+import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.pet.repository.PetRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +24,9 @@ import java.util.stream.Collectors;
 public class MediaCommandServiceImpl implements MediaCommandService {
 
     private final MediaRepository mediaRepository;
+    private final MemberRepository memberRepository;
+    private final PetRepository petRepository;
+    private final TeamRepository teamRepository;
     private final AwsS3Service awsS3Service;
 
     @Override
@@ -50,6 +56,9 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     public void deleteMediaFileInS3() {
         List<Media> dbImageList = mediaRepository.findAll();
         Set<String> dbImageListSet = new HashSet(dbImageList);
+        memberRepository.findAll().forEach(member -> dbImageListSet.add(member.getProfileImgUrl()));
+        petRepository.findAll().forEach(pet -> dbImageListSet.add(pet.getProfileImgUrl()));
+        teamRepository.findAll().forEach(team -> dbImageListSet.add(team.getCoverImageUrl()));
         List<String> imgFileList = awsS3Service.getImgFileList();
 
         List<String> filesToDelete = imgFileList.stream()

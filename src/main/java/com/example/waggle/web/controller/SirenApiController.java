@@ -66,8 +66,9 @@ public class SirenApiController {
     })
     @PutMapping("/{sirenId}")
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
-                                            @RequestPart @Validated SirenRequest updateSirenRequest,
+                                            @RequestBody @Validated SirenRequest updateSirenRequest,
                                             @AuthUser Member member) {
+        updateSirenRequest.getMediaList().forEach(media -> log.info("media = {}", media));
         List<String> removedPrefixMedia = updateSirenRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
         updateSirenRequest.setMediaList(removedPrefixMedia);
