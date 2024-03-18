@@ -12,8 +12,6 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.SirenConverter;
-import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
-import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.siren.SirenResponse.RepresentativeSirenDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
@@ -22,26 +20,17 @@ import com.example.waggle.web.dto.siren.SirenResponse.SirenSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,12 +49,14 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public ApiResponseDto<Long> createSiren(
-            @RequestPart("createSirenRequest") @Validated SirenRequest createSirenRequest,
-            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+            @RequestBody @Validated SirenRequest createSirenRequest,
             @AuthUser Member member) {
-        Long boardId = sirenCommandService.createSiren(createSirenRequest, files, member);
+        List<String> removedPrefixMedia = createSirenRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        createSirenRequest.setMediaList(removedPrefixMedia);
+        Long boardId = sirenCommandService.createSiren(createSirenRequest, member);
         return ApiResponseDto.onSuccess(boardId);
     }
 
@@ -73,18 +64,14 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{sirenId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{sirenId}")
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
-                                            @RequestPart("updateSirenRequest") @Validated SirenRequest updateSirenRequest,
-                                            @RequestPart("updateMediaRequest") MediaUpdateDto updateMediaRequest,
-                                            @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                            @RequestBody @Validated SirenRequest updateSirenRequest,
                                             @AuthUser Member member) {
-        updateMediaRequest.getMediaList()
-                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        updateMediaRequest.getDeleteMediaList()
-                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-
-        sirenCommandService.updateSiren(sirenId, updateSirenRequest, updateMediaRequest, files, member);
+        List<String> removedPrefixMedia = updateSirenRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        updateSirenRequest.setMediaList(removedPrefixMedia);
+        sirenCommandService.updateSiren(sirenId, updateSirenRequest, member);
         return ApiResponseDto.onSuccess(sirenId);
     }
 
@@ -96,22 +83,6 @@ public class SirenApiController {
     public ApiResponseDto<Long> convertStatus(@PathVariable("sirenId") Long sirenId,
                                               @AuthUser Member member) {
         sirenCommandService.convertStatus(sirenId, member);
-        return ApiResponseDto.onSuccess(sirenId);
-    }
-
-    @Operation(summary = "사이렌 수정 🔑", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌 정보를 저장하고 스토리의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @PutMapping(value = "/{sirenId}/v2", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
-                                            @RequestPart("updateSirenRequest") SirenRequest updateSirenRequest,
-                                            @RequestPart("updateMediaRequest") MediaRequestDto updateMediaRequest,
-                                            @AuthUser Member member) {
-        updateMediaRequest.setMediaList(updateMediaRequest.getMediaList().stream()
-                .map(MediaUtil::removePrefix)
-                .collect(Collectors.toList()));
-        sirenCommandService.updateSiren(sirenId, updateSirenRequest, updateMediaRequest, member);
         return ApiResponseDto.onSuccess(sirenId);
     }
 

@@ -9,12 +9,10 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
-import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,11 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,12 +42,11 @@ public class AnswerApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/{questionId}")
     public ApiResponseDto<Long> createAnswer(@PathVariable("questionId") Long questionId,
-                                             @RequestPart("createAnswerRequest") AnswerRequest createAnswerRequest,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                             @RequestBody AnswerRequest createAnswerRequest,
                                              @AuthUser Member member) {
-        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, files, member);
+        Long answer = answerCommandService.createAnswer(questionId, createAnswerRequest, member);
         return ApiResponseDto.onSuccess(answer);
     }
 
@@ -61,17 +54,11 @@ public class AnswerApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{answerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{answerId}")
     public ApiResponseDto<Long> updateAnswer(@PathVariable("answerId") Long answerId,
-                                             @RequestPart("updateAnswerRequest") AnswerRequest updateAnswerRequest,
-                                             @RequestPart("mediaUpdateRequest") MediaUpdateDto mediaUpdateRequest,
-                                             @RequestPart(required = false, value = "files") List<MultipartFile> files,
+                                             @RequestBody AnswerRequest updateAnswerRequest,
                                              @AuthUser Member member) {
-        mediaUpdateRequest.getMediaList()
-                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        mediaUpdateRequest.getDeleteMediaList()
-                .forEach(media -> media.setImageUrl(MediaUtil.removePrefix(media.getImageUrl())));
-        answerCommandService.updateAnswer(answerId, updateAnswerRequest, mediaUpdateRequest, files, member);
+        answerCommandService.updateAnswer(answerId, updateAnswerRequest, member);
         return ApiResponseDto.onSuccess(answerId);
     }
 

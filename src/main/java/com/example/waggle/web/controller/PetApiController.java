@@ -1,6 +1,5 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.service.PetCommandService;
@@ -9,6 +8,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
 import com.example.waggle.web.dto.pet.PetRequest;
 import com.example.waggle.web.dto.pet.PetResponse.PetSummaryDto;
@@ -17,10 +17,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,17 +32,16 @@ public class PetApiController {
 
     private final PetCommandService petCommandService;
     private final PetQueryService petQueryService;
-    private final AwsS3Service awsS3Service;
 
     @Operation(summary = "반려견 정보 입력 🔑", description = "반려견 정보를 입력합니다. 입력한 반려견의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createPet(@RequestPart("createPetRequest") @Validated PetRequest createPetRequest,
-                                          @RequestPart(value = "petProfileImg", required = false) MultipartFile petProfileImg,
+    @PostMapping
+    public ApiResponseDto<Long> createPet(@RequestBody @Validated PetRequest createPetRequest,
                                           @AuthUser Member member) {
-        Long petId = petCommandService.createPet(createPetRequest, petProfileImg, member);
+        createPetRequest.setPetProfileImg(MediaUtil.removePrefix(createPetRequest.getPetProfileImg()));
+        Long petId = petCommandService.createPet(createPetRequest, member);
         return ApiResponseDto.onSuccess(petId);
     }
 
@@ -53,13 +50,12 @@ public class PetApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{petId}")
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
-                                          @RequestPart("updatePetRequest") @Validated PetRequest updatePetRequest,
-                                          @RequestPart(value = "petProfileImg", required = false) MultipartFile petProfileImg,
-                                          @RequestParam("allowUpload") boolean allowUpload,
+                                          @RequestBody @Validated PetRequest updatePetRequest,
                                           @AuthUser Member member) {
-        Long result = petCommandService.updatePet(petId, updatePetRequest, petProfileImg, allowUpload, member);
+        updatePetRequest.setPetProfileImg(MediaUtil.removePrefix(updatePetRequest.getPetProfileImg()));
+        Long result = petCommandService.updatePet(petId, updatePetRequest, member);
         return ApiResponseDto.onSuccess(result);
     }
 
