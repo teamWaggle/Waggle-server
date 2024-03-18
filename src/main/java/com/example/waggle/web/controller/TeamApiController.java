@@ -1,6 +1,5 @@
 package com.example.waggle.web.controller;
 
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
@@ -9,7 +8,6 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
@@ -22,10 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,17 +33,14 @@ public class TeamApiController {
 
     private final TeamCommandService teamCommandService;
     private final TeamQueryService teamQueryService;
-    private final AwsS3Service awsS3Service;
 
     @Operation(summary = "팀 생성 🔑", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
-                                           @RequestPart(value = "teamCoverImg", required = false) MultipartFile teamCoverImg,
+    @PostMapping
+    public ApiResponseDto<Long> createTeam(@RequestBody @Validated TeamRequest createTeamRequest,
                                            @AuthUser Member member) {
-        createTeamRequest.setCoverImageUrl(MediaUtil.saveProfileImg(teamCoverImg, awsS3Service));
         Long createdTeamId = teamCommandService.createTeam(createTeamRequest, member);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
@@ -56,19 +49,11 @@ public class TeamApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{teamId}")
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
-                                           @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
-                                           @RequestPart(value = "teamCoverImg", required = false) MultipartFile teamCoverImg,
-                                           @RequestParam boolean allowUpload,
+                                           @RequestBody @Validated TeamRequest updateTeamRequest,
                                            @AuthUser Member member) {
-        String removePrefixCoverUrl = MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl());
-        if (allowUpload) {
-            awsS3Service.deleteFile(removePrefixCoverUrl);
-            updateTeamRequest.setCoverImageUrl(MediaUtil.saveProfileImg(teamCoverImg, awsS3Service));
-        } else {
-            updateTeamRequest.setCoverImageUrl(removePrefixCoverUrl);
-        }
+
         Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest, member);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
