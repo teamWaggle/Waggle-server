@@ -27,4 +27,5 @@ public class QuestionRequest {
     private String title;
 
     private List<String> hashtagList;
+    private List<String> mediaList;
 }

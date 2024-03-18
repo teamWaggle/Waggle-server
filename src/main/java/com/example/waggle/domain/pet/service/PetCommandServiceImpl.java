@@ -1,6 +1,5 @@
 package com.example.waggle.domain.pet.service;
 
-import com.example.waggle.domain.media.service.AwsS3Service;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
@@ -8,12 +7,10 @@ import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.global.exception.handler.PetHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.pet.PetRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,12 +22,10 @@ public class PetCommandServiceImpl implements PetCommandService {
 
     private final PetRepository petRepository;
     private final MemberQueryService memberQueryService;
-    private final AwsS3Service awsS3Service;
 
     @Override
-    public Long createPet(PetRequest createPetRequest, MultipartFile petProfileImg, Member member) {
-        String profileImgUrl = MediaUtil.saveProfileImg(petProfileImg, awsS3Service);
-        Pet pet = buildPet(createPetRequest, profileImgUrl, member);
+    public Long createPet(PetRequest createPetRequest, Member member) {
+        Pet pet = buildPet(createPetRequest, member);
         petRepository.save(pet);
         return pet.getId();
     }
@@ -38,14 +33,11 @@ public class PetCommandServiceImpl implements PetCommandService {
     @Override
     public Long updatePet(Long petId,
                           PetRequest updatePetRequest,
-                          MultipartFile petProfileImg,
-                          boolean allowUpload,
                           Member member) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         validateIsOwner(member, pet);
-        String profileImgUrl = updateProfileImg(petProfileImg, allowUpload, pet);
-        pet.update(updatePetRequest, profileImgUrl);
+        pet.update(updatePetRequest);
         return pet.getId();
     }
 
@@ -71,26 +63,16 @@ public class PetCommandServiceImpl implements PetCommandService {
         }
     }
 
-    private Pet buildPet(PetRequest createPetRequest, String profileImg, Member member) {
+    private Pet buildPet(PetRequest createPetRequest, Member member) {
         return Pet.builder()
                 .age(createPetRequest.getAge())
                 .name(createPetRequest.getName())
                 .description(createPetRequest.getDescription())
                 .breed(createPetRequest.getBreed())
                 .gender(Gender.valueOf(createPetRequest.getGender()))
-                .profileImgUrl(profileImg)
+                .profileImgUrl(createPetRequest.getPetProfileImg())
                 .member(member)
                 .build();
-    }
-
-    private String updateProfileImg(MultipartFile petProfileImg, boolean allowUpload, Pet pet) {
-        if (!allowUpload) {
-            return pet.getProfileImgUrl();
-        }
-        if (pet.getProfileImgUrl() != null) {
-            awsS3Service.deleteFile(pet.getProfileImgUrl());
-        }
-        return MediaUtil.saveProfileImg(petProfileImg, awsS3Service);
     }
 
 }

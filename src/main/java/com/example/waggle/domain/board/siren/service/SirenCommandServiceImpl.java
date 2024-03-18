@@ -13,16 +13,11 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
-import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 import static com.example.waggle.domain.board.service.BoardType.SIREN;
 
@@ -39,19 +34,16 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     private final MediaCommandService mediaCommandService;
 
     @Override
-    public Long createSiren(SirenRequest createSirenRequest, List<MultipartFile> multipartFiles,
-                            Member member) {
+    public Long createSiren(SirenRequest createSirenRequest, Member member) {
         Siren siren = buildSiren(createSirenRequest, member);
         sirenRepository.save(siren);
-        mediaCommandService.createMedia(multipartFiles, siren);
+        mediaCommandService.createMedia(createSirenRequest.getMediaList(), siren);
         return siren.getId();
     }
 
     @Override
     public Long updateSiren(Long boardId,
                             SirenRequest updateSirenRequest,
-                            MediaUpdateDto updateMediaRequest,
-                            List<MultipartFile> multipartFiles,
                             Member member) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -60,27 +52,11 @@ public class SirenCommandServiceImpl implements SirenCommandService {
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         siren.changeSiren(updateSirenRequest);
-        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, siren);
+        mediaCommandService.updateMedia(updateSirenRequest.getMediaList(), siren);
 
         return siren.getId();
     }
 
-    @Override
-    public Long updateSiren(Long boardId,
-                            SirenRequest updateSirenRequest,
-                            MediaRequestDto updateMediaRequest,
-                            Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
-            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Siren siren = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        siren.changeSiren(updateSirenRequest);
-        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), siren);
-
-        return siren.getId();
-    }
 
     @Override
     public void convertStatus(Long boardId, Member member) {

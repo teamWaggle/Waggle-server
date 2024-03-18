@@ -9,16 +9,11 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.media.MediaRequest.MediaRequestDto;
-import com.example.waggle.web.dto.media.MediaRequest.MediaUpdateDto;
 import com.example.waggle.web.dto.story.StoryRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 import static com.example.waggle.domain.board.service.BoardType.STORY;
 
@@ -37,7 +32,6 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public Long createStory(StoryRequest createStoryRequest,
-                            List<MultipartFile> multipartFiles,
                             Member member) {
         Story createdStory = buildStory(createStoryRequest, member);
         Story story = storyRepository.save(createdStory);
@@ -45,15 +39,13 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         if (!createStoryRequest.getHashtagList().isEmpty()) {
             createStoryRequest.getHashtagList().stream().forEach(h -> boardService.saveHashtag(story, h));
         }
-        boolean media = mediaCommandService.createMedia(multipartFiles, createdStory);
+        mediaCommandService.createMedia(createStoryRequest.getMediaList(), story);
         return story.getId();
     }
 
     @Override
     public Long updateStory(Long boardId,
                             StoryRequest updateStoryRequest,
-                            MediaUpdateDto updateMediaRequest,
-                            List<MultipartFile> multipartFiles,
                             Member member) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -62,7 +54,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         story.changeContent(updateStoryRequest.getContent());
-        mediaCommandService.updateMedia(updateMediaRequest, multipartFiles, story);
+        mediaCommandService.updateMedia(updateStoryRequest.getMediaList(), story);
 
         story.getBoardHashtags().clear();
         for (String hashtag : updateStoryRequest.getHashtagList()) {
@@ -71,26 +63,6 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         return story.getId();
     }
 
-    @Override
-    public Long updateStory(Long boardId,
-                            StoryRequest updateStoryRequest,
-                            MediaRequestDto updateMediaRequest,
-                            Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
-            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        story.changeContent(updateStoryRequest.getContent());
-        mediaCommandService.updateMedia(updateMediaRequest.getMediaList(), story);
-
-        story.getBoardHashtags().clear();
-        for (String hashtag : updateStoryRequest.getHashtagList()) {
-            boardService.saveHashtag(story, hashtag);
-        }
-        return story.getId();
-    }
 
     @Override
     public void deleteStory(Long boardId, Member member) {
