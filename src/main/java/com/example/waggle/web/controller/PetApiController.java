@@ -8,6 +8,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
 import com.example.waggle.web.dto.pet.PetRequest;
 import com.example.waggle.web.dto.pet.PetResponse.PetSummaryDto;
@@ -39,6 +40,7 @@ public class PetApiController {
     @PostMapping
     public ApiResponseDto<Long> createPet(@RequestBody @Validated PetRequest createPetRequest,
                                           @AuthUser Member member) {
+        createPetRequest.setPetProfileImg(MediaUtil.removePrefix(createPetRequest.getPetProfileImg()));
         Long petId = petCommandService.createPet(createPetRequest, member);
         return ApiResponseDto.onSuccess(petId);
     }
@@ -52,6 +54,7 @@ public class PetApiController {
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
                                           @RequestBody @Validated PetRequest updatePetRequest,
                                           @AuthUser Member member) {
+        updatePetRequest.setPetProfileImg(MediaUtil.removePrefix(updatePetRequest.getPetProfileImg()));
         Long result = petCommandService.updatePet(petId, updatePetRequest, member);
         return ApiResponseDto.onSuccess(result);
     }

@@ -9,6 +9,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.dto.member.MemberRequest;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
@@ -61,6 +62,7 @@ public class MemberApiController {
     public ApiResponseDto<Long> initializeMemberProfile(
             @RequestBody MemberProfileDto memberProfileRequest,
             @AuthUser Member member) {
+        memberProfileRequest.setMemberProfileImg(MediaUtil.removePrefix(memberProfileRequest.getMemberProfileImg()));
         Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -72,6 +74,7 @@ public class MemberApiController {
     @PutMapping
     public ApiResponseDto<Long> updateInfo(@RequestBody MemberUpdateDto updateMemberRequest,
                                            @AuthUser Member member) {
+        updateMemberRequest.setMemberProfileImg(MediaUtil.removePrefix(updateMemberRequest.getMemberProfileImg()));
         Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
         return ApiResponseDto.onSuccess(memberId);
     }

@@ -9,6 +9,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.StoryConverter;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -23,6 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,6 +47,9 @@ public class StoryApiController {
     @PostMapping
     public ApiResponseDto<Long> createStory(@RequestBody StoryRequest createStoryRequest,
                                             @AuthUser Member member) {
+        List<String> removedPrefixMedia = createStoryRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        createStoryRequest.setMediaList(removedPrefixMedia);
         Long boardId = storyCommandService.createStory(createStoryRequest, member);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -55,6 +62,9 @@ public class StoryApiController {
     public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
                                             @RequestBody StoryRequest updateStoryRequest,
                                             @AuthUser Member member) {
+        List<String> removedPrefixMedia = updateStoryRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        updateStoryRequest.setMediaList(removedPrefixMedia);
         storyCommandService.updateStory(storyId, updateStoryRequest, member);
         return ApiResponseDto.onSuccess(storyId);
     }

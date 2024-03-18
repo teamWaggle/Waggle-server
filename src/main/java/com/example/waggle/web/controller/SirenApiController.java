@@ -9,6 +9,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.SirenConverter;
 import com.example.waggle.web.dto.siren.SirenRequest;
@@ -29,6 +30,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,6 +53,9 @@ public class SirenApiController {
     public ApiResponseDto<Long> createSiren(
             @RequestBody @Validated SirenRequest createSirenRequest,
             @AuthUser Member member) {
+        List<String> removedPrefixMedia = createSirenRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        createSirenRequest.setMediaList(removedPrefixMedia);
         Long boardId = sirenCommandService.createSiren(createSirenRequest, member);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -63,6 +68,9 @@ public class SirenApiController {
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
                                             @RequestPart @Validated SirenRequest updateSirenRequest,
                                             @AuthUser Member member) {
+        List<String> removedPrefixMedia = updateSirenRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        updateSirenRequest.setMediaList(removedPrefixMedia);
         sirenCommandService.updateSiren(sirenId, updateSirenRequest, member);
         return ApiResponseDto.onSuccess(sirenId);
     }

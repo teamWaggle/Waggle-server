@@ -9,6 +9,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.question.QuestionRequest;
@@ -24,6 +25,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
 
@@ -48,6 +52,9 @@ public class QuestionApiController {
     public ApiResponseDto<Long> createQuestion(
             @RequestBody @Validated QuestionRequest createQuestionRequest,
             @AuthUser Member member) {
+        List<String> removedPrefixMedia = createQuestionRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        createQuestionRequest.setMediaList(removedPrefixMedia);
         Long boardId = questionCommandService.createQuestion(createQuestionRequest, member);
         return ApiResponseDto.onSuccess(boardId);
     }
@@ -60,6 +67,9 @@ public class QuestionApiController {
     public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
                                                @RequestBody @Validated QuestionRequest updateQuestionRequest,
                                                @AuthUser Member member) {
+        List<String> removedPrefixMedia = updateQuestionRequest.getMediaList().stream()
+                .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
+        updateQuestionRequest.setMediaList(removedPrefixMedia);
         questionCommandService.updateQuestion(questionId, updateQuestionRequest, member);
         return ApiResponseDto.onSuccess(questionId);
     }

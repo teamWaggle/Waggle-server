@@ -8,6 +8,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
@@ -41,6 +42,7 @@ public class TeamApiController {
     @PostMapping
     public ApiResponseDto<Long> createTeam(@RequestBody @Validated TeamRequest createTeamRequest,
                                            @AuthUser Member member) {
+        createTeamRequest.setCoverImageUrl(MediaUtil.removePrefix(createTeamRequest.getCoverImageUrl()));
         Long createdTeamId = teamCommandService.createTeam(createTeamRequest, member);
         return ApiResponseDto.onSuccess(createdTeamId);
     }
@@ -53,7 +55,7 @@ public class TeamApiController {
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
                                            @RequestBody @Validated TeamRequest updateTeamRequest,
                                            @AuthUser Member member) {
-
+        updateTeamRequest.setCoverImageUrl(MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl()));
         Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest, member);
         return ApiResponseDto.onSuccess(updatedTeamId);
     }
