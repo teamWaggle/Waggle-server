@@ -31,12 +31,11 @@ public class MediaCommandServiceImpl implements MediaCommandService {
 
     @Override
     public void createMedia(List<String> imgUrlList, Board board) {
-        imgUrlList.forEach(img -> mediaRepository.save(
-                Media.builder()
-                        .uploadFile(img)
-                        .board(board)
-                        .build()
-        ));
+        List<Media> mediaList = imgUrlList.stream().map(img -> Media.builder()
+                .uploadFile(img)
+                .board(board)
+                .build()).collect(Collectors.toList());
+        mediaRepository.saveAll(mediaList);
     }
 
     @Override
@@ -68,7 +67,6 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         filesToDelete
                 .forEach(file -> {
                     //log is for check scheduled
-                    log.info("delete File is = {}", file);
                     awsS3Service.deleteFile(file);
                 });
     }
