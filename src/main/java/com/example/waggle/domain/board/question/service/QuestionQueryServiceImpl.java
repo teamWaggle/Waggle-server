@@ -2,8 +2,12 @@ package com.example.waggle.domain.board.question.service;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,7 @@ import java.util.List;
 public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final QuestionRepository questionRepository;
+    private final RecommendRepository recommendRepository;
 
     @Override
     public List<Question> getAllQuestion() {
@@ -46,5 +51,20 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     @Override
     public Page<Question> getPagedQuestions(Pageable pageable) {
         return questionRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Question> getRepresentativeQuestionList() {
+        List<Question> questions = questionRepository.findAll();
+
+        Map<Long, Long> recommendCountByQuestionId = recommendRepository.findRecommendsForQuestions().stream()
+                .collect(Collectors.groupingBy(recommend -> recommend.getBoard().getId(), Collectors.counting()));
+
+        return questions.stream()
+                .sorted(Comparator.comparingLong((Question q) -> recommendCountByQuestionId.getOrDefault(q.getId(), 0L))
+                        .reversed())
+                .limit(3)
+                .collect(Collectors.toList());
+
     }
 }
