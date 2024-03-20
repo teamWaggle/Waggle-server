@@ -59,4 +59,13 @@ public class QuestionResponse {
         private int viewCount;
     }
 
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class RepresentativeQuestionDto {
+        private List<QuestionSummaryDto> questionList;
+    }
+
 }

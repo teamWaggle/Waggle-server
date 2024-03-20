@@ -17,4 +17,7 @@ public interface QuestionQueryService {
     Question getQuestionByBoardId(Long boardId);
 
     Page<Question> getPagedQuestions(Pageable pageable);
+
+    List<Question> getRepresentativeQuestionList();
+
 }
