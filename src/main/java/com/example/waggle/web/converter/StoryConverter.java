@@ -25,7 +25,7 @@ public class StoryConverter {
                 .map(StoryConverter::toSummaryDto).collect(Collectors.toList());
         return StorySummaryListDto.builder()
                 .storyList(stories)
-                .nextPageNumber(PageUtil.countNextPage(storyPage))
+                .nextPageParam(PageUtil.countNextPage(storyPage))
                 .build();
     }
 
