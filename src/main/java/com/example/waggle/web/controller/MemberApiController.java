@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,9 +59,9 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/info")
+    @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> initializeMemberProfile(
-            @RequestBody MemberProfileDto memberProfileRequest,
+            @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
             @AuthUser Member member) {
         memberProfileRequest.setMemberProfileImg(MediaUtil.removePrefix(memberProfileRequest.getMemberProfileImg()));
         Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
@@ -71,8 +72,8 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping
-    public ApiResponseDto<Long> updateInfo(@RequestBody MemberUpdateDto updateMemberRequest,
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> updateInfo(@RequestPart("updateMemberRequest") MemberUpdateDto updateMemberRequest,
                                            @AuthUser Member member) {
         updateMemberRequest.setMemberProfileImg(MediaUtil.removePrefix(updateMemberRequest.getMemberProfileImg()));
         Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
