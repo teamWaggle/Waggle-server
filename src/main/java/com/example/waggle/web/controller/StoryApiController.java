@@ -10,6 +10,7 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.StoryConverter;
 import com.example.waggle.web.dto.story.StoryRequest;
@@ -77,7 +78,7 @@ public class StoryApiController {
     @GetMapping
     public ApiResponseDto<StorySummaryListDto> getAllStories(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE, latestSorting);
         return ApiResponseDto.onSuccess(
                 StoryConverter.toListDto(storyQueryService.getPagedStories(pageable)));
     }
@@ -89,7 +90,7 @@ public class StoryApiController {
     @GetMapping("/member/{memberId}")
     public ApiResponseDto<StorySummaryListDto> getStoriesByUsername(@PathVariable("memberId") Long memberId,
                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE, latestSorting);
         return ApiResponseDto.onSuccess(
                 StoryConverter.toListDto(storyQueryService.getPagedStoriesByMemberId(memberId, pageable)));
     }
