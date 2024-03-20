@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +40,8 @@ public class TeamApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
-    public ApiResponseDto<Long> createTeam(@RequestBody @Validated TeamRequest createTeamRequest,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
                                            @AuthUser Member member) {
         createTeamRequest.setCoverImageUrl(MediaUtil.removePrefix(createTeamRequest.getCoverImageUrl()));
         Long createdTeamId = teamCommandService.createTeam(createTeamRequest, member);
@@ -51,9 +52,9 @@ public class TeamApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/{teamId}")
+    @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
-                                           @RequestBody @Validated TeamRequest updateTeamRequest,
+                                           @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
                                            @AuthUser Member member) {
         updateTeamRequest.setCoverImageUrl(MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl()));
         Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest, member);

@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,9 +50,9 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createSiren(
-            @RequestBody @Validated SirenRequest createSirenRequest,
+            @RequestPart("createSirenRequest") @Validated SirenRequest createSirenRequest,
             @AuthUser Member member) {
         List<String> removedPrefixMedia = createSirenRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
@@ -64,9 +65,9 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/{sirenId}")
+    @PutMapping(value = "/{sirenId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
-                                            @RequestBody @Validated SirenRequest updateSirenRequest,
+                                            @RequestPart("updateSirenRequest") @Validated SirenRequest updateSirenRequest,
                                             @AuthUser Member member) {
         List<String> removedPrefixMedia = updateSirenRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
