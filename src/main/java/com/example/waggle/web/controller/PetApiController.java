@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,8 +38,8 @@ public class PetApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
-    public ApiResponseDto<Long> createPet(@RequestBody @Validated PetRequest createPetRequest,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> createPet(@RequestPart("createPetRequest") @Validated PetRequest createPetRequest,
                                           @AuthUser Member member) {
         createPetRequest.setPetProfileImg(MediaUtil.removePrefix(createPetRequest.getPetProfileImg()));
         Long petId = petCommandService.createPet(createPetRequest, member);
@@ -50,9 +51,9 @@ public class PetApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/{petId}")
+    @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
-                                          @RequestBody @Validated PetRequest updatePetRequest,
+                                          @RequestPart("updatePetRequest") @Validated PetRequest updatePetRequest,
                                           @AuthUser Member member) {
         updatePetRequest.setPetProfileImg(MediaUtil.removePrefix(updatePetRequest.getPetProfileImg()));
         Long result = petCommandService.updatePet(petId, updatePetRequest, member);

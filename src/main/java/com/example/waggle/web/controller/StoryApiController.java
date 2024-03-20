@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,8 +45,8 @@ public class StoryApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
-    public ApiResponseDto<Long> createStory(@RequestBody StoryRequest createStoryRequest,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponseDto<Long> createStory(@RequestPart("createStoryRequest") StoryRequest createStoryRequest,
                                             @AuthUser Member member) {
         List<String> removedPrefixMedia = createStoryRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
@@ -58,9 +59,9 @@ public class StoryApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/{storyId}")
+    @PutMapping(value = "/{storyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateStory(@PathVariable("storyId") Long storyId,
-                                            @RequestBody StoryRequest updateStoryRequest,
+                                            @RequestPart("updateStoryRequest") StoryRequest updateStoryRequest,
                                             @AuthUser Member member) {
         List<String> removedPrefixMedia = updateStoryRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());

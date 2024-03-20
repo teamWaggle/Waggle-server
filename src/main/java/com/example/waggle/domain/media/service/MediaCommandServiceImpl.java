@@ -6,6 +6,8 @@ import com.example.waggle.domain.media.repository.MediaRepository;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.pet.repository.PetRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
+import com.example.waggle.global.exception.handler.MediaHandler;
+import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,6 +33,9 @@ public class MediaCommandServiceImpl implements MediaCommandService {
 
     @Override
     public void createMedia(List<String> imgUrlList, Board board) {
+        if (imgUrlList.contains(null)) {
+            throw new MediaHandler(ErrorStatus.MEDIA_PREFIX_IS_WRONG);
+        }
         List<Media> mediaList = imgUrlList.stream().map(img -> Media.builder()
                 .uploadFile(img)
                 .board(board)

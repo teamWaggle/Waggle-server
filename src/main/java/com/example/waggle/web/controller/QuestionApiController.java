@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,9 +58,9 @@ public class QuestionApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createQuestion(
-            @RequestBody @Validated QuestionRequest createQuestionRequest,
+            @RequestPart("createQuestionRequest") @Validated QuestionRequest createQuestionRequest,
             @AuthUser Member member) {
         List<String> removedPrefixMedia = createQuestionRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
@@ -72,9 +73,9 @@ public class QuestionApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping(value = "/{questionId}")
+    @PutMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
-                                               @RequestBody @Validated QuestionRequest updateQuestionRequest,
+                                               @RequestPart("updateQuestionRequest") @Validated QuestionRequest updateQuestionRequest,
                                                @AuthUser Member member) {
         List<String> removedPrefixMedia = updateQuestionRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
