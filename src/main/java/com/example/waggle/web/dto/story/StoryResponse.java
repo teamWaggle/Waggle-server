@@ -41,9 +41,7 @@ public class StoryResponse {
     @AllArgsConstructor
     public static class StorySummaryListDto {
         private List<StorySummaryDto> storyList;
-        private long storyCount;
-        private Boolean isFirst;
-        private Boolean isLast;
+        private int nextPageParam;
     }
 
 }
