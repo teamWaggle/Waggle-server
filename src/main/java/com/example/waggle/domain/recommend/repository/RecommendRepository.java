@@ -29,4 +29,7 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     @Query("SELECT r FROM Recommend r WHERE r.board.id IN (SELECT s.id FROM Siren s)")
     List<Recommend> findRecommendsForSirens();
 
+    @Query("SELECT r FROM Recommend r WHERE r.board.id IN (SELECT q.id FROM Question q)")
+    List<Recommend> findRecommendsForQuestions();
+
 }

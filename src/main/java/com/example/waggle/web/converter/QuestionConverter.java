@@ -5,10 +5,10 @@ import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.question.QuestionResponse;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
-import org.springframework.data.domain.Page;
-
+import com.example.waggle.web.dto.question.QuestionResponse.RepresentativeQuestionDto;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class QuestionConverter {
     public static QuestionSummaryDto toSummaryDto(Question question) {
@@ -50,4 +50,13 @@ public class QuestionConverter {
                 .viewCount(question.getViewCount())
                 .build();
     }
+
+    public static RepresentativeQuestionDto toRepresentativeQuestionDto(List<Question> questionList) {
+        List<QuestionSummaryDto> collect = questionList.stream()
+                .map(QuestionConverter::toSummaryDto).collect(Collectors.toList());
+        return RepresentativeQuestionDto.builder()
+                .questionList(collect)
+                .build();
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.example.waggle.web.controller;
 
+import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
+
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
@@ -13,10 +15,14 @@ import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.question.QuestionRequest;
+import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
+import com.example.waggle.web.dto.question.QuestionResponse.RepresentativeQuestionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,12 +30,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -96,7 +105,18 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        setRecommendInList(listDto);
+        setRecommendInList(listDto.getQuestionList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "대표 질문 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/representative")
+    public ApiResponseDto<RepresentativeQuestionDto> getRepresentativeQuestionList() {
+        List<Question> representativeQuestionList = questionQueryService.getRepresentativeQuestionList();
+        RepresentativeQuestionDto listDto = QuestionConverter.toRepresentativeQuestionDto(
+                representativeQuestionList);
+        setRecommendInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -110,7 +130,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        setRecommendInList(listDto);
+        setRecommendInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -143,8 +163,8 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    private void setRecommendInList(QuestionSummaryListDto listDto) {
-        listDto.getQuestionList()
+    private void setRecommendInList(List<QuestionSummaryDto> questionList) {
+        questionList
                 .forEach(question ->
                         question.setRecommendationInfo(
                                 recommendQueryService.getRecommendationInfo(
