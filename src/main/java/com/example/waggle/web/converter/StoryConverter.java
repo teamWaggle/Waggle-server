@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryDto;
 import com.example.waggle.web.dto.story.StoryResponse.StorySummaryListDto;
@@ -24,9 +25,7 @@ public class StoryConverter {
                 .map(StoryConverter::toSummaryDto).collect(Collectors.toList());
         return StorySummaryListDto.builder()
                 .storyList(stories)
-                .storyCount(storyPage.getTotalElements())
-                .isFirst(storyPage.isFirst())
-                .isLast(storyPage.isLast())
+                .nextPageParam(PageUtil.countNextPage(storyPage))
                 .build();
     }
 
