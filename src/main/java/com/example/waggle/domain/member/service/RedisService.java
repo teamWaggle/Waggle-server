@@ -1,14 +1,13 @@
 package com.example.waggle.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -47,9 +46,19 @@ public class RedisService {
         hashOperations.put(key, hashKey, value);
     }
 
+    public void incrementCntInHash(String key, String hashKey, Long value) {
+        HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
+        hashOperations.increment(key, hashKey, value);
+    }
+
     public Long getCntInHash(String key, String hashKey) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
         return hashOperations.get(key, hashKey);
+    }
+
+    public boolean existCntInHash(String key, String hashKey) {
+        HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
+        return hashOperations.hasKey(key, hashKey);
     }
 
     public void deleteCntInHash(String key) {
@@ -63,14 +72,38 @@ public class RedisService {
         setOperations.add(key, value);
     }
 
+    public Set<String> getValuesInSet(String key) {
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        return setOperations.members(key);
+    }
+
+    public Set<String> getKeysByPattern(String pattern) {
+        RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
+        ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).build();
+        Cursor<byte[]> cursor = connection.scan(scanOptions);
+
+        Set<String> keys = new HashSet<>();
+        while (cursor.hasNext()) {
+            keys.add(new String(cursor.next()));
+        }
+
+        try {
+            cursor.close();
+        } catch (Exception e) {
+            // Handle exception
+        }
+
+        return keys;
+    }
+
     public boolean existValueInSet(String key, String value) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         return setOperations.isMember(key, value);
     }
 
-    public void deleteValueInSet(String key, List<String> values) {
+    public void deleteValueInSet(String key, String value) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.remove(key, values);
+        setOperations.remove(key, value);
     }
 
 }
