@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +33,11 @@ class RecommendCommandServiceImplV2Test {
     @Autowired
     StoryCommandService storyCommandService;
     @Autowired
-    RecommendCommandServiceImplV2 recommendCommandServiceImplV2;
+    RecommendCommandService recommendCommandService;
+    @Autowired
+    RecommendQueryService recommendQueryService;
+    @Autowired
+    RecommendSyncService recommendSyncService;
     @Autowired
     RecommendRepository recommendRepository;
     @Autowired
@@ -78,19 +81,29 @@ class RecommendCommandServiceImplV2Test {
     }
 
     @Test
-    void syncRecommend() {
-        log.info("member 0 = {}", memberIdList.get(0));
-        log.info("member 1 = {}", memberIdList.get(1));
+    void syncRecommendByRedis() {
+        recommendSyncService.initRecommendationInRedis(memberList.get(0));
 
-        recommendCommandServiceImplV2.handleRecommendation(boardIdList.get(3), memberList.get(0));
-        recommendCommandServiceImplV2.handleRecommendation(boardIdList.get(2), memberList.get(1));
-        recommendCommandServiceImplV2.handleRecommendation(boardIdList.get(2), memberList.get(0));
+        for (int i = 0; i < 500; i++) {
+            System.out.println("i = " + i);
+            recommendCommandService.handleRecommendation(boardIdList.get(3), memberList.get(0));
+            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
+            recommendCommandService.handleRecommendation(boardIdList.get(1), memberList.get(0));
 
-        List<Recommend> allRecommend = recommendRepository.findAll();
-        Set<String> keysByPattern = redisService.getKeysByPattern("set:recommend:board*");
-        keysByPattern.stream().forEach(key -> log.info("key = {}", key));
+            System.out.println();
+        }
+    }
 
-        assertThat(allRecommend.size()).isEqualTo(0);
-        assertThat(keysByPattern.size()).isEqualTo(2);
+    @Test
+    void syncRecommendByRDB() {
+
+        for (int i = 0; i < 501; i++) {
+            recommendCommandService.handleRecommendation(boardIdList.get(3), memberList.get(0));
+            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(1));
+            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
+        }
+
+        List<Recommend> all = recommendRepository.findAll();
+        assertThat(all.size()).isEqualTo(3);
     }
 }

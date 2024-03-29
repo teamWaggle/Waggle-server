@@ -61,6 +61,8 @@ public enum ErrorStatus implements BaseCode {
     REPLY_CANNOT_EDIT_OTHERS(BAD_REQUEST, 4158, "다른 사용자의 대댓글을 수정하거나 삭제할 수 없습니다."),
     BOARD_OBJECT_CANNOT_BE_NULL_WHEN_CHECK_RECOMMEND(BAD_REQUEST, 4159, "좋아요를 확인할때 게시글 객체가 널이어서는 안됩니다"),
     BOARD_TYPE_CANNOT_BE_FOUND_WHEN_CHECK_RECOMMEND(BAD_REQUEST, 4160, "좋아요를 확인할 때 검증하는 게시글 타입이 아닙니다"),
+    RECOMMEND_WAS_NOT_INITIATED(BAD_REQUEST, 4161, "redis에 해당 멤버의 recommend정보가 초기화되지 않았습니다."),
+    RECOMMEND_WAS_ALREADY_INITIATED(BAD_REQUEST, 4162, "redis에 해당 멤버의 recommend정보를 이미 초기화했습니다."),
 
 
     // 스케줄 관련 오류 (4200 ~ 4249)
