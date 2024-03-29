@@ -9,13 +9,9 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.SecurityUtil;
-import java.util.List;
-import java.util.stream.Collectors;
 import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,7 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Service
+//@Service
 public class RecommendQueryServiceImpl implements RecommendQueryService {
 
     private final RecommendRepository recommendRepository;
