@@ -1,5 +1,7 @@
 package com.example.waggle.domain.member.service;
 
+import com.example.waggle.domain.recommend.entity.RecommendationHashKey;
+import com.example.waggle.domain.recommend.entity.RecommendationSetKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
@@ -14,6 +16,8 @@ import java.util.Set;
 public class RedisService {
 
     private final RedisTemplate redisTemplate;
+    private static String recommendSetKeyPrefix = "set:recommend:board:";
+    private static String hashKeyPrefix = "hash:board:";
 
     // key-value 설정
     public void setValue(String token, String username) {
@@ -40,41 +44,66 @@ public class RedisService {
         values.set(token, value, Duration.ofMillis(expireInMillis));
     }
 
+    public void initRecommend(Long memberId) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(String.valueOf(memberId), "initRecommend");
+    }
+
+    public boolean existInitRecommend(Long memberId) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        if (values.get(String.valueOf(memberId)) == null) {
+            return false;
+        }
+        return true;
+    }
+
     //for recommend count & view count
-    public void setCntInHash(String key, String hashKey, Long value) {
+    public void setRecommendCnt(Long boardId, Long value) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
-        hashOperations.put(key, hashKey, value);
+        RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        hashOperations.put(recommendationHashKey.getKey(), recommendationHashKey.getHashKey(), value);
     }
 
-    public void incrementCntInHash(String key, String hashKey, Long value) {
+    public void incrementRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
-        hashOperations.increment(key, hashKey, value);
+        RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        hashOperations.increment(recommendationHashKey.getKey(), recommendationHashKey.getHashKey(), 1L);
     }
 
-    public Long getCntInHash(String key, String hashKey) {
+    public void decrementRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
-        return hashOperations.get(key, hashKey);
+        RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        hashOperations.increment(recommendationHashKey.getKey(), recommendationHashKey.getHashKey(), -1L);
     }
 
-    public boolean existCntInHash(String key, String hashKey) {
+    public Long getRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
-        return hashOperations.hasKey(key, hashKey);
+        RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        return hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
     }
 
-    public void deleteCntInHash(String key) {
+    public boolean existRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
-        hashOperations.delete(key);
+        RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        return hashOperations.hasKey(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
+    }
+
+    public void deleteRecommendCnt(Long boardId) {
+        HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
+        RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        hashOperations.delete(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
     }
 
     //for newly insert recommend
-    public void setValueInSet(String key, String value) {
+    public void setIsRecommend(Long boardId, Long memberId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.add(key, value);
+        RecommendationSetKey setKey = buildSetKey(boardId, memberId);
+        setOperations.add(setKey.getKey(), setKey.getValue());
     }
 
-    public Set<String> getValuesInSet(String key) {
+    public Set<String> getIsRecommend(Long boardId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        return setOperations.members(key);
+        return setOperations.members(recommendSetKeyPrefix + boardId);
     }
 
     public Set<String> getKeysByPattern(String pattern) {
@@ -96,14 +125,34 @@ public class RedisService {
         return keys;
     }
 
-    public boolean existValueInSet(String key, String value) {
+    public boolean existIsRecommend(Long boardId, Long memberId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        return setOperations.isMember(key, value);
+        RecommendationSetKey setKey = buildSetKey(boardId, memberId);
+        return setOperations.isMember(setKey.getKey(), setKey.getValue());
     }
 
-    public void deleteValueInSet(String key, String value) {
+    public void deleteIsRecommend(Long boardId, Long memberId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.remove(key, value);
+        RecommendationSetKey setKey = buildSetKey(boardId, memberId);
+        setOperations.remove(setKey.getKey(), setKey.getValue());
+    }
+
+    private RecommendationHashKey buildHashKey(Long boardId) {
+        String key = hashKeyPrefix + boardId;
+        String hashKey = "recommendation";
+        return RecommendationHashKey.builder()
+                .key(key)
+                .hashKey(hashKey)
+                .build();
+    }
+
+    private RecommendationSetKey buildSetKey(Long boardId, Long memberId) {
+        String key = recommendSetKeyPrefix + boardId;
+        String value = String.valueOf(memberId);
+        return RecommendationSetKey.builder()
+                .key(key)
+                .value(value)
+                .build();
     }
 
 }
