@@ -3,6 +3,7 @@ package com.example.waggle.domain.recommend.service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.RedisService;
+import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.RecommendHandler;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class RecommendQueryServiceImplV2 implements RecommendQueryService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.RECOMMEND_NOT_FOUND));
         validateInitRecommend(member);
-        if (redisService.existIsRecommend(boardId, member.getId())) {
+        if (redisService.existRecommend(member.getId(), boardId)) {
             return true;
         }
         return false;
@@ -52,7 +54,8 @@ public class RecommendQueryServiceImplV2 implements RecommendQueryService {
 
     @Override
     public List<Member> getRecommendingMembers(Long boardId) {
-        return null;
+        List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
+        return byBoardId.stream().map(r -> r.getMember()).collect(Collectors.toList());
     }
 
     @Override

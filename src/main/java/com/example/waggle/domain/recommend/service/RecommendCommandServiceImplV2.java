@@ -8,7 +8,6 @@ import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Service
+//@Service
 public class RecommendCommandServiceImplV2 implements RecommendCommandService {
     private final RecommendRepository recommendRepository;
     private final RedisService redisService;
@@ -26,17 +25,24 @@ public class RecommendCommandServiceImplV2 implements RecommendCommandService {
     @Override
     public void handleRecommendation(Long boardId, Member member) {
         validateInitRecommend(member);
-        if (redisService.existIsRecommend(boardId, member.getId())) {
-            redisService.deleteIsRecommend(boardId, member.getId());
+        validateInitRecommendCnt(boardId);
+        if (redisService.existRecommend(member.getId(), boardId)) {
+            redisService.deleteRecommend(member.getId(), boardId);
             redisService.decrementRecommendCnt(boardId);
         } else {
-            redisService.setIsRecommend(boardId, member.getId());
+            redisService.setRecommend(member.getId(), boardId);
             redisService.incrementRecommendCnt(boardId);
         }
     }
 
+    private void validateInitRecommendCnt(Long boardId) {
+        if (!redisService.existRecommendCnt(boardId)) {
+            redisService.setRecommendCnt(boardId, Long.valueOf(recommendRepository.countByBoardId(boardId)));
+        }
+    }
+
     private void validateInitRecommend(Member member) {
-        if (redisService.existInitRecommend(member.getId())) {
+        if (!redisService.existInitRecommend(member.getId())) {
             throw new RecommendHandler(ErrorStatus.RECOMMEND_WAS_NOT_INITIATED);
         }
     }
