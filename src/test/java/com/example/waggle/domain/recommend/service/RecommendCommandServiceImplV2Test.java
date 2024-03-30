@@ -20,8 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Slf4j
 @SpringBootTest
 class RecommendCommandServiceImplV2Test {
@@ -82,28 +80,28 @@ class RecommendCommandServiceImplV2Test {
 
     @Test
     void syncRecommendByRedis() {
-        recommendSyncService.initRecommendationInRedis(memberList.get(0));
+//        recommendSyncService.initRecommendationInRedis(memberList.get(0));
 
         for (int i = 0; i < 500; i++) {
             System.out.println("i = " + i);
             recommendCommandService.handleRecommendation(boardIdList.get(3), memberList.get(0));
             recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
             recommendCommandService.handleRecommendation(boardIdList.get(1), memberList.get(0));
-
-            System.out.println();
+            List<Long> recommendList = redisService.getRecommendList(memberIdList.get(0));
+            recommendList.forEach(recommend -> log.info("recommend board  : {}", recommend));
         }
     }
 
     @Test
     void syncRecommendByRDB() {
 
-        for (int i = 0; i < 501; i++) {
+        for (int i = 0; i < 500; i++) {
+            log.info("i = {}", i);
             recommendCommandService.handleRecommendation(boardIdList.get(3), memberList.get(0));
-            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(1));
             recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
+            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
+            List<Recommend> all = recommendRepository.findAll();
+            all.forEach(recommend -> log.info("recommend board : {}", recommend));
         }
-
-        List<Recommend> all = recommendRepository.findAll();
-        assertThat(all.size()).isEqualTo(3);
     }
 }

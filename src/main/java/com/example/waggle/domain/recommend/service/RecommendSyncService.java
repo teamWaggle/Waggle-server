@@ -6,4 +6,5 @@ public interface RecommendSyncService {
     void initRecommendationInRedis(Member member);
 
     void syncRecommendation();
+
 }

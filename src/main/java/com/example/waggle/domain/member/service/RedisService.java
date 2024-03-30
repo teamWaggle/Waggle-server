@@ -9,14 +9,17 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RedisService {
 
     private final RedisTemplate redisTemplate;
-    private static String recommendSetKeyPrefix = "set:recommend:board:";
+    private static String recommendMemberKeyPrefix = "set:recommend:member:";
+    //    private static String recommendBoardKeyPrefix = "set:recommend:board:";
     private static String hashKeyPrefix = "hash:board:";
 
     // key-value 설정
@@ -95,18 +98,15 @@ public class RedisService {
     }
 
     //for newly insert recommend
-    public void setIsRecommend(Long boardId, Long memberId) {
+    public void setRecommend(Long memberId, Long boardId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        RecommendationSetKey setKey = buildSetKey(boardId, memberId);
-        setOperations.add(setKey.getKey(), setKey.getValue());
+        RecommendationSetKey memberSetKey = buildMemberSetKey(memberId, boardId);
+//        RecommendationSetKey boardSetKey = buildBoardSetKey(boardId, memberId);
+        setOperations.add(memberSetKey.getKey(), memberSetKey.getValue());
+//        setOperations.add(boardSetKey.getKey(), boardSetKey.getValue());
     }
 
-    public Set<String> getIsRecommend(Long boardId) {
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        return setOperations.members(recommendSetKeyPrefix + boardId);
-    }
-
-    public Set<String> getKeysByPattern(String pattern) {
+    private Set<String> getKeysByPattern(String pattern) {
         RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
         ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).build();
         Cursor<byte[]> cursor = connection.scan(scanOptions);
@@ -125,16 +125,47 @@ public class RedisService {
         return keys;
     }
 
-    public boolean existIsRecommend(Long boardId, Long memberId) {
+    public List<Long> getRecommendedBoardList(Long memberId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        RecommendationSetKey setKey = buildSetKey(boardId, memberId);
+        String key = recommendMemberKeyPrefix + memberId;
+        Set<String> boards = setOperations.members(key);
+        return boards.stream()
+                .map(board -> Long.valueOf(board)).collect(Collectors.toList());
+    }
+
+//    public List<Long> getRecommendingMemberList(Long boardId) {
+//            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+//            String key = recommendBoardKeyPrefix + boardId;
+//            Set<String> members = setOperations.members(key);
+//        return members.stream()
+//                .map(member -> Long.valueOf(member)).collect(Collectors.toList());
+//    }
+
+    public List<Long> getAllRecommendingMemberList() {
+        Set<String> keysByPattern = getKeysByPattern(recommendMemberKeyPrefix + "*");
+        return keysByPattern.stream()
+                .map(key -> Long.valueOf(key)).collect(Collectors.toList());
+    }
+
+    public boolean existRecommend(Long memberId, Long boardId) {
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        RecommendationSetKey setKey = buildMemberSetKey(memberId, boardId);
         return setOperations.isMember(setKey.getKey(), setKey.getValue());
     }
 
-    public void deleteIsRecommend(Long boardId, Long memberId) {
+    public void deleteRecommend(Long memberId, Long boardId) {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        RecommendationSetKey setKey = buildSetKey(boardId, memberId);
-        setOperations.remove(setKey.getKey(), setKey.getValue());
+        RecommendationSetKey memberSetKey = buildMemberSetKey(memberId, boardId);
+//        RecommendationSetKey boardSetKey = buildBoardSetKey(boardId, memberId);
+        setOperations.remove(memberSetKey.getKey(), memberSetKey.getValue());
+//        setOperations.remove(boardSetKey.getKey(), boardSetKey.getValue());
+    }
+
+    public void clearRecommend() {
+        Set<String> memberKeys = getKeysByPattern(recommendMemberKeyPrefix + "*");
+//        Set<String> boardKeys = getKeysByPattern(recommendBoardKeyPrefix + "*");
+        redisTemplate.delete(memberKeys);
+//        redisTemplate.delete(boardKeys);
     }
 
     private RecommendationHashKey buildHashKey(Long boardId) {
@@ -146,13 +177,22 @@ public class RedisService {
                 .build();
     }
 
-    private RecommendationSetKey buildSetKey(Long boardId, Long memberId) {
-        String key = recommendSetKeyPrefix + boardId;
-        String value = String.valueOf(memberId);
+    private RecommendationSetKey buildMemberSetKey(Long memberId, Long boardId) {
+        String key = recommendMemberKeyPrefix + memberId;
+        String value = String.valueOf(boardId);
         return RecommendationSetKey.builder()
                 .key(key)
                 .value(value)
                 .build();
     }
+
+//    private RecommendationSetKey buildBoardSetKey(Long boardId, Long memberId) {
+//        String key = recommendBoardKeyPrefix + memberId;
+//        String value = String.valueOf(memberId);
+//        return RecommendationSetKey.builder()
+//                .key(key)
+//                .value(value)
+//                .build();
+//    }
 
 }

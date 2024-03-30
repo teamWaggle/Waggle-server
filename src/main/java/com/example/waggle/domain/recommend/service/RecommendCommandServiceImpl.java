@@ -10,6 +10,7 @@ import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-//@Service
+@Service
 public class RecommendCommandServiceImpl implements RecommendCommandService {
     private final RecommendRepository recommendRepository;
     private final BoardRepository boardRepository;
