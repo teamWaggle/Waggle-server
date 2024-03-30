@@ -38,7 +38,7 @@ public class RecommendQueryServiceImplV2 implements RecommendQueryService {
     }
 
     private void validateInitRecommend(Member member) {
-        if (redisService.existInitRecommend(member.getId())) {
+        if (!redisService.existInitRecommend(member.getId())) {
             throw new RecommendHandler(ErrorStatus.RECOMMEND_WAS_NOT_INITIATED);
         }
     }
