@@ -11,11 +11,13 @@ import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,10 +34,10 @@ public class RecommendSyncServiceImpl implements RecommendSyncService {
         validateInitRecommend(member);
         //초기화 선언
         redisService.initRecommend(member.getId());
-        log.info("init = {}", redisService.existInitRecommend(member.getId()));
         // isRecommend 데이터 rdb -> redis
-        List<Recommend> dataList = recommendRepository.findByMember(member);
-        dataList.forEach(data -> redisService.setRecommend(data.getId(), member.getId()));
+        List<Long> boardIdList = recommendRepository.findByMember(member).stream()
+                .map(recommend -> recommend.getBoard().getId()).collect(Collectors.toList());
+        boardIdList.forEach(boardId -> redisService.setRecommend(member.getId(), boardId));
     }
 
     private void validateInitRecommend(Member member) {
@@ -44,6 +46,7 @@ public class RecommendSyncServiceImpl implements RecommendSyncService {
         }
     }
 
+    @Scheduled(fixedRate = 1000 * 60 * 3L)
     @Override
     public void syncRecommendation() {
         redisService.getAllRecommendingMemberList().stream()
@@ -59,6 +62,8 @@ public class RecommendSyncServiceImpl implements RecommendSyncService {
                             .forEach(recommend -> recommendRepository.save(recommend));
                 });
         redisService.clearRecommend();
+        redisService.clearRecommendCnt();
+        redisService.clearInitRecommend();
     }
 
 
