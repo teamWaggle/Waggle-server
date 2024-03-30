@@ -3,6 +3,7 @@ package com.example.waggle.domain.member.service;
 import com.example.waggle.domain.recommend.entity.RecommendationHashKey;
 import com.example.waggle.domain.recommend.entity.RecommendationSetKey;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
@@ -21,6 +23,7 @@ public class RedisService {
     private static String recommendMemberKeyPrefix = "set:recommend:member:";
     //    private static String recommendBoardKeyPrefix = "set:recommend:board:";
     private static String hashKeyPrefix = "hash:board:";
+    private static String initKeyPrefix = "init:member:";
 
     // key-value 설정
     public void setValue(String token, String username) {
@@ -49,15 +52,21 @@ public class RedisService {
 
     public void initRecommend(Long memberId) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(String.valueOf(memberId), "initRecommend");
+        String key = initKeyPrefix + memberId;
+        values.set(key, "initRecommend");
     }
 
     public boolean existInitRecommend(Long memberId) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        if (values.get(String.valueOf(memberId)) == null) {
+        if (values.get(initKeyPrefix + memberId) == null) {
             return false;
         }
         return true;
+    }
+
+    public void clearInitRecommend() {
+        Set<String> initRecommendKey = getKeysByPattern(initKeyPrefix + "*");
+        redisTemplate.delete(initRecommendKey);
     }
 
     //for recommend count & view count
@@ -82,6 +91,7 @@ public class RedisService {
     public Long getRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
         RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
+        log.info("class = {}", hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey()).getClass());
         return hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
     }
 
@@ -95,6 +105,11 @@ public class RedisService {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
         RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
         hashOperations.delete(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
+    }
+
+    public void clearRecommendCnt() {
+        Set<String> recommendCntKey = getKeysByPattern(hashKeyPrefix + "*");
+        redisTemplate.delete(recommendCntKey);
     }
 
     //for newly insert recommend
@@ -144,7 +159,8 @@ public class RedisService {
     public List<Long> getAllRecommendingMemberList() {
         Set<String> keysByPattern = getKeysByPattern(recommendMemberKeyPrefix + "*");
         return keysByPattern.stream()
-                .map(key -> Long.valueOf(key)).collect(Collectors.toList());
+                .map(key -> Long.valueOf(key.substring(recommendMemberKeyPrefix.length())))
+                .collect(Collectors.toList());
     }
 
     public boolean existRecommend(Long memberId, Long boardId) {
