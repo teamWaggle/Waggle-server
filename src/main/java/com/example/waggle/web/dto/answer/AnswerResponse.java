@@ -1,7 +1,6 @@
 package com.example.waggle.web.dto.answer;
 
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
-import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +24,7 @@ public class AnswerResponse {
         private List<String> hashtagList;
         private List<String> mediaList;
         private MemberSummaryDto member;
-        private RecommendationInfo recommendationInfo;
+        private int recommendCount;
     }
 
     @Data

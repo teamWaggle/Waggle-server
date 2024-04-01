@@ -10,7 +10,6 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
@@ -99,7 +98,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        setRecommendInList(listDto.getQuestionList());
+        setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -110,7 +109,7 @@ public class QuestionApiController {
         List<Question> representativeQuestionList = questionQueryService.getRepresentativeQuestionList();
         RepresentativeQuestionDto listDto = QuestionConverter.toRepresentativeQuestionDto(
                 representativeQuestionList);
-        setRecommendInList(listDto.getQuestionList());
+        setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -124,7 +123,7 @@ public class QuestionApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionByMemberId(memberId, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        setRecommendInList(listDto.getQuestionList());
+        setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -138,10 +137,7 @@ public class QuestionApiController {
         questionCommandService.increaseQuestionViewCount(questionId);
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
         QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        detailDto.setRecommendationInfo(recommendQueryService.getRecommendationInfo(
-                questionId,
-                SecurityUtil.getCurrentUsername())
-        );
+        detailDto.setRecommendCount(recommendQueryService.countRecommend(questionId));
         return ApiResponseDto.onSuccess(detailDto);
     }
 
@@ -157,14 +153,12 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    private void setRecommendInList(List<QuestionSummaryDto> questionList) {
+    private void setRecommendCntInList(List<QuestionSummaryDto> questionList) {
         questionList
                 .forEach(question ->
-                        question.setRecommendationInfo(
-                                recommendQueryService.getRecommendationInfo(
-                                        question.getBoardId(),
-                                        SecurityUtil.getCurrentUsername()))
-                );
+                        question.setRecommendCount(
+                                recommendQueryService.countRecommend(question.getBoardId()
+                                )));
     }
 
     // TODO 사용자가 작성한 대답과 관련된 question list 가져오기

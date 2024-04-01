@@ -11,7 +11,6 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.StoryConverter;
 import com.example.waggle.web.dto.story.StoryRequest;
 import com.example.waggle.web.dto.story.StoryResponse.StoryDetailDto;
@@ -104,10 +103,7 @@ public class StoryApiController {
     public ApiResponseDto<StoryDetailDto> getStoryByBoardId(@PathVariable("storyId") Long storyId) {
         Story storyByBoardId = storyQueryService.getStoryByBoardId(storyId);
         StoryDetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
-        detailDto.setRecommendationInfo(recommendQueryService.getRecommendationInfo(
-                storyId,
-                SecurityUtil.getCurrentUsername())
-        );
+        detailDto.setRecommendCount(recommendQueryService.countRecommend(storyId));
         return ApiResponseDto.onSuccess(detailDto);
     }
 
