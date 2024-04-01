@@ -9,7 +9,6 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.AnswerConverter;
 import com.example.waggle.web.dto.answer.AnswerRequest;
 import com.example.waggle.web.dto.answer.AnswerResponse.AnswerListDto;
@@ -73,7 +72,7 @@ public class AnswerApiController {
         Page<Answer> pagedAnswers = answerQueryService.getPagedAnswers(questionId, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswers);
         //recommend relation field
-        setRecommendInList(listDto);
+
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -87,7 +86,6 @@ public class AnswerApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswerByUsername);
-        setRecommendInList(listDto);
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -100,15 +98,5 @@ public class AnswerApiController {
                                                 @AuthUser Member member) {
         answerCommandService.deleteAnswer(answerId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
-    }
-
-    private void setRecommendInList(AnswerListDto listDto) {
-        listDto.getAnswerList()
-                .forEach(answer ->
-                        answer.setRecommendationInfo(
-                                recommendQueryService.getRecommendationInfo(
-                                        answer.getBoardId(),
-                                        SecurityUtil.getCurrentUsername()))
-                );
     }
 }

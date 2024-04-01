@@ -46,7 +46,8 @@ public class RecommendSyncServiceImpl implements RecommendSyncService {
         }
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 3L)
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 3L)
+//    @Scheduled(fixedRate = 1000 * 60 * 3L)
     @Override
     public void syncRecommendation() {
         redisService.getAllRecommendingMemberList().stream()
@@ -54,6 +55,7 @@ public class RecommendSyncServiceImpl implements RecommendSyncService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .forEach(member -> {
+                    recommendRepository.deleteAllByMember(member);
                     redisService.getRecommendedBoardList(member.getId()).stream()
                             .map(boardRepository::findById)
                             .filter(Optional::isPresent)
