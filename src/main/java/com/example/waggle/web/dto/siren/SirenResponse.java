@@ -4,7 +4,6 @@ import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
-import com.example.waggle.web.dto.recommend.RecommendResponse.RecommendationInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public class SirenResponse {
         private String lostLocate;
         private SirenCategory category;
         private ResolutionStatus status;
-        private RecommendationInfo recommendationInfo;
+        private int recommendCount;
     }
 
     @Data
@@ -53,7 +52,7 @@ public class SirenResponse {
         private List<String> mediaList;
         private MemberSummaryDto member;
         private ResolutionStatus status;
-        private RecommendationInfo recommendationInfo;
+        private int recommendCount;
         private int viewCount;
     }
 

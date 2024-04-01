@@ -54,6 +54,9 @@ public class RedisService {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         String key = initKeyPrefix + memberId;
         values.set(key, "initRecommend");
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        String memberKey = recommendMemberKeyPrefix + memberId;
+        setOperations.add(memberKey, String.valueOf(0L));
     }
 
     public boolean existInitRecommend(Long memberId) {
