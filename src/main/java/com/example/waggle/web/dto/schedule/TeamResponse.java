@@ -3,11 +3,12 @@ package com.example.waggle.web.dto.schedule;
 import com.example.waggle.domain.schedule.entity.TeamColor;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 public class TeamResponse {
 
@@ -37,6 +38,7 @@ public class TeamResponse {
         private Long teamId;
         private String name;
         private String coverImageUrl;
+        private String description;
         private TeamColor teamColor;
         private Integer maxTeamSize;
         private Integer teamSize;

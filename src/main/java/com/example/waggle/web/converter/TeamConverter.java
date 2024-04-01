@@ -32,8 +32,10 @@ public class TeamConverter {
 
     public static TeamSummaryDto toSummaryDto(Team team) {
         return TeamSummaryDto.builder()
+                .teamId(team.getId())
                 .name(team.getName())
                 .coverImageUrl(MediaUtil.getCoverImg(team))
+                .description(team.getDescription())
                 .teamColor(team.getTeamColor())
                 .maxTeamSize(team.getMaxTeamSize())
                 .teamSize(team.getTeamMembers().size())
