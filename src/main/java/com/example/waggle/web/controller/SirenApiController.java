@@ -10,7 +10,6 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.global.util.SecurityUtil;
 import com.example.waggle.web.converter.SirenConverter;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.siren.SirenResponse.RepresentativeSirenDto;
@@ -98,7 +97,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
-        setRecommendInList(listDto.getSirenList());
+        setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -109,7 +108,7 @@ public class SirenApiController {
         List<Siren> representativeSirenList = sirenQueryService.getRepresentativeSirenList();
         RepresentativeSirenDto listDto = SirenConverter.toRepresentativeSirenDto(
                 representativeSirenList);
-        setRecommendInList(listDto.getSirenList());
+        setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -123,7 +122,7 @@ public class SirenApiController {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
-        setRecommendInList(listDto.getSirenList());
+        setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
     }
 
@@ -136,10 +135,7 @@ public class SirenApiController {
         sirenCommandService.increaseSirenViewCount(sirenId);
         Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
         SirenDetailDto detailDto = SirenConverter.toSirenDetailDto(siren);
-        detailDto.setRecommendationInfo(recommendQueryService.getRecommendationInfo(
-                sirenId,
-                SecurityUtil.getCurrentUsername()
-        ));
+        detailDto.setRecommendCount(recommendQueryService.countRecommend(sirenId));
 
         return ApiResponseDto.onSuccess(detailDto);
     }
@@ -155,13 +151,11 @@ public class SirenApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    private void setRecommendInList(List<SirenSummaryDto> sirenList) {
+    private void setRecommendCntInList(List<SirenSummaryDto> sirenList) {
         sirenList
                 .forEach(siren ->
-                        siren.setRecommendationInfo(
-                                recommendQueryService.getRecommendationInfo(
-                                        siren.getBoardId(),
-                                        SecurityUtil.getCurrentUsername()))
+                        siren.setRecommendCount(
+                                recommendQueryService.countRecommend(siren.getBoardId()))
                 );
     }
 }
