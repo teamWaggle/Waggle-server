@@ -4,7 +4,6 @@ import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.service.BoardType;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
@@ -28,7 +27,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
-    private final MemberRepository memberRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final CommentCommandService commentCommandService;
@@ -41,7 +39,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
         validateTeamMember(team, member);
-        ScheduleUtil.validateSchedule(createScheduleRequest.getStartTime(), createScheduleRequest.getEndTime());
+        validateOrderOfStartAndEnd(createScheduleRequest);
 
         Schedule schedule = buildSchedule(createScheduleRequest, team, member);
         team.addSchedule(schedule);
@@ -58,7 +56,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
-        ScheduleUtil.validateSchedule(updateScheduleRequest.getStartTime(), updateScheduleRequest.getEndTime());
+        validateOrderOfStartAndEnd(updateScheduleRequest);
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
@@ -128,11 +126,19 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_IN_YOUR_TEAM_SCHEDULE);
         }
     }
-    
+
     private void validateExistMemberSchedule(Long scheduleId, Member member) {
         if (memberScheduleRepository.existsByMemberIdAndScheduleId(member.getId(), scheduleId)) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_WAS_ALREADY_CHOSEN);
         }
+    }
+
+    private static void validateOrderOfStartAndEnd(ScheduleRequest scheduleRequest) {
+        ScheduleUtil.validateSchedule(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
+        ScheduleUtil.validateSchedule(
+                ScheduleUtil.convertLocalTime(scheduleRequest.getStartTime()),
+                ScheduleUtil.convertLocalTime(scheduleRequest.getEndTime())
+        );
     }
 
     private Schedule buildSchedule(ScheduleRequest createScheduleRequest, Team team, Member member) {
@@ -140,17 +146,18 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .team(team)
                 .title(createScheduleRequest.getTitle())
                 .content(createScheduleRequest.getContent())
-                .startTime(createScheduleRequest.getStartTime())
-                .endTime(createScheduleRequest.getEndTime())
+                .startDate(createScheduleRequest.getStartDate())
+                .endDate(createScheduleRequest.getEndDate())
+                .startTime(ScheduleUtil.convertLocalTime(createScheduleRequest.getStartTime()))
+                .endTime(ScheduleUtil.convertLocalTime(createScheduleRequest.getEndTime()))
                 .member(member)
                 .build();
     }
 
-    private static MemberSchedule buildMemberSchedule(Member member, Schedule schedule) {
-        MemberSchedule memberSchedule = MemberSchedule.builder()
+    private MemberSchedule buildMemberSchedule(Member member, Schedule schedule) {
+        return MemberSchedule.builder()
                 .member(member)
                 .schedule(schedule)
                 .build();
-        return memberSchedule;
     }
 }
