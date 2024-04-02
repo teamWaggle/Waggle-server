@@ -18,6 +18,8 @@ public class ScheduleConverter {
                 .teamColor(schedule.getTeam().getTeamColor())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
+                .startDate(schedule.getStartDate())
+                .endDate(schedule.getEndDate())
                 .startTime(schedule.getStartTime())
                 .endTime(schedule.getEndTime())
                 .createdDate(schedule.getCreatedDate())

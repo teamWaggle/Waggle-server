@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,26 +55,24 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     public List<Schedule> getMonthlySchedulesByMember(Long memberId, int year, int month) {
-        LocalDate startOfMonth = LocalDate.of(year, month, 1);
-        LocalDateTime startDateTime = startOfMonth.atStartOfDay();
-        LocalDateTime endDateTime = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth()).atTime(23, 59, 59);
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1);
 
-        return memberScheduleRepository.findByMemberIdAndDay(memberId, startDateTime, endDateTime).stream()
+        return memberScheduleRepository.findByMemberIdAndDay(memberId, startDate, endDate).stream()
                 .map(MemberSchedule::getSchedule)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month) {
-        LocalDate startDay = LocalDate.of(year, month, 1);
-        LocalDateTime startDateTime = startDay.atStartOfDay();
-        LocalDateTime endDateTime = startDay.plusMonths(1).atStartOfDay();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1);
 
-        return scheduleRepository.findByTeamIdAndDay(teamId, startDateTime, endDateTime);
+        return scheduleRepository.findByTeamIdAndDay(teamId, startDate, endDate);
     }
 
     @Override
-    public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDateTime startTime, LocalDateTime endTime) {
+    public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDate startTime, LocalDate endTime) {
         return scheduleRepository.findByTeamIdAndDay(teamId, startTime, endTime);
     }
 

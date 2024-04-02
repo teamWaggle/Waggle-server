@@ -1,9 +1,12 @@
 package com.example.waggle.web.dto.schedule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -13,6 +16,10 @@ import java.time.LocalDateTime;
 public class ScheduleRequest {
     private String title;
     private String content;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    @Schema(description = "Start time in HH:mm format")
+    private String startTime;
+    @Schema(description = "End time in HH:mm format")
+    private String endTime;
 }

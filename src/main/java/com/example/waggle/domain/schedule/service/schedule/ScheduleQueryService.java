@@ -5,7 +5,7 @@ import com.example.waggle.domain.schedule.entity.Schedule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ScheduleQueryService {
@@ -24,7 +24,7 @@ public interface ScheduleQueryService {
 
     List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month);
 
-    List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDateTime startTime, LocalDateTime endTime);
+    List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDate startTime, LocalDate endTime);
 
     List<Member> getMemberBySchedule(Long scheduleId);
 
