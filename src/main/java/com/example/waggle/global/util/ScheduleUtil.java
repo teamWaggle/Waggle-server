@@ -14,7 +14,7 @@ import static com.example.waggle.domain.schedule.entity.ScheduleStatus.*;
 
 public class ScheduleUtil {
 
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     public static ScheduleStatus setStatus(Schedule schedule) {
         LocalDate currentDate = LocalDate.now();
@@ -49,11 +49,8 @@ public class ScheduleUtil {
         }
     }
 
-//    public static LocalTime getLocalTime(int startHour, int startMinute) {
-//        return LocalTime.of(startHour, startMinute);
-//    }
-
     public static LocalTime convertLocalTime(String time) {
         return LocalTime.parse(time, TIME_FORMATTER);
     }
+
 }
