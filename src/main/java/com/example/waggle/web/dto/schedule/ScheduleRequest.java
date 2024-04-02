@@ -1,5 +1,6 @@
 package com.example.waggle.web.dto.schedule;
 
+import com.example.waggle.global.annotation.valid.localTime.ValidTimeForm;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,9 @@ public class ScheduleRequest {
     private LocalDate startDate;
     private LocalDate endDate;
     @Schema(description = "Start time in HH:mm format")
+    @ValidTimeForm
     private String startTime;
     @Schema(description = "End time in HH:mm format")
+    @ValidTimeForm
     private String endTime;
 }
