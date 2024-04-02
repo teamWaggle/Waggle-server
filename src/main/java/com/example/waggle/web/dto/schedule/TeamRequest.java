@@ -1,16 +1,13 @@
 package com.example.waggle.web.dto.schedule;
 
 import com.example.waggle.domain.schedule.entity.TeamColor;
-import com.example.waggle.global.annotation.valid.ValidEnum;
+import com.example.waggle.global.annotation.valid.enums.ValidEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @Data
 @Builder

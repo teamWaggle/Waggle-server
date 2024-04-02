@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class ScheduleApiController {
     })
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@PathVariable("teamId") Long teamId,
-                                               @RequestBody ScheduleRequest createScheduleRequest,
+                                               @RequestBody @Validated ScheduleRequest createScheduleRequest,
                                                @AuthUser Member member) {
         Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest, member);
         return ApiResponseDto.onSuccess(createdScheduleId);

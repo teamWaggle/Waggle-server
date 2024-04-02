@@ -1,11 +1,12 @@
-package com.example.waggle.global.annotation.valid;
+package com.example.waggle.global.annotation.valid.enums;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 
 @Component
 public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
