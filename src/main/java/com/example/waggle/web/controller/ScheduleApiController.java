@@ -8,6 +8,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ScheduleUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
@@ -26,7 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -49,8 +50,7 @@ public class ScheduleApiController {
     public ApiResponseDto<Long> createSchedule(@PathVariable("teamId") Long teamId,
                                                @RequestBody ScheduleRequest createScheduleRequest,
                                                @AuthUser Member member) {
-        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest,
-                member);
+        Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest, member);
         return ApiResponseDto.onSuccess(createdScheduleId);
     }
 
@@ -181,8 +181,9 @@ public class ScheduleApiController {
     })
     @GetMapping("/teams/{teamId}/period")
     public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriod(@PathVariable("teamId") Long teamId,
-                                                                   @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-                                                                   @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+                                                                   @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
+                                                                   @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        ScheduleUtil.validateSchedule(start, end);
         List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }

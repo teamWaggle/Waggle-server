@@ -1,19 +1,14 @@
 package com.example.waggle.domain.schedule.entity;
 
 import com.example.waggle.domain.board.Board;
+import com.example.waggle.global.util.ScheduleUtil;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -30,15 +25,21 @@ public class Schedule extends Board {
 
     private String title;
 
-    private LocalDateTime startTime;
+    private LocalDate startDate;
 
-    private LocalDateTime endTime;
+    private LocalDate endDate;
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
 
     public void update(ScheduleRequest updateScheduleRequest) {
         this.title = updateScheduleRequest.getTitle();
         this.content = updateScheduleRequest.getContent();
-        this.startTime = updateScheduleRequest.getStartTime();
-        this.endTime = updateScheduleRequest.getEndTime();
+        this.startDate = updateScheduleRequest.getStartDate();
+        this.endDate = updateScheduleRequest.getEndDate();
+        this.startTime = ScheduleUtil.convertLocalTime(updateScheduleRequest.getStartTime());
+        this.endTime = ScheduleUtil.convertLocalTime(updateScheduleRequest.getEndTime());
     }
 
 }
