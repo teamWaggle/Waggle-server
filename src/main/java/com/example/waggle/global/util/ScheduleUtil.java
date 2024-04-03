@@ -22,9 +22,7 @@ public class ScheduleUtil {
             return UPCOMING;
         } else if (currentDate.isAfter(schedule.getEndDate())) {
             return CLOSING;
-        } else if (currentDate.isAfter(schedule.getStartDate()) && LocalDate.now().isBefore(schedule.getEndDate())) {
-            return IN_PROGRESS;
-        } else if (currentDate.isEqual(schedule.getStartDate()) || currentDate.isEqual(schedule.getEndDate())) {
+        } else if (!currentDate.isBefore(schedule.getStartDate()) && !currentDate.isAfter(schedule.getEndDate())) {
             return IN_PROGRESS;
         } else {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME);
