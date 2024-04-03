@@ -3,10 +3,8 @@ package com.example.waggle.domain.recommend.service;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.RedisService;
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
-import com.example.waggle.global.exception.handler.RecommendHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.recommend.RecommendResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,7 +38,11 @@ public class RecommendQueryServiceImplV2 implements RecommendQueryService {
 
     private void validateInitRecommend(Member member) {
         if (!redisService.existInitRecommend(member.getId())) {
-            throw new RecommendHandler(ErrorStatus.RECOMMEND_WAS_NOT_INITIATED);
+            redisService.initRecommend(member.getId());
+            // isRecommend 데이터 rdb -> redis
+            recommendRepository.findByMember(member).stream()
+                    .map(recommend -> recommend.getBoard().getId())
+                    .forEach(boardId -> redisService.setRecommend(member.getId(), boardId));
         }
     }
 
@@ -54,8 +57,15 @@ public class RecommendQueryServiceImplV2 implements RecommendQueryService {
 
     @Override
     public List<Member> getRecommendingMembers(Long boardId) {
-        List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
-        return byBoardId.stream().map(r -> r.getMember()).collect(Collectors.toList());
+        List<Member> fromRDB = recommendRepository.findByBoardId(boardId).stream()
+                .map(recommend -> recommend.getMember()).collect(Collectors.toList());
+        List<Member> fromRedis = redisService.getAllRecommendingMemberList().stream()
+                .filter(memberId -> redisService.existRecommend(memberId, boardId))
+                .map(memberRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get).collect(Collectors.toList());
+        fromRDB.addAll(fromRedis);
+        return fromRDB;
     }
 
     @Override

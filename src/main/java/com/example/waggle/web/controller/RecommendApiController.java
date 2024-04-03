@@ -61,16 +61,6 @@ public class RecommendApiController {
         return ApiResponseDto.onSuccess(recommendQueryService.checkRecommend(boardId, member.getUsername()));
     }
 
-    @Operation(summary = "로그인 유저 데이터베이스 -> 캐시 동기화 🔑", description = "유저의 활동을 위해 좋아요 정보를 rdb -> redis 로 옮깁니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/init")
-    public ApiResponseDto<Long> initRecommendInfoInRedis(@AuthUser Member member) {
-        recommendSyncService.initRecommendationInRedis(member);
-        return ApiResponseDto.onSuccess(member.getId());
-    }
-
     @Operation(summary = "캐시 -> 데이터베이스 동기화 🔑", description = "유저의 활동을 위해 좋아요 정보를 rdb -> redis 로 옮깁니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
