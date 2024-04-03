@@ -56,7 +56,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Override
     public List<Schedule> getMonthlySchedulesByMember(Long memberId, int year, int month) {
         LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = startDate.plusMonths(1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
         return memberScheduleRepository.findByMemberIdAndDay(memberId, startDate, endDate).stream()
                 .map(MemberSchedule::getSchedule)
@@ -66,14 +66,14 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Override
     public List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month) {
         LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = startDate.plusMonths(1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
         return scheduleRepository.findByTeamIdAndDay(teamId, startDate, endDate);
     }
 
     @Override
-    public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDate startTime, LocalDate endTime) {
-        return scheduleRepository.findByTeamIdAndDay(teamId, startTime, endTime);
+    public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDate startDate, LocalDate endDate) {
+        return scheduleRepository.findByTeamIdAndDay(teamId, startDate, endDate);
     }
 
     @Override
