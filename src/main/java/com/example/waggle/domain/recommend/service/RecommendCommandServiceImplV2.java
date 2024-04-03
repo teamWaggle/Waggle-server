@@ -4,8 +4,6 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.exception.handler.RecommendHandler;
-import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,7 @@ import java.util.List;
 public class RecommendCommandServiceImplV2 implements RecommendCommandService {
     private final RecommendRepository recommendRepository;
     private final RedisService redisService;
+    private final RecommendSyncService recommendSyncService;
 
 
     @Override
@@ -44,7 +43,7 @@ public class RecommendCommandServiceImplV2 implements RecommendCommandService {
 
     private void validateInitRecommend(Member member) {
         if (!redisService.existInitRecommend(member.getId())) {
-            throw new RecommendHandler(ErrorStatus.RECOMMEND_WAS_NOT_INITIATED);
+            recommendSyncService.initRecommendationInRedis(member);
         }
     }
 

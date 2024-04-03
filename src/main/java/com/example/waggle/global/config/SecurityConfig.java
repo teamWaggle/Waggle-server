@@ -119,7 +119,6 @@ public class SecurityConfig {
 
     private RequestMatcher[] authenticatedEndpoints() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher("api/recommends/init"),
                 antMatcher(HttpMethod.GET, "api/recommends/")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
