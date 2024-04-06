@@ -9,9 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 public class ScheduleResponse {
@@ -27,10 +25,8 @@ public class ScheduleResponse {
         private TeamColor teamColor;
         private String title;
         private String content;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private LocalTime startTime;
-        private LocalTime endTime;
+        private LocalDateTime startDate;
+        private LocalDateTime endDate;
         private LocalDateTime createdDate;
         private ScheduleStatus status;
         private MemberSummaryDto member;
