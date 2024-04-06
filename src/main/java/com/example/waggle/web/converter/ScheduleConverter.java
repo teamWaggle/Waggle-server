@@ -6,6 +6,7 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,8 @@ public class ScheduleConverter {
                 .teamColor(schedule.getTeam().getTeamColor())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
-                .startDate(schedule.getStartDate())
-                .endDate(schedule.getEndDate())
-                .startTime(schedule.getStartTime())
-                .endTime(schedule.getEndTime())
+                .startDate(LocalDateTime.of(schedule.getStartDate(), schedule.getStartTime()))
+                .endDate(LocalDateTime.of(schedule.getEndDate(), schedule.getEndTime()))
                 .createdDate(schedule.getCreatedDate())
                 .status(ScheduleUtil.setStatus(schedule))
                 .member(MemberConverter.toMemberSummaryDto(schedule.getMember()))
