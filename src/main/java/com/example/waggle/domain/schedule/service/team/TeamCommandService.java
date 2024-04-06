@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.service.team;
 
-import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.web.dto.schedule.TeamRequest;
 
 public interface TeamCommandService {
 
@@ -11,7 +11,7 @@ public interface TeamCommandService {
 
     void deleteTeam(Long teamId, Member member);
 
-    Long addTeamMember(Long teamId, Long newMemberId, Member member);
+    Long addTeamMemberByLeader(Long teamId, Long newMemberId, Member member);
 
     void deleteTeamMemberByLeader(Long teamId, Long memberId, Member leader);
 
