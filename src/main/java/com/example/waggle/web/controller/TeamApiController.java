@@ -99,7 +99,7 @@ public class TeamApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PutMapping("/{teamId}/leader/{memberId}")
+    @PutMapping("/{teamId}/leader/{newLeaderId}")
     public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable("teamId") Long teamId,
                                                     @PathVariable("newLeaderId") Long newLeaderId,
                                                     @AuthUser Member member) {

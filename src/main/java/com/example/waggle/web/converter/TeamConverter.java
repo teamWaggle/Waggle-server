@@ -22,7 +22,6 @@ public class TeamConverter {
                 .description(team.getDescription())
                 .coverImageUrl(MediaUtil.getCoverImg(team))
                 .teamColor(team.getTeamColor())
-                .maxTeamSize(team.getMaxTeamSize())
                 .teamSize(team.getTeamMembers().size())
                 .leader(MemberConverter.toMemberSummaryDto(team.getLeader()))
                 .teamMemberList(
@@ -37,7 +36,6 @@ public class TeamConverter {
                 .coverImageUrl(MediaUtil.getCoverImg(team))
                 .description(team.getDescription())
                 .teamColor(team.getTeamColor())
-                .maxTeamSize(team.getMaxTeamSize())
                 .teamSize(team.getTeamMembers().size())
                 .build();
     }
