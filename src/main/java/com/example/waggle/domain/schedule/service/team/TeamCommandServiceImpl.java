@@ -72,25 +72,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    //no usages인데 지워도 되나요
-    public Long addTeamMemberByLeader(Long teamId, Long newMemberId, Member leader) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member newMember = memberRepository.findById(newMemberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Participation participation = buildParticipation(newMember, team);
-        participation.setStatus(ParticipationStatus.ACCEPTED);
-
-        validateCallerIsLeader(team, leader);
-        validateMemberDuplication(team, newMember);
-        validateLimitOfTeamCapacity(team);
-        addMemberToTeam(team, leader);
-        participationRepository.save(participation);
-
-        return team.getId();
-    }
-
-    @Override
     public void deleteTeamMemberByLeader(Long teamId, Long memberId, Member leader) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
