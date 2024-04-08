@@ -18,6 +18,7 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberMentionListDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,6 +89,15 @@ public class MemberApiController {
     public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("userUrl") String userUrl) {
         Member member = memberQueryService.getMemberByUserUrl(userUrl);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
+    }
+
+    @Operation(summary = "회원 정보 조회 🔑", description = "Access Token을 통해 memberId, userUrl을 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/info")
+    public ApiResponseDto<MemberSummaryDto> getMemberInfoByAuth(@AuthUser Member member) {
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberSummaryDto(member));
     }
 
     @Operation(summary = "회원 검색", description = "nickname 일부 혹은 전체를 검색하여 검색어에 해당하는 모든 회원을 조회합니다.")
