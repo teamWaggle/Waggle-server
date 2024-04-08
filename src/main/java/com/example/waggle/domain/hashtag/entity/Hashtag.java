@@ -16,14 +16,15 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Hashtag extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hashtag_id")
     private Long id;
 
     @Column(nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "hashtag",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "hashtag", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Builder.Default
     private List<BoardHashtag> boardHashtags = new ArrayList<>();
 

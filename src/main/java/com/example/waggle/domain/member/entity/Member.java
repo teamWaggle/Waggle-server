@@ -28,7 +28,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
 
