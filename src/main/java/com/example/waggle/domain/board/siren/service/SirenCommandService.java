@@ -19,4 +19,8 @@ public interface SirenCommandService {
 
     void increaseSirenViewCount(Long boardId);
 
+    void applyViewCountToRedis(Long boardId);
+
+    void applyViewCountToRDB();
+
 }

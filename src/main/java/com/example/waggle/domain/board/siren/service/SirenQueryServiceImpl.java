@@ -3,9 +3,11 @@ package com.example.waggle.domain.board.siren.service;
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
+import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
 
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
+    private final RedisService redisService;
 
     @Override
     public List<Siren> getAllSiren() {
@@ -67,5 +70,19 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     public Siren getSirenByBoardId(Long boardId) {
         return sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
+    }
+
+    @Override
+    public Integer getViewCountInRedis(Long boardId) {
+        String viewCountKey = "viewCount::" + boardId;
+        String viewCount = redisService.getValue(viewCountKey);
+        if (viewCount == null) {
+            redisService.setData(
+                    viewCountKey,
+                    String.valueOf(sirenRepository.findViewCountByBoardId(boardId)),
+                    Duration.ofMinutes(3)
+            );
+        }
+        return Integer.parseInt(viewCount);
     }
 }

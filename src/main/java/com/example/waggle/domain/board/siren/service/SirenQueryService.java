@@ -18,4 +18,7 @@ public interface SirenQueryService {
     Page<Siren> getPagedSirenListByMemberId(Long memberId, Pageable pageable);
 
     Siren getSirenByBoardId(Long boardId);
+
+    Integer getViewCountInRedis(Long boardId);
+
 }

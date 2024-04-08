@@ -1,5 +1,7 @@
 package com.example.waggle.domain.board.siren.service;
 
+import static com.example.waggle.domain.board.service.BoardType.SIREN;
+
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
@@ -9,17 +11,20 @@ import com.example.waggle.domain.conversation.service.comment.CommentCommandServ
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.siren.SirenRequest;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.waggle.domain.board.service.BoardType.SIREN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +37,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
+    private final RedisService redisService;
 
     @Override
     public Long createSiren(SirenRequest createSirenRequest, Member member) {
@@ -91,6 +97,42 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         Siren siren = sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
         siren.increaseViewCount();
+    }
+
+    @Override
+    public void applyViewCountToRedis(Long boardId) {
+        String viewCountKey = "viewCount::" + boardId;
+        if (redisService.getValue(viewCountKey) != null) {
+            redisService.increment(viewCountKey);
+            return;
+        }
+        redisService.setData(
+                viewCountKey,
+                String.valueOf(sirenRepository.findViewCountByBoardId(boardId) + 1),
+                Duration.ofMinutes(3)
+        );
+    }
+
+    @Scheduled(cron = "0 0/3 * * * ?")
+    @Override
+    public void applyViewCountToRDB() {
+        Set<String> viewCountKeys = redisService.keys("viewCount*");
+        if (Objects.requireNonNull(viewCountKeys).isEmpty()) {
+            return;
+        }
+
+        for (String viewCntKey : viewCountKeys) {
+            Long boardId = extractBoardIdFromKey(viewCntKey);
+            Long viewCount = Long.parseLong(redisService.getData(viewCntKey));
+
+            sirenRepository.applyViewCntToRDB(boardId, viewCount);
+            redisService.deleteData(viewCntKey);
+            redisService.deleteData("board::" + boardId);
+        }
+    }
+
+    private static Long extractBoardIdFromKey(String key) {
+        return Long.parseLong(key.split("::")[1]);
     }
 
     private Siren buildSiren(SirenRequest createSirenRequest, Member member) {
