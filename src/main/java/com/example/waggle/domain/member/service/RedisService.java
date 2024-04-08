@@ -94,7 +94,8 @@ public class RedisService {
     public Long getRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
         RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
-        log.info("class = {}", hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey()).getClass());
+        log.info("class = {}",
+                hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey()).getClass());
         return hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
     }
 
@@ -213,5 +214,28 @@ public class RedisService {
 //                .value(value)
 //                .build();
 //    }
+
+    public void increment(String key) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.increment(key);
+    }
+
+    public String getData(String key) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        return valueOperations.get(key);
+    }
+
+    public void setData(String key, String value, Duration timeout) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(key, value, timeout);
+    }
+
+    public Set<String> keys(String pattern) {
+        return redisTemplate.keys(pattern);
+    }
+
+    public void deleteData(String key) {
+        redisTemplate.delete(key);
+    }
 
 }

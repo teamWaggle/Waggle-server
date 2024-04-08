@@ -2,9 +2,11 @@ package com.example.waggle.domain.board.question.service;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
+    private final RedisService redisService;
 
     @Override
     public List<Question> getAllQuestion() {
@@ -66,5 +69,19 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 .limit(3)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public Integer getViewCountInRedis(Long boardId) {
+        String viewCountKey = "viewCount::" + boardId;
+        String viewCount = redisService.getValue(viewCountKey);
+        if (viewCount == null) {
+            redisService.setData(
+                    viewCountKey,
+                    String.valueOf(questionRepository.findViewCountByBoardId(boardId)),
+                    Duration.ofMinutes(3)
+            );
+        }
+        return Integer.parseInt(viewCount);
     }
 }

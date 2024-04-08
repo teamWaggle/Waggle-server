@@ -1,11 +1,14 @@
 package com.example.waggle.domain.board.question.repository;
 
 import com.example.waggle.domain.board.question.entity.Question;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
@@ -19,5 +22,13 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 
     void deleteAllByMemberUsername(String username);
+
+    @Query("SELECT q.viewCount FROM Question q WHERE q.id = :boardId")
+    Integer findViewCountByBoardId(@Param("boardId") Long boardId);
+
+    @Transactional
+    @Modifying
+    @Query("update Question q set q.viewCount = :viewCount where q.id = :boardId")
+    void applyViewCntToRDB(@Param("boardId") Long boardId, @Param("viewCount") Long viewCount);
 
 }

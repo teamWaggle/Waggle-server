@@ -18,4 +18,8 @@ public interface QuestionCommandService {
 
     void increaseQuestionViewCount(Long boardId);
 
+    void applyViewCountToRedis(Long boardId);
+
+    void applyViewCountToRDB();
+
 }
