@@ -1,5 +1,6 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.follow.service.FollowQueryService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.service.EmailService;
@@ -43,6 +44,7 @@ public class MemberApiController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final FollowQueryService followQueryService;
     private final EmailService emailService;
 
 
@@ -81,14 +83,17 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 조회", description = "memberId를 통해 userUrl, nickname, profileImg를 조회합니다.")
+    @Operation(summary = "회원 정보 조회", description = "userUrl을 통해 userUrl, nickname, profileImg를 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/{userUrl}")
     public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("userUrl") String userUrl) {
         Member member = memberQueryService.getMemberByUserUrl(userUrl);
-        return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
+        MemberDetailDto memberDetailDto = MemberConverter.toMemberDetailDto(member);
+        memberDetailDto.setFollowerCount(followQueryService.getFollowersByUserUrl(userUrl).stream().count());
+        memberDetailDto.setFollowingCount(followQueryService.getFollowingsByUserUrl(userUrl).stream().count());
+        return ApiResponseDto.onSuccess(memberDetailDto);
     }
 
     @Operation(summary = "회원 정보 조회 🔑", description = "Access Token을 통해 memberId, userUrl을 조회합니다.")
