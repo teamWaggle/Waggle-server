@@ -1,5 +1,7 @@
 package com.example.waggle.domain.member.service;
 
+import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.BoardRepository;
 import com.example.waggle.domain.board.answer.repository.AnswerRepository;
@@ -19,7 +21,11 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.entity.TeamMember;
-import com.example.waggle.domain.schedule.repository.*;
+import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.repository.ParticipationRepository;
+import com.example.waggle.domain.schedule.repository.ScheduleRepository;
+import com.example.waggle.domain.schedule.repository.TeamMemberRepository;
+import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.NameUtil;
@@ -28,21 +34,18 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberProfileDto;
 import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static com.example.waggle.global.security.oauth2.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -107,8 +110,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
                                     Member member) {
-        String encodedPassword = passwordEncoder.encode(updateMemberRequest.getPassword());
-        member.updateInfo(updateMemberRequest, encodedPassword);
+        member.updateInfo(updateMemberRequest);
         return member.getId();
     }
 
