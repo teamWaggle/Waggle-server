@@ -80,11 +80,11 @@ public class AnswerApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/member/{memberId}")
-    public ApiResponseDto<AnswerListDto> getAnswerByMemberId(@PathVariable("memberId") Long memberId,
-                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    @GetMapping("/member/{userUrl}")
+    public ApiResponseDto<AnswerListDto> getAnswerByUserUrl(@PathVariable("userUrl") String userUrl,
+                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByMemberId(memberId, pageable);
+        Page<Answer> pagedAnswerByUsername = answerQueryService.getPagedAnswerByUserUrl(userUrl, pageable);
         AnswerListDto listDto = AnswerConverter.toAnswerListDto(pagedAnswerByUsername);
         return ApiResponseDto.onSuccess(listDto);
     }

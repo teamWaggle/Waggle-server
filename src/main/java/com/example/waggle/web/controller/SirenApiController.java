@@ -116,11 +116,11 @@ public class SirenApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/member/{memberId}")
-    public ApiResponseDto<SirenListDto> getSirenListByUsername(@PathVariable("memberId") Long memberId,
+    @GetMapping("/member/{userUrl}")
+    public ApiResponseDto<SirenListDto> getSirenListByUsername(@PathVariable("userUrl") String userUrl,
                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByMemberId(memberId, pageable);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByUserUrl(userUrl, pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);

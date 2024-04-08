@@ -15,6 +15,8 @@ public interface MemberQueryService {
 
     Member getMemberById(Long memberId);
 
+    Member getMemberByUserUrl(String userUrl);
+
     List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday);
 
     List<Member> getMembersByNicknameContaining(String nickname);

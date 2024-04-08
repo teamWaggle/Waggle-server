@@ -84,9 +84,9 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{memberId}")
-    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("memberId") Long memberId) {
-        Member member = memberQueryService.getMemberById(memberId);
+    @GetMapping("/{userUrl}")
+    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("userUrl") String userUrl) {
+        Member member = memberQueryService.getMemberByUserUrl(userUrl);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
     }
 
@@ -95,7 +95,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/by-nickname/{nickname}")
-    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(@PathVariable("nickname") String nickname) {
+    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(
+            @PathVariable("nickname") String nickname) {
         List<Member> members = memberQueryService.getMembersByNicknameContaining(nickname);
         return ApiResponseDto.onSuccess(MemberConverter.toMentionListDto(members));
     }
