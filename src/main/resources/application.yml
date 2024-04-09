@@ -28,6 +28,7 @@ spring:
     include:
       - security
       - s3
+      - kafka
 
   cache:
     type: redis
