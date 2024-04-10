@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 public class Recommend extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recommend_id")
     private Long id;
 

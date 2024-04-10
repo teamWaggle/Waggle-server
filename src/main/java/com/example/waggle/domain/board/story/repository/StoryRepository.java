@@ -18,6 +18,8 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     Page<Story> findByMemberUsername(String username, Pageable pageable);
 
+    Page<Story> findByMemberUserUrl(String userUrl, Pageable pageable);
+
     Page<Story> findByMemberId(Long memberId, Pageable pageable);
 
     void deleteAllByMemberUsername(String username);

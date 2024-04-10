@@ -74,9 +74,9 @@ public class FollowApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/list/following/{memberId}")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberList(@PathVariable("memberId") Long memberId) {
-        List<Follow> followings = followQueryService.getFollowings(memberId);
+    @GetMapping("/list/following/{userUrl}")
+    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberList(@PathVariable("userUrl") String userUrl) {
+        List<Follow> followings = followQueryService.getFollowingsByUserUrl(userUrl);
         List<MemberSummaryDto> collect = followings.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
@@ -98,9 +98,9 @@ public class FollowApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/list/follower/{memberId}")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberList(@PathVariable("memberId") Long memberId) {
-        List<Follow> followers = followQueryService.getFollowers(memberId);
+    @GetMapping("/list/follower/{userUrl}")
+    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberList(@PathVariable("userUrl") String userUrl) {
+        List<Follow> followers = followQueryService.getFollowersByUserUrl(userUrl);
         List<MemberSummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);

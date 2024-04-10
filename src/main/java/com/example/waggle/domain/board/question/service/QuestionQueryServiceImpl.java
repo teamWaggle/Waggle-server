@@ -38,6 +38,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
+    public Page<Question> getPagedQuestionsByUserUrl(String userUrl, Pageable pageable) {
+        return questionRepository.findByMemberUserUrl(userUrl, pageable);
+    }
+
+    @Override
     public Page<Question> getPagedQuestionByMemberId(Long memberId, Pageable pageable) {
         return questionRepository.findPageByMemberId(memberId, pageable);
     }
