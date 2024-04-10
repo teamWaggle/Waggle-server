@@ -1,6 +1,7 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
@@ -10,12 +11,14 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -128,6 +131,16 @@ public class TeamApiController {
     public ApiResponseDto<TeamDetailDto> getTeam(@PathVariable("teamId") Long teamId) {
         Team team = teamQueryService.getTeamById(teamId);
         return ApiResponseDto.onSuccess(TeamConverter.toDetailDto(team));
+    }
+
+    @Operation(summary = "팀 참여 요청 목록 조회", description = "팀의 참여 요청 목록을 조회합니다. 팀의 리더 권한을 가진 회원만 조회할 수 있습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/{teamId}/participation")
+    public ApiResponseDto<MemberSummaryListDto> getTeam(@AuthUser Member member, @PathVariable("teamId") Long teamId) {
+        List<Participation> participationList = teamQueryService.getParticipationList(member, teamId);
+        return ApiResponseDto.onSuccess(TeamConverter.toMemberSummaryListDto(participationList));
     }
 
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")

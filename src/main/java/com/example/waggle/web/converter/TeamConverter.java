@@ -1,8 +1,11 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
@@ -53,4 +56,15 @@ public class TeamConverter {
                 .isLast(teamPage.isLast())
                 .build();
     }
+
+    public static MemberSummaryListDto toMemberSummaryListDto(List<Participation> participationList) {
+        List<MemberSummaryDto> memberSummaryDtoList = participationList.stream()
+                .map(participation -> MemberConverter.toMemberSummaryDto(participation.getMember()))
+                .collect(Collectors.toList());
+        return MemberSummaryListDto.builder()
+                .memberList(memberSummaryDtoList)
+                .memberCount(memberSummaryDtoList.size())
+                .build();
+    }
+
 }

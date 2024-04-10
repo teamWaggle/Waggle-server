@@ -1,5 +1,7 @@
 package com.example.waggle.domain.schedule.service.team;
 
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +19,7 @@ public interface TeamQueryService {
     Team getTeamById(Long teamId);
 
     boolean isTeamLeader(Long teamId, String username);
+
+    List<Participation> getParticipationList(Member leader, Long teamId);
 
 }
