@@ -1,5 +1,6 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.follow.service.FollowQueryService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.entity.Role;
 import com.example.waggle.domain.member.service.EmailService;
@@ -18,6 +19,7 @@ import com.example.waggle.web.dto.member.MemberRequest.MemberUpdateDto;
 import com.example.waggle.web.dto.member.MemberResponse;
 import com.example.waggle.web.dto.member.MemberResponse.MemberDetailDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberMentionListDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailSendDto;
 import com.example.waggle.web.dto.member.VerifyMailRequest.EmailVerificationDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +44,7 @@ public class MemberApiController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final FollowQueryService followQueryService;
     private final EmailService emailService;
 
 
@@ -80,14 +83,26 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(memberId);
     }
 
-    @Operation(summary = "회원 정보 조회", description = "memberId를 통해 userUrl, nickname, profileImg를 조회합니다.")
+    @Operation(summary = "회원 정보 조회", description = "userUrl을 통해 userUrl, nickname, profileImg를 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{memberId}")
-    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("memberId") Long memberId) {
-        Member member = memberQueryService.getMemberById(memberId);
-        return ApiResponseDto.onSuccess(MemberConverter.toMemberDetailDto(member));
+    @GetMapping("/{userUrl}")
+    public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("userUrl") String userUrl) {
+        Member member = memberQueryService.getMemberByUserUrl(userUrl);
+        MemberDetailDto memberDetailDto = MemberConverter.toMemberDetailDto(member);
+        memberDetailDto.setFollowerCount(followQueryService.getFollowersByUserUrl(userUrl).stream().count());
+        memberDetailDto.setFollowingCount(followQueryService.getFollowingsByUserUrl(userUrl).stream().count());
+        return ApiResponseDto.onSuccess(memberDetailDto);
+    }
+
+    @Operation(summary = "회원 정보 조회 🔑", description = "Access Token을 통해 memberId, userUrl을 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/info")
+    public ApiResponseDto<MemberSummaryDto> getMemberInfoByAuth(@AuthUser Member member) {
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberSummaryDto(member));
     }
 
     @Operation(summary = "회원 검색", description = "nickname 일부 혹은 전체를 검색하여 검색어에 해당하는 모든 회원을 조회합니다.")
@@ -95,7 +110,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/by-nickname/{nickname}")
-    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(@PathVariable("nickname") String nickname) {
+    public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(
+            @PathVariable("nickname") String nickname) {
         List<Member> members = memberQueryService.getMembersByNicknameContaining(nickname);
         return ApiResponseDto.onSuccess(MemberConverter.toMentionListDto(members));
     }
@@ -193,7 +209,7 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "🔑 휴면계정 등록", description = "특정 회원을 휴면계정으로 전환합니다. 하루동안 휴면계정을 풀지 않으면 회원관련 정보가 모두 삭제됩니다")
+    @Operation(summary = "휴면계정 등록 🔑", description = "특정 회원을 휴면계정으로 전환합니다. 하루동안 휴면계정을 풀지 않으면 회원관련 정보가 모두 삭제됩니다")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
@@ -203,7 +219,7 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "🔑 휴면계정 해제", description = "특정 회원을 휴면계정에서 일반회원으로 전환합니다.")
+    @Operation(summary = "휴면계정 해제 🔑", description = "특정 회원을 휴면계정에서 일반회원으로 전환합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
@@ -213,7 +229,18 @@ public class MemberApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "🔑 회원 강제 삭제", description = "특정 회원을 관리자가 강제 삭제합니다.")
+    @Operation(summary = "비밀번호 재설정 🔑", description = "인증된 회원의 비밀번호를 재설정합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @PutMapping("/password")
+    public ApiResponseDto<Long> updatePassword(@AuthUser Member member,
+                                               @RequestBody MemberRequest.PasswordDto updatePasswordRequest) {
+        memberCommandService.updatePassword(member.getId(), updatePasswordRequest.getPassword());
+        return ApiResponseDto.onSuccess(member.getId());
+    }
+
+    @Operation(summary = "회원 강제 삭제 🔑", description = "특정 회원을 관리자가 강제 삭제합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })

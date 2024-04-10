@@ -23,15 +23,17 @@ public class StoryQueryServiceImpl implements StoryQueryService {
 
     @Override
     public List<Story> getStories() {
-        List<Story> stories = storyRepository.findAll();
-        return stories;
-
+        return storyRepository.findAll();
     }
 
     @Override
     public Page<Story> getPagedStoriesByUsername(String username, Pageable pageable) {
-        Page<Story> stories = storyRepository.findByMemberUsername(username, pageable);
-        return stories;
+        return storyRepository.findByMemberUsername(username, pageable);
+    }
+
+    @Override
+    public Page<Story> getPagedStoriesByUserUrl(String userUrl, Pageable pageable) {
+        return storyRepository.findByMemberUsername(userUrl, pageable);
     }
 
     @Override
@@ -42,15 +44,13 @@ public class StoryQueryServiceImpl implements StoryQueryService {
 
     @Override
     public Page<Story> getPagedStories(Pageable pageable) {
-        Page<Story> all = storyRepository.findAll(pageable);
-        return all;
+        return storyRepository.findAll(pageable);
     }
 
 
     @Override
     public Story getStoryByBoardId(Long boardId) {
-        Story story = storyRepository.findById(boardId)
+        return storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-        return story;
     }
 }

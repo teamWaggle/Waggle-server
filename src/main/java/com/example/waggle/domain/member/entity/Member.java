@@ -28,7 +28,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
 
@@ -96,8 +96,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         return true;
     }
 
-    public void updateInfo(MemberUpdateDto request, String encodedPassword) {
-        this.password = encodedPassword;
+    public void updateInfo(MemberUpdateDto request) {
         this.name = request.getName();
         this.nickname = request.getNickname();
         this.birthday = request.getBirthday();

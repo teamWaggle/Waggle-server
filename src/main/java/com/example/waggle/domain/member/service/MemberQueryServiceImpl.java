@@ -49,6 +49,12 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
+    public Member getMemberByUserUrl(String userUrl) {
+        return memberRepository.findByUsername(userUrl)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
     public List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday) {
         return memberRepository.findByNameAndBirthday(name, birthday);
     }

@@ -17,6 +17,11 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
                                               @Param("startOfDay") LocalDate startOfDay,
                                               @Param("endOfDay") LocalDate endOfDay);
 
+    @Query("SELECT ms FROM MemberSchedule ms JOIN ms.member m JOIN ms.schedule s WHERE ms.member.userUrl = :userUrl AND (s.startDate <= :endOfDay AND s.endDate >= :startOfDay)")
+    List<MemberSchedule> findByMemberUserUrlAndDay(@Param("userUrl") String userUrl,
+                                                   @Param("startOfDay") LocalDate startOfDay,
+                                                   @Param("endOfDay") LocalDate endOfDay);
+
     List<MemberSchedule> findByScheduleId(Long scheduleId);
 
     void deleteByMemberIdAndScheduleId(Long memberId, Long scheduleId);

@@ -64,6 +64,16 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     }
 
     @Override
+    public List<Schedule> getMonthlySchedulesByMemberUserUrl(String userUrl, int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+
+        return memberScheduleRepository.findByMemberUserUrlAndDay(userUrl, startDate, endDate).stream()
+                .map(MemberSchedule::getSchedule)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month) {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
