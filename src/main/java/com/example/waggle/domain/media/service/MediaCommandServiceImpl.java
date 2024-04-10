@@ -65,6 +65,7 @@ public class MediaCommandServiceImpl implements MediaCommandService {
         petRepository.findAll().forEach(pet -> dbImageListSet.add(pet.getProfileImgUrl()));
         teamRepository.findAll().forEach(team -> dbImageListSet.add(team.getCoverImageUrl()));
         List<String> imgFileList = awsS3Service.getImgFileList();
+        imgFileList.forEach(imgInDB -> log.info("imgInDB : {}", imgInDB));
 
         List<String> filesToDelete = imgFileList.stream()
                 .filter(file -> !dbImageListSet.contains(file))
@@ -73,6 +74,7 @@ public class MediaCommandServiceImpl implements MediaCommandService {
 
         filesToDelete
                 .forEach(file -> {
+                    log.info("file = {}", file);
                     awsS3Service.deleteFile(file);
                 });
     }
