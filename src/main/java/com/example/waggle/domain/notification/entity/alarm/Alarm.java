@@ -1,8 +1,7 @@
-package com.example.waggle.domain.notification.entity;
+package com.example.waggle.domain.notification.entity.alarm;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
-import com.example.waggle.web.dto.kafka.AlarmArgs;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,4 +36,12 @@ public class Alarm extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "called_member_id", nullable = false, updatable = false)
     private Member calledMember;
+
+    public static Alarm of(AlarmType alarmType, AlarmArgs alarmArgs, Member alarmReceiver) {
+        return Alarm.builder()
+                .alarmType(alarmType)
+                .alarmArgs(alarmArgs)
+                .calledMember(alarmReceiver)
+                .build();
+    }
 }

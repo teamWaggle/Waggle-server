@@ -1,6 +1,6 @@
 package com.example.waggle.global.config.kafka;
 
-import com.example.waggle.web.dto.kafka.AlarmEvent;
+import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;

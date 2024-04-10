@@ -1,5 +1,6 @@
 package com.example.waggle.domain.member.service;
 
+import com.example.waggle.domain.notification.entity.sse.SseEventName;
 import com.example.waggle.domain.recommend.entity.RecommendationHashKey;
 import com.example.waggle.domain.recommend.entity.RecommendationSetKey;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class RedisService {
     //    private static String recommendBoardKeyPrefix = "set:recommend:board:";
     private static String hashKeyPrefix = "hash:board:";
     private static String initKeyPrefix = "init:member:";
+    private static final String UNDER_SCORE = "_";
 
     // key-value 설정
     public void setValue(String token, String username) {
@@ -213,5 +215,20 @@ public class RedisService {
 //                .value(value)
 //                .build();
 //    }
+
+    public void publishMessage(Long alarmReceiverId, SseEventName sseEventName) {
+        redisTemplate.convertAndSend(sseEventName.getValue(), getRedisPubMessage(alarmReceiverId, sseEventName));
+    }
+
+    /**
+     * redis pub시 userId와 sseEventName을 합쳐서 보낸다.
+     *
+     * @param userId
+     * @param sseEventName
+     * @return
+     */
+    private String getRedisPubMessage(Long userId, SseEventName sseEventName) {
+        return userId + UNDER_SCORE + sseEventName.getValue();
+    }
 
 }
