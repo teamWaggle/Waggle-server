@@ -12,7 +12,7 @@ public class SseRepositoryKeyRule {
 
     private static final String UNDER_SCORE = "_";
 
-    private final Long userId;
+    private final Long memberId;
     private final SseEventName sseEventName;
     private final LocalDateTime createdAt;
 
@@ -26,6 +26,6 @@ public class SseRepositoryKeyRule {
     public String toCompleteKeyWhichSpecifyOnlyOneValue() {
 
         String createdAtString = createdAt == null ? "" : createdAt.toString();
-        return userId + UNDER_SCORE + sseEventName.getValue() + UNDER_SCORE + createdAtString;
+        return memberId + UNDER_SCORE + sseEventName.getValue() + UNDER_SCORE + createdAtString;
     }
 }

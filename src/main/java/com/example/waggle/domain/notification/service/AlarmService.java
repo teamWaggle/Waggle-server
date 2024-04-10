@@ -59,7 +59,7 @@ public class AlarmService {
         redisService.publishMessage(alarmReceiverId, sseEventName);
     }
 
-    public SseEmitter subscribe(Member member, String lastEventId, LocalDateTime now) {
+    public SseEmitter subscribe(Member member, LocalDateTime now) {
         Long userId = member.getId();
         SseEmitter sse = new SseEmitter(Long.parseLong(sseTimeout));
         String key = new SseRepositoryKeyRule(userId, SseEventName.ALARM_LIST,
