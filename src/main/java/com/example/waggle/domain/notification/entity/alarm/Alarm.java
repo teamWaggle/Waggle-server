@@ -1,6 +1,7 @@
 package com.example.waggle.domain.notification.entity.alarm;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.notification.entity.alarm.alarmArgs.AlarmArgs;
 import com.example.waggle.global.component.auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

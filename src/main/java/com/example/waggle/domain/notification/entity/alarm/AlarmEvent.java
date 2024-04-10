@@ -1,5 +1,6 @@
 package com.example.waggle.domain.notification.entity.alarm;
 
+import com.example.waggle.domain.notification.entity.alarm.alarmArgs.AlarmArgs;
 import com.example.waggle.domain.notification.entity.sse.SseEventName;
 import lombok.AllArgsConstructor;
 import lombok.Data;

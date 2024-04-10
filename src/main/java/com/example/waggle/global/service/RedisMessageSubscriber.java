@@ -5,6 +5,7 @@ import com.example.waggle.domain.notification.entity.sse.SseRepositoryKeyRule;
 import com.example.waggle.domain.notification.repository.SseRepository;
 import com.example.waggle.global.exception.GeneralException;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -31,7 +32,7 @@ public class RedisMessageSubscriber implements MessageListener {
         String keyPrefix = new SseRepositoryKeyRule(userId, eventName,
                 null).toCompleteKeyWhichSpecifyOnlyOneValue();
 
-        LocalDateTime now = LocalDateTime.now().withNano(0);
+        LocalDateTime now = TimeUtil.nowWithoutNano();
 
         sseRepository.getKeyListByKeyPrefix(keyPrefix).forEach(key -> {
             SseEmitter emitter = sseRepository.get(key).get();

@@ -5,8 +5,8 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.notification.entity.alarm.Alarm;
-import com.example.waggle.domain.notification.entity.alarm.AlarmArgs;
 import com.example.waggle.domain.notification.entity.alarm.AlarmType;
+import com.example.waggle.domain.notification.entity.alarm.alarmArgs.AlarmArgs;
 import com.example.waggle.domain.notification.entity.sse.SseEventName;
 import com.example.waggle.domain.notification.entity.sse.SseRepositoryKeyRule;
 import com.example.waggle.domain.notification.repository.AlarmRepository;
@@ -62,8 +62,8 @@ public class AlarmService {
     public SseEmitter subscribe(Member member, LocalDateTime now) {
         Long userId = member.getId();
         SseEmitter sse = new SseEmitter(Long.parseLong(sseTimeout));
-        String key = new SseRepositoryKeyRule(userId, SseEventName.ALARM_LIST,
-                now).toCompleteKeyWhichSpecifyOnlyOneValue();
+        String key = new SseRepositoryKeyRule(userId, SseEventName.ALARM_LIST, now)
+                .toCompleteKeyWhichSpecifyOnlyOneValue();
 
         sse.onCompletion(() -> {
             log.info("onCompletion callback");
