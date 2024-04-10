@@ -64,9 +64,9 @@ public class PetApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{memberId}")
-    public ApiResponseDto<List<PetSummaryDto>> findPets(@PathVariable("memberId") Long memberId) {
-        List<Pet> petsByUsername = petQueryService.getPetsByMemberId(memberId);
+    @GetMapping("/{userUrl}")
+    public ApiResponseDto<List<PetSummaryDto>> findPets(@PathVariable("userUrl") String userUrl) {
+        List<Pet> petsByUsername = petQueryService.getPetsByUserUrl(userUrl);
         return ApiResponseDto.onSuccess(PetConverter.toPetSummaryListDto(petsByUsername));
     }
 

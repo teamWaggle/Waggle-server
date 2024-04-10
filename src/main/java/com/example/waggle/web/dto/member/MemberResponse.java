@@ -35,6 +35,8 @@ public class MemberResponse {
         private String name;
         private LocalDate birthday;
         private String profileImgUrl;
+        private Long followingCount;
+        private Long followerCount;
     }
 
     @Data

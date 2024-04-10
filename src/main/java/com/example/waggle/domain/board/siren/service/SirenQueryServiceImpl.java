@@ -59,6 +59,12 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
+    public Page<Siren> getPagedSirenListByUserUrl(String userUrl, Pageable pageable) {
+        Page<Siren> pageSirenByUsername = sirenRepository.findByMemberUsername(userUrl, pageable);
+        return pageSirenByUsername;
+    }
+
+    @Override
     public Page<Siren> getPagedSirenListByMemberId(Long memberId, Pageable pageable) {
         return sirenRepository.findByMemberId(memberId, pageable);
     }

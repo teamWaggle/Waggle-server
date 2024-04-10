@@ -24,8 +24,8 @@ public class PetQueryServiceImpl implements PetQueryService {
     }
 
     @Override
-    public List<Pet> getPetsByUsername(String username) {
-        return petRepository.findByMemberUsername(username);
+    public List<Pet> getPetsByUserUrl(String userUrl) {
+        return petRepository.findByMemberUserUrl(userUrl);
     }
 
     @Override

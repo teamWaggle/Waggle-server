@@ -168,11 +168,11 @@ public class ScheduleApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/members/{memberId}/monthly")
-    public ApiResponseDto<ScheduleListDto> getMonthlySchedulesForMember(@PathVariable("memberId") Long memberId,
+    @GetMapping("/members/{userUrl}/monthly")
+    public ApiResponseDto<ScheduleListDto> getMonthlySchedulesForMember(@PathVariable("userUrl") String userUrl,
                                                                         @RequestParam("year") int year,
                                                                         @RequestParam("month") int month) {
-        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(memberId, year, month);
+        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMemberUserUrl(userUrl, year, month);
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
