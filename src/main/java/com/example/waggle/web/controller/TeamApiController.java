@@ -2,6 +2,7 @@ package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
@@ -13,6 +14,8 @@ import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.TeamConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse;
+import com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse.Status;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +29,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -143,6 +154,19 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(TeamConverter.toMemberSummaryListDto(participationList));
     }
 
+    @Operation(summary = "팀 참여 상태 조회 🔑", description = "팀의 참여 요청 상태를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/{teamId}/participation/status")
+    public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
+                                                                                  @PathVariable("teamId") Long teamId) {
+        return teamQueryService.getParticipation(member, teamId)
+                .map(participation -> mapToStatusResponse(participation.getStatus()))
+                .orElseGet(() -> ApiResponseDto.onSuccess(
+                        ParticipationStatusResponse.builder().status(Status.NONE).build()));
+    }
+
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
@@ -165,5 +189,11 @@ public class TeamApiController {
                                                         @AuthUser Member member) {
         teamCommandService.requestParticipation(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    private ApiResponseDto<ParticipationStatusResponse> mapToStatusResponse(ParticipationStatus participationStatus) {
+        Status status = Status.valueOf(participationStatus.toString());
+        ParticipationStatusResponse response = ParticipationStatusResponse.builder().status(status).build();
+        return ApiResponseDto.onSuccess(response);
     }
 }
