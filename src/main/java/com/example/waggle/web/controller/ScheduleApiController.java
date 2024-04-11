@@ -13,6 +13,7 @@ import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.ScheduleResponse.OverlappedScheduleDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -196,6 +198,7 @@ public class ScheduleApiController {
         List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
         ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(schedules);
         setIsScheduledInList(member, scheduleListDto);
+        setOverlappedScheduleInList(member, scheduleListDto);
         return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
@@ -216,5 +219,17 @@ public class ScheduleApiController {
                         schedule.setIsScheduled(
                                 scheduleQueryService.getIsScheduled(member, schedule.getBoardId())));
     }
+
+    private void setOverlappedScheduleInList(Member member, ScheduleListDto scheduleListDto) {
+        scheduleListDto.getScheduleList().forEach(scheduleDto -> {
+            List<Schedule> overlappingSchedules = scheduleQueryService.findOverlappingSchedules(member,
+                    scheduleDto.getBoardId());
+            List<OverlappedScheduleDto> overlappedScheduleDtos = overlappingSchedules.stream()
+                    .map(ScheduleConverter::toOverlappedScheduleDto)
+                    .collect(Collectors.toList());
+            scheduleDto.setOverlappedScheduleList(overlappedScheduleDtos);
+        });
+    }
+
 
 }

@@ -19,6 +19,18 @@ public class ScheduleResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
+    public static class OverlappedScheduleDto {
+        private String teamName;
+        private TeamColor teamColor;
+        private String scheduleTitle;
+    }
+
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
     public static class ScheduleDetailDto {
         private Long boardId;
         private Long teamId;
@@ -31,6 +43,8 @@ public class ScheduleResponse {
         private ScheduleStatus status;
         private MemberSummaryDto member;
         private Boolean isScheduled;
+        private List<OverlappedScheduleDto> overlappedScheduleList;
+        private int overlappedScheduleCount;
     }
 
     @Data
