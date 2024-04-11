@@ -1,6 +1,6 @@
 package com.example.waggle.domain.member.service;
 
-import com.example.waggle.domain.notification.entity.sse.SseEventName;
+import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.domain.recommend.entity.RecommendationHashKey;
 import com.example.waggle.domain.recommend.entity.RecommendationSetKey;
 import lombok.RequiredArgsConstructor;
@@ -216,19 +216,15 @@ public class RedisService {
 //                .build();
 //    }
 
-    public void publishMessage(Long alarmReceiverId, SseEventName sseEventName) {
-        redisTemplate.convertAndSend(sseEventName.getValue(), getRedisPubMessage(alarmReceiverId, sseEventName));
+    public void publishMessage(AlarmEvent alarmEvent) {
+        redisTemplate.convertAndSend(alarmEvent.getEventName().getValue(), getRedisPubMessage(alarmEvent));
     }
 
-    /**
-     * redis pub시 userId와 sseEventName을 합쳐서 보낸다.
-     *
-     * @param userId
-     * @param sseEventName
-     * @return
-     */
-    private String getRedisPubMessage(Long userId, SseEventName sseEventName) {
-        return userId + UNDER_SCORE + sseEventName.getValue();
+    private String getRedisPubMessage(AlarmEvent alarmEvent) {
+        return alarmEvent.getMemberId()
+                + UNDER_SCORE + alarmEvent.getEventName().getValue()
+                + UNDER_SCORE + alarmEvent.getArgs().getCallingMemberUserUrl()
+                + UNDER_SCORE + alarmEvent.getType().getAlarmContent();
     }
 
 }

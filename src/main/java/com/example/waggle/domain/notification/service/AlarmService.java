@@ -5,6 +5,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.notification.entity.alarm.Alarm;
+import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.domain.notification.entity.alarm.AlarmType;
 import com.example.waggle.domain.notification.entity.alarm.alarmArgs.AlarmArgs;
 import com.example.waggle.domain.notification.entity.sse.SseEventName;
@@ -53,8 +54,8 @@ public class AlarmService {
         alarmRepository.save(alarm);
     }
 
-    public void send(Long alarmReceiverId, SseEventName sseEventName) {
-        redisService.publishMessage(alarmReceiverId, sseEventName);
+    public void send(AlarmEvent alarmEvent) {
+        redisService.publishMessage(alarmEvent);
     }
 
     public SseEmitter subscribe(Member member, LocalDateTime now) {

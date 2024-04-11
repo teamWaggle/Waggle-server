@@ -33,8 +33,7 @@ public class AlarmConsumer {
             containerFactory = "kafkaListenerContainerFactoryRedis")
     public void redisPublishConsumerGroup(@Payload AlarmEvent alarmEvent, Acknowledgment ack) {
         log.debug("redisPublishConsumerGroup");
-        alarmService.send(alarmEvent.getMemberId(),
-                alarmEvent.getEventName());
+        alarmService.send(alarmEvent);
         ack.acknowledge();
     }
 }

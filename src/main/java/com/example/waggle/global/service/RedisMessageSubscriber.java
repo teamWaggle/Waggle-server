@@ -29,8 +29,13 @@ public class RedisMessageSubscriber implements MessageListener {
         String[] strings = message.toString().split(UNDER_SCORE);
         Long userId = Long.parseLong(strings[0]);
         SseEventName eventName = SseEventName.getEnumFromValue(strings[1]);
-        String keyPrefix = new SseRepositoryKeyRule(userId, eventName,
-                null).toCompleteKeyWhichSpecifyOnlyOneValue();
+        String keyPrefix = new SseRepositoryKeyRule(userId, eventName, null)
+                .toCompleteKeyWhichSpecifyOnlyOneValue();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(strings[2]);
+        stringBuilder.append(UNDER_SCORE);
+        stringBuilder.append(strings[3]);
 
         LocalDateTime now = TimeUtil.nowWithoutNano();
 
@@ -40,7 +45,7 @@ public class RedisMessageSubscriber implements MessageListener {
                 emitter.send(SseEmitter.event()
                         .id(getEventId(userId, now, eventName))
                         .name(eventName.getValue())
-                        .data(eventName.getValue()));
+                        .data(stringBuilder.toString()));
             } catch (IOException e) {
                 sseRepository.remove(key);
                 log.error("SSE send error", e);

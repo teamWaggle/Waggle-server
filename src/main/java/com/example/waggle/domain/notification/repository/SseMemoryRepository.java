@@ -1,6 +1,6 @@
 package com.example.waggle.domain.notification.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class SseMemoryRepository implements SseRepository {
     private final Map<String, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
 

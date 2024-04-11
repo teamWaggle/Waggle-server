@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,12 +48,11 @@ public class AlarmApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping(value = "/subscribe", produces = "text/event-stream")
-    public ApiResponseDto<Boolean> subscribeAlarm(@AuthUser Member member,
-                                                  HttpServletResponse response) {
+    public SseEmitter subscribeAlarm(@AuthUser Member member,
+                                     HttpServletResponse response) {
         LocalDateTime current = TimeUtil.nowWithoutNano();
         response.setHeader("X-Accel-Buffering", "no");
         response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
-        alarmService.subscribe(member, current);
-        return ApiResponseDto.onSuccess(true);
+        return alarmService.subscribe(member, current);
     }
 }

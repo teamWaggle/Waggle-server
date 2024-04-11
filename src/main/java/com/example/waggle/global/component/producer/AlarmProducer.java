@@ -18,6 +18,6 @@ public class AlarmProducer {
 
     public void send(AlarmEvent alarmEvent) {
         kafkaTemplate.send(topicName, alarmEvent);
-        log.debug("alarm kafka produce");
+        log.info("alarm kafka produce");
     }
 }

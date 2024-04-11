@@ -6,7 +6,7 @@ spring:
           insync:
             replicas: 2
 kafka:
-  bootstrapAddress: localhost:9092, localhost:9093
+  bootstrapAddress: localhost:9092
   admin:
     properties:
   topic:

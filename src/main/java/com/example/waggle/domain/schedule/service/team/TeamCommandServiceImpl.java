@@ -130,7 +130,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
         return new AlarmEvent(AlarmType.PARTICIPATION_MY_TEAM,
-                AlarmArgs.builder().build(),
+                AlarmArgs.builder().callingMemberUserUrl(team.getLeader().getUserUrl()).build(),
                 team.getLeader().getId(),
                 SseEventName.ALARM_LIST);
     }
