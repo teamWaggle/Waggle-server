@@ -1,12 +1,10 @@
 package com.example.waggle.domain.notification.entity.alarm.alarmArgs;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
-@EqualsAndHashCode
+@SuperBuilder
 public class ParticipationAlarmArgs extends AlarmArgs {
     private Long teamId;
 }

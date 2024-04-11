@@ -16,7 +16,6 @@ import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +31,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Service
 public class AlarmService {
-    @Value("${sse.timeout}")
-    private String sseTimeout;
+    private static final Long sseTimeout = 1000 * 60 * 3L;
     private static final String UNDER_SCORE = "_";
     private static final String CONNECTED = "CONNECTED";
     private final AlarmRepository alarmRepository;
@@ -61,7 +59,7 @@ public class AlarmService {
 
     public SseEmitter subscribe(Member member, LocalDateTime now) {
         Long userId = member.getId();
-        SseEmitter sse = new SseEmitter(Long.parseLong(sseTimeout));
+        SseEmitter sse = new SseEmitter(sseTimeout);
         String key = new SseRepositoryKeyRule(userId, SseEventName.ALARM_LIST, now)
                 .toCompleteKeyWhichSpecifyOnlyOneValue();
 
