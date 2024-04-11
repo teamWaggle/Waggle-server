@@ -30,4 +30,6 @@ public interface ScheduleQueryService {
 
     List<Member> getMemberBySchedule(Long scheduleId);
 
+    Boolean getIsScheduled(Member member, Long boardId);
+
 }

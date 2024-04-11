@@ -30,6 +30,7 @@ public class ScheduleResponse {
         private LocalDateTime createdDate;
         private ScheduleStatus status;
         private MemberSummaryDto member;
+        private Boolean isScheduled;
     }
 
     @Data

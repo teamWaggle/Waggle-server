@@ -133,7 +133,7 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(TeamConverter.toDetailDto(team));
     }
 
-    @Operation(summary = "팀 참여 요청 목록 조회", description = "팀의 참여 요청 목록을 조회합니다. 팀의 리더 권한을 가진 회원만 조회할 수 있습니다.")
+    @Operation(summary = "팀 참여 요청 목록 조회 🔑", description = "팀의 참여 요청 목록을 조회합니다. 팀의 리더 권한을 가진 회원만 조회할 수 있습니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })

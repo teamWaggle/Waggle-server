@@ -93,4 +93,9 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Boolean getIsScheduled(Member member, Long scheduleId) {
+        return memberScheduleRepository.existsByMemberIdAndScheduleId(member.getId(), scheduleId);
+    }
+
 }

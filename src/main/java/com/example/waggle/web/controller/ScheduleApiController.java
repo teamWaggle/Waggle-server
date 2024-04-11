@@ -18,6 +18,8 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,10 +28,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -176,17 +183,20 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
-    @Operation(summary = "기간 해당 팀 일정 조회", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
+    @Operation(summary = "기간 해당 팀 일정 조회 🔑", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/teams/{teamId}/period")
-    public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriod(@PathVariable("teamId") Long teamId,
+    public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriod(@AuthUser Member member,
+                                                                   @PathVariable("teamId") Long teamId,
                                                                    @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
                                                                    @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
         ScheduleUtil.validateSchedule(start, end);
         List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(schedules);
+        setIsScheduledInList(member, scheduleListDto);
+        return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
     @Operation(summary = "스케줄 선택 멤버 조회", description = "특정한 팀 스케줄을 선택한 멤버들을 조회합니다.")
@@ -198,6 +208,13 @@ public class ScheduleApiController {
                                                                               scheduleId) {
         List<Member> memberBySchedule = scheduleQueryService.getMemberBySchedule(scheduleId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(memberBySchedule));
+    }
+
+    private void setIsScheduledInList(Member member, ScheduleListDto scheduleListDto) {
+        scheduleListDto.getScheduleList()
+                .forEach(schedule ->
+                        schedule.setIsScheduled(
+                                scheduleQueryService.getIsScheduled(member, schedule.getBoardId())));
     }
 
 }
