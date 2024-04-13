@@ -2,6 +2,7 @@ package com.example.waggle.domain.schedule.repository;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,6 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
     void deleteByMemberAndTeam(Member member, Team team);
 
-    List<Participation> findByTeam(Team team);
+    List<Participation> findByTeamAndStatus(Team team, ParticipationStatus status);
 
 }

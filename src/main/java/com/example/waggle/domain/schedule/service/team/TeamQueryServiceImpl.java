@@ -3,6 +3,7 @@ package com.example.waggle.domain.schedule.service.team;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
@@ -64,7 +65,7 @@ public class TeamQueryServiceImpl implements TeamQueryService {
         if (!team.getLeader().equals(leader)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
-        return participationRepository.findByTeam(team);
+        return participationRepository.findByTeamAndStatus(team, ParticipationStatus.PENDING);
     }
 
     @Override
