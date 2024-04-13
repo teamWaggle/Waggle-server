@@ -10,18 +10,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface TeamQueryService {
 
-    Page<Team> getPagingTeamByUsername(String username, Pageable pageable);
-
     Page<Team> getPagedTeamByMemberId(Long memberId, Pageable pageable);
 
-    List<Team> getTeamListByUsername(String username);
-
     Team getTeamById(Long teamId);
-
-    boolean isTeamLeader(Long teamId, String username);
 
     List<Participation> getParticipationList(Member leader, Long teamId);
 
     Optional<Participation> getParticipation(Member member, Long teamId);
 
+    boolean isMemberOfTeam(Member member, Long teamId);
+    
 }
