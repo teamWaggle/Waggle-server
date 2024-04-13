@@ -61,7 +61,7 @@ public class TeamResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public class ParticipationStatusResponse {
+    public static class ParticipationStatusResponse {
 
         private Status status;
 
