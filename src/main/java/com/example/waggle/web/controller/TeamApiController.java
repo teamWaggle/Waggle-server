@@ -11,7 +11,9 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.TeamConverter;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse;
@@ -22,6 +24,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -151,7 +154,10 @@ public class TeamApiController {
     @GetMapping("/{teamId}/participation")
     public ApiResponseDto<MemberSummaryListDto> getTeam(@AuthUser Member member, @PathVariable("teamId") Long teamId) {
         List<Participation> participationList = teamQueryService.getParticipationList(member, teamId);
-        return ApiResponseDto.onSuccess(TeamConverter.toMemberSummaryListDto(participationList));
+        List<MemberSummaryDto> memberSummaryList = participationList.stream()
+                .map(participation -> MemberConverter.toMemberSummaryDto(participation.getMember()))
+                .collect(Collectors.toList());
+        return ApiResponseDto.onSuccess(MemberSummaryListDto.builder().memberList(memberSummaryList).build());
     }
 
     @Operation(summary = "팀 참여 상태 조회 🔑", description = "팀의 참여 요청 상태를 조회합니다.")

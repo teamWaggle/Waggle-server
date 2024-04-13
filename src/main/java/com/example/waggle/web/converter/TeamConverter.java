@@ -1,18 +1,14 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class TeamConverter {
 
@@ -54,16 +50,6 @@ public class TeamConverter {
                 .teamCount(teamPage.getTotalElements())
                 .isFirst(teamPage.isFirst())
                 .isLast(teamPage.isLast())
-                .build();
-    }
-
-    public static MemberSummaryListDto toMemberSummaryListDto(List<Participation> participationList) {
-        List<MemberSummaryDto> memberSummaryDtoList = participationList.stream()
-                .map(participation -> MemberConverter.toMemberSummaryDto(participation.getMember()))
-                .collect(Collectors.toList());
-        return MemberSummaryListDto.builder()
-                .memberList(memberSummaryDtoList)
-                .memberCount(memberSummaryDtoList.size())
                 .build();
     }
 
