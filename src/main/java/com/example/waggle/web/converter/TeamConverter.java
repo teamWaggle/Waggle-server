@@ -6,10 +6,9 @@ import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class TeamConverter {
 
@@ -53,4 +52,5 @@ public class TeamConverter {
                 .isLast(teamPage.isLast())
                 .build();
     }
+
 }
