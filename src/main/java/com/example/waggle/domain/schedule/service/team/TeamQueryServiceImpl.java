@@ -1,13 +1,11 @@
 package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import java.util.List;
@@ -23,14 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TeamQueryServiceImpl implements TeamQueryService {
 
-    private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final ParticipationRepository participationRepository;
-
-    @Override
-    public Page<Team> getPagingTeamByUsername(String username, Pageable pageable) {
-        return teamRepository.findByTeamMembers_Member_Username(username, pageable);
-    }
 
     @Override
     public Page<Team> getPagedTeamByMemberId(Long memberId, Pageable pageable) {
@@ -38,24 +30,9 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
-    public List<Team> getTeamListByUsername(String username) {
-        return teamRepository.findListByTeamMembers_Member_Username(username);
-    }
-
-    @Override
     public Team getTeamById(Long teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-    }
-
-    @Override
-    public boolean isTeamLeader(Long teamId, String username) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        return team.getLeader() != null && team.getLeader().equals(member);
     }
 
     @Override
@@ -71,5 +48,13 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     @Override
     public Optional<Participation> getParticipation(Member member, Long teamId) {
         return participationRepository.findByTeamIdAndMemberId(teamId, member.getId());
+    }
+
+    @Override
+    public boolean isMemberOfTeam(Member member, Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        return team.getTeamMembers().stream()
+                .anyMatch(teamMember -> teamMember.getMember().equals(member));
     }
 }

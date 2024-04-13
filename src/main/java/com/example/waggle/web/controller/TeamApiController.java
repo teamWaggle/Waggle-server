@@ -1,8 +1,9 @@
 package com.example.waggle.web.controller;
 
+import static com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse.builder;
+
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Participation;
-import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -167,10 +169,20 @@ public class TeamApiController {
     @GetMapping("/{teamId}/participation/status")
     public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
                                                                                   @PathVariable("teamId") Long teamId) {
-        return teamQueryService.getParticipation(member, teamId)
-                .map(participation -> mapToStatusResponse(participation.getStatus()))
+        return Optional.ofNullable(getParticipationStatus(member, teamId))
+                .map(status -> ApiResponseDto.onSuccess(builder().status(status).build()))
                 .orElseGet(() -> ApiResponseDto.onSuccess(
-                        ParticipationStatusResponse.builder().status(Status.NONE).build()));
+                        builder().status(Status.NONE).build()));
+    }
+
+    private Status getParticipationStatus(Member member, Long teamId) {
+        Optional<Participation> participation = teamQueryService.getParticipation(member, teamId);
+        if (participation.isPresent()) {
+            return Status.valueOf(String.valueOf(participation.get().getStatus()));
+        } else if (teamQueryService.isMemberOfTeam(member, teamId)) {
+            return Status.ACCEPTED;
+        }
+        return Status.NONE;
     }
 
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
@@ -197,9 +209,4 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    private ApiResponseDto<ParticipationStatusResponse> mapToStatusResponse(ParticipationStatus participationStatus) {
-        Status status = Status.valueOf(participationStatus.toString());
-        ParticipationStatusResponse response = ParticipationStatusResponse.builder().status(status).build();
-        return ApiResponseDto.onSuccess(response);
-    }
 }
