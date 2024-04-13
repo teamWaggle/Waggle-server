@@ -228,6 +228,7 @@ public class ScheduleApiController {
                     .map(ScheduleConverter::toOverlappedScheduleDto)
                     .collect(Collectors.toList());
             scheduleDto.setOverlappedScheduleList(overlappedScheduleDtos);
+            scheduleDto.setOverlappedScheduleCount((int) overlappedScheduleDtos.stream().count());
         });
     }
 
