@@ -3,11 +3,11 @@ package com.example.waggle.domain.schedule.repository;
 import com.example.waggle.domain.schedule.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import io.lettuce.core.dynamic.annotation.Param;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, Long> {
     List<MemberSchedule> findByMemberId(Long memberId);
@@ -33,5 +33,12 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
     boolean existsByMemberIdAndScheduleId(Long memberId, Long scheduleId);
 
     void deleteAllBySchedule(Schedule schedule);
+
+
+    @Query("SELECT ms.schedule FROM MemberSchedule ms WHERE ms.member.id = :memberId AND (" +
+            "(ms.schedule.startDate <= :schedule.endDate AND ms.schedule.endDate >= :schedule.startDate) AND " +
+            "(ms.schedule.startTime < :schedule.endTime AND ms.schedule.endTime > :schedule.startTime))")
+    List<Schedule> findOverlappingSchedules(@Param("memberId") Long memberId,
+                                            @Param("schedule") Schedule schedule);
 
 }

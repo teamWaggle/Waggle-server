@@ -7,15 +7,14 @@ import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.handler.ScheduleHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -92,5 +91,18 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .map(MemberSchedule::getMember)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Boolean getIsScheduled(Member member, Long scheduleId) {
+        return memberScheduleRepository.existsByMemberIdAndScheduleId(member.getId(), scheduleId);
+    }
+
+    @Override
+    public List<Schedule> findOverlappingSchedules(Member member, Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        return memberScheduleRepository.findOverlappingSchedules(member.getId(), schedule);
+    }
+
 
 }
