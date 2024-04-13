@@ -101,8 +101,12 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public List<Schedule> findOverlappingSchedules(Member member, Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        return memberScheduleRepository.findOverlappingSchedules(member.getId(), schedule);
+        return memberScheduleRepository.findOverlappingSchedules(
+                member.getId(),
+                schedule.getStartDate(),
+                schedule.getEndDate(),
+                schedule.getStartTime(),
+                schedule.getEndTime());
     }
-
 
 }
