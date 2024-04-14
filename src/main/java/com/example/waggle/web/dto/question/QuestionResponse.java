@@ -21,10 +21,10 @@ public class QuestionResponse {
     public static class QuestionSummaryDto {
         private Long boardId;
         private String title;
+        private String content;
         private ResolutionStatus status;
         private LocalDateTime createdDate;
         private List<String> hashtagList;
-        private MemberSummaryDto member;
         private int recommendCount;
     }
 

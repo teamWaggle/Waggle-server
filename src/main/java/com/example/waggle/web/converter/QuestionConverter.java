@@ -6,20 +6,21 @@ import com.example.waggle.web.dto.question.QuestionResponse;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
 import com.example.waggle.web.dto.question.QuestionResponse.RepresentativeQuestionDto;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
 
 public class QuestionConverter {
     public static QuestionSummaryDto toSummaryDto(Question question) {
         return QuestionSummaryDto.builder()
                 .boardId(question.getId())
                 .title(question.getTitle())
+                .content(question.getContent())
                 .status(question.getStatus())
                 .createdDate(question.getCreatedDate())
                 .hashtagList(question.getBoardHashtags().stream()
                         .map(h -> h.getHashtag().getContent()).collect(Collectors.toList()))
-                .member(MemberConverter.toMemberSummaryDto(question.getMember()))
                 .build();
     }
 
