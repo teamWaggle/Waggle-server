@@ -16,12 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -49,17 +44,6 @@ public class TokenApiController {
         return ApiResponseDto.onSuccess(jwtToken);
     }
 
-    @Operation(summary = "oauth2 로그인", description = "oauth2를 통해 리다이렉트 된 페이지 입니다. 정상적으로 호출 되었을 시 쿠키의 리프레시 토큰을 통해 jwt Token을 재발급합니다")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/oauth2")
-    public ApiResponseDto<JwtToken> loginByOAuth2(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = getRefreshInCookie(request, response);
-        JwtToken jwtToken = tokenService.issueTokens(refreshToken);
-        CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
-        return ApiResponseDto.onSuccess(jwtToken);
-    }
 
     @Operation(summary = "토큰 재발급", description = "리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 재발급합니다.")
     @ApiErrorCodeExample({
