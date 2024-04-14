@@ -150,7 +150,6 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/questions/**"),
                 antMatcher(HttpMethod.GET, "/api/sirens/**"),
                 antMatcher(HttpMethod.GET, "/api/recommends/{boardId}/memberList"),
-                antMatcher(HttpMethod.GET, "/api/answers/**"),
                 antMatcher(HttpMethod.GET, "/api/follows/**"),
                 antMatcher("/api/media/**")
         );
