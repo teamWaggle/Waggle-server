@@ -3,6 +3,7 @@ package com.example.waggle.web.controller;
 import static com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse.builder;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
@@ -54,6 +55,7 @@ public class TeamApiController {
 
     private final TeamCommandService teamCommandService;
     private final TeamQueryService teamQueryService;
+//    private final AlarmProducer alarmProducer;
 
     @Operation(summary = "팀 생성 🔑", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -205,7 +207,8 @@ public class TeamApiController {
     @PostMapping("/{teamId}/participation")
     public ApiResponseDto<Boolean> requestParticipation(@PathVariable("teamId") Long teamId,
                                                         @AuthUser Member member) {
-        teamCommandService.requestParticipation(teamId, member);
+        AlarmEvent alarmEvent = teamCommandService.requestParticipation(teamId, member);
+//        alarmProducer.send(alarmEvent);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

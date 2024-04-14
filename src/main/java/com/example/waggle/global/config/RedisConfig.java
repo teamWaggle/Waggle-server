@@ -1,5 +1,6 @@
 package com.example.waggle.global.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@RequiredArgsConstructor
 @EnableRedisRepositories
 @Configuration
 public class RedisConfig {
@@ -18,6 +20,8 @@ public class RedisConfig {
 
     @Value("${spring.redis.port}")
     private int redisPort;
+
+//    private final RedisMessageSubscriber redisMessageSubscriber;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -34,5 +38,25 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
+
+//    @Bean
+//    ChannelTopic topic() {
+//        return new ChannelTopic(SseEventName.ALARM_LIST.getValue());
+//    }
+//
+//    @Bean
+//    MessageListenerAdapter messageListener() {
+//        return new MessageListenerAdapter(redisMessageSubscriber);
+//    }
+//
+//    @Bean
+//    public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory,
+//                                                                       MessageListenerAdapter listenerAdapter,
+//                                                                       ChannelTopic topic) {
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//        container.addMessageListener(listenerAdapter, topic);
+//        return container;
+//    }
 
 }
