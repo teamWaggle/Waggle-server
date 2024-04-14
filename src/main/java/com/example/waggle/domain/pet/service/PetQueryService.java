@@ -8,7 +8,7 @@ public interface PetQueryService {
 
     Pet getPetById(Long petId);
 
-    List<Pet> getPetsByUsername(String username);
+    List<Pet> getPetsByUserUrl(String userUrl);
 
     List<Pet> getPetsByMemberId(Long memberId);
 

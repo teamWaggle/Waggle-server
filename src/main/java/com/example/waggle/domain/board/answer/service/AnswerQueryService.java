@@ -12,6 +12,8 @@ public interface AnswerQueryService {
 
     Page<Answer> getPagedAnswerByMemberId(Long memberId, Pageable pageable);
 
+    Page<Answer> getPagedAnswerByUserUrl(String userUrl, Pageable pageable);
+
     Answer getAnswerByBoardId(Long boardId);
 
     Page<Answer> getPagedAnswers(Long questionId, Pageable pageable);

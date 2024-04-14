@@ -87,12 +87,12 @@ public class StoryApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/member/{memberId}")
-    public ApiResponseDto<StorySummaryListDto> getStoriesByUsername(@PathVariable("memberId") Long memberId,
+    @GetMapping("/member/{userUrl}")
+    public ApiResponseDto<StorySummaryListDto> getStoriesByUsername(@PathVariable("userUrl") String userUrl,
                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE, latestSorting);
         return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStoriesByMemberId(memberId, pageable)));
+                StoryConverter.toListDto(storyQueryService.getPagedStoriesByUserUrl(userUrl, pageable)));
     }
 
     @Operation(summary = "특정 스토리 조회", description = "특정 스토리의 상세 정보를 조회합니다.")

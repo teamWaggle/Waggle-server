@@ -9,7 +9,11 @@ public interface FollowQueryService {
 
     List<Follow> getFollowingsByUsername(String username);
 
+    List<Follow> getFollowingsByUserUrl(String userUrl);
+
     List<Follow> getFollowers(Long memberId);
 
     List<Follow> getFollowersByUsername(String username);
+
+    List<Follow> getFollowersByUserUrl(String userUrl);
 }
