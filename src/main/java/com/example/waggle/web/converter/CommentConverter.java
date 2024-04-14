@@ -1,6 +1,7 @@
 package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.conversation.entity.Comment;
+import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentViewDto;
 import org.springframework.data.domain.Page;
@@ -24,9 +25,7 @@ public class CommentConverter {
                 .map(CommentConverter::toCommentViewDto).collect(Collectors.toList());
         return CommentListDto.builder()
                 .commentList(collect)
-                .isFirst(pagedComment.isFirst())
-                .isLast(pagedComment.isLast())
-                .commentCount(pagedComment.getTotalElements())
+                .nextPageParam(PageUtil.countNextPage(pagedComment))
                 .build();
     }
 }

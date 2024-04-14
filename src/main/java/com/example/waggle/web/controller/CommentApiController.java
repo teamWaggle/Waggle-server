@@ -8,6 +8,7 @@ import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.CommentConverter;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
@@ -20,15 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,7 +42,7 @@ public class CommentApiController {
     @GetMapping("/page/{boardId}")
     public ApiResponseDto<CommentListDto> getCommentsByPage(@PathVariable("boardId") Long boardId,
                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, oldestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
         CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
         return ApiResponseDto.onSuccess(listDto);
