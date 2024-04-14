@@ -1,5 +1,6 @@
 package com.example.waggle.domain.member.service;
 
+import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.domain.recommend.entity.RecommendationHashKey;
 import com.example.waggle.domain.recommend.entity.RecommendationSetKey;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class RedisService {
     //    private static String recommendBoardKeyPrefix = "set:recommend:board:";
     private static String hashKeyPrefix = "hash:board:";
     private static String initKeyPrefix = "init:member:";
+    private static final String UNDER_SCORE = "_";
 
     // key-value 설정
     public void setValue(String token, String username) {
@@ -213,5 +215,16 @@ public class RedisService {
 //                .value(value)
 //                .build();
 //    }
+
+    public void publishMessage(AlarmEvent alarmEvent) {
+        redisTemplate.convertAndSend(alarmEvent.getEventName().getValue(), getRedisPubMessage(alarmEvent));
+    }
+
+    private String getRedisPubMessage(AlarmEvent alarmEvent) {
+        return alarmEvent.getMemberId()
+                + UNDER_SCORE + alarmEvent.getEventName().getValue()
+                + UNDER_SCORE + alarmEvent.getArgs().getCallingMemberUserUrl()
+                + UNDER_SCORE + alarmEvent.getType().getAlarmContent();
+    }
 
 }

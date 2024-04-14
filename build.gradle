@@ -71,6 +71,9 @@ dependencies {
     // thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+    
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
 
 }
 
