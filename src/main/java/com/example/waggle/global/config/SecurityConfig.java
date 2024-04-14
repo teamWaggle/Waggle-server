@@ -159,7 +159,8 @@ public class SecurityConfig {
     private RequestMatcher[] authorizationAdmin() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(HttpMethod.DELETE, "/api/members/{memberId}/force"),
-                antMatcher(HttpMethod.GET, "api/recommends/sync")
+                antMatcher(HttpMethod.GET, "api/recommends/sync"),
+                antMatcher(HttpMethod.GET, "api/members/info")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
