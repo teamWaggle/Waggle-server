@@ -31,9 +31,7 @@ public class CommentResponse {
     @Schema
     public static class CommentListDto {
         private List<CommentViewDto> commentList;
-        private long commentCount;
-        private Boolean isFirst;
-        private Boolean isLast;
+        private int nextPageParam;
     }
 
 }
