@@ -1,7 +1,5 @@
 package com.example.waggle.web.controller;
 
-import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
-
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
@@ -12,6 +10,7 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.QuestionConverter;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
@@ -20,8 +19,6 @@ import com.example.waggle.web.dto.question.QuestionResponse.RepresentativeQuesti
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,15 +27,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -102,7 +96,7 @@ public class QuestionApiController {
     @GetMapping
     public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
@@ -127,7 +121,7 @@ public class QuestionApiController {
     @GetMapping("/member/{userUrl}")
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(@PathVariable("userUrl") String userUrl,
                                                                          @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, latestSorting);
         Page<Question> questions = questionQueryService.getPagedQuestionsByUserUrl(userUrl, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
