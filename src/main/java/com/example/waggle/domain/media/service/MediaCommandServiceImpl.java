@@ -10,6 +10,7 @@ import com.example.waggle.global.exception.handler.MediaHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +57,10 @@ public class MediaCommandServiceImpl implements MediaCommandService {
     }
 
     @Scheduled(cron = "0 0 1 * * ?")
+    @Profile({"real1", "real2"})
     @Override
     public void deleteMediaFileInS3() {
+        log.info("start sync img file");
         List<String> dbImageList = mediaRepository.findAll().stream()
                 .map(media -> media.getUploadFile()).collect(Collectors.toList());
         Set<String> dbImageListSet = new HashSet(dbImageList);
