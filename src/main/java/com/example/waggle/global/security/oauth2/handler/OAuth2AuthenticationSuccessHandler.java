@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -22,6 +23,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Value("${app.oauth2.authorizedRedirectUri}")
     private String redirectUri;
     private final TokenService tokenService;
+    private static int week = 604800;
 
 
     @Override
@@ -32,11 +34,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (response.isCommitted()) {
             return;
         }
-        String refreshToken = jwtToken.getRefreshToken();
-        CookieUtil.addCookie(response, "refresh_token", refreshToken, 60);
+        CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         CookieUtil.deleteCookie(request, response, "JSESSIONID");
+        String url = UriComponentsBuilder.fromHttpUrl(redirectUri)
+                .queryParam("code", jwtToken.getAccessToken())
+                .build()
+                .toUriString();
 
-        getRedirectStrategy().sendRedirect(request, response, redirectUri);
+        response.sendRedirect(url);
     }
 
 }
