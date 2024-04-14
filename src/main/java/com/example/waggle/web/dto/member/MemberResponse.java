@@ -10,6 +10,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class MemberResponse {
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class MemberStorageDto {
+        private Long memberId;
+        private String userUrl;
+    }
 
     @Data
     @Builder

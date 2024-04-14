@@ -50,7 +50,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     public Member getMemberByUserUrl(String userUrl) {
-        return memberRepository.findByUsername(userUrl)
+        return memberRepository.findByUserUrl(userUrl)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
