@@ -19,6 +19,13 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberStorageDto toMemberStorageDto(Member member) {
+        return MemberStorageDto.builder()
+                .memberId(member.getId())
+                .userUrl(member.getUserUrl())
+                .build();
+    }
+
     public static MemberDetailDto toMemberDetailDto(Member member) {
         return MemberDetailDto.builder()
                 .memberId(member.getId())
