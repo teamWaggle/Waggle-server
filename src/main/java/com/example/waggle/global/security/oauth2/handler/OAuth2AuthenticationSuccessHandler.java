@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,10 +35,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         if (response.isCommitted()) {
             return;
         }
+        String provider = null;
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
+            provider = oauth2Token.getAuthorizedClientRegistrationId();
+        }
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         CookieUtil.deleteCookie(request, response, "JSESSIONID");
         String url = UriComponentsBuilder.fromHttpUrl(redirectUri)
                 .queryParam("code", jwtToken.getAccessToken())
+                .queryParam("provider", provider)
                 .build()
                 .toUriString();
 
