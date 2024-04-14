@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.dto.question.QuestionResponse;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
@@ -31,9 +32,7 @@ public class QuestionConverter {
 
         return QuestionSummaryListDto.builder()
                 .questionList(questionsSummaryDtoList)
-                .questionCount(questionPage.getTotalElements())
-                .isFirst(questionPage.isFirst())
-                .isLast(questionPage.isLast())
+                .nextPageParam(PageUtil.countNextPage(questionPage))
                 .build();
     }
 

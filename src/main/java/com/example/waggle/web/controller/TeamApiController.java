@@ -1,7 +1,5 @@
 package com.example.waggle.web.controller;
 
-import static com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse.builder;
-
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.domain.schedule.entity.Participation;
@@ -15,7 +13,6 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.TeamConverter;
-import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse;
@@ -25,9 +22,6 @@ import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,15 +29,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -158,10 +148,10 @@ public class TeamApiController {
     @GetMapping("/{teamId}/participation")
     public ApiResponseDto<MemberSummaryListDto> getTeam(@AuthUser Member member, @PathVariable("teamId") Long teamId) {
         List<Participation> participationList = teamQueryService.getParticipationList(member, teamId);
-        List<MemberSummaryDto> memberSummaryList = participationList.stream()
-                .map(participation -> MemberConverter.toMemberSummaryDto(participation.getMember()))
+        List<Member> members = participationList.stream()
+                .map(Participation::getMember)
                 .collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(MemberSummaryListDto.builder().memberList(memberSummaryList).build());
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(members));
     }
 
     @Operation(summary = "팀 참여 상태 조회 🔑", description = "팀의 참여 요청 상태를 조회합니다.")
@@ -171,10 +161,9 @@ public class TeamApiController {
     @GetMapping("/{teamId}/participation/status")
     public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
                                                                                   @PathVariable("teamId") Long teamId) {
-        return Optional.ofNullable(getParticipationStatus(member, teamId))
-                .map(status -> ApiResponseDto.onSuccess(builder().status(status).build()))
-                .orElseGet(() -> ApiResponseDto.onSuccess(
-                        builder().status(Status.NONE).build()));
+        Optional<Participation> participation = teamQueryService.getParticipation(member, teamId);
+        boolean isMember = teamQueryService.isMemberOfTeam(member, teamId);
+        return ApiResponseDto.onSuccess(TeamConverter.toStatusDto(participation, isMember));
     }
 
     private Status getParticipationStatus(Member member, Long teamId) {

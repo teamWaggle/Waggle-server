@@ -35,9 +35,7 @@ public class QuestionResponse {
     @Schema
     public static class QuestionSummaryListDto {
         private List<QuestionSummaryDto> questionList;
-        private long questionCount;
-        private Boolean isFirst;
-        private Boolean isLast;
+        private int nextPageParam;
     }
 
     @Data
