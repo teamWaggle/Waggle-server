@@ -48,7 +48,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     .map(GrantedAuthority::getAuthority)
                     .anyMatch(Role.GUEST.getKey()::equals);
         }
-        log.info("redirectUri = {}", redirectUri);
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
         CookieUtil.deleteCookie(request, response, "JSESSIONID");
         String url = UriComponentsBuilder.fromHttpUrl(redirectUri)
