@@ -28,14 +28,12 @@ public class SirenQueryServiceImpl implements SirenQueryService {
 
     @Override
     public List<Siren> getAllSiren() {
-        List<Siren> all = sirenRepository.findAll();
-        return all;
+        return sirenRepository.findAll();
     }
 
     @Override
     public Page<Siren> getPagedSirenList(Pageable pageable) {
-        Page<Siren> all = sirenRepository.findAll(pageable);
-        return all;
+        return sirenRepository.findAll(pageable);
     }
 
     @Override
@@ -54,14 +52,12 @@ public class SirenQueryServiceImpl implements SirenQueryService {
 
     @Override
     public Page<Siren> getPagedSirenListByUsername(String username, Pageable pageable) {
-        Page<Siren> pageSirenByUsername = sirenRepository.findByMemberUsername(username, pageable);
-        return pageSirenByUsername;
+        return sirenRepository.findByMemberUsername(username, pageable);
     }
 
     @Override
     public Page<Siren> getPagedSirenListByUserUrl(String userUrl, Pageable pageable) {
-        Page<Siren> pageSirenByUsername = sirenRepository.findByMemberUsername(userUrl, pageable);
-        return pageSirenByUsername;
+        return sirenRepository.findByMemberUserUrl(userUrl, pageable);
     }
 
     @Override

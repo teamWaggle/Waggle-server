@@ -33,7 +33,7 @@ public class StoryQueryServiceImpl implements StoryQueryService {
 
     @Override
     public Page<Story> getPagedStoriesByUserUrl(String userUrl, Pageable pageable) {
-        return storyRepository.findByMemberUsername(userUrl, pageable);
+        return storyRepository.findByMemberUserUrl(userUrl, pageable);
     }
 
     @Override
