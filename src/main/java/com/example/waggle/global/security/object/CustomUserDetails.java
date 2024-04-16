@@ -1,7 +1,6 @@
 package com.example.waggle.global.security.object;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.entity.Role;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +32,7 @@ public class CustomUserDetails implements OAuth2User, UserDetails {
 
     public static CustomUserDetails create(Member member) {
         List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority(Role.GUEST.getKey()));
+                singletonList(new SimpleGrantedAuthority(member.getRole().getKey()));
 
         return new CustomUserDetails(
                 member.getId(),

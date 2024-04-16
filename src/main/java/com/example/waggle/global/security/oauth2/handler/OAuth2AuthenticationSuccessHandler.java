@@ -44,6 +44,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
             provider = oauth2Token.getAuthorizedClientRegistrationId();
             Collection<GrantedAuthority> authorities = oauth2Token.getAuthorities();
+            authorities.forEach(grantedAuthority -> log.info("role {}", grantedAuthority.getAuthority()));
             isGuest = authorities.stream()
                     .map(GrantedAuthority::getAuthority)
                     .anyMatch(Role.GUEST.getKey()::equals);
