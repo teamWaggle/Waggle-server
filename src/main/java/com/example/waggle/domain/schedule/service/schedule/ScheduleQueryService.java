@@ -13,19 +13,17 @@ public interface ScheduleQueryService {
 
     List<Schedule> getTeamSchedules(Long teamId);
 
-    Page<Schedule> getPagedTeamSchedules(Long teamId, Pageable pageable);
+    Page<Schedule> getPagedTeamSchedules(Member member, Long teamId, Pageable pageable);
 
     List<Schedule> getSchedulesByWriter(Long memberId);
 
     List<Schedule> getSchedulesByMember(Long memberId);
 
-    List<Schedule> getMonthlySchedulesByMember(Long memberId, int year, int month);
-
     List<Schedule> getMonthlySchedulesByMemberUserUrl(String userUrl, int year, int month);
 
     List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month);
 
-    List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDate startTime, LocalDate endTime);
+    List<Schedule> getTeamScheduleByPeriod(Member member, Long teamId, LocalDate startTime, LocalDate endTime);
 
     List<Member> getMemberBySchedule(Long scheduleId);
 
