@@ -36,7 +36,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     }
 
     @Override
-    public Page<Schedule> getPagedTeamSchedules(Long teamId, Pageable pageable) {
+    public Page<Schedule> getPagedTeamSchedules(Member member, Long teamId, Pageable pageable) {
         return scheduleRepository.findPagedByTeamId(teamId, pageable);
     }
 
@@ -48,16 +48,6 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Override
     public List<Schedule> getSchedulesByMember(Long memberId) {
         return memberScheduleRepository.findByMemberId(memberId).stream()
-                .map(MemberSchedule::getSchedule)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Schedule> getMonthlySchedulesByMember(Long memberId, int year, int month) {
-        LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
-
-        return memberScheduleRepository.findByMemberIdAndDay(memberId, startDate, endDate).stream()
                 .map(MemberSchedule::getSchedule)
                 .collect(Collectors.toList());
     }
@@ -76,12 +66,11 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public List<Schedule> getMonthlyTeamSchedule(Long teamId, int year, int month) {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
-
         return scheduleRepository.findByTeamIdAndDay(teamId, startDate, endDate);
     }
 
     @Override
-    public List<Schedule> getTeamScheduleByPeriod(Long teamId, LocalDate startDate, LocalDate endDate) {
+    public List<Schedule> getTeamScheduleByPeriod(Member member, Long teamId, LocalDate startDate, LocalDate endDate) {
         return scheduleRepository.findByTeamIdAndDay(teamId, startDate, endDate);
     }
 
