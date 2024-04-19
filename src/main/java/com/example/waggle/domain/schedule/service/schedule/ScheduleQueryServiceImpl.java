@@ -95,7 +95,9 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 schedule.getStartDate(),
                 schedule.getEndDate(),
                 schedule.getStartTime(),
-                schedule.getEndTime());
+                schedule.getEndTime(),
+                schedule.getId()
+        );
     }
 
 }
