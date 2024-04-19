@@ -36,12 +36,14 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
 
 
     @Query("SELECT ms.schedule FROM MemberSchedule ms WHERE ms.member.id = :memberId AND " +
+            "ms.schedule.id <> :excludedScheduleId AND " +
             "(ms.schedule.startDate <= :endDate AND ms.schedule.endDate >= :startDate) AND " +
             "(ms.schedule.startTime < :endTime AND ms.schedule.endTime > :startTime)")
     List<Schedule> findOverlappingSchedules(@Param("memberId") Long memberId,
                                             @Param("startDate") LocalDate startDate,
                                             @Param("endDate") LocalDate endDate,
                                             @Param("startTime") LocalTime startTime,
-                                            @Param("endTime") LocalTime endTime);
+                                            @Param("endTime") LocalTime endTime,
+                                            @Param("excludedScheduleId") Long excludedScheduleId);
 
 }
