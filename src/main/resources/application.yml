@@ -65,3 +65,9 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: method
   use-fqn: true
+
+app:
+  image:
+    default:
+      member: "6d40e0b9-e675-45ce-ad84-c2032bfbb185.png"
+      pet: "1c463c40-a8df-405b-bbda-7b8c3763d886.png"

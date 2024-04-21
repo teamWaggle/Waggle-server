@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MediaUtil {
 
-    private static String SERVER_URI = "https://waggle-bucket.s3.ap-northeast-2.amazonaws.com/";
+    private static final String SERVER_URI = "https://waggle-bucket.s3.ap-northeast-2.amazonaws.com/";
+    private static final String DEFAULT_MEMBER_PROFILE_IMG = "6d40e0b9-e675-45ce-ad84-c2032bfbb185.png";
+    private static final String DEFAULT_PET_PROFILE_IMG = "1c463c40-a8df-405b-bbda-7b8c3763d886.png";
 
     public static String appendUri(String s3URI) {
         StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
@@ -23,14 +25,14 @@ public class MediaUtil {
 
     public static String getProfileImg(Member member) {
         if (member.getProfileImgUrl() == null) {
-            return null;
+            return appendUri(DEFAULT_MEMBER_PROFILE_IMG);
         }
         return appendUri(member.getProfileImgUrl());
     }
 
     public static String getProfileImg(Pet pet) {
         if (pet.getProfileImgUrl() == null) {
-            return null;
+            return appendUri(DEFAULT_PET_PROFILE_IMG);
         }
         return appendUri(pet.getProfileImgUrl());
     }
