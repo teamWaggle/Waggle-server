@@ -2,10 +2,6 @@ package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
-import com.example.waggle.domain.notification.entity.alarm.AlarmType;
-import com.example.waggle.domain.notification.entity.alarm.alarmArgs.AlarmArgs;
-import com.example.waggle.domain.notification.entity.sse.SseEventName;
 import com.example.waggle.domain.schedule.entity.*;
 import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
@@ -121,7 +117,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public AlarmEvent requestParticipation(Long teamId, Member member) {
+    public Long requestParticipation(Long teamId, Member member) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
@@ -129,10 +125,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
-        return new AlarmEvent(AlarmType.PARTICIPATION_MY_TEAM,
-                AlarmArgs.builder().callingMemberUserUrl(team.getLeader().getUserUrl()).build(),
-                team.getLeader().getId(),
-                SseEventName.ALARM_LIST);
+        return participation.getId();
     }
 
     @Override

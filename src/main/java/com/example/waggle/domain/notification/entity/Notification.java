@@ -2,6 +2,7 @@ package com.example.waggle.domain.notification.entity;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.component.auditing.BaseEntity;
+import com.example.waggle.web.dto.notification.NotificationRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,11 +24,22 @@ public class Notification extends BaseEntity {
 
     private boolean isRead;
 
+    private Long targetId;      //comment, team, follow
+
+    private Long receiverId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private Member sender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reciever_id")
-    private Member reciever;
+
+    public static Notification of(Member sender, NotificationRequest notificationRequest) {
+        return Notification.builder()
+                .sender(sender)
+                .receiverId(notificationRequest.getReceiverId())
+                .targetId(notificationRequest.getTargetId())
+                .type(notificationRequest.getType())
+                .isRead(false)
+                .build();
+    }
 }
