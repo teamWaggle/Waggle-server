@@ -5,8 +5,11 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
 import com.example.waggle.domain.notification.entity.Notification;
 import com.example.waggle.domain.notification.repository.NotificationRepository;
+import com.example.waggle.domain.schedule.entity.TeamColor;
+import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.notification.NotificationRequest;
+import com.example.waggle.web.dto.schedule.TeamRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static com.example.waggle.domain.notification.entity.NotificationType.FOLLOWED;
+import static com.example.waggle.domain.notification.entity.NotificationType.PARTICIPATION_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -29,6 +33,8 @@ class NotificationCommandServiceTest {
     NotificationCommandService notificationCommandService;
     @Autowired
     FollowCommandService followCommandService;
+    @Autowired
+    TeamCommandService teamCommandService;
     //repository
     @Autowired
     MemberRepository memberRepository;
@@ -99,6 +105,29 @@ class NotificationCommandServiceTest {
                 .extracting("type", "targetId")
                 .containsExactlyInAnyOrder(
                         Tuple.tuple(FOLLOWED, followId)
+                );
+    }
+
+    @Test
+    @DisplayName("발신자가 team에 참가 요청을 하면서 알림을 생성합니다.")
+    void createNotificationWhenParticipation() {
+        //given
+        TeamRequest teamRequest = TeamRequest.builder()
+                .name("team")
+                .teamColor(String.valueOf(TeamColor.team_1))
+                .description("description")
+                .build();
+        Long teamId = teamCommandService.createTeam(teamRequest, receiver);
+
+        //when
+        Long participationId = teamCommandService.requestParticipation(teamId, sender);
+
+        //then
+        List<Notification> all = notificationRepository.findAll();
+        assertThat(all).hasSize(1)
+                .extracting("type", "targetId")
+                .containsExactlyInAnyOrder(
+                        Tuple.tuple(PARTICIPATION_REQUEST, participationId)
                 );
     }
 

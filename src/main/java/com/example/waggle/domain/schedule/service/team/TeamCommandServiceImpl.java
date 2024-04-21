@@ -2,12 +2,15 @@ package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.notification.entity.Notification;
+import com.example.waggle.domain.notification.repository.NotificationRepository;
 import com.example.waggle.domain.schedule.entity.*;
 import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.converter.NotificationConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final ScheduleRepository scheduleRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final ParticipationRepository participationRepository;
+    private final NotificationRepository notificationRepository;
     private final ScheduleCommandService scheduleCommandService;
     private final int teamCapacityLimit = 15;
 
@@ -125,6 +129,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
+        notificationRepository.save(
+                Notification.of(member, NotificationConverter.toRequest(participation, team.getLeader().getId()))
+        );
         return participation.getId();
     }
 
