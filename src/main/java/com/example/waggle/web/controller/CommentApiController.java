@@ -1,5 +1,7 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.board.question.entity.Question;
+import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.service.comment.CommentQueryService;
@@ -44,6 +46,32 @@ public class CommentApiController {
                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
+        CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "마이페이지 Question 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/page/{userUrl}/question")
+    public ApiResponseDto<CommentListDto> getMyQuestionCommentsByPage(@PathVariable("userUrl") String userUrl,
+                                                                      @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
+        Page<Comment> pagedComments = commentQueryService.getPagedCommentsByUserUrl(userUrl, Question.class, pageable);
+        CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "마이페이지 Siren 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/page/{userUrl}/siren")
+    public ApiResponseDto<CommentListDto> getMySirenCommentsByPage(@PathVariable("userUrl") String userUrl,
+                                                                   @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
+        Page<Comment> pagedComments = commentQueryService.getPagedCommentsByUserUrl(userUrl, Siren.class, pageable);
         CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
         return ApiResponseDto.onSuccess(listDto);
     }
