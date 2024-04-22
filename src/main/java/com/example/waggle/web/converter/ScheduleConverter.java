@@ -24,7 +24,7 @@ public class ScheduleConverter {
                 .endDate(LocalDateTime.of(schedule.getEndDate(), schedule.getEndTime()))
                 .createdDate(schedule.getCreatedDate())
                 .status(ScheduleUtil.setStatus(schedule))
-                .member(MemberConverter.toMemberSummaryDto(schedule.getMember()))
+                .scheduleOwner(MemberConverter.toMemberSummaryDto(schedule.getMember()))
                 .build();
     }
 

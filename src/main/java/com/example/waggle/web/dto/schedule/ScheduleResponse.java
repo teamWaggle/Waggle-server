@@ -41,7 +41,7 @@ public class ScheduleResponse {
         private LocalDateTime endDate;
         private LocalDateTime createdDate;
         private ScheduleStatus status;
-        private MemberSummaryDto member;
+        private MemberSummaryDto scheduleOwner;
         private Boolean isScheduled;
         private List<OverlappedScheduleDto> overlappedScheduleList;
         private int overlappedScheduleCount;
