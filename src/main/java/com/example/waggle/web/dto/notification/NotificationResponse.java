@@ -16,7 +16,7 @@ public class NotificationResponse {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public class NotificationViewDto {
+    public static class NotificationViewDto {
         private Long notificationId;
         private Long targetId;
         private Long receiverId;
@@ -29,7 +29,7 @@ public class NotificationResponse {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public class NotificationListDto {
+    public static class NotificationListDto {
         private List<NotificationViewDto> notificationList;
     }
 
@@ -38,7 +38,7 @@ public class NotificationResponse {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public class NotificationCountDto {
+    public static class NotificationCountDto {
         private int count;
     }
 

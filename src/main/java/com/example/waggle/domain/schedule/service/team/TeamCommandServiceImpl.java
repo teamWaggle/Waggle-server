@@ -10,7 +10,6 @@ import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandServic
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.converter.NotificationConverter;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -130,7 +129,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
         notificationRepository.save(
-                Notification.of(member, NotificationConverter.toRequest(participation, team.getLeader().getId()))
+                Notification.of(member, participation)
         );
         return participation.getId();
     }

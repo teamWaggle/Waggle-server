@@ -1,13 +1,17 @@
 package com.example.waggle.domain.notification.entity;
 
+import com.example.waggle.domain.follow.entity.Follow;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.global.component.auditing.BaseEntity;
-import com.example.waggle.web.dto.notification.NotificationRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import static com.example.waggle.domain.notification.entity.NotificationType.FOLLOWED;
+import static com.example.waggle.domain.notification.entity.NotificationType.PARTICIPATION_REQUEST;
 
 @Entity
 @Getter
@@ -32,13 +36,22 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "sender_id")
     private Member sender;
 
-
-    public static Notification of(Member sender, NotificationRequest notificationRequest) {
+    public static Notification of(Member member, Participation participation) {
         return Notification.builder()
-                .sender(sender)
-                .receiverId(notificationRequest.getReceiverId())
-                .targetId(notificationRequest.getTargetId())
-                .type(notificationRequest.getType())
+                .sender(member)
+                .type(PARTICIPATION_REQUEST)
+                .targetId(participation.getId())
+                .receiverId(participation.getTeam().getLeader().getId())
+                .isRead(false)
+                .build();
+    }
+
+    public static Notification of(Member member, Follow follow) {
+        return Notification.builder()
+                .sender(member)
+                .type(FOLLOWED)
+                .targetId(follow.getId())
+                .receiverId(follow.getToMember().getId())
                 .isRead(false)
                 .build();
     }

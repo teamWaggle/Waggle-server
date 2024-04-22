@@ -9,7 +9,6 @@ import com.example.waggle.domain.notification.repository.NotificationRepository;
 import com.example.waggle.domain.schedule.entity.TeamColor;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.notification.NotificationRequest;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.groups.Tuple;
@@ -76,26 +75,6 @@ class NotificationCommandServiceTest {
         databaseCleanUp.truncateAllEntity();
     }
 
-    @Test
-    @DisplayName("발신자가 알림을 생성하여 데이터베이스에서 해당 내용을 확인합니다.")
-    void createNotification() {
-        //given
-        NotificationRequest notice = NotificationRequest.builder()
-                .type(FOLLOWED)
-                .targetId(1L)
-                .receiverId(receiver.getId())
-                .build();
-        //when
-        notificationCommandService.sendNotification(sender, notice);
-
-        //then
-        List<Notification> all = notificationRepository.findAll();
-        assertThat(all).hasSize(1)
-                .extracting("type", "targetId")
-                .containsExactlyInAnyOrder(
-                        Tuple.tuple(FOLLOWED, 1L)
-                );
-    }
 
     @Test
     @DisplayName("발신자가 follow를 하면서 알림을 생성합니다.")

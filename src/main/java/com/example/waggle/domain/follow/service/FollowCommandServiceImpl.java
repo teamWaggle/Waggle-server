@@ -9,7 +9,6 @@ import com.example.waggle.domain.notification.repository.NotificationRepository;
 import com.example.waggle.global.exception.handler.FollowHandler;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.converter.NotificationConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
         notificationRepository.save(
-                Notification.of(from, NotificationConverter.toRequest(follow, to))
+                Notification.of(from, follow)
         );
         return follow.getId();
     }
