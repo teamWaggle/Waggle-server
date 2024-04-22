@@ -20,4 +20,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     Page<Team> findByNameContaining(String name, Pageable pageable);
 
+    Page<Team> findAll(Pageable pageable);
+
 }

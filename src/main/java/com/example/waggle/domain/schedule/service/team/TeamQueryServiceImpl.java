@@ -36,6 +36,11 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
+    public Page<Team> getTeamsByPagination(Pageable pageable) {
+        return teamRepository.findAll(pageable);
+    }
+
+    @Override
     public Team getTeamById(Long teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));

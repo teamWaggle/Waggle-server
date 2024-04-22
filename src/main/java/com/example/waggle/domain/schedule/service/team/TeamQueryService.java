@@ -15,6 +15,8 @@ public interface TeamQueryService {
 
     Page<Team> getTeamByContainName(String name, Pageable pageable);
 
+    Page<Team> getTeamsByPagination(Pageable pageable);
+
     Team getTeamById(Long teamId);
 
     List<Participation> getParticipationList(Member leader, Long teamId);
