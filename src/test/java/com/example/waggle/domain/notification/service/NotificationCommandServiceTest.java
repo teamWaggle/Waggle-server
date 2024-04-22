@@ -134,5 +134,25 @@ class NotificationCommandServiceTest {
                 );
     }
 
+    @Test
+    @DisplayName("수신한 알림을 읽었을 때, 상태를 변경합니다.")
+    void testMethodName() {
+        //given
+        TeamRequest teamRequest = TeamRequest.builder()
+                .name("team")
+                .teamColor(String.valueOf(TeamColor.team_1))
+                .description("description")
+                .build();
+        Long teamId = teamCommandService.createTeam(teamRequest, receiver);
+        Long participationId = teamCommandService.requestParticipation(teamId, sender);
+        //when
+        notificationCommandService.convertIsRead(receiver, participationId, PARTICIPATION_REQUEST);
+        //then
+        List<Notification> all = notificationRepository.findAll();
+        assertThat(all).hasSize(1)
+                .extracting("isRead")
+                .containsExactlyInAnyOrder(true);
+    }
+
 
 }
