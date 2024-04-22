@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +45,6 @@ public class TeamApiController {
 
     private final TeamCommandService teamCommandService;
     private final TeamQueryService teamQueryService;
-    private Sort mostPopular = Sort.by("teamMembers").descending();
 
     @Operation(summary = "팀 생성 🔑", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -161,8 +159,8 @@ public class TeamApiController {
     })
     @GetMapping("/recommend")
     public ApiResponseDto<TeamSummaryListDto> getRecommendedTeam(@RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 3, mostPopular);
-        Page<Team> teamByContainName = teamQueryService.getTeamsByPagination(pageable);
+        Pageable pageable = PageRequest.of(currentPage, 3);
+        Page<Team> teamByContainName = teamQueryService.getPopularTeamListTop3(pageable);
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teamByContainName));
     }
 
