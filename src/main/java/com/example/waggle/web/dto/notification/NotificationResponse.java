@@ -20,6 +20,7 @@ public class NotificationResponse {
         private Long notificationId;
         private Long targetId;
         private Long receiverId;
+        private boolean isRead;
         private MemberSummaryDto sender;
         private NotificationType notificationType;
     }

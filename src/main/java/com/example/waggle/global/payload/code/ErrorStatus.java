@@ -104,7 +104,8 @@ public enum ErrorStatus implements BaseCode {
     MEDIA_PREFIX_IS_WRONG(BAD_REQUEST, 4354, "요청한 이미지 url의 prefix가 잘못되었습니다."),
 
     //알림 관련 오류(4400 ~ 4449)
-    NOTIFICATION_NOT_FOUND(NOT_FOUND, 4400, "존재하지 않는 알림입니다");
+    NOTIFICATION_NOT_FOUND(NOT_FOUND, 4400, "존재하지 않는 알림입니다"),
+    NOTIFICATION_NOT_YOURS(BAD_REQUEST, 4401, "당신의 알림이 아닙니다");
 
 
     private final HttpStatus httpStatus;
