@@ -1,5 +1,6 @@
 package com.example.waggle.domain.notification.service;
 
+import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
 import com.example.waggle.domain.follow.service.FollowCommandService;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
@@ -35,6 +36,8 @@ class NotificationCommandServiceTest {
     FollowCommandService followCommandService;
     @Autowired
     TeamCommandService teamCommandService;
+    @Autowired
+    CommentCommandService commentCommandService;
     //repository
     @Autowired
     MemberRepository memberRepository;
@@ -130,5 +133,6 @@ class NotificationCommandServiceTest {
                         Tuple.tuple(PARTICIPATION_REQUEST, participationId)
                 );
     }
+
 
 }

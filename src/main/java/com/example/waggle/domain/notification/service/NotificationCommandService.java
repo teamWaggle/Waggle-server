@@ -5,4 +5,6 @@ import com.example.waggle.web.dto.notification.NotificationRequest;
 
 public interface NotificationCommandService {
     Long sendNotification(Member sender, NotificationRequest notificationRequest);
+
+    void convertIsRead(Member receiver, Long notificationId);
 }

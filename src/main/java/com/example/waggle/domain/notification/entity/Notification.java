@@ -42,4 +42,10 @@ public class Notification extends BaseEntity {
                 .isRead(false)
                 .build();
     }
+
+    public void readNotification() {
+        if (!this.isRead) {
+            this.isRead = true;
+        }
+    }
 }
