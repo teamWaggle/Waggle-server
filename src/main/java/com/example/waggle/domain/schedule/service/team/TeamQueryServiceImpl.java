@@ -8,13 +8,14 @@ import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -27,6 +28,11 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     @Override
     public Page<Team> getPagedTeamByMemberId(Long memberId, Pageable pageable) {
         return teamRepository.findByTeamMembers_MemberId(memberId, pageable);
+    }
+
+    @Override
+    public Page<Team> getTeamByContainName(String name, Pageable pageable) {
+        return teamRepository.findByNameContaining(name, pageable);
     }
 
     @Override

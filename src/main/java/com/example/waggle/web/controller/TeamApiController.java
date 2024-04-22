@@ -45,7 +45,6 @@ public class TeamApiController {
 
     private final TeamCommandService teamCommandService;
     private final TeamQueryService teamQueryService;
-//    private final AlarmProducer alarmProducer;
 
     @Operation(summary = "팀 생성 🔑", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -139,6 +138,19 @@ public class TeamApiController {
     public ApiResponseDto<TeamDetailDto> getTeam(@PathVariable("teamId") Long teamId) {
         Team team = teamQueryService.getTeamById(teamId);
         return ApiResponseDto.onSuccess(TeamConverter.toDetailDto(team));
+    }
+
+    @Operation(summary = "팀 검색", description = "팀의 이름을 검색하여 팀 정보를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/by-name/{name}")
+    public ApiResponseDto<TeamSummaryListDto> getTeamsBySearch(@PathVariable("name") String name,
+                                                               @RequestParam(name = "currentPage", defaultValue = "0") int currentPage,
+                                                               @RequestParam(name = "size", defaultValue = "0") int size) {
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Team> teamByContainName = teamQueryService.getTeamByContainName(name, pageable);
+        return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teamByContainName));
     }
 
     @Operation(summary = "팀 참여 요청 목록 조회 🔑", description = "팀의 참여 요청 목록을 조회합니다. 팀의 리더 권한을 가진 회원만 조회할 수 있습니다.")
