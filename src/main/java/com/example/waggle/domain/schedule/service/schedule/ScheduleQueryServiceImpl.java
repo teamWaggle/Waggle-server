@@ -127,13 +127,13 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         List<Schedule> scheduleList = scheduleRepository.findAllById(boardIdList);
         scheduleList.stream()
                 .forEach(schedule -> countHashMap.put(schedule.getId(),
-                        memberScheduleRepository.countOverlappingSchedules(
-                                member.getId(),
+                        memberScheduleRepository.countOverlappedSchedule(
+                                member,
+                                schedule.getId(),
                                 schedule.getStartDate(),
-                                schedule.getEndDate(),
                                 schedule.getStartTime(),
-                                schedule.getEndTime(),
-                                schedule.getId()
+                                schedule.getEndDate(),
+                                schedule.getEndTime()
                         )
                 ));
         return countHashMap;

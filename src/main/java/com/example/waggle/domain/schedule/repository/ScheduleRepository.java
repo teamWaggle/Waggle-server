@@ -27,7 +27,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     List<Schedule> findAllByTeam(Team team);
 
-    List<Schedule> findByIdContaining(List<Long> boardIdList);
-
 
 }
