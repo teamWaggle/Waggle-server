@@ -42,9 +42,11 @@ public class ScheduleResponse {
         private LocalDateTime createdDate;
         private ScheduleStatus status;
         private MemberSummaryDto scheduleOwner;
-        private Boolean isScheduled;
-        private List<OverlappedScheduleDto> overlappedScheduleList;
-        private int overlappedScheduleCount;
+        @Builder.Default
+        private Boolean isScheduled = false;
+        //        private List<OverlappedScheduleDto> overlappedScheduleList;
+        @Builder.Default
+        private int overlappedScheduleCount = 0;
     }
 
     @Data

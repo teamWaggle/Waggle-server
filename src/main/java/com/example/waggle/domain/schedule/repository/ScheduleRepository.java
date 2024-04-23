@@ -1,21 +1,19 @@
 package com.example.waggle.domain.schedule.repository;
 
-import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.domain.schedule.entity.Team;
-import java.time.LocalDate;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     List<Schedule> findAllByTeamId(Long teamId);
-
-    List<Schedule> findListByMemberUsername(String username);
 
     List<Schedule> findListByMemberId(Long memberId);
 
@@ -26,13 +24,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     Page<Schedule> findPagedByTeamId(Long teamId, Pageable pageable);
 
-    void deleteAllByMemberUsername(String username);
-
-    void deleteAllByTeamId(Long teamId);
 
     List<Schedule> findAllByTeam(Team team);
 
-    List<Schedule> findAllByMember(Member member);
+    List<Schedule> findByIdContaining(List<Long> boardIdList);
 
 
 }

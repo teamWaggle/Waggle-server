@@ -8,6 +8,7 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,18 @@ public class ScheduleConverter {
                 .teamName(schedule.getTeam().getName())
                 .teamColor(schedule.getTeam().getTeamColor())
                 .build();
+    }
+
+    public static void setIsScheduledInList(ScheduleListDto scheduleListDto, HashMap<Long, Boolean> isScheduledMap) {
+        scheduleListDto.getScheduleList().forEach(scheduleDto ->
+                scheduleDto.setIsScheduled(isScheduledMap.get(scheduleDto.getBoardId()))
+        );
+    }
+
+    public static void setOverlappedScheduleCount(ScheduleListDto scheduleListDto, HashMap<Long, Long> countMap) {
+        scheduleListDto.getScheduleList().forEach(scheduleDto ->
+                scheduleDto.setOverlappedScheduleCount(Math.toIntExact(countMap.get(scheduleDto.getBoardId())))
+        );
     }
 
 }

@@ -19,9 +19,6 @@ import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,15 +27,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -124,24 +117,33 @@ public class ScheduleApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/teams/{teamId}")
-    public ApiResponseDto<ScheduleListDto> getSchedulesByTeam(@PathVariable("teamId") Long teamId) {
-        List<Schedule> schedules = scheduleQueryService.getTeamSchedules(teamId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
+    public ApiResponseDto<ScheduleListDto> getSchedulesByTeam(@PathVariable("teamId") Long teamId,
+                                                              @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, 12, latestStart);
+        Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(teamId, pageable);
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(pagedSchedules);
+        return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
     @Operation(summary = "특정 팀의 모든 일정 조회 🔑", description = "특정 팀의 모든 일정을 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/teams/{teamId}/page")
-    public ApiResponseDto<ScheduleListDto> getPagedSchedulesByTeam(@AuthUser Member member,
-                                                                   @PathVariable("teamId") Long teamId,
-                                                                   @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    @GetMapping("/teams/{teamId}/auth")
+    public ApiResponseDto<ScheduleListDto> getSchedulesByTeamWhenAuth(@AuthUser Member member,
+                                                                      @PathVariable("teamId") Long teamId,
+                                                                      @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 12, latestStart);
-        Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(member, teamId, pageable);
+        Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(teamId, pageable);
         ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(pagedSchedules);
-        setIsScheduledInList(member, scheduleListDto);
-        setOverlappedScheduleInList(member, scheduleListDto);
+        ScheduleConverter.setIsScheduledInList(
+                scheduleListDto,
+                scheduleQueryService.getMapOfIsScheduled(member, scheduleListDto)
+        );
+        ScheduleConverter.setOverlappedScheduleCount(
+                scheduleListDto,
+                scheduleQueryService.getMapOfOverlappedScheduleCount(member, scheduleListDto)
+        );
         return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
@@ -159,9 +161,9 @@ public class ScheduleApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/writers/{memberId}")
-    public ApiResponseDto<ScheduleListDto> getSchedulesByWriter(@PathVariable("memberId") Long memberId) {
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByWriter(memberId);
+    @GetMapping("/owners/{memberId}")
+    public ApiResponseDto<ScheduleListDto> getSchedulesByOwner(@PathVariable("memberId") Long memberId) {
+        List<Schedule> schedules = scheduleQueryService.getSchedulesByOwner(memberId);
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
@@ -189,20 +191,41 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
-    @Operation(summary = "기간 해당 팀 일정 조회 🔑", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
+    @Operation(summary = "기간 해당 팀 일정 조회", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/teams/{teamId}/period")
-    public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriod(@AuthUser Member member,
-                                                                   @PathVariable("teamId") Long teamId,
+    public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriod(@PathVariable("teamId") Long teamId,
                                                                    @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
                                                                    @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
         ScheduleUtil.validateSchedule(start, end);
-        List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(member, teamId, start, end);
+        List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
         ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(schedules);
-        setIsScheduledInList(member, scheduleListDto);
-        setOverlappedScheduleInList(member, scheduleListDto);
+        return ApiResponseDto.onSuccess(scheduleListDto);
+    }
+
+    @Operation(summary = "기간 해당 팀 일정 조회 🔑", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/teams/{teamId}/period/auth")
+    public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriodWhenAuth(
+            @AuthUser Member member,
+            @PathVariable("teamId") Long teamId,
+            @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
+            @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        ScheduleUtil.validateSchedule(start, end);
+        List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(schedules);
+        ScheduleConverter.setIsScheduledInList(
+                scheduleListDto,
+                scheduleQueryService.getMapOfIsScheduled(member, scheduleListDto)
+        );
+        ScheduleConverter.setOverlappedScheduleCount(
+                scheduleListDto,
+                scheduleQueryService.getMapOfOverlappedScheduleCount(member, scheduleListDto)
+        );
         return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
@@ -231,7 +254,7 @@ public class ScheduleApiController {
             List<OverlappedScheduleDto> overlappedScheduleDtos = overlappingSchedules.stream()
                     .map(ScheduleConverter::toOverlappedScheduleDto)
                     .collect(Collectors.toList());
-            scheduleDto.setOverlappedScheduleList(overlappedScheduleDtos);
+//            scheduleDto.setOverlappedScheduleList(overlappedScheduleDtos);
             scheduleDto.setOverlappedScheduleCount((int) overlappedScheduleDtos.stream().count());
         });
     }
