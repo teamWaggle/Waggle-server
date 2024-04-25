@@ -2,14 +2,15 @@ package com.example.waggle.domain.schedule.repository;
 
 import com.example.waggle.domain.schedule.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.entity.Schedule;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, Long> {
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, Long>, MemberScheduleQueryRepository {
     List<MemberSchedule> findByMemberId(Long memberId);
 
     @Query("SELECT ms FROM MemberSchedule ms JOIN ms.member m JOIN ms.schedule s WHERE ms.member.id = :memberId AND (s.startDate <= :endOfDay AND s.endDate >= :startOfDay)")
@@ -34,7 +35,6 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
 
     void deleteAllBySchedule(Schedule schedule);
 
-
     @Query("SELECT ms.schedule FROM MemberSchedule ms WHERE ms.member.id = :memberId AND " +
             "ms.schedule.id <> :excludedScheduleId AND " +
             "(ms.schedule.startDate <= :endDate AND ms.schedule.endDate >= :startDate) AND " +
@@ -45,5 +45,6 @@ public interface MemberScheduleRepository extends JpaRepository<MemberSchedule, 
                                             @Param("startTime") LocalTime startTime,
                                             @Param("endTime") LocalTime endTime,
                                             @Param("excludedScheduleId") Long excludedScheduleId);
+
 
 }

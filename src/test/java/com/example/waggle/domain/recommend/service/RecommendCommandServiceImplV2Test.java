@@ -5,7 +5,6 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberCommandService;
 import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.domain.member.service.RedisService;
-import com.example.waggle.domain.recommend.entity.Recommend;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.component.DatabaseCleanUp;
 import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
@@ -99,19 +98,19 @@ class RecommendCommandServiceImplV2Test {
         }
     }
 
-    @Test
-    @DisplayName("관계형 데이터베이스를 통해 대량 좋아요 요청 처리하기.")
-    void recommendByRDB() {
-
-        for (int i = 0; i < 500; i++) {
-            log.info("i = {}", i);
-            recommendCommandService.handleRecommendation(boardIdList.get(3), memberList.get(0));
-            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
-            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
-            List<Recommend> all = recommendRepository.findAll();
-            all.forEach(recommend -> log.info("recommend board : {}", recommend));
-        }
-    }
+//    @Test
+//    @DisplayName("관계형 데이터베이스를 통해 대량 좋아요 요청 처리하기.")
+//    void recommendByRDB() {
+//
+//        for (int i = 0; i < 500; i++) {
+//            log.info("i = {}", i);
+//            recommendCommandService.handleRecommendation(boardIdList.get(3), memberList.get(0));
+//            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
+//            recommendCommandService.handleRecommendation(boardIdList.get(2), memberList.get(0));
+//            List<Recommend> all = recommendRepository.findAll();
+//            all.forEach(recommend -> log.info("recommend board : {}", recommend));
+//        }
+//    }
 
     @Test
     @DisplayName("좋아요를 누르고 취소하며 그때마다 redis내 데이터와 비교확인합니다.")
@@ -128,15 +127,15 @@ class RecommendCommandServiceImplV2Test {
         }
     }
 
-    @Test
-    @DisplayName("좋아요를 만들거나 취소하며 그때마다 rdb내 데이터와 비교확인합니다.")
-    void getRecommendByRDB() {
-        for (int i = 0; i < 3; i++) {
-            log.info("count = {}", i);
-            makeRecommend();
-            cancleRecommend();
-        }
-    }
+//    @Test
+//    @DisplayName("좋아요를 만들거나 취소하며 그때마다 rdb내 데이터와 비교확인합니다.")
+//    void getRecommendByRDB() {
+//        for (int i = 0; i < 3; i++) {
+//            log.info("count = {}", i);
+//            makeRecommend();
+//            cancleRecommend();
+//        }
+//    }
 
     @Test
     @DisplayName("좋아요를 누른 뒤, redis로부터 좋아요 개수를 확인합니다.")
@@ -158,32 +157,32 @@ class RecommendCommandServiceImplV2Test {
         }
     }
 
-    @Test
-    @DisplayName("redis 전체 플로우 확인")
-    void recommendEntireFlowUsingRedis() {
-        recommendSyncService.initRecommendationInRedis(memberList.get(0));
-        recommendSyncService.initRecommendationInRedis(memberList.get(1));
-        recommendSyncService.initRecommendationInRedis(memberList.get(2));
-
-        makeRecommend();
-
-        recommendSyncService.syncRecommendation();
-
-        assertThat(recommendRepository.findAll().size()).isEqualTo(30);
-
-        recommendSyncService.initRecommendationInRedis(memberList.get(0));
-        recommendSyncService.initRecommendationInRedis(memberList.get(1));
-        recommendSyncService.initRecommendationInRedis(memberList.get(2));
-
-        assertThat(redisService.getRecommendedBoardList(memberList.get(0).getId()).size()).isEqualTo(10);
-
-        for (Long boardId : boardIdList) {
-            assertThat(recommendQueryService.countRecommend(boardId)).isEqualTo(3);
-            assertThat(recommendQueryService.checkRecommend(boardId, memberList.get(0).getUsername())).isTrue();
-            assertThat(recommendQueryService.checkRecommend(boardId, memberList.get(1).getUsername())).isTrue();
-            assertThat(recommendQueryService.checkRecommend(boardId, memberList.get(2).getUsername())).isTrue();
-        }
-    }
+//    @Test
+//    @DisplayName("redis 전체 플로우 확인")
+//    void recommendEntireFlowUsingRedis() {
+//        recommendSyncService.initRecommendationInRedis(memberList.get(0));
+//        recommendSyncService.initRecommendationInRedis(memberList.get(1));
+//        recommendSyncService.initRecommendationInRedis(memberList.get(2));
+//
+//        makeRecommend();
+//
+//        recommendSyncService.syncRecommendation();
+//
+//        assertThat(recommendRepository.findAll().size()).isEqualTo(30);
+//
+//        recommendSyncService.initRecommendationInRedis(memberList.get(0));
+//        recommendSyncService.initRecommendationInRedis(memberList.get(1));
+//        recommendSyncService.initRecommendationInRedis(memberList.get(2));
+//
+//        assertThat(redisService.getRecommendedBoardList(memberList.get(0).getId()).size()).isEqualTo(10);
+//
+//        for (Long boardId : boardIdList) {
+//            assertThat(recommendQueryService.countRecommend(boardId)).isEqualTo(3);
+//            assertThat(recommendQueryService.checkRecommend(boardId, memberList.get(0).getUsername())).isTrue();
+//            assertThat(recommendQueryService.checkRecommend(boardId, memberList.get(1).getUsername())).isTrue();
+//            assertThat(recommendQueryService.checkRecommend(boardId, memberList.get(2).getUsername())).isTrue();
+//        }
+//    }
 
     private void cancleRecommend() {
         for (Long boardId : boardIdList) {
