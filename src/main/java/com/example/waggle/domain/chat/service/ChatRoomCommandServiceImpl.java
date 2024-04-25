@@ -21,10 +21,10 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     private final ChatRoomMemberRepository chatRoomMemberRepository;
 
     @Override
-    public ChatRoom createChatRoom(Member member, ChatRoomRequest request) {
+    public Long createChatRoom(Member member, ChatRoomRequest request) {
         ChatRoom chatRoom = chatRoomRepository.save(buildChatRoom(member, request));
         addMemberToChatRoom(member, chatRoom);
-        return chatRoom;
+        return chatRoom.getId();
     }
 
     private ChatRoom buildChatRoom(Member member, ChatRoomRequest request) {
@@ -37,11 +37,11 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     @Override
-    public ChatRoomMember joinChatRoom(Member member, Long chatRoomId, String password) {
+    public Long joinChatRoom(Member member, Long chatRoomId, String password) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
         validateChatRoomPassword(chatRoom, password);
-        return addMemberToChatRoom(member, chatRoom);
+        return addMemberToChatRoom(member, chatRoom).getId();
     }
 
     private void validateChatRoomPassword(ChatRoom chatRoom, String password) {
@@ -55,11 +55,10 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     private ChatRoomMember buildChatRoomMember(Member member, ChatRoom chatRoom) {
-        ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+        return ChatRoomMember.builder()
                 .chatRoom(chatRoom)
                 .member(member)
                 .build();
-        return chatRoomMember;
     }
 
     @Override
@@ -95,16 +94,16 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     @Override
-    public ChatRoom updateChatRoom(Member member, Long chatRoomId, ChatRoomRequest request) {
+    public Long updateChatRoom(Member member, Long chatRoomId, ChatRoomRequest request) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
         checkChatRoomAccess(member, chatRoom);
         chatRoom.updateChatRoom(request.getName(), request.getDescription(), request.getPassword());
-        return chatRoom;
+        return chatRoom.getId();
     }
 
     private void checkChatRoomAccess(Member member, ChatRoom chatRoom) {
-        if (!chatRoom.getOwner().getId().equals(member.getId())) {
+        if (!chatRoom.getOwner().equals(member)) {
             throw new ChatRoomHandler(ErrorStatus.CHAT_ROOM_ACCESS_DENIED);
         }
     }

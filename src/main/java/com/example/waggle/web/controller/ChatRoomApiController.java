@@ -43,7 +43,7 @@ public class ChatRoomApiController {
     })
     @PostMapping
     public ApiResponseDto<Long> createChatRoom(@AuthUser Member member, @RequestBody ChatRoomRequest request) {
-        return ApiResponseDto.onSuccess(chatRoomCommandService.createChatRoom(member, request).getId());
+        return ApiResponseDto.onSuccess(chatRoomCommandService.createChatRoom(member, request));
     }
 
     @Operation(summary = "채팅방 입장 🔑", description = "사용자가 지정한 채팅방에 입장합니다. 입장 성공 시 입장한 채팅방의 멤버 ID를 반환합니다.")
@@ -54,7 +54,7 @@ public class ChatRoomApiController {
     @PostMapping("/{chatRoomId}/join")
     public ApiResponseDto<Long> joinChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
                                              @RequestParam(value = "password", required = false) String password) {
-        return ApiResponseDto.onSuccess(chatRoomCommandService.joinChatRoom(member, chatRoomId, password).getId());
+        return ApiResponseDto.onSuccess(chatRoomCommandService.joinChatRoom(member, chatRoomId, password));
     }
 
     @Operation(summary = "채팅방 수정 🔑", description = "채팅방 호스트가 채팅방을 수정합니다. 호스트만 채팅방 수정 권한을 가지며, 성공적으로 수정 시 채팅방의 ID를 반환합니다.")
@@ -65,7 +65,7 @@ public class ChatRoomApiController {
     @PutMapping("/{chatRoomId}")
     public ApiResponseDto<Long> updateChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
                                                @RequestBody ChatRoomRequest request) {
-        return ApiResponseDto.onSuccess(chatRoomCommandService.updateChatRoom(member, chatRoomId, request).getId());
+        return ApiResponseDto.onSuccess(chatRoomCommandService.updateChatRoom(member, chatRoomId, request));
     }
 
 

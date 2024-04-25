@@ -10,8 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class ChatRoom {
     private Member owner;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ChatRoomMember> chatRoomMembers = new HashSet<>();
+    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
     @Builder
     public ChatRoom(String name, String description, String password, Member owner) {
