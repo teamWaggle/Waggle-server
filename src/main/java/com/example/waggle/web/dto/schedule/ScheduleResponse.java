@@ -61,4 +61,14 @@ public class ScheduleResponse {
         private Boolean isLast;
     }
 
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class OverlappedScheduleListDto {
+        private List<OverlappedScheduleDto> overlappedScheduleDtoList;
+        private long scheduleCount;
+    }
+
 }

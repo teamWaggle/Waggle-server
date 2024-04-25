@@ -107,14 +107,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public List<Schedule> findOverlappingSchedules(Member member, Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        return memberScheduleRepository.findOverlappingSchedules(
-                member.getId(),
-                schedule.getStartDate(),
-                schedule.getEndDate(),
-                schedule.getStartTime(),
-                schedule.getEndTime(),
-                schedule.getId()
-        );
+        return memberScheduleRepository.findOverlappingScheduleList(member, schedule);
     }
 
     //사실 scheduleListDto안에 바로 값을 넣어주는게 더 깔끔할 것 같은데
@@ -128,20 +121,11 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .collect(Collectors.toList());
         List<Schedule> scheduleList = scheduleRepository.findAllById(boardIdList);
         scheduleList.stream()
-                .forEach(schedule -> {
-                    countHashMap.put(schedule.getId(),
-                            memberScheduleRepository.countOverlappedSchedule(
-                                    member,
-                                    schedule.getId(),
-                                    schedule.getStartDate(),
-                                    schedule.getStartTime(),
-                                    schedule.getEndDate(),
-                                    schedule.getEndTime()
-                            )
-                    );
-                    log.info("startDate : {}", schedule.getStartDate());
-                    log.info("startTime : {}", schedule.getStartTime());
-                });
+                .forEach(schedule ->
+                        countHashMap.put(schedule.getId(),
+                                memberScheduleRepository.countOverlappedSchedule(member, schedule)
+                        )
+                );
         return countHashMap;
     }
 

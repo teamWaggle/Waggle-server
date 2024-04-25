@@ -2,6 +2,7 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.example.waggle.global.util.ScheduleUtil;
+import com.example.waggle.web.dto.schedule.ScheduleResponse;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.OverlappedScheduleDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
@@ -53,6 +54,16 @@ public class ScheduleConverter {
                 .scheduleTitle(schedule.getTitle())
                 .teamName(schedule.getTeam().getName())
                 .teamColor(schedule.getTeam().getTeamColor())
+                .build();
+    }
+
+    public static ScheduleResponse.OverlappedScheduleListDto toOverlappedScheduleListDto(List<Schedule> scheduleList) {
+        return ScheduleResponse.OverlappedScheduleListDto.builder()
+                .overlappedScheduleDtoList(
+                        scheduleList.stream()
+                                .map(ScheduleConverter::toOverlappedScheduleDto).collect(Collectors.toList())
+                )
+                .scheduleCount(scheduleList.size())
                 .build();
     }
 

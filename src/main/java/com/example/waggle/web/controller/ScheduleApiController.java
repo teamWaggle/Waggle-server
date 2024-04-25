@@ -14,6 +14,7 @@ import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.OverlappedScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleResponse.OverlappedScheduleListDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -145,6 +146,18 @@ public class ScheduleApiController {
                 scheduleQueryService.getMapOfOverlappedScheduleCount(member, scheduleListDto)
         );
         return ApiResponseDto.onSuccess(scheduleListDto);
+    }
+
+    @Operation(summary = "겹치는 일정 조회 🔑", description = "조회한 스케줄과 비교했을 때 사용자가 가지는 스케줄과 겹치는 스케줄을 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/{scheduleId}/overlap")
+    public ApiResponseDto<OverlappedScheduleListDto> getOverlappingSchedules(
+            @AuthUser Member member,
+            @PathVariable("scheduleId") Long scheduleId) {
+        List<Schedule> overlappingSchedules = scheduleQueryService.findOverlappingSchedules(member, scheduleId);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toOverlappedScheduleListDto(overlappingSchedules));
     }
 
     @Operation(summary = "특정 사용자의 모든 일정 조회", description = "특정 사용자가 선택한 모든 일정을 가져옵니다.")
