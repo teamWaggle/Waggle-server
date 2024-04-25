@@ -2,9 +2,9 @@ package com.example.waggle.web.converter;
 
 import com.example.waggle.domain.pet.entity.Pet;
 import com.example.waggle.global.util.MediaUtil;
-
 import com.example.waggle.web.dto.pet.PetResponse.PetDetailDto;
 import com.example.waggle.web.dto.pet.PetResponse.PetSummaryDto;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,5 +32,11 @@ public class PetConverter {
 
     public static List<PetSummaryDto> toPetSummaryListDto(List<Pet> pets) {
         return pets.stream().map(PetConverter::toPetSummaryDto).collect(Collectors.toList());
+    }
+
+    public static List<PetDetailDto> toPetDetailListDto(List<Pet> pets) {
+        return pets.stream()
+                .map(PetConverter::toPetDetailDto)
+                .collect(Collectors.toList());
     }
 }
