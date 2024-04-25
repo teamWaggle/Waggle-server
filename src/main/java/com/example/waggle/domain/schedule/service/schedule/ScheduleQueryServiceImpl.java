@@ -10,6 +10,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -126,16 +128,20 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .collect(Collectors.toList());
         List<Schedule> scheduleList = scheduleRepository.findAllById(boardIdList);
         scheduleList.stream()
-                .forEach(schedule -> countHashMap.put(schedule.getId(),
-                        memberScheduleRepository.countOverlappedSchedule(
-                                member,
-                                schedule.getId(),
-                                schedule.getStartDate(),
-                                schedule.getStartTime(),
-                                schedule.getEndDate(),
-                                schedule.getEndTime()
-                        )
-                ));
+                .forEach(schedule -> {
+                    countHashMap.put(schedule.getId(),
+                            memberScheduleRepository.countOverlappedSchedule(
+                                    member,
+                                    schedule.getId(),
+                                    schedule.getStartDate(),
+                                    schedule.getStartTime(),
+                                    schedule.getEndDate(),
+                                    schedule.getEndTime()
+                            )
+                    );
+                    log.info("startDate : {}", schedule.getStartDate());
+                    log.info("startTime : {}", schedule.getStartTime());
+                });
         return countHashMap;
     }
 
