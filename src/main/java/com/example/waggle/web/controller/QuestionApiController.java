@@ -46,6 +46,7 @@ public class QuestionApiController {
     private final QuestionQueryService questionQueryService;
     private final RecommendQueryService recommendQueryService;
     private final Sort latestSorting = Sort.by("createdDate").descending();
+    private final Sort resolutionStatusSorting = Sort.by("status").descending().and(latestSorting);
 
     @Operation(summary = "질문 작성 🔑", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -96,7 +97,7 @@ public class QuestionApiController {
     @GetMapping
     public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, resolutionStatusSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
