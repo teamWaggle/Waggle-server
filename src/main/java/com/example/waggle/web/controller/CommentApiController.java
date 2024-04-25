@@ -41,7 +41,7 @@ public class CommentApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/page/{boardId}")
+    @GetMapping("/{boardId}/paged")
     public ApiResponseDto<CommentListDto> getCommentsByPage(@PathVariable("boardId") Long boardId,
                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
@@ -54,7 +54,7 @@ public class CommentApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/page/{userUrl}/question")
+    @GetMapping("/members/{userUrl}/question/paged")
     public ApiResponseDto<CommentListDto> getMyQuestionCommentsByPage(@PathVariable("userUrl") String userUrl,
                                                                       @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
@@ -67,7 +67,7 @@ public class CommentApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/page/{userUrl}/siren")
+    @GetMapping("/members/{userUrl}/siren/paged")
     public ApiResponseDto<CommentListDto> getMySirenCommentsByPage(@PathVariable("userUrl") String userUrl,
                                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, oldestSorting);
