@@ -5,7 +5,7 @@ import com.example.waggle.domain.notification.entity.NotificationType;
 
 public interface NotificationCommandService {
 
-    void convertIsRead(Member receiver, Long notificationId);
+    void markNotificationAsRead(Member receiver, Long notificationId);
 
     void convertIsRead(Member receiver, Long targetId, NotificationType type);
 }

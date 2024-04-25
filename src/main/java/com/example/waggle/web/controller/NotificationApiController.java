@@ -61,7 +61,7 @@ public class NotificationApiController {
     @PostMapping(value = "/status/{notificationId}")
     public ApiResponseDto<Boolean> getNotifications(@AuthUser Member member,
                                                     @PathVariable Long notificationId) {
-        notificationCommandService.convertIsRead(member, notificationId);
+        notificationCommandService.markNotificationAsRead(member, notificationId);
         return ApiResponseDto.onSuccess(true);
     }
 

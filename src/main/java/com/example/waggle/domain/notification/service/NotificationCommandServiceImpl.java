@@ -17,7 +17,7 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
     private final NotificationRepository notificationRepository;
 
     @Override
-    public void convertIsRead(Member receiver, Long notificationId) {
+    public void markNotificationAsRead(Member receiver, Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_FOUND));
         validateNotification(receiver, notification);
