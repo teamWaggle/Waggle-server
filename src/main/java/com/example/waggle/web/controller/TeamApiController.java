@@ -1,7 +1,6 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
@@ -194,11 +193,9 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{teamId}/participation")
-    public ApiResponseDto<Boolean> requestParticipation(@PathVariable("teamId") Long teamId,
-                                                        @AuthUser Member member) {
-        AlarmEvent alarmEvent = teamCommandService.requestParticipation(teamId, member);
-//        alarmProducer.send(alarmEvent);
-        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    public ApiResponseDto<Long> requestParticipation(@PathVariable("teamId") Long teamId,
+                                                     @AuthUser Member member) {
+        return ApiResponseDto.onSuccess(teamCommandService.requestParticipation(teamId, member));
     }
 
 }
