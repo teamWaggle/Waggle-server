@@ -1,10 +1,16 @@
 package com.example.waggle.global.payload.code;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -103,9 +109,15 @@ public enum ErrorStatus implements BaseCode {
     MEDIA_COUNT_IS_DIFFERENT(BAD_REQUEST, 4353, "새로 업로드 요청한 파일의 개수와 실제 post한 파일의 개수가 일치하지 않습니다"),
     MEDIA_PREFIX_IS_WRONG(BAD_REQUEST, 4354, "요청한 이미지 url의 prefix가 잘못되었습니다."),
 
-    //알림 관련 오류(4400 ~ 4449)
-    NOTIFICATION_NOT_FOUND(NOT_FOUND, 4400, "존재하지 않는 알림입니다"),
-    NOTIFICATION_NOT_YOURS(BAD_REQUEST, 4401, "당신의 알림이 아닙니다");
+    // 채팅 관련 오류(4400 ~ 4449)
+    CHAT_ROOM_NOT_FOUND(NOT_FOUND, 4400, "존재하지 않는 채팅방입니다."),
+    CHAT_ROOM_MEMBER_NOT_FOUND(NOT_FOUND, 4401, "회원이 채팅방에 존재하지 않습니다."),
+    CHAT_ROOM_ACCESS_DENIED(FORBIDDEN, 4402, "채팅방 접근이 거부되었습니다."),
+    CHAT_ROOM_LEAVE_DENIED(FORBIDDEN, 4403, "채팅방에서의 퇴장이 거부되었습니다.");
+
+    //알림 관련 오류(4450 ~ 4499)
+    NOTIFICATION_NOT_FOUND(NOT_FOUND, 4450, "존재하지 않는 알림입니다"),
+    NOTIFICATION_NOT_YOURS(BAD_REQUEST, 4451, "당신의 알림이 아닙니다");
 
 
     private final HttpStatus httpStatus;
