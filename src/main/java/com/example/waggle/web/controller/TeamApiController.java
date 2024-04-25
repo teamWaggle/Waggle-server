@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/teams")
@@ -158,7 +160,7 @@ public class TeamApiController {
     })
     @GetMapping("/recommend")
     public ApiResponseDto<TeamSummaryListDto> getRecommendedTeam(@RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 3);
+        Pageable pageable = PageRequest.of(currentPage, TEAM_RECOMMEND_SIZE);
         Page<Team> teamByContainName = teamQueryService.getPopularTeamListTop3(pageable);
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teamByContainName));
     }
