@@ -1,7 +1,6 @@
 package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.notification.entity.alarm.AlarmEvent;
 import com.example.waggle.web.dto.schedule.TeamRequest;
 
 public interface TeamCommandService {
@@ -18,7 +17,7 @@ public interface TeamCommandService {
 
     void changeTeamLeader(Long teamId, Long newLeaderId, Member leader);
 
-    AlarmEvent requestParticipation(Long teamId, Member member);
+    Long requestParticipation(Long teamId, Member member);
 
     void respondToParticipation(Long teamId, Long memberId, Member leader, boolean accept);
 
