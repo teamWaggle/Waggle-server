@@ -51,10 +51,10 @@ public class MessageDto implements Serializable {
     public ChatMessage toEntity() {
         return ChatMessage.builder()
                 .chatRoomId(chatRoomId)
-                .messageType(messageType.toString())
+                .messageType(ChatMessage.MessageType.valueOf(messageType.toString()))
                 .content(content)
                 .senderUserUrl(senderUserUrl)
-                .sendDate(Instant.ofEpochMilli(sendTime).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())
+                .sendTime(Instant.ofEpochMilli(sendTime).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                 .build();
     }
 

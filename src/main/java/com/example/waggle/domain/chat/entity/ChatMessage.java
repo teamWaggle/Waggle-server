@@ -1,14 +1,18 @@
 package com.example.waggle.domain.chat.entity;
 
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "chat")
+@ToString
+@Document(collection = "chatMessage")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -16,15 +20,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ChatMessage {
 
     @Id
-    private Long id;
+    private String id;
+
+    @NotNull
     private Long chatRoomId;
-    private String messageType;
+
+    @NotNull
+    private MessageType messageType;
+
+    @NotBlank
     private String content;
-    private Long senderId;
-    private String senderNickname;
+
+    @NotBlank
     private String senderUserUrl;
-    private LocalDateTime sendDate;
-    private Integer readCount;
+
+    @NotNull
+    private LocalDateTime sendTime;
 
     public enum MessageType {
         ENTER, TALK
