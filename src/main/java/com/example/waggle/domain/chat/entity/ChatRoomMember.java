@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,9 +31,16 @@ public class ChatRoomMember {
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
+    private LocalDateTime lastAccessTime;
+
     @Builder
-    public ChatRoomMember(Member member, ChatRoom chatRoom) {
+    public ChatRoomMember(Member member, ChatRoom chatRoom, LocalDateTime lastAccessTime) {
         this.member = member;
         this.chatRoom = chatRoom;
+        this.lastAccessTime = lastAccessTime;
+    }
+
+    public void updateLastAccessTime(LocalDateTime time) {
+        this.lastAccessTime = time;
     }
 }

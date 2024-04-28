@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Websocket ChatRoom</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/dist/css/bootstrap.min.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <button onclick="location.href=`/chat/rooms`">돌아가기</button>
+</div>
+<div class="container" id="app" v-cloak>
+    <div>
+        <h2>{{chatRoom.name}}</h2>
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <label class="input-group-text">내용</label>
+        </div>
+        <input type="text" class="form-control" v-model="content" v-on:keypress.enter="sendMessage">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button" @click="sendMessage">보내기</button>
+        </div>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item" v-for="message in messages">
+            {{message.senderNickname}}: {{message.content}}
+        </li>
+    </ul>
+    <div></div>
+</div>
+<!-- JavaScript -->
+<script src="/webjars/vue/2.5.16/dist/vue.min.js"></script>
+<script src="/webjars/axios/0.17.1/dist/axios.min.js"></script>
+<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
+<script>
+    //alert(document.title);
+    // websocket & stomp initialize
+    var sock = new SockJS("/ws/chat");
+    var ws = Stomp.over(sock);
+    var reconnect = 0;
+    // vue.js
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            chatRoomId: '',
+            chatRoom: {},
+            accessToken: '',
+            senderUserUrl: '',
+            content: '',
+            messages: [],
+        },
+        created() {
+            this.chatRoomId = localStorage.getItem('wschat.chatRoomId');
+            this.accessToken = localStorage.getItem('wschat.accessToken');
+            this.findRoom();
+            this.fetchUserInfo(); // 이제 fetchUserInfo가 connect를 자동으로 호출하게 됩니다.
+        },
+        methods: {
+            fetchUserInfo: function () {
+                axios.get('/api/members/info', {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.accessToken
+                    }
+                }).then(response => {
+                    const userInfo = response.data.result;
+                    this.senderUserUrl = userInfo.userUrl;
+                    console.log('senderUserUrl = ' + this.senderUserUrl);
+                    this.connect(); // Axios 호출이 성공하면 connect를 호출
+                }).catch(error => {
+                    console.error("Error fetching user info:", error);
+                });
+            },
+            findRoom: function () {
+                axios.get('/api/chat/rooms/' + this.chatRoomId).then(response => {
+                    this.chatRoom = response.data.result;
+                });
+            },
+            sendMessage: function () {
+                console.log('sendMessage.senderUserUrl = ' + this.senderUserUrl);
+                this.ws.send("/publish/message", {
+                    'Authorization': 'Bearer ' + this.accessToken
+                }, JSON.stringify({
+                    messageType: 'TALK',
+                    chatRoomId: this.chatRoomId,
+                    senderUserUrl: this.senderUserUrl,
+                    content: this.content
+                }));
+                this.content = '';
+            },
+            recvMessage: function (recv) {
+                console.log('recv.senderUserUrl = ' + recv.senderUserUrl);
+                this.messages.unshift({
+                    "messageType": recv.messageType,
+                    "senderUserUrl": recv.senderUserUrl,
+                    "senderNickname": recv.messageType == 'ENTER' ? '[알림]' : recv.senderNickname,
+                    "senderProfileImgUrl": recv.senderProfileImgUrl,
+                    "content": recv.content,
+                })
+            },
+            connect: function () {
+                console.log('Attempting to connect...');
+                this.ws = Stomp.over(new SockJS("/ws/chat"));
+                this.ws.connect({
+                    'Authorization': 'Bearer ' + this.accessToken
+                }, (frame) => {
+                    console.log('Connected: ' + frame);
+                    this.ws.subscribe("/subscribe/" + this.chatRoomId, (message) => {
+                        var recv = JSON.parse(message.body);
+                        this.recvMessage(recv);
+                    }, {
+                        'Authorization': 'Bearer ' + this.accessToken
+                    });
+                    this.ws.send("/publish/message", {
+                        'Authorization': 'Bearer ' + this.accessToken
+                    }, JSON.stringify({
+                        messageType: 'ENTER',
+                        chatRoomId: this.chatRoomId,
+                        senderUserUrl: this.senderUserUrl,
+                    }));
+                }, (error) => {
+                    if (this.reconnect++ <= 5) {
+                        setTimeout(() => {
+                            console.log("Attempting reconnect...");
+                            this.connect();
+                        }, 10 * 1000);
+                    }
+                });
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

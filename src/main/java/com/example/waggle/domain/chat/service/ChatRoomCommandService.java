@@ -4,6 +4,7 @@ import com.example.waggle.domain.chat.entity.ChatRoom;
 import com.example.waggle.domain.chat.entity.ChatRoomMember;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.chat.ChatRoomRequest;
+import java.time.LocalDateTime;
 
 public interface ChatRoomCommandService {
 
@@ -16,5 +17,7 @@ public interface ChatRoomCommandService {
     void deleteChatRoom(Member member, Long chatRoomId);
 
     ChatRoom updateChatRoom(Member member, Long chatRoomId, ChatRoomRequest request);
+
+    Long updateLastAccessTime(Member member, Long chatRoomId, LocalDateTime lastAccessTime);
 
 }

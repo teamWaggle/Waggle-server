@@ -79,6 +79,7 @@ public class SecurityConfig {
                 .requestMatchers(additionalSwaggerRequests()).permitAll()
                 .requestMatchers(authRelatedEndpoints()).permitAll()
                 .requestMatchers(permitAllRequest()).permitAll()
+                .requestMatchers("/ws/**", "/subscribe/**", "/publish/**").permitAll()
                 .requestMatchers(authorizationAdmin()).hasRole("ADMIN")
                 .requestMatchers(authorizationDormant()).hasRole("DORMANT")
                 .requestMatchers(authorizationGuest()).hasRole("GUEST")
@@ -151,6 +152,9 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/recommends/{boardId}/memberList"),
                 antMatcher(HttpMethod.GET, "/api/follows/**"),
                 antMatcher(HttpMethod.GET, "/api/chat/rooms/**"),
+                antMatcher("/ws/chat/**"),
+                antMatcher("/chat/**"),
+                antMatcher("/webjars/**"),
                 antMatcher("/api/media/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);

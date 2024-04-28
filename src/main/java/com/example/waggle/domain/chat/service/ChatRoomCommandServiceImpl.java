@@ -8,6 +8,7 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.ChatRoomHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.chat.ChatRoomRequest;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,6 +102,14 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
         checkChatRoomAccess(member, chatRoom);
         chatRoom.updateChatRoom(request.getName(), request.getDescription(), request.getPassword());
         return chatRoom;
+    }
+
+    @Override
+    public Long updateLastAccessTime(Member member, Long chatRoomId, LocalDateTime lastAccessTime) {
+        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoomId, member.getId())
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_MEMBER_NOT_FOUND));
+        chatRoomMember.updateLastAccessTime(LocalDateTime.now());
+        return chatRoomMember.getId();
     }
 
     private void checkChatRoomAccess(Member member, ChatRoom chatRoom) {

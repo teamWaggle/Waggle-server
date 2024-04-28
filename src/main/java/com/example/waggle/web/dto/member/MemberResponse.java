@@ -18,6 +18,7 @@ public class MemberResponse {
     public static class MemberStorageDto {
         private Long memberId;
         private String userUrl;
+        private String profileImgUrl;
     }
 
     @Data

@@ -25,3 +25,9 @@
 #    retry: 3
 #    enable-idempotence: true
 #    max-in-flight-requests-per-connection: 3
+
+kafka:
+  waggle:
+    topic: waggle-chat
+    groupId: waggle
+    broker: localhost:9092
