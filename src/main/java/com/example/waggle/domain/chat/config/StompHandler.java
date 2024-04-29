@@ -55,23 +55,10 @@ public class StompHandler implements ChannelInterceptor {
         return null;
     }
 
-    private void connectToChatRoom(StompHeaderAccessor accessor, String username) {
-        String chatRoomId = getChatRoomId(accessor);
-        // TODO 마지막 채팅방 접속 시간 업데이트
-    }
-
-    private void broadcastNewMember(String chatRoomId, String username) {
-        // TODO 채팅방에 있는 모든 사용자에게 새로운 사용자가 들어왔다는 메시지를 전송하는 로직
-    }
-
     private String verifyAccessToken(String accessToken) {
         if (!tokenService.validateToken(accessToken)) {
             throw new MemberHandler(ErrorStatus.AUTH_INVALID_TOKEN);
         }
         return tokenService.getAuthentication(accessToken).getName();
-    }
-
-    private String getChatRoomId(StompHeaderAccessor accessor) {
-        return accessor.getFirstNativeHeader("chatRoomId");
     }
 }

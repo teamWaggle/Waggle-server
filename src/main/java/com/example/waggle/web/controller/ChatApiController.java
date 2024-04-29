@@ -1,22 +1,28 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.chat.entity.ChatMessage;
 import com.example.waggle.domain.chat.entity.ChatRoom;
 import com.example.waggle.domain.chat.service.ChatMessageQueryService;
 import com.example.waggle.domain.chat.service.ChatRoomCommandService;
 import com.example.waggle.domain.chat.service.ChatRoomQueryService;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.annotation.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.ChatRoomConverter;
+import com.example.waggle.web.converter.MemberConverter;
+import com.example.waggle.web.dto.chat.ChatMessageResponse;
+import com.example.waggle.web.dto.chat.ChatMessageResponse.ChatMessageDto;
 import com.example.waggle.web.dto.chat.ChatRoomRequest;
 import com.example.waggle.web.dto.chat.ChatRoomResponse;
 import com.example.waggle.web.dto.chat.ChatRoomResponse.ActiveChatRoomDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +44,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @ApiResponse(responseCode = "2000", description = "성공")
 @Tag(name = "Chat API", description = "채팅 API")
-public class ChatRoomApiController {
+public class ChatApiController {
 
     private final ChatRoomCommandService chatRoomCommandService;
     private final ChatRoomQueryService chatRoomQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
+    private final MemberQueryService memberQueryService;
 
     @Operation(summary = "채팅방 생성 🔑", description = "사용자가 새로운 채팅방을 생성합니다. 생성 성공 시 채팅방의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -157,6 +164,36 @@ public class ChatRoomApiController {
                 .name(room.getName())
                 .unreadCount(unreadCount)
                 .lastMessageContent(lastMessageContent)
+                .build();
+    }
+
+    @Operation(summary = "특정 채팅 내역 목록 조회 (페이징 O)", description = "특정 채팅 내역 목록을 조회합니다. 페이지의 크기는 20입니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/rooms/{chatRoomId}/messages")
+    public ApiResponseDto<ChatMessageResponse.ChatMessageListDto> getPagedChatMessages(@AuthUser Member member,
+                                                                                       @PathVariable("chatRoomId") Long chatRoomId,
+                                                                                       @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        LocalDateTime now = LocalDateTime.now();
+        chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_MESSAGE_SIZE);
+        Page<ChatMessage> chatMessages = chatMessageQueryService.getPagedChatMessages(member, chatRoomId,
+                pageable);
+        List<ChatMessageDto> chatMessageList = chatMessages.getContent().stream()
+                .map(this::buildChatMessageDto)
+                .collect(Collectors.toList());
+        return ApiResponseDto.onSuccess(ChatRoomConverter.toChatMessageListDto(chatMessageList));
+    }
+
+    private ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {
+        Member sender = memberQueryService.getMemberByUserUrl(chatMessage.getSenderUserUrl());
+        return ChatMessageDto.builder()
+                .id(chatMessage.getId())
+                .content(chatMessage.getContent())
+                .sendTime(chatMessage.getSendTime())
+                .messageType(chatMessage.getMessageType())
+                .sender(MemberConverter.toMemberSummaryDto(sender))
                 .build();
     }
 
