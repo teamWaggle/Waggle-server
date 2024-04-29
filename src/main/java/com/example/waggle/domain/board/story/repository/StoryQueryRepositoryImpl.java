@@ -18,7 +18,7 @@ import static com.example.waggle.domain.recommend.entity.QRecommend.recommend;
 
 @Repository
 @RequiredArgsConstructor
-public class StoryQueryReposiotryImpl implements StoryQueryRepository {
+public class StoryQueryRepositoryImpl implements StoryQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
