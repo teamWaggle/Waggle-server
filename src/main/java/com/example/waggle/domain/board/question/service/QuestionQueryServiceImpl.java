@@ -5,9 +5,7 @@ import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.example.waggle.web.dto.question.QuestionFilterParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,7 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -56,6 +57,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     @Override
     public Page<Question> getPagedQuestions(Pageable pageable) {
         return questionRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Question> getPagedQuestionsByFilter(QuestionFilterParam filterParam) {
+        return null;
     }
 
     @Override
