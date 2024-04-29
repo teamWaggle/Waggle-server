@@ -109,12 +109,12 @@ public class QuestionApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping
+    @GetMapping("/filter")
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsByFilterParam(
             @RequestParam(name = "filterParam") QuestionFilterParam filterParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, resolutionStatusSorting);
-        Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
+        Page<Question> questions = questionQueryService.getPagedQuestionsByFilter(filterParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);

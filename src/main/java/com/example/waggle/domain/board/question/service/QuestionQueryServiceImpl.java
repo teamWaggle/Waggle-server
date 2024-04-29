@@ -60,8 +60,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
-    public Page<Question> getPagedQuestionsByFilter(QuestionFilterParam filterParam) {
-        return null;
+    public Page<Question> getPagedQuestionsByFilter(QuestionFilterParam filterParam, Pageable pageable) {
+        return questionRepository.findQuestionsByFilter(filterParam, pageable);
     }
 
     @Override

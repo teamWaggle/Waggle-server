@@ -26,6 +26,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
         JPAQuery<Question> baseQuery = query.selectFrom(question);
         if (filterParam == QuestionFilterParam.recommend) {
             baseQuery.leftJoin(recommend).on(recommend.board.eq(question._super));
+            baseQuery.groupBy(question);
         }
         List<Question> questionList = baseQuery
                 .orderBy(createOrderFilter(filterParam))

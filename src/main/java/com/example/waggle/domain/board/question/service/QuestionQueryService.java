@@ -21,7 +21,7 @@ public interface QuestionQueryService {
 
     Page<Question> getPagedQuestions(Pageable pageable);
 
-    Page<Question> getPagedQuestionsByFilter(QuestionFilterParam filterParam);
+    Page<Question> getPagedQuestionsByFilter(QuestionFilterParam filterParam, Pageable pageable);
 
     List<Question> getRepresentativeQuestionList();
 
