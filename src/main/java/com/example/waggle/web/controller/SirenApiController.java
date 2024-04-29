@@ -1,6 +1,7 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.board.siren.entity.Siren;
+import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
 import com.example.waggle.domain.member.entity.Member;
@@ -11,6 +12,7 @@ import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.SirenConverter;
+import com.example.waggle.web.dto.siren.SirenFilterParam;
 import com.example.waggle.web.dto.siren.SirenRequest;
 import com.example.waggle.web.dto.siren.SirenResponse.RepresentativeSirenDto;
 import com.example.waggle.web.dto.siren.SirenResponse.SirenDetailDto;
@@ -31,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -94,8 +98,38 @@ public class SirenApiController {
     @GetMapping
     public ApiResponseDto<SirenListDto> getAllSiren(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
+        SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
+        setRecommendCntInList(listDto.getSirenList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "사이렌 필터 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/filter")
+    public ApiResponseDto<SirenListDto> getSirensByFilter(
+            @RequestParam(name = "filterParam") SirenFilterParam filterParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByFilter(filterParam, pageable);
+        SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
+        setRecommendCntInList(listDto.getSirenList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "사이렌 카테고리 조회", description = "카테고리 옵션에 맞추어 결과를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/category")
+    public ApiResponseDto<SirenListDto> getSirensByCategory(
+            @RequestParam(name = "category") SirenCategory category,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByCategory(category, pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
@@ -119,7 +153,7 @@ public class SirenApiController {
     @GetMapping("/member/{userUrl}")
     public ApiResponseDto<SirenListDto> getSirenListByUsername(@PathVariable("userUrl") String userUrl,
                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 10, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByUserUrl(userUrl, pageable);
         SirenListDto listDto = SirenConverter.toSirenListDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
