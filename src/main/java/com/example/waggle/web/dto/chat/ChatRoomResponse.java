@@ -32,4 +32,25 @@ public class ChatRoomResponse {
     public static class ChatRoomListDto {
         private List<ChatRoomDetailDto> chatRooms;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class ActiveChatRoomDto {
+        private Long id;
+        private String name;
+        private long unreadCount;
+        private String lastMessageContent;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class ActiveChatRoomListDto {
+        private List<ActiveChatRoomDto> chatRooms;
+    }
 }

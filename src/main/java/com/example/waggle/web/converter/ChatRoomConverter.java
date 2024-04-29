@@ -1,9 +1,12 @@
 package com.example.waggle.web.converter;
 
+import com.example.waggle.domain.chat.entity.ChatMessage;
 import com.example.waggle.domain.chat.entity.ChatRoom;
 import com.example.waggle.domain.chat.entity.ChatRoomMember;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.web.dto.chat.ChatRoomResponse;
+import com.example.waggle.web.dto.chat.ChatRoomResponse.ActiveChatRoomDto;
+import com.example.waggle.web.dto.chat.ChatRoomResponse.ActiveChatRoomListDto;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,4 +39,18 @@ public class ChatRoomConverter {
                 .build();
     }
 
+    public static ActiveChatRoomDto toActiveChatRoomDto(ChatRoom chatRoom, ChatMessage lastMessage, long unreadCount) {
+        return ChatRoomResponse.ActiveChatRoomDto.builder()
+                .id(chatRoom.getId())
+                .name(chatRoom.getName())
+                .unreadCount(unreadCount)
+                .lastMessageContent(lastMessage.getContent())
+                .build();
+    }
+
+    public static ActiveChatRoomListDto toActiveChatRoomList(List<ActiveChatRoomDto> chatRooms) {
+        return ChatRoomResponse.ActiveChatRoomListDto.builder()
+                .chatRooms(chatRooms)
+                .build();
+    }
 }

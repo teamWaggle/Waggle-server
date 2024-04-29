@@ -1,5 +1,7 @@
 package com.example.waggle.web.controller;
 
+import com.example.waggle.domain.chat.entity.ChatRoom;
+import com.example.waggle.domain.chat.service.ChatMessageQueryService;
 import com.example.waggle.domain.chat.service.ChatRoomCommandService;
 import com.example.waggle.domain.chat.service.ChatRoomQueryService;
 import com.example.waggle.domain.member.entity.Member;
@@ -11,10 +13,14 @@ import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.ChatRoomConverter;
 import com.example.waggle.web.dto.chat.ChatRoomRequest;
 import com.example.waggle.web.dto.chat.ChatRoomResponse;
+import com.example.waggle.web.dto.chat.ChatRoomResponse.ActiveChatRoomDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,20 +34,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/chat/rooms")
+@RequestMapping("/api/chat")
 @RestController
 @ApiResponse(responseCode = "2000", description = "성공")
-@Tag(name = "ChatRoom API", description = "채팅방 API")
+@Tag(name = "Chat API", description = "채팅 API")
 public class ChatRoomApiController {
 
     private final ChatRoomCommandService chatRoomCommandService;
     private final ChatRoomQueryService chatRoomQueryService;
+    private final ChatMessageQueryService chatMessageQueryService;
 
     @Operation(summary = "채팅방 생성 🔑", description = "사용자가 새로운 채팅방을 생성합니다. 생성 성공 시 채팅방의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @PostMapping
+    @PostMapping("/rooms")
     public ApiResponseDto<Long> createChatRoom(@AuthUser Member member, @RequestBody ChatRoomRequest request) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.createChatRoom(member, request).getId());
     }
@@ -51,7 +58,7 @@ public class ChatRoomApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR,
             ErrorStatus.CHAT_ROOM_NOT_FOUND
     })
-    @PostMapping("/{chatRoomId}/join")
+    @PostMapping("/rooms/{chatRoomId}/join")
     public ApiResponseDto<Long> joinChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
                                              @RequestParam(value = "password", required = false) String password) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.joinChatRoom(member, chatRoomId, password).getId());
@@ -62,7 +69,7 @@ public class ChatRoomApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR,
             ErrorStatus.CHAT_ROOM_NOT_FOUND
     })
-    @PutMapping("/{chatRoomId}")
+    @PutMapping("/rooms/{chatRoomId}")
     public ApiResponseDto<Long> updateChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
                                                @RequestBody ChatRoomRequest request) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.updateChatRoom(member, chatRoomId, request).getId());
@@ -76,7 +83,7 @@ public class ChatRoomApiController {
             ErrorStatus.CHAT_ROOM_ACCESS_DENIED,
             ErrorStatus.CHAT_ROOM_LEAVE_DENIED
     })
-    @DeleteMapping("/{chatRoomId}")
+    @DeleteMapping("/rooms/{chatRoomId}")
     public ApiResponseDto<Boolean> deleteChatRoom(@AuthUser Member member,
                                                   @PathVariable("chatRoomId") Long chatRoomId) {
         chatRoomCommandService.deleteChatRoom(member, chatRoomId);
@@ -89,7 +96,7 @@ public class ChatRoomApiController {
             ErrorStatus.CHAT_ROOM_NOT_FOUND,
             ErrorStatus.CHAT_ROOM_MEMBER_NOT_FOUND
     })
-    @DeleteMapping("/{chatRoomId}/leave")
+    @DeleteMapping("/rooms/{chatRoomId}/leave")
     public ApiResponseDto<Boolean> leaveChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId) {
         chatRoomCommandService.leaveChatRoom(member, chatRoomId);
         return ApiResponseDto.onSuccess(true);
@@ -99,7 +106,7 @@ public class ChatRoomApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/all")
+    @GetMapping("/rooms/all")
     public ApiResponseDto<ChatRoomResponse.ChatRoomListDto> getChatRooms() {
         return ApiResponseDto.onSuccess(ChatRoomConverter.toChatRoomListDto(chatRoomQueryService.getChatRooms()));
     }
@@ -108,7 +115,7 @@ public class ChatRoomApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/paged")
+    @GetMapping("/rooms/paged")
     public ApiResponseDto<ChatRoomResponse.ChatRoomListDto> getPagedChatRooms(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE);
@@ -121,10 +128,36 @@ public class ChatRoomApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR,
             ErrorStatus.CHAT_ROOM_NOT_FOUND
     })
-    @GetMapping("/{chatRoomId}")
+    @GetMapping("/rooms/{chatRoomId}")
     public ApiResponseDto<ChatRoomResponse.ChatRoomDetailDto> getChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         return ApiResponseDto.onSuccess(
                 ChatRoomConverter.toChatRoomDetailDto(chatRoomQueryService.getChatRoomById(chatRoomId)));
+    }
+
+    @Operation(summary = "특정 회원이 참여중인 채팅방 목록 전체 조회 (페이징 O)", description = "회원이 참여중인 채팅방 목록을 조회합니다. 페이지의 크기는 9입니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/rooms/active")
+    public ApiResponseDto<ChatRoomResponse.ActiveChatRoomListDto> getPagedChatRoomsByMember(@AuthUser Member member,
+                                                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE);
+        Page<ChatRoom> chatRooms = chatRoomQueryService.getPagedActiveChatRoomsByMember(member, pageable);
+        List<ActiveChatRoomDto> activeChatRooms = chatRooms.getContent().stream()
+                .map(room -> buildActiveChatRoomDto(member, room))
+                .collect(Collectors.toList());
+        return ApiResponseDto.onSuccess(ChatRoomConverter.toActiveChatRoomList(activeChatRooms));
+    }
+
+    private ActiveChatRoomDto buildActiveChatRoomDto(Member member, ChatRoom room) {
+        long unreadCount = chatRoomQueryService.getUnreadMessagesCount(member, room.getId());
+        String lastMessageContent = chatRoomQueryService.getLastMessageContent(room.getId());
+        return ActiveChatRoomDto.builder()
+                .id(room.getId())
+                .name(room.getName())
+                .unreadCount(unreadCount)
+                .lastMessageContent(lastMessageContent)
+                .build();
     }
 
 }

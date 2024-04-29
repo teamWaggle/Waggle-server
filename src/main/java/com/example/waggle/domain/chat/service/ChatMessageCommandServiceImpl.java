@@ -16,9 +16,7 @@ public class ChatMessageCommandServiceImpl implements ChatMessageCommandService 
 
     @Override
     public String createChatMessage(MessageDto messageDto) {
-        ChatMessage chatMessageDto = messageDto.toEntity();
-        ChatMessage chatMessage = chatMessageRepository.save(chatMessageDto);
-        log.info("chatMessage = {}", chatMessage);
+        ChatMessage chatMessage = chatMessageRepository.save(messageDto.toEntity());
         return chatMessage.getId();
     }
 }
