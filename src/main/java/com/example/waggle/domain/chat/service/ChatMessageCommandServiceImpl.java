@@ -4,10 +4,8 @@ import com.example.waggle.domain.chat.dto.MessageDto;
 import com.example.waggle.domain.chat.entity.ChatMessage;
 import com.example.waggle.domain.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatMessageCommandServiceImpl implements ChatMessageCommandService {

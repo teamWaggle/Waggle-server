@@ -2,7 +2,6 @@ package com.example.waggle.domain.chat.entity;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +34,7 @@ public class ChatMessage {
     private String senderUserUrl;
 
     @NotNull
-    private LocalDateTime sendTime;
+    private Long sendTime;
 
     public enum MessageType {
         ENTER, TALK

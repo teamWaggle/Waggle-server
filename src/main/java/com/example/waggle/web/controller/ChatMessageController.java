@@ -25,7 +25,6 @@ public class ChatMessageController {
     @MessageMapping("/message")
     public void sendMessage(MessageDto message) {
         Member member = memberQueryService.getMemberByUserUrl(message.getSenderUserUrl());
-        LocalDateTime accessTime = LocalDateTime.now();
         message.setSendTimeAndSenderInfo(LocalDateTime.now(), member.getNickname(), member.getProfileImgUrl());
         if (message.getMessageType().equals(MessageType.ENTER)) {
             message.setContent("🐶 " + message.getSenderNickname() + "님이 입장하셨습니다.");

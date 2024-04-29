@@ -12,13 +12,9 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.PageUtil;
-import com.example.waggle.web.converter.ChatRoomConverter;
-import com.example.waggle.web.converter.MemberConverter;
-import com.example.waggle.web.dto.chat.ChatMessageResponse;
-import com.example.waggle.web.dto.chat.ChatMessageResponse.ChatMessageDto;
-import com.example.waggle.web.dto.chat.ChatRoomRequest;
-import com.example.waggle.web.dto.chat.ChatRoomResponse;
-import com.example.waggle.web.dto.chat.ChatRoomResponse.ActiveChatRoomDto;
+import com.example.waggle.web.converter.ChatConverter;
+import com.example.waggle.web.dto.chat.ChatRequest;
+import com.example.waggle.web.dto.chat.ChatResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/chat")
 @RestController
@@ -56,7 +54,7 @@ public class ChatApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/rooms")
-    public ApiResponseDto<Long> createChatRoom(@AuthUser Member member, @RequestBody ChatRoomRequest request) {
+    public ApiResponseDto<Long> createChatRoom(@AuthUser Member member, @RequestBody ChatRequest request) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.createChatRoom(member, request).getId());
     }
 
@@ -68,7 +66,10 @@ public class ChatApiController {
     @PostMapping("/rooms/{chatRoomId}/join")
     public ApiResponseDto<Long> joinChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
                                              @RequestParam(value = "password", required = false) String password) {
-        return ApiResponseDto.onSuccess(chatRoomCommandService.joinChatRoom(member, chatRoomId, password).getId());
+        LocalDateTime now = LocalDateTime.now();
+        chatRoomCommandService.joinChatRoom(member, chatRoomId, password).getId();
+        Long updatedChatRoomMemberId = chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);
+        return ApiResponseDto.onSuccess(updatedChatRoomMemberId);
     }
 
     @Operation(summary = "채팅방 수정 🔑", description = "채팅방 호스트가 채팅방을 수정합니다. 호스트만 채팅방 수정 권한을 가지며, 성공적으로 수정 시 채팅방의 ID를 반환합니다.")
@@ -78,7 +79,7 @@ public class ChatApiController {
     })
     @PutMapping("/rooms/{chatRoomId}")
     public ApiResponseDto<Long> updateChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
-                                               @RequestBody ChatRoomRequest request) {
+                                               @RequestBody ChatRequest request) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.updateChatRoom(member, chatRoomId, request).getId());
     }
 
@@ -114,8 +115,8 @@ public class ChatApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/rooms/all")
-    public ApiResponseDto<ChatRoomResponse.ChatRoomListDto> getChatRooms() {
-        return ApiResponseDto.onSuccess(ChatRoomConverter.toChatRoomListDto(chatRoomQueryService.getChatRooms()));
+    public ApiResponseDto<ChatResponse.ChatRoomListDto> getChatRooms() {
+        return ApiResponseDto.onSuccess(ChatConverter.toChatRoomListDto(chatRoomQueryService.getChatRooms()));
     }
 
     @Operation(summary = "채팅방 목록 전체 조회 (페이징 O)", description = "채팅방 목록을 조회합니다. 페이지의 크기는 9입니다.")
@@ -123,11 +124,11 @@ public class ChatApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/rooms/paged")
-    public ApiResponseDto<ChatRoomResponse.ChatRoomListDto> getPagedChatRooms(
+    public ApiResponseDto<ChatResponse.ChatRoomListDto> getPagedChatRooms(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE);
         return ApiResponseDto.onSuccess(
-                ChatRoomConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRooms(pageable).getContent()));
+                ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRooms(pageable).getContent()));
     }
 
     @Operation(summary = "특정 채팅방 조회", description = "특정 채팅방을 조회합니다.")
@@ -136,9 +137,9 @@ public class ChatApiController {
             ErrorStatus.CHAT_ROOM_NOT_FOUND
     })
     @GetMapping("/rooms/{chatRoomId}")
-    public ApiResponseDto<ChatRoomResponse.ChatRoomDetailDto> getChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
+    public ApiResponseDto<ChatResponse.ChatRoomDetailDto> getChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         return ApiResponseDto.onSuccess(
-                ChatRoomConverter.toChatRoomDetailDto(chatRoomQueryService.getChatRoomById(chatRoomId)));
+                ChatConverter.toChatRoomDetailDto(chatRoomQueryService.getChatRoomById(chatRoomId)));
     }
 
     @Operation(summary = "특정 회원이 참여중인 채팅방 목록 전체 조회 (페이징 O)", description = "회원이 참여중인 채팅방 목록을 조회합니다. 페이지의 크기는 9입니다.")
@@ -146,25 +147,20 @@ public class ChatApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/rooms/active")
-    public ApiResponseDto<ChatRoomResponse.ActiveChatRoomListDto> getPagedChatRoomsByMember(@AuthUser Member member,
-                                                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<ChatResponse.ActiveChatRoomListDto> getPagedChatRoomsByMember(@AuthUser Member member,
+                                                                                        @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE);
         Page<ChatRoom> chatRooms = chatRoomQueryService.getPagedActiveChatRoomsByMember(member, pageable);
-        List<ActiveChatRoomDto> activeChatRooms = chatRooms.getContent().stream()
+        List<ChatResponse.ActiveChatRoomDto> activeChatRooms = chatRooms.getContent().stream()
                 .map(room -> buildActiveChatRoomDto(member, room))
                 .collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(ChatRoomConverter.toActiveChatRoomList(activeChatRooms));
+        return ApiResponseDto.onSuccess(ChatConverter.toActiveChatRoomList(activeChatRooms));
     }
 
-    private ActiveChatRoomDto buildActiveChatRoomDto(Member member, ChatRoom room) {
+    private ChatResponse.ActiveChatRoomDto buildActiveChatRoomDto(Member member, ChatRoom room) {
         long unreadCount = chatRoomQueryService.getUnreadMessagesCount(member, room.getId());
         String lastMessageContent = chatRoomQueryService.getLastMessageContent(room.getId());
-        return ActiveChatRoomDto.builder()
-                .id(room.getId())
-                .name(room.getName())
-                .unreadCount(unreadCount)
-                .lastMessageContent(lastMessageContent)
-                .build();
+        return ChatConverter.toActiveChatRoomDto(room, unreadCount, lastMessageContent);
     }
 
     @Operation(summary = "특정 채팅 내역 목록 조회 (페이징 O)", description = "특정 채팅 내역 목록을 조회합니다. 페이지의 크기는 20입니다.")
@@ -172,29 +168,21 @@ public class ChatApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/rooms/{chatRoomId}/messages")
-    public ApiResponseDto<ChatMessageResponse.ChatMessageListDto> getPagedChatMessages(@AuthUser Member member,
-                                                                                       @PathVariable("chatRoomId") Long chatRoomId,
-                                                                                       @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        LocalDateTime now = LocalDateTime.now();
-        chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);
+    public ApiResponseDto<ChatResponse.ChatMessageListDto> getPagedChatMessages(@AuthUser Member member,
+                                                                                @PathVariable("chatRoomId") Long chatRoomId,
+                                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_MESSAGE_SIZE);
         Page<ChatMessage> chatMessages = chatMessageQueryService.getPagedChatMessages(member, chatRoomId,
                 pageable);
-        List<ChatMessageDto> chatMessageList = chatMessages.getContent().stream()
+        List<ChatResponse.ChatMessageDto> chatMessageList = chatMessages.getContent().stream()
                 .map(this::buildChatMessageDto)
                 .collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(ChatRoomConverter.toChatMessageListDto(chatMessageList));
+        return ApiResponseDto.onSuccess(ChatConverter.toChatMessageListDto(chatMessageList));
     }
 
-    private ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {
+    private ChatResponse.ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {
         Member sender = memberQueryService.getMemberByUserUrl(chatMessage.getSenderUserUrl());
-        return ChatMessageDto.builder()
-                .id(chatMessage.getId())
-                .content(chatMessage.getContent())
-                .sendTime(chatMessage.getSendTime())
-                .messageType(chatMessage.getMessageType())
-                .sender(MemberConverter.toMemberSummaryDto(sender))
-                .build();
+        return ChatConverter.toChatMessageDto(chatMessage, sender);
     }
 
 }

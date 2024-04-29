@@ -1,9 +1,8 @@
 package com.example.waggle.domain.chat.dto;
 
 import com.example.waggle.domain.chat.entity.ChatMessage;
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ToString
 @Getter
 @Builder
@@ -54,7 +55,7 @@ public class MessageDto implements Serializable {
                 .messageType(ChatMessage.MessageType.valueOf(messageType.toString()))
                 .content(content)
                 .senderUserUrl(senderUserUrl)
-                .sendTime(Instant.ofEpochMilli(sendTime).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())
+                .sendTime(sendTime)
                 .build();
     }
 

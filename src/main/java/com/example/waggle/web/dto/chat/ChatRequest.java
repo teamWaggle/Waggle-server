@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatRoomRequest {
+public class ChatRequest {
 
     @NotEmpty
     private String name;
@@ -16,7 +16,7 @@ public class ChatRoomRequest {
     private String password;
 
     @Builder
-    public ChatRoomRequest(String name, String description, String password) {
+    public ChatRequest(String name, String description, String password) {
         this.name = name;
         this.description = description;
         this.password = password;

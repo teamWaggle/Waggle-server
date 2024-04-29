@@ -7,11 +7,13 @@ import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.ChatRoomHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service

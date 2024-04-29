@@ -9,13 +9,17 @@ import com.example.waggle.domain.chat.repository.ChatRoomRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.ChatRoomHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import java.time.ZoneId;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -50,14 +54,22 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
     public long getUnreadMessagesCount(Member member, Long chatRoomId) {
         ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoomId, member.getId())
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_MEMBER_NOT_FOUND));
-        return chatMessageRepository.countByChatRoomIdAndSendTimeAfter(chatRoomId, chatRoomMember.getLastAccessTime());
+        log.info("accessTime = {}",
+                chatRoomMember.getLastAccessTime().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli());
+        Long unreadCount = chatMessageRepository.countByChatRoomIdAndSendTimeAfter(
+                chatRoomId,
+                chatRoomMember.getLastAccessTime().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli());
+        return unreadCount;
     }
 
     @Override
     public String getLastMessageContent(Long chatRoomId) {
-        return chatMessageRepository.findTopByChatRoomIdOrderBySendTimeDesc(chatRoomId)
-                .map(ChatMessage::getContent)
-                .orElse("No recent messages");
+        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findByChatRoomIdSortedBySendTimeDesc(
+                chatRoomId, PageRequest.of(0, 1));
+        if (!pagedChatMessage.hasContent()) {
+            return "최근 메시지가 없습니다.";
+        }
+        return pagedChatMessage.getContent().get(0).getContent();
     }
 
 
