@@ -64,7 +64,7 @@
             this.chatRoomId = localStorage.getItem('wschat.chatRoomId');
             this.accessToken = localStorage.getItem('wschat.accessToken');
             this.findRoom();
-            this.fetchUserInfo(); // 이제 fetchUserInfo가 connect를 자동으로 호출하게 됩니다.
+            this.fetchUserInfo();
         },
         methods: {
             fetchUserInfo: function () {
@@ -76,7 +76,7 @@
                     const userInfo = response.data.result;
                     this.senderUserUrl = userInfo.userUrl;
                     console.log('senderUserUrl = ' + this.senderUserUrl);
-                    this.connect(); // Axios 호출이 성공하면 connect를 호출
+                    this.connect();
                 }).catch(error => {
                     console.error("Error fetching user info:", error);
                 });
@@ -91,7 +91,7 @@
                 this.ws.send("/publish/message", {
                     'Authorization': 'Bearer ' + this.accessToken
                 }, JSON.stringify({
-                    messageType: 'TALK',
+                    chatMessageType: 'TALK',
                     chatRoomId: this.chatRoomId,
                     senderUserUrl: this.senderUserUrl,
                     content: this.content
@@ -101,9 +101,9 @@
             recvMessage: function (recv) {
                 console.log('recv.senderUserUrl = ' + recv.senderUserUrl);
                 this.messages.unshift({
-                    "messageType": recv.messageType,
+                    "chatMessageType": recv.chatMessageType,
                     "senderUserUrl": recv.senderUserUrl,
-                    "senderNickname": recv.messageType == 'ENTER' ? '[알림]' : recv.senderNickname,
+                    "senderNickname": recv.chatMessageType == 'ENTER' ? '[알림]' : recv.senderNickname,
                     "senderProfileImgUrl": recv.senderProfileImgUrl,
                     "content": recv.content,
                 })
@@ -124,7 +124,7 @@
                     this.ws.send("/publish/message", {
                         'Authorization': 'Bearer ' + this.accessToken
                     }, JSON.stringify({
-                        messageType: 'ENTER',
+                        chatMessageType: 'ENTER',
                         chatRoomId: this.chatRoomId,
                         senderUserUrl: this.senderUserUrl,
                     }));

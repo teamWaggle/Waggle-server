@@ -1,6 +1,6 @@
 package com.example.waggle.domain.chat.service;
 
-import com.example.waggle.domain.chat.dto.MessageDto;
+import com.example.waggle.domain.chat.entity.ChatMessageDto;
 import com.example.waggle.domain.chat.entity.ChatMessage;
 import com.example.waggle.domain.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +13,8 @@ public class ChatMessageCommandServiceImpl implements ChatMessageCommandService 
     private final ChatMessageRepository chatMessageRepository;
 
     @Override
-    public String createChatMessage(MessageDto messageDto) {
-        ChatMessage chatMessage = chatMessageRepository.save(messageDto.toEntity());
+    public String createChatMessage(ChatMessageDto chatMessageDto) {
+        ChatMessage chatMessage = chatMessageRepository.save(chatMessageDto.toEntity());
         return chatMessage.getId();
     }
 }

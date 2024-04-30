@@ -1,5 +1,11 @@
 package com.example.waggle.domain.chat.config;
 
+import static org.springframework.messaging.simp.stomp.StompCommand.CONNECT;
+import static org.springframework.messaging.simp.stomp.StompCommand.SEND;
+import static org.springframework.messaging.simp.stomp.StompCommand.SUBSCRIBE;
+
+import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.MemberQueryService;
 import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.security.service.TokenService;
@@ -9,9 +15,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
 @Order(Ordered.HIGHEST_PRECEDENCE + 99) // 우선 순위를 높게 설정해서 SecurityFilter들 보다 앞서 실행되게 해준다.
@@ -21,30 +27,16 @@ import org.springframework.stereotype.Component;
 public class StompHandler implements ChannelInterceptor {
 
     private final TokenService tokenService;
+    private final MemberQueryService memberQueryService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        try {
-            String username = verifyAccessToken(getAccessToken(accessor));
-            handleMessage(accessor.getCommand(), accessor, username);
-        } catch (Exception e) {
-            log.error("Error handling message: ", e);
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        if (accessor.getCommand() == CONNECT || accessor.getCommand() == SEND || accessor.getCommand() == SUBSCRIBE) {
+            Member member = getMemberByAccessToken(getAccessToken(accessor));
+            accessor.setUser(() -> member.getUsername());
         }
         return message;
-    }
-
-    private void handleMessage(StompCommand stompCommand, StompHeaderAccessor accessor, String username) {
-        switch (stompCommand) {
-            case CONNECT:
-                break;
-            case SUBSCRIBE:
-                break;
-            case SEND:
-                break;
-            case DISCONNECT:
-                break;
-        }
     }
 
     private String getAccessToken(StompHeaderAccessor accessor) {
@@ -52,13 +44,14 @@ public class StompHandler implements ChannelInterceptor {
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7).trim();
         }
-        return null;
+        throw new MemberHandler(ErrorStatus.AUTH_IS_NULL);
     }
 
-    private String verifyAccessToken(String accessToken) {
+    private Member getMemberByAccessToken(String accessToken) {
         if (!tokenService.validateToken(accessToken)) {
             throw new MemberHandler(ErrorStatus.AUTH_INVALID_TOKEN);
         }
-        return tokenService.getAuthentication(accessToken).getName();
+        String username = tokenService.getAuthentication(accessToken).getName();
+        return memberQueryService.getMemberByUsername(username);
     }
 }

@@ -53,7 +53,7 @@ public class ChatConverter {
                 .content(chatMessage.getContent())
                 .sendTime(Instant.ofEpochMilli(chatMessage.getSendTime()).atZone(ZoneId.of("Asia/Seoul"))
                         .toLocalDateTime())
-                .messageType(chatMessage.getMessageType())
+                .chatMessageType(chatMessage.getChatMessageType())
                 .sender(MemberConverter.toMemberSummaryDto(sender))
                 .build();
     }

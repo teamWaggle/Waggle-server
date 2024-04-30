@@ -1,6 +1,5 @@
-package com.example.waggle.domain.chat.dto;
+package com.example.waggle.domain.chat.entity;
 
-import com.example.waggle.domain.chat.entity.ChatMessage;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,13 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDto implements Serializable {
+public class ChatMessageDto implements Serializable {
 
     private String id;
     @NotNull
     private Long chatRoomId;
     @NotNull
-    private MessageType messageType;
+    private ChatMessageType chatMessageType;
     @NotNull
     private String content;
     @NotNull
@@ -52,14 +51,10 @@ public class MessageDto implements Serializable {
     public ChatMessage toEntity() {
         return ChatMessage.builder()
                 .chatRoomId(chatRoomId)
-                .messageType(ChatMessage.MessageType.valueOf(messageType.toString()))
+                .chatMessageType(ChatMessageType.valueOf(chatMessageType.toString()))
                 .content(content)
                 .senderUserUrl(senderUserUrl)
                 .sendTime(sendTime)
                 .build();
-    }
-
-    public enum MessageType {
-        ENTER, TALK
     }
 }

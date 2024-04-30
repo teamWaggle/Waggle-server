@@ -25,7 +25,7 @@ public class ChatMessage {
     private Long chatRoomId;
 
     @NotNull
-    private MessageType messageType;
+    private ChatMessageType chatMessageType;
 
     @NotBlank
     private String content;
@@ -35,9 +35,5 @@ public class ChatMessage {
 
     @NotNull
     private Long sendTime;
-
-    public enum MessageType {
-        ENTER, TALK
-    }
 
 }

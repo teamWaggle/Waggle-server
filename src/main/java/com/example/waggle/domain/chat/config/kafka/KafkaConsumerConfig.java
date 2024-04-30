@@ -1,6 +1,6 @@
 //package com.example.waggle.domain.chat.config.kafka;
 //
-//import com.example.waggle.domain.chat.dto.MessageDto;
+//import com.example.waggle.domain.chat.entity.MessageDto;
 //import com.google.common.collect.ImmutableMap;
 //import java.util.Map;
 //import lombok.RequiredArgsConstructor;
