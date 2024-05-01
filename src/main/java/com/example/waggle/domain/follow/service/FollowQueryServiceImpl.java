@@ -28,6 +28,11 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     }
 
     @Override
+    public List<Follow> getFollowingsByUserUrl(String userUrl) {
+        return followRepository.findByFromMember_UserUrl(userUrl);
+    }
+
+    @Override
     public List<Follow> getFollowers(Long memberId) {
         return followRepository.findByToMemberId(memberId);
     }
@@ -35,6 +40,11 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     @Override
     public List<Follow> getFollowersByUsername(String username) {
         return followRepository.findByToMember_Username(username);
+    }
+
+    @Override
+    public List<Follow> getFollowersByUserUrl(String userUrl) {
+        return followRepository.findByToMember_UserUrl(userUrl);
     }
 
 }

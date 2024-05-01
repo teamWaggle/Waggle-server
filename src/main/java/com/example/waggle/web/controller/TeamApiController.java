@@ -1,6 +1,7 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.schedule.entity.Participation;
 import com.example.waggle.domain.schedule.entity.Team;
 import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 import com.example.waggle.domain.schedule.service.team.TeamQueryService;
@@ -9,8 +10,12 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.payload.ApiResponseDto;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.TeamConverter;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse;
+import com.example.waggle.web.dto.schedule.TeamResponse.ParticipationStatusResponse.Status;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamDetailDto;
 import com.example.waggle.web.dto.schedule.TeamResponse.TeamSummaryListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +29,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -130,6 +141,65 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(TeamConverter.toDetailDto(team));
     }
 
+    @Operation(summary = "팀 검색", description = "팀의 이름을 검색하여 팀 정보를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/by-name/{name}")
+    public ApiResponseDto<TeamSummaryListDto> getTeamsBySearch(@PathVariable("name") String name,
+                                                               @RequestParam(name = "currentPage", defaultValue = "0") int currentPage,
+                                                               @RequestParam(name = "size", defaultValue = "0") int size) {
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Team> teamByContainName = teamQueryService.getTeamByContainName(name, pageable);
+        return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teamByContainName));
+    }
+
+    @Operation(summary = "추천 팀 조회", description = "가장 참여 인원이 많은 팀을 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/recommend")
+    public ApiResponseDto<TeamSummaryListDto> getRecommendedTeam(@RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, TEAM_RECOMMEND_SIZE);
+        Page<Team> teamByContainName = teamQueryService.getPopularTeamListTop3(pageable);
+        return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teamByContainName));
+    }
+
+    @Operation(summary = "팀 참여 요청 목록 조회 🔑", description = "팀의 참여 요청 목록을 조회합니다. 팀의 리더 권한을 가진 회원만 조회할 수 있습니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/{teamId}/participation")
+    public ApiResponseDto<MemberSummaryListDto> getTeam(@AuthUser Member member, @PathVariable("teamId") Long teamId) {
+        List<Participation> participationList = teamQueryService.getParticipationList(member, teamId);
+        List<Member> members = participationList.stream()
+                .map(Participation::getMember)
+                .collect(Collectors.toList());
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(members));
+    }
+
+    @Operation(summary = "팀 참여 상태 조회 🔑", description = "팀의 참여 요청 상태를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/{teamId}/participation/status")
+    public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
+                                                                                  @PathVariable("teamId") Long teamId) {
+        Optional<Participation> participation = teamQueryService.getParticipation(member, teamId);
+        boolean isMember = teamQueryService.isMemberOfTeam(member, teamId);
+        return ApiResponseDto.onSuccess(TeamConverter.toStatusDto(participation, isMember));
+    }
+
+    private Status getParticipationStatus(Member member, Long teamId) {
+        Optional<Participation> participation = teamQueryService.getParticipation(member, teamId);
+        if (participation.isPresent()) {
+            return Status.valueOf(String.valueOf(participation.get().getStatus()));
+        } else if (teamQueryService.isMemberOfTeam(member, teamId)) {
+            return Status.ACCEPTED;
+        }
+        return Status.NONE;
+    }
+
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
@@ -148,9 +218,9 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/{teamId}/participation")
-    public ApiResponseDto<Boolean> requestParticipation(@PathVariable("teamId") Long teamId,
-                                                        @AuthUser Member member) {
-        teamCommandService.requestParticipation(teamId, member);
-        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    public ApiResponseDto<Long> requestParticipation(@PathVariable("teamId") Long teamId,
+                                                     @AuthUser Member member) {
+        return ApiResponseDto.onSuccess(teamCommandService.requestParticipation(teamId, member));
     }
+
 }

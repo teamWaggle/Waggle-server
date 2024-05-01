@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 public class Follow extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
     private Long id;
 

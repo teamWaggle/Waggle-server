@@ -23,7 +23,7 @@ public class QuestionRequest {
     private String content;
 
     @NotBlank(message = "질문 제목을 작성해주세요.")
-    @Length(min = 5, max = 30)
+    @Length(min = 2, max = 30)
     private String title;
 
     private List<String> hashtagList;

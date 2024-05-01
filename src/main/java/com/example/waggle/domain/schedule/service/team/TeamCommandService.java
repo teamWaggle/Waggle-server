@@ -17,7 +17,7 @@ public interface TeamCommandService {
 
     void changeTeamLeader(Long teamId, Long newLeaderId, Member leader);
 
-    void requestParticipation(Long teamId, Member member);
+    Long requestParticipation(Long teamId, Member member);
 
     void respondToParticipation(Long teamId, Long memberId, Member leader, boolean accept);
 

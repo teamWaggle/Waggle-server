@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Websocket Chat</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/dist/css/bootstrap.min.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app" v-cloak>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>채팅방 리스트</h3>
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <label class="input-group-text">방제목</label>
+        </div>
+        <input type="text" class="form-control" v-model="room_name" v-on:keyup.enter="createRoom">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button" @click="createRoom">채팅방 개설</button>
+        </div>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-action" v-for="chatRoom in chatRooms" v-bind:key="chatRoom.id"
+            v-on:click="enterRoom(chatRoom.id)">
+            {{chatRoom.name}}
+        </li>
+    </ul>
+</div>
+<!-- JavaScript -->
+<script src="/webjars/vue/2.5.16/dist/vue.min.js"></script>
+<script src="/webjars/axios/0.17.1/dist/axios.min.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            room_name: '',
+            chatRooms: []
+        },
+        created() {
+            this.findAllRoom();
+        },
+        methods: {
+            findAllRoom: function () {
+                axios.get('/api/chat/rooms/paged').then(response => {
+                    this.chatRooms = response.data.result.chatRooms;
+                });
+            },
+            createRoom: function () {
+                if (this.room_name === "") {
+                    alert("방 제목을 입력해 주십시요.");
+                    return;
+                }
+                var accessToken = prompt('access token을 입력해 주세요.');
+                if (!accessToken) {
+                    alert("Access Token을 입력해 주십시오.");
+                    return;
+                }
+                const roomData = {
+                    name: this.room_name
+                };
+                axios.post('/api/chat/rooms', roomData, {
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                })
+                    .then(response => {
+                            alert("방 개설에 성공하였습니다.")
+                            this.room_name = '';
+                            this.findAllRoom();
+                        }
+                    )
+                    .catch(error => {
+                        console.error('Failed to create chat room: ', error);
+                        alert("채팅방 개설에 실패하였습니다.");
+                    });
+
+            },
+            enterRoom: function (id) {
+                var accessToken = prompt('access token을 입력해 주세요.');
+                if (accessToken) {
+                    localStorage.setItem('wschat.accessToken', accessToken);
+                    localStorage.setItem('wschat.chatRoomId', id);
+                    location.href = "/chat/rooms/" + id;
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

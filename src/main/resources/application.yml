@@ -28,6 +28,8 @@ spring:
     include:
       - security
       - s3
+      - kafka
+      - mongo
 
   cache:
     type: redis
@@ -64,3 +66,4 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: method
   use-fqn: true
+

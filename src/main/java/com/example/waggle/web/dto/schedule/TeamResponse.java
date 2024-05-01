@@ -23,9 +23,8 @@ public class TeamResponse {
         private String description;
         private String coverImageUrl;
         private TeamColor teamColor;
-        private Integer maxTeamSize;
         private Integer teamSize;
-        private MemberSummaryDto leader;
+        private MemberSummaryDto teamLeader;
         private List<MemberSummaryDto> teamMemberList;
     }
 
@@ -40,7 +39,6 @@ public class TeamResponse {
         private String coverImageUrl;
         private String description;
         private TeamColor teamColor;
-        private Integer maxTeamSize;
         private Integer teamSize;
     }
 
@@ -55,6 +53,24 @@ public class TeamResponse {
         private long teamCount;
         private Boolean isFirst;
         private Boolean isLast;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class ParticipationStatusResponse {
+
+        private Status status;
+
+        public enum Status {
+            PENDING, ACCEPTED, REJECTED, NONE
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
     }
 
 }

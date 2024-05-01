@@ -8,13 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface QuestionRepository extends JpaRepository<Question, Long> {
+public interface QuestionRepository extends JpaRepository<Question, Long>, QuestionQueryRepository {
 
     List<Question> findListByMemberUsername(String username);
 
     Page<Question> findAll(Pageable pageable);
 
     Page<Question> findByMemberUsername(String username, Pageable pageable);
+
+    Page<Question> findByMemberUserUrl(String userUrl, Pageable pageable);
 
     Page<Question> findPageByMemberId(Long memberId, Pageable pageable);
 

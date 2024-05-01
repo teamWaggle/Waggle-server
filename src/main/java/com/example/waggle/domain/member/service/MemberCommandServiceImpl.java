@@ -2,8 +2,6 @@ package com.example.waggle.domain.member.service;
 
 import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.board.BoardRepository;
-import com.example.waggle.domain.board.answer.repository.AnswerRepository;
-import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.entity.Reply;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
@@ -59,7 +57,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final ScheduleRepository scheduleRepository;
-    private final AnswerRepository answerRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final BoardRepository boardRepository;
     private final TeamMemberRepository teamMemberRepository;
@@ -107,8 +104,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
                                     Member member) {
-        String encodedPassword = passwordEncoder.encode(updateMemberRequest.getPassword());
-        member.updateInfo(updateMemberRequest, encodedPassword);
+        member.updateInfo(updateMemberRequest);
         return member.getId();
     }
 
@@ -184,10 +180,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             recommendRepository.deleteAllByBoard(board);
 
             deleteCommentsAndReplies(commentRepository.findByBoard(board));
-
-            if (board instanceof Question) {
-                answerRepository.deleteAllByQuestion((Question) board);
-            }
 
             if (board instanceof Schedule) {
                 memberScheduleRepository.deleteAllBySchedule((Schedule) board);

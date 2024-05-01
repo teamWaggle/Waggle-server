@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 
-public interface StoryRepository extends JpaRepository<Story, Long> {
+public interface StoryRepository extends JpaRepository<Story, Long>, StoryQueryRepository {
 
     List<Story> findListByMemberUsername(String username);
 
@@ -17,6 +17,8 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     Page<Story> findAll(Pageable pageable);
 
     Page<Story> findByMemberUsername(String username, Pageable pageable);
+
+    Page<Story> findByMemberUserUrl(String userUrl, Pageable pageable);
 
     Page<Story> findByMemberId(Long memberId, Pageable pageable);
 

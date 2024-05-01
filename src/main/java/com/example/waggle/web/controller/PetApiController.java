@@ -11,7 +11,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.web.converter.PetConverter;
 import com.example.waggle.web.dto.pet.PetRequest;
-import com.example.waggle.web.dto.pet.PetResponse.PetSummaryDto;
+import com.example.waggle.web.dto.pet.PetResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,10 +64,10 @@ public class PetApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/{memberId}")
-    public ApiResponseDto<List<PetSummaryDto>> findPets(@PathVariable("memberId") Long memberId) {
-        List<Pet> petsByUsername = petQueryService.getPetsByMemberId(memberId);
-        return ApiResponseDto.onSuccess(PetConverter.toPetSummaryListDto(petsByUsername));
+    @GetMapping("/{userUrl}")
+    public ApiResponseDto<List<PetResponse.PetDetailDto>> findPets(@PathVariable("userUrl") String userUrl) {
+        List<Pet> petsByUsername = petQueryService.getPetsByUserUrl(userUrl);
+        return ApiResponseDto.onSuccess(PetConverter.toPetDetailListDto(petsByUsername));
     }
 
     @Operation(summary = "반려견 삭제 🔑", description = "회원의 특정 반려견의 정보를 삭제합니다.")

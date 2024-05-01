@@ -1,10 +1,11 @@
 package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.schedule.entity.Participation;
+import com.example.waggle.domain.schedule.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.schedule.repository.ParticipationRepository;
 import com.example.waggle.domain.schedule.repository.TeamRepository;
-import com.example.waggle.global.exception.handler.MemberHandler;
 import com.example.waggle.global.exception.handler.TeamHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +15,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class TeamQueryServiceImpl implements TeamQueryService {
 
-    private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
-
-    @Override
-    public Page<Team> getPagingTeamByUsername(String username, Pageable pageable) {
-        return teamRepository.findByTeamMembers_Member_Username(username, pageable);
-    }
+    private final ParticipationRepository participationRepository;
 
     @Override
     public Page<Team> getPagedTeamByMemberId(Long memberId, Pageable pageable) {
@@ -34,9 +31,15 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
-    public List<Team> getTeamListByUsername(String username) {
-        return teamRepository.findListByTeamMembers_Member_Username(username);
+    public Page<Team> getTeamByContainName(String name, Pageable pageable) {
+        return teamRepository.findByNameContaining(name, pageable);
     }
+
+    @Override
+    public Page<Team> getPopularTeamListTop3(Pageable pageable) {
+        return teamRepository.findBySizeOfTeamMembers(pageable);
+    }
+
 
     @Override
     public Team getTeamById(Long teamId) {
@@ -45,12 +48,25 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
-    public boolean isTeamLeader(Long teamId, String username) {
+    public List<Participation> getParticipationList(Member leader, Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!team.getLeader().equals(leader)) {
+            throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
+        }
+        return participationRepository.findByTeamAndStatus(team, ParticipationStatus.PENDING);
+    }
 
-        return team.getLeader() != null && team.getLeader().equals(member);
+    @Override
+    public Optional<Participation> getParticipation(Member member, Long teamId) {
+        return participationRepository.findByTeamIdAndMemberId(teamId, member.getId());
+    }
+
+    @Override
+    public boolean isMemberOfTeam(Member member, Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        return team.getTeamMembers().stream()
+                .anyMatch(teamMember -> teamMember.getMember().equals(member));
     }
 }

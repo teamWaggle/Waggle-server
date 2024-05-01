@@ -24,6 +24,7 @@ public class RedisService {
     //    private static String recommendBoardKeyPrefix = "set:recommend:board:";
     private static String hashKeyPrefix = "hash:board:";
     private static String initKeyPrefix = "init:member:";
+    private static final String UNDER_SCORE = "_";
 
     // key-value 설정
     public void setValue(String token, String username) {

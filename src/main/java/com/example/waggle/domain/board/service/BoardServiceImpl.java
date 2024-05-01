@@ -1,7 +1,6 @@
 package com.example.waggle.domain.board.service;
 
 import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.board.answer.repository.AnswerRepository;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
@@ -10,10 +9,12 @@ import com.example.waggle.domain.hashtag.entity.Hashtag;
 import com.example.waggle.domain.hashtag.repository.HashtagRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.schedule.repository.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.repository.ScheduleRepository;
 import com.example.waggle.global.exception.GeneralException;
-import com.example.waggle.global.exception.handler.*;
+import com.example.waggle.global.exception.handler.QuestionHandler;
+import com.example.waggle.global.exception.handler.ScheduleHandler;
+import com.example.waggle.global.exception.handler.SirenHandler;
+import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +29,9 @@ public class BoardServiceImpl implements BoardService {
 
     private final StoryRepository storyRepository;
     private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
     private final HashtagRepository hashtagRepository;
-    private final MemberScheduleRepository memberScheduleRepository;
     private final MemberQueryService memberQueryService;
 
 
@@ -84,10 +83,6 @@ public class BoardServiceImpl implements BoardService {
             case QUESTION:
                 board = questionRepository.findById(boardId)
                         .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-                break;
-            case ANSWER:
-                board = answerRepository.findById(boardId)
-                        .orElseThrow(() -> new AnswerHandler(ErrorStatus.BOARD_NOT_FOUND));
                 break;
             case SIREN:
                 board = sirenRepository.findById(boardId)

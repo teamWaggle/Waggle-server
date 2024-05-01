@@ -1,5 +1,6 @@
 package com.example.waggle.domain.conversation.service.comment;
 
+import com.example.waggle.domain.board.Board;
 import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.domain.conversation.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,4 +29,9 @@ public class CommentQueryServiceImpl implements CommentQueryService {
         return commentRepository.findPagedCommentsByBoardId(boardId, pageable);
     }
 
+    @Override
+    //TODO QueryDSL
+    public Page<Comment> getPagedCommentsByUserUrl(String userUrl, Class<? extends Board> boardType, Pageable pageable) {
+        return commentRepository.findPagedCommentsByMemberUserUrl(userUrl, boardType, pageable);
+    }
 }

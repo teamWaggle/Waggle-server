@@ -2,6 +2,8 @@ package com.example.waggle.domain.schedule.service.team;
 
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.member.repository.MemberRepository;
+import com.example.waggle.domain.notification.entity.Notification;
+import com.example.waggle.domain.notification.repository.NotificationRepository;
 import com.example.waggle.domain.schedule.entity.*;
 import com.example.waggle.domain.schedule.repository.*;
 import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
@@ -29,6 +31,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final ScheduleRepository scheduleRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final ParticipationRepository participationRepository;
+    private final NotificationRepository notificationRepository;
     private final ScheduleCommandService scheduleCommandService;
     private final int teamCapacityLimit = 15;
 
@@ -117,7 +120,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     }
 
     @Override
-    public void requestParticipation(Long teamId, Member member) {
+    public Long requestParticipation(Long teamId, Member member) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
@@ -125,6 +128,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
+        notificationRepository.save(
+                Notification.of(member, participation)
+        );
+        return participation.getId();
     }
 
     @Override

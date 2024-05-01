@@ -1,6 +1,8 @@
 package com.example.waggle.global.config;
 
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 import com.example.waggle.global.security.exception.JwtAccessDeniedHandler;
 import com.example.waggle.global.security.exception.JwtAuthenticationEntryPoint;
 import com.example.waggle.global.security.filter.JwtAuthenticationFilter;
@@ -8,6 +10,7 @@ import com.example.waggle.global.security.filter.JwtExceptionFilter;
 import com.example.waggle.global.security.oauth2.CustomOAuth2UserService;
 import com.example.waggle.global.security.oauth2.handler.OAuth2AuthenticationFailureHandler;
 import com.example.waggle.global.security.oauth2.handler.OAuth2AuthenticationSuccessHandler;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +22,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.List;
-
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
@@ -80,6 +79,7 @@ public class SecurityConfig {
                 .requestMatchers(additionalSwaggerRequests()).permitAll()
                 .requestMatchers(authRelatedEndpoints()).permitAll()
                 .requestMatchers(permitAllRequest()).permitAll()
+                .requestMatchers("/ws/**", "/subscribe/**", "/publish/**").permitAll()
                 .requestMatchers(authorizationAdmin()).hasRole("ADMIN")
                 .requestMatchers(authorizationDormant()).hasRole("DORMANT")
                 .requestMatchers(authorizationGuest()).hasRole("GUEST")
@@ -119,7 +119,11 @@ public class SecurityConfig {
 
     private RequestMatcher[] authenticatedEndpoints() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher(HttpMethod.GET, "api/recommends/")
+                antMatcher(HttpMethod.GET, "api/recommends/"),
+                antMatcher(HttpMethod.GET, "api/teams/{teamId}/participation"),
+                antMatcher(HttpMethod.GET, "api/teams/{teamId}/participation/status"),
+                antMatcher(HttpMethod.GET, "api/schedules/teams/{teamId}/auth"),
+                antMatcher(HttpMethod.GET, "api/schdules/teams/{teamId}/period/auth")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
@@ -130,7 +134,7 @@ public class SecurityConfig {
                 antMatcher("/login/**"),
                 antMatcher(HttpMethod.POST, "/api/tokens"),
                 antMatcher(HttpMethod.POST, "/api/tokens/refresh"),
-                antMatcher(HttpMethod.GET, "/api/tokens/oauth2"),
+                antMatcher("/api/tokens/oauth2/**"),
                 antMatcher(HttpMethod.DELETE, "/api/tokens"),
                 antMatcher(HttpMethod.GET, "/api/members/**"),
                 antMatcher(HttpMethod.POST, "/api/members/**"),
@@ -150,8 +154,11 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/questions/**"),
                 antMatcher(HttpMethod.GET, "/api/sirens/**"),
                 antMatcher(HttpMethod.GET, "/api/recommends/{boardId}/memberList"),
-                antMatcher(HttpMethod.GET, "/api/answers/**"),
                 antMatcher(HttpMethod.GET, "/api/follows/**"),
+                antMatcher(HttpMethod.GET, "/api/chat/rooms/**"),
+                antMatcher("/ws/chat/**"),
+                antMatcher("/chat/**"),
+                antMatcher("/webjars/**"),
                 antMatcher("/api/media/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -160,7 +167,8 @@ public class SecurityConfig {
     private RequestMatcher[] authorizationAdmin() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(HttpMethod.DELETE, "/api/members/{memberId}/force"),
-                antMatcher(HttpMethod.GET, "api/recommends/sync")
+                antMatcher(HttpMethod.GET, "api/recommends/sync"),
+                antMatcher(HttpMethod.GET, "api/members/info")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

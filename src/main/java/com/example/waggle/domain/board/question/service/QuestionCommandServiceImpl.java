@@ -3,9 +3,6 @@ package com.example.waggle.domain.board.question.service;
 import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 import com.example.waggle.domain.board.ResolutionStatus;
-import com.example.waggle.domain.board.answer.entity.Answer;
-import com.example.waggle.domain.board.answer.repository.AnswerRepository;
-import com.example.waggle.domain.board.answer.service.AnswerCommandService;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.service.BoardService;
@@ -28,9 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     private final QuestionRepository questionRepository;
-    private final AnswerRepository answerRepository;
     private final RecommendRepository recommendRepository;
-    private final AnswerCommandService answerCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
 
@@ -90,8 +85,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         Question question = questionRepository.findById(boardId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        List<Answer> answers = answerRepository.findAnswerByQuestionId(question.getId());
-        answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId(), member));
         recommendRepository.deleteAllByBoardId(question.getId());
         questionRepository.delete(question);
     }

@@ -21,10 +21,10 @@ public class QuestionResponse {
     public static class QuestionSummaryDto {
         private Long boardId;
         private String title;
+        private String content;
         private ResolutionStatus status;
         private LocalDateTime createdDate;
         private List<String> hashtagList;
-        private MemberSummaryDto member;
         private int recommendCount;
     }
 
@@ -35,9 +35,7 @@ public class QuestionResponse {
     @Schema
     public static class QuestionSummaryListDto {
         private List<QuestionSummaryDto> questionList;
-        private long questionCount;
-        private Boolean isFirst;
-        private Boolean isLast;
+        private int nextPageParam;
     }
 
     @Data

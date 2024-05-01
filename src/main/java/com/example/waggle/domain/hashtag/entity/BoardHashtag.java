@@ -12,8 +12,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardHashtag extends BaseEntity{
-    @Id @GeneratedValue
+public class BoardHashtag extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_hashtag_id")
     private Long id;
 
@@ -24,7 +25,6 @@ public class BoardHashtag extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_id")
     private Hashtag hashtag;
-
 
     //builder에서 연관관계까지 맺어버리게 만들기
 

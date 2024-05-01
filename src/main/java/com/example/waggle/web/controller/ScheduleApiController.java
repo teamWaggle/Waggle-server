@@ -13,6 +13,8 @@ import com.example.waggle.web.converter.MemberConverter;
 import com.example.waggle.web.converter.ScheduleConverter;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.web.dto.schedule.ScheduleRequest;
+import com.example.waggle.web.dto.schedule.ScheduleResponse.OverlappedScheduleDto;
+import com.example.waggle.web.dto.schedule.ScheduleResponse.OverlappedScheduleListDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.web.dto.schedule.ScheduleResponse.ScheduleListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -115,21 +118,46 @@ public class ScheduleApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/teams/{teamId}")
-    public ApiResponseDto<ScheduleListDto> getSchedulesByTeam(@PathVariable("teamId") Long teamId) {
-        List<Schedule> schedules = scheduleQueryService.getTeamSchedules(teamId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
+    public ApiResponseDto<ScheduleListDto> getSchedulesByTeam(@PathVariable("teamId") Long teamId,
+                                                              @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, 12, latestStart);
+        Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(teamId, pageable);
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(pagedSchedules);
+        return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
-    @Operation(summary = "특정 팀의 모든 일정 조회", description = "특정 팀의 모든 일정을 가져옵니다.")
+    @Operation(summary = "특정 팀의 모든 일정 조회 🔑", description = "특정 팀의 모든 일정을 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/teams/{teamId}/page")
-    public ApiResponseDto<ScheduleListDto> getPagedSchedulesByTeam(@PathVariable("teamId") Long teamId,
-                                                                   @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    @GetMapping("/teams/{teamId}/auth")
+    public ApiResponseDto<ScheduleListDto> getSchedulesByTeamWhenAuth(@AuthUser Member member,
+                                                                      @PathVariable("teamId") Long teamId,
+                                                                      @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 12, latestStart);
         Page<Schedule> pagedSchedules = scheduleQueryService.getPagedTeamSchedules(teamId, pageable);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(pagedSchedules));
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(pagedSchedules);
+        ScheduleConverter.setIsScheduledInList(
+                scheduleListDto,
+                scheduleQueryService.getMapOfIsScheduled(member, scheduleListDto)
+        );
+        ScheduleConverter.setOverlappedScheduleCount(
+                scheduleListDto,
+                scheduleQueryService.getMapOfOverlappedScheduleCount(member, scheduleListDto)
+        );
+        return ApiResponseDto.onSuccess(scheduleListDto);
+    }
+
+    @Operation(summary = "겹치는 일정 조회 🔑", description = "조회한 스케줄과 비교했을 때 사용자가 가지는 스케줄과 겹치는 스케줄을 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/{scheduleId}/overlap")
+    public ApiResponseDto<OverlappedScheduleListDto> getOverlappingSchedules(
+            @AuthUser Member member,
+            @PathVariable("scheduleId") Long scheduleId) {
+        List<Schedule> overlappingSchedules = scheduleQueryService.findOverlappingSchedules(member, scheduleId);
+        return ApiResponseDto.onSuccess(ScheduleConverter.toOverlappedScheduleListDto(overlappingSchedules));
     }
 
     @Operation(summary = "특정 사용자의 모든 일정 조회", description = "특정 사용자가 선택한 모든 일정을 가져옵니다.")
@@ -146,9 +174,9 @@ public class ScheduleApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/writers/{memberId}")
-    public ApiResponseDto<ScheduleListDto> getSchedulesByWriter(@PathVariable("memberId") Long memberId) {
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByWriter(memberId);
+    @GetMapping("/owners/{memberId}")
+    public ApiResponseDto<ScheduleListDto> getSchedulesByOwner(@PathVariable("memberId") Long memberId) {
+        List<Schedule> schedules = scheduleQueryService.getSchedulesByOwner(memberId);
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
@@ -168,11 +196,11 @@ public class ScheduleApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/members/{memberId}/monthly")
-    public ApiResponseDto<ScheduleListDto> getMonthlySchedulesForMember(@PathVariable("memberId") Long memberId,
+    @GetMapping("/members/{userUrl}/monthly")
+    public ApiResponseDto<ScheduleListDto> getMonthlySchedulesForMember(@PathVariable("userUrl") String userUrl,
                                                                         @RequestParam("year") int year,
                                                                         @RequestParam("month") int month) {
-        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMember(memberId, year, month);
+        List<Schedule> schedules = scheduleQueryService.getMonthlySchedulesByMemberUserUrl(userUrl, year, month);
         return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
     }
 
@@ -186,7 +214,32 @@ public class ScheduleApiController {
                                                                    @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
         ScheduleUtil.validateSchedule(start, end);
         List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(schedules);
+        return ApiResponseDto.onSuccess(scheduleListDto);
+    }
+
+    @Operation(summary = "기간 해당 팀 일정 조회 🔑", description = "사용자가 검색한 기간에 해당하는 팀 스케줄을 모두 가져옵니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/teams/{teamId}/period/auth")
+    public ApiResponseDto<ScheduleListDto> getTeamScheduleByPeriodWhenAuth(
+            @AuthUser Member member,
+            @PathVariable("teamId") Long teamId,
+            @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
+            @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        ScheduleUtil.validateSchedule(start, end);
+        List<Schedule> schedules = scheduleQueryService.getTeamScheduleByPeriod(teamId, start, end);
+        ScheduleListDto scheduleListDto = ScheduleConverter.toScheduleListDto(schedules);
+        ScheduleConverter.setIsScheduledInList(
+                scheduleListDto,
+                scheduleQueryService.getMapOfIsScheduled(member, scheduleListDto)
+        );
+        ScheduleConverter.setOverlappedScheduleCount(
+                scheduleListDto,
+                scheduleQueryService.getMapOfOverlappedScheduleCount(member, scheduleListDto)
+        );
+        return ApiResponseDto.onSuccess(scheduleListDto);
     }
 
     @Operation(summary = "스케줄 선택 멤버 조회", description = "특정한 팀 스케줄을 선택한 멤버들을 조회합니다.")
@@ -199,5 +252,25 @@ public class ScheduleApiController {
         List<Member> memberBySchedule = scheduleQueryService.getMemberBySchedule(scheduleId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(memberBySchedule));
     }
+
+    private void setIsScheduledInList(Member member, ScheduleListDto scheduleListDto) {
+        scheduleListDto.getScheduleList()
+                .forEach(schedule ->
+                        schedule.setIsScheduled(
+                                scheduleQueryService.getIsScheduled(member, schedule.getBoardId())));
+    }
+
+    private void setOverlappedScheduleInList(Member member, ScheduleListDto scheduleListDto) {
+        scheduleListDto.getScheduleList().forEach(scheduleDto -> {
+            List<Schedule> overlappingSchedules = scheduleQueryService.findOverlappingSchedules(member,
+                    scheduleDto.getBoardId());
+            List<OverlappedScheduleDto> overlappedScheduleDtos = overlappingSchedules.stream()
+                    .map(ScheduleConverter::toOverlappedScheduleDto)
+                    .collect(Collectors.toList());
+//            scheduleDto.setOverlappedScheduleList(overlappedScheduleDtos);
+            scheduleDto.setOverlappedScheduleCount((int) overlappedScheduleDtos.stream().count());
+        });
+    }
+
 
 }

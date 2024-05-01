@@ -10,6 +10,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class MemberResponse {
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
+    public static class MemberStorageDto {
+        private Long memberId;
+        private String userUrl;
+        private String profileImgUrl;
+    }
 
     @Data
     @Builder
@@ -35,6 +45,8 @@ public class MemberResponse {
         private String name;
         private LocalDate birthday;
         private String profileImgUrl;
+        private Long followingCount;
+        private Long followerCount;
     }
 
     @Data
