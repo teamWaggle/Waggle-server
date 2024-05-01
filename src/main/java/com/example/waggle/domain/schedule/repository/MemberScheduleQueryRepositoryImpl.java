@@ -1,22 +1,21 @@
 package com.example.waggle.domain.schedule.repository;
 
+import static com.example.waggle.domain.member.entity.QMember.member;
+import static com.example.waggle.domain.schedule.entity.QMemberSchedule.memberSchedule;
+import static com.example.waggle.domain.schedule.entity.QSchedule.schedule;
+
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.domain.schedule.entity.Schedule;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-
-import static com.example.waggle.domain.member.entity.QMember.member;
-import static com.example.waggle.domain.schedule.entity.QMemberSchedule.memberSchedule;
-import static com.example.waggle.domain.schedule.entity.QSchedule.schedule;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
