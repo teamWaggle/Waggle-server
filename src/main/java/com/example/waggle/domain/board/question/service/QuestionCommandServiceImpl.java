@@ -134,7 +134,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         for (String viewCntKey : viewCountKeys) {
             Long boardId = extractBoardIdFromKey(viewCntKey);
             Long viewCount = Long.parseLong(redisService.getData(viewCntKey));
-
             questionRepository.applyViewCntToRDB(boardId, viewCount);
             redisService.deleteData(viewCntKey);
             redisService.deleteData("board::" + boardId);

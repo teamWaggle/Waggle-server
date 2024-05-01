@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
@@ -26,8 +25,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q.viewCount FROM Question q WHERE q.id = :boardId")
     Integer findViewCountByBoardId(@Param("boardId") Long boardId);
 
-    @Transactional
-    @Modifying
     @Query("update Question q set q.viewCount = :viewCount where q.id = :boardId")
     void applyViewCntToRDB(@Param("boardId") Long boardId, @Param("viewCount") Long viewCount);
 
