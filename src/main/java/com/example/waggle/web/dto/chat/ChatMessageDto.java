@@ -1,5 +1,7 @@
-package com.example.waggle.domain.chat.entity;
+package com.example.waggle.web.dto.chat;
 
+import com.example.waggle.domain.chat.entity.ChatMessage;
+import com.example.waggle.domain.chat.entity.ChatMessageType;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;

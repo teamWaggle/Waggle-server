@@ -3,12 +3,12 @@ package com.example.waggle.domain.chat.service;
 import com.example.waggle.domain.chat.entity.ChatRoom;
 import com.example.waggle.domain.chat.entity.ChatRoomMember;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.web.dto.chat.ChatRequest;
+import com.example.waggle.web.dto.chat.ChatRoomRequest;
 import java.time.LocalDateTime;
 
 public interface ChatRoomCommandService {
 
-    ChatRoom createChatRoom(Member member, ChatRequest request);
+    ChatRoom createChatRoom(Member member, ChatRoomRequest request);
 
     ChatRoomMember joinChatRoom(Member member, Long chatRoomId, String password);
 
@@ -16,7 +16,7 @@ public interface ChatRoomCommandService {
 
     void deleteChatRoom(Member member, Long chatRoomId);
 
-    ChatRoom updateChatRoom(Member member, Long chatRoomId, ChatRequest request);
+    ChatRoom updateChatRoom(Member member, Long chatRoomId, ChatRoomRequest request);
 
     Long updateLastAccessTime(Member member, Long chatRoomId, LocalDateTime lastAccessTime);
 

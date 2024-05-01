@@ -7,7 +7,7 @@ import com.example.waggle.domain.chat.repository.ChatRoomRepository;
 import com.example.waggle.domain.member.entity.Member;
 import com.example.waggle.global.exception.handler.ChatRoomHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import com.example.waggle.web.dto.chat.ChatRequest;
+import com.example.waggle.web.dto.chat.ChatRoomRequest;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,13 +22,13 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     private final ChatRoomMemberRepository chatRoomMemberRepository;
 
     @Override
-    public ChatRoom createChatRoom(Member member, ChatRequest request) {
+    public ChatRoom createChatRoom(Member member, ChatRoomRequest request) {
         ChatRoom chatRoom = chatRoomRepository.save(buildChatRoom(member, request));
         addMemberToChatRoom(member, chatRoom);
         return chatRoom;
     }
 
-    private ChatRoom buildChatRoom(Member member, ChatRequest request) {
+    private ChatRoom buildChatRoom(Member member, ChatRoomRequest request) {
         return ChatRoom.builder()
                 .owner(member)
                 .name(request.getName())
@@ -56,11 +56,10 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     private ChatRoomMember buildChatRoomMember(Member member, ChatRoom chatRoom) {
-        ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+        return ChatRoomMember.builder()
                 .chatRoom(chatRoom)
                 .member(member)
                 .build();
-        return chatRoomMember;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     @Override
-    public ChatRoom updateChatRoom(Member member, Long chatRoomId, ChatRequest request) {
+    public ChatRoom updateChatRoom(Member member, Long chatRoomId, ChatRoomRequest request) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
         checkChatRoomAccess(member, chatRoom);
