@@ -6,9 +6,11 @@ public class PageUtil {
     public static int THIS_PAGE_IS_LAST = -1;
     public static int STORY_SIZE = 9;
     public static int QUESTION_SIZE = 9;
+    public static int SIREN_SIZE = 10;
     public static int COMMENT_SIZE = 5;
     public static int CHAT_ROOM_SIZE = 9;
     public static int CHAT_MESSAGE_SIZE = 20;
+    public static int TEAM_RECOMMEND_SIZE = 3;
 
     public static int countNextPage(Page<?> pagedList) {
         if (pagedList.isLast()) {
@@ -16,4 +18,5 @@ public class PageUtil {
         }
         return pagedList.getNumber() + 1;
     }
+
 }

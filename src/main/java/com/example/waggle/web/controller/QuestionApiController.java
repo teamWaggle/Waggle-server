@@ -12,6 +12,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.QuestionConverter;
+import com.example.waggle.web.dto.question.QuestionFilterParam;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
@@ -46,6 +47,7 @@ public class QuestionApiController {
     private final QuestionQueryService questionQueryService;
     private final RecommendQueryService recommendQueryService;
     private final Sort latestSorting = Sort.by("createdDate").descending();
+    private final Sort resolutionStatusSorting = Sort.by("status").descending().and(latestSorting);
 
     @Operation(summary = "질문 작성 🔑", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -96,8 +98,23 @@ public class QuestionApiController {
     @GetMapping
     public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, resolutionStatusSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
+        QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
+        setRecommendCntInList(listDto.getQuestionList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "질문 필터 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/filter")
+    public ApiResponseDto<QuestionSummaryListDto> getQuestionsByFilterParam(
+            @RequestParam(name = "filterParam") QuestionFilterParam filterParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
+        Page<Question> questions = questionQueryService.getPagedQuestionsByFilter(filterParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);

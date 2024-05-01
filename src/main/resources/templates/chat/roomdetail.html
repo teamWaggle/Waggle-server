@@ -76,6 +76,7 @@
                     const userInfo = response.data.result;
                     this.senderUserUrl = userInfo.userUrl;
                     console.log('senderUserUrl = ' + this.senderUserUrl);
+                    this.fetchChatMessages();
                     this.connect();
                 }).catch(error => {
                     console.error("Error fetching user info:", error);
@@ -84,6 +85,29 @@
             findRoom: function () {
                 axios.get('/api/chat/rooms/' + this.chatRoomId).then(response => {
                     this.chatRoom = response.data.result;
+                });
+            },
+            fetchChatMessages: function () {
+                axios.get(`/api/chat/rooms/${this.chatRoomId}/messages`, {
+                    params: {currentPage: this.currentPage},
+                    headers: {
+                        'Authorization': 'Bearer ' + this.accessToken
+                    }
+                }).then(response => {
+                    const chatMessages = response.data.result.chatMessages;
+                    chatMessages.forEach(msg => {
+                        this.messages.push({
+                            id: msg.id,
+                            content: msg.content,
+                            sendTime: msg.sendTime,
+                            senderNickname: msg.sender.nickname,
+                            senderProfileImgUrl: msg.sender.profileImgUrl,
+                            chatMessageType: msg.chatMessageType
+                        });
+                    });
+                    console.log('Chat messages fetched successfully');
+                }).catch(error => {
+                    console.error("Error fetching chat messages:", error);
                 });
             },
             sendMessage: function () {

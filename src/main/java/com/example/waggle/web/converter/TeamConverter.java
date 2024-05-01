@@ -28,7 +28,7 @@ public class TeamConverter {
                 .coverImageUrl(MediaUtil.getCoverImg(team))
                 .teamColor(team.getTeamColor())
                 .teamSize(team.getTeamMembers().size())
-                .leader(MemberConverter.toMemberSummaryDto(team.getLeader()))
+                .teamLeader(MemberConverter.toMemberSummaryDto(team.getLeader()))
                 .teamMemberList(
                         teamMembers.stream().map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList()))
                 .build();

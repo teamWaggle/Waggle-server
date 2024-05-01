@@ -54,8 +54,6 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
     public long getUnreadMessagesCount(Member member, Long chatRoomId) {
         ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoomId, member.getId())
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_MEMBER_NOT_FOUND));
-        log.info("accessTime = {}",
-                chatRoomMember.getLastAccessTime().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli());
         Long unreadCount = chatMessageRepository.countByChatRoomIdAndSendTimeAfter(
                 chatRoomId,
                 chatRoomMember.getLastAccessTime().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli());
@@ -71,6 +69,4 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
         }
         return pagedChatMessage.getContent().get(0).getContent();
     }
-
-
 }
