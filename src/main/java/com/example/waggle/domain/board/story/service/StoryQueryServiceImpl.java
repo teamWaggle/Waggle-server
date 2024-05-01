@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.story.entity.Story;
 import com.example.waggle.domain.board.story.repository.StoryRepository;
 import com.example.waggle.global.exception.handler.StoryHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.web.dto.story.StoryFilterParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,6 +46,11 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     @Override
     public Page<Story> getPagedStories(Pageable pageable) {
         return storyRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Story> getPagedStoriesByFilter(StoryFilterParam filterParam, Pageable pageable) {
+        return storyRepository.findStoriesByFilter(filterParam, pageable);
     }
 
 
