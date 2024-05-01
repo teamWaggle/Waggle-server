@@ -134,12 +134,10 @@ public class SirenApiController {
     })
     @GetMapping("/{sirenId}")
     public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("sirenId") Long sirenId) {
-        sirenCacheService.applyViewCountToRedis(sirenId);
         Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
         SirenDetailDto detailDto = SirenConverter.toSirenDetailDto(siren);
-        detailDto.setViewCount(sirenQueryService.getViewCountInRedis(sirenId));
+        detailDto.setViewCount(sirenCacheService.applyViewCountToRedis(sirenId));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(sirenId));
-
         return ApiResponseDto.onSuccess(detailDto);
     }
 

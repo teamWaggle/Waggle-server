@@ -6,8 +6,8 @@ import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import java.time.Duration;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -69,19 +67,5 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 .limit(3)
                 .collect(Collectors.toList());
 
-    }
-
-    @Override
-    public Integer getViewCountInRedis(Long boardId) {
-        String viewCountKey = "viewCount::" + boardId;
-        String viewCount = redisService.getValue(viewCountKey);
-        if (viewCount == null) {
-            redisService.setData(
-                    viewCountKey,
-                    String.valueOf(questionRepository.findViewCountByBoardId(boardId)),
-                    Duration.ofMinutes(3)
-            );
-        }
-        return Integer.parseInt(viewCount);
     }
 }

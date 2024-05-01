@@ -143,10 +143,9 @@ public class QuestionApiController {
     @GetMapping("/{questionId}")
     public ApiResponseDto<QuestionDetailDto> getQuestionByBoardId(
             @PathVariable("questionId") Long questionId) {
-        questionCacheService.applyViewCountToRedis(questionId);
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
         QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
-        detailDto.setViewCount(questionQueryService.getViewCountInRedis(questionId));
+        detailDto.setViewCount(questionCacheService.applyViewCountToRedis(questionId));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(questionId));
         return ApiResponseDto.onSuccess(detailDto);
     }

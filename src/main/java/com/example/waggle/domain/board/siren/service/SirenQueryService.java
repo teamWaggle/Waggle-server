@@ -19,6 +19,4 @@ public interface SirenQueryService {
 
     Siren getSirenByBoardId(Long boardId);
 
-    Integer getViewCountInRedis(Long boardId);
-
 }

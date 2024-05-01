@@ -19,7 +19,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Page<Question> findPageByMemberId(Long memberId, Pageable pageable);
 
     @Query("SELECT q.viewCount FROM Question q WHERE q.id = :boardId")
-    Integer findViewCountByBoardId(@Param("boardId") Long boardId);
+    Long findViewCountByBoardId(@Param("boardId") Long boardId);
 
     @Query("update Question q set q.viewCount = :viewCount where q.id = :boardId")
     void applyViewCntToRDB(@Param("boardId") Long boardId, @Param("viewCount") Long viewCount);

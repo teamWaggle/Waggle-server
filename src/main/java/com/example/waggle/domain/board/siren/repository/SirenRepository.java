@@ -28,7 +28,7 @@ public interface SirenRepository extends JpaRepository<Siren, Long> {
     List<Siren> findAllByOrderByStatusAsc();
 
     @Query("SELECT s.viewCount FROM Siren s WHERE s.id = :boardId")
-    Integer findViewCountByBoardId(@Param("boardId") Long boardId);
+    Long findViewCountByBoardId(@Param("boardId") Long boardId);
 
     @Transactional
     @Modifying

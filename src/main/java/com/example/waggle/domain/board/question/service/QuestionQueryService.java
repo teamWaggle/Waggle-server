@@ -20,6 +20,4 @@ public interface QuestionQueryService {
 
     List<Question> getRepresentativeQuestionList();
 
-    Integer getViewCountInRedis(Long boardId);
-
 }

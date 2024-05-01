@@ -215,9 +215,9 @@ public class RedisService {
 //                .build();
 //    }
 
-    public void increment(String key) {
+    public Long increment(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.increment(key);
+        return valueOperations.increment(key);
     }
 
     public String getData(String key) {
