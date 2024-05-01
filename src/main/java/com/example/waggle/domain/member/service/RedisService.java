@@ -218,20 +218,6 @@ public class RedisService {
         return valueOperations.increment(key);
     }
 
-    public String getData(String key) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        return valueOperations.get(key);
-    }
-
-    public void setData(String key, String value, Duration timeout) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(key, value, timeout);
-    }
-
-    public Set<String> keys(String pattern) {
-        return redisTemplate.keys(pattern);
-    }
-
     public void deleteData(String key) {
         redisTemplate.delete(key);
     }

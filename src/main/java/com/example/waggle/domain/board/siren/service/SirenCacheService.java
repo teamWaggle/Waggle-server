@@ -43,7 +43,7 @@ public class SirenCacheService {
 
         for (String viewCntKey : viewCountKeys) {
             Long boardId = extractBoardIdFromKey(viewCntKey);
-            Long viewCount = Long.parseLong(redisService.getData(viewCntKey));
+            Long viewCount = Long.parseLong(redisService.getValue(viewCntKey));
             sirenRepository.applyViewCntToRDB(boardId, viewCount);
             redisService.deleteData(viewCntKey);
             redisService.deleteData(BOARD_PREFIX + boardId);

@@ -41,7 +41,7 @@ public class QuestionCacheService {
 
         for (String viewCntKey : viewCountKeys) {
             Long boardId = extractBoardIdFromKey(viewCntKey);
-            Long viewCount = Long.parseLong(redisService.getData(viewCntKey));
+            Long viewCount = Long.parseLong(redisService.getValue(viewCntKey));
             questionRepository.applyViewCntToRDB(boardId, viewCount);
             redisService.deleteData(viewCntKey);
             redisService.deleteData(BOARD_PREFIX + boardId);
