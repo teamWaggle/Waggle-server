@@ -125,7 +125,7 @@ public class RedisService {
 //        setOperations.add(boardSetKey.getKey(), boardSetKey.getValue());
     }
 
-    private Set<String> getKeysByPattern(String pattern) {
+    public Set<String> getKeysByPattern(String pattern) {
         RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
         ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).build();
         Cursor<byte[]> cursor = connection.scan(scanOptions);

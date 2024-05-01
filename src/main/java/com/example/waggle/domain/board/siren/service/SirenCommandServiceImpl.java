@@ -17,12 +17,8 @@ import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.siren.SirenRequest;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,49 +86,6 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         recommendRepository.deleteAllByBoardId(boardId);
 
         sirenRepository.delete(siren);
-    }
-
-    @Override
-    public void increaseSirenViewCount(Long boardId) {
-        Siren siren = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
-        siren.increaseViewCount();
-    }
-
-    @Override
-    public void applyViewCountToRedis(Long boardId) {
-        String viewCountKey = "viewCount::" + boardId;
-        if (redisService.getValue(viewCountKey) != null) {
-            redisService.increment(viewCountKey);
-            return;
-        }
-        redisService.setData(
-                viewCountKey,
-                String.valueOf(sirenRepository.findViewCountByBoardId(boardId) + 1),
-                Duration.ofMinutes(3)
-        );
-    }
-
-    @Scheduled(cron = "0 0/3 * * * ?")
-    @Override
-    public void applyViewCountToRDB() {
-        Set<String> viewCountKeys = redisService.keys("viewCount*");
-        if (Objects.requireNonNull(viewCountKeys).isEmpty()) {
-            return;
-        }
-
-        for (String viewCntKey : viewCountKeys) {
-            Long boardId = extractBoardIdFromKey(viewCntKey);
-            Long viewCount = Long.parseLong(redisService.getData(viewCntKey));
-
-            sirenRepository.applyViewCntToRDB(boardId, viewCount);
-            redisService.deleteData(viewCntKey);
-            redisService.deleteData("board::" + boardId);
-        }
-    }
-
-    private static Long extractBoardIdFromKey(String key) {
-        return Long.parseLong(key.split("::")[1]);
     }
 
     private Siren buildSiren(SirenRequest createSirenRequest, Member member) {

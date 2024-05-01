@@ -3,6 +3,7 @@ package com.example.waggle.web.controller;
 import static com.example.waggle.web.dto.question.QuestionResponse.QuestionDetailDto;
 
 import com.example.waggle.domain.board.question.entity.Question;
+import com.example.waggle.domain.board.question.service.QuestionCacheService;
 import com.example.waggle.domain.board.question.service.QuestionCommandService;
 import com.example.waggle.domain.board.question.service.QuestionQueryService;
 import com.example.waggle.domain.member.entity.Member;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Question API", description = "질문 API")
 public class QuestionApiController {
 
+    private final QuestionCacheService questionCacheService;
     private final QuestionCommandService questionCommandService;
     private final QuestionQueryService questionQueryService;
     private final RecommendQueryService recommendQueryService;
@@ -141,7 +143,7 @@ public class QuestionApiController {
     @GetMapping("/{questionId}")
     public ApiResponseDto<QuestionDetailDto> getQuestionByBoardId(
             @PathVariable("questionId") Long questionId) {
-        questionCommandService.applyViewCountToRedis(questionId);
+        questionCacheService.applyViewCountToRedis(questionId);
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
         QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
         detailDto.setViewCount(questionQueryService.getViewCountInRedis(questionId));

@@ -11,18 +11,13 @@ import com.example.waggle.domain.board.question.repository.QuestionRepository;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.question.QuestionRequest;
-import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +33,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final AnswerCommandService answerCommandService;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
-    private final RedisService redisService;
 
     @Override
     public Long createQuestion(QuestionRequest createQuestionRequest,
@@ -100,48 +94,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         answers.stream().forEach(answer -> answerCommandService.deleteAnswer(answer.getId(), member));
         recommendRepository.deleteAllByBoardId(question.getId());
         questionRepository.delete(question);
-    }
-
-    @Override
-    public void increaseQuestionViewCount(Long boardId) {
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-        question.increaseViewCount();
-    }
-
-    @Override
-    public void applyViewCountToRedis(Long boardId) {
-        String viewCountKey = "viewCount::" + boardId;
-        if (redisService.getValue(viewCountKey) != null) {
-            redisService.increment(viewCountKey);
-            return;
-        }
-        redisService.setData(
-                viewCountKey,
-                String.valueOf(questionRepository.findViewCountByBoardId(boardId) + 1),
-                Duration.ofMinutes(3)
-        );
-    }
-
-    @Scheduled(fixedRate = 1000 * 60 * 3)
-    @Override
-    public void applyViewCountToRDB() {
-        Set<String> viewCountKeys = redisService.keys("viewCount*");
-        if (Objects.requireNonNull(viewCountKeys).isEmpty()) {
-            return;
-        }
-
-        for (String viewCntKey : viewCountKeys) {
-            Long boardId = extractBoardIdFromKey(viewCntKey);
-            Long viewCount = Long.parseLong(redisService.getData(viewCntKey));
-            questionRepository.applyViewCntToRDB(boardId, viewCount);
-            redisService.deleteData(viewCntKey);
-            redisService.deleteData("board::" + boardId);
-        }
-    }
-
-    private static Long extractBoardIdFromKey(String key) {
-        return Long.parseLong(key.split("::")[1]);
     }
 
     private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {

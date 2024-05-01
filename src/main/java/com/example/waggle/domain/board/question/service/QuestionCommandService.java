@@ -16,10 +16,4 @@ public interface QuestionCommandService {
 
     void deleteQuestion(Long boardId, Member member);
 
-    void increaseQuestionViewCount(Long boardId);
-
-    void applyViewCountToRedis(Long boardId);
-
-    void applyViewCountToRDB();
-
 }

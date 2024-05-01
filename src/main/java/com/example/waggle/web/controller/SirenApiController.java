@@ -1,6 +1,7 @@
 package com.example.waggle.web.controller;
 
 import com.example.waggle.domain.board.siren.entity.Siren;
+import com.example.waggle.domain.board.siren.service.SirenCacheService;
 import com.example.waggle.domain.board.siren.service.SirenCommandService;
 import com.example.waggle.domain.board.siren.service.SirenQueryService;
 import com.example.waggle.domain.member.entity.Member;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 @Tag(name = "Siren API", description = "사이렌 API")
 public class SirenApiController {
 
+    private final SirenCacheService sirenCacheService;
     private final SirenCommandService sirenCommandService;
     private final SirenQueryService sirenQueryService;
     private final RecommendQueryService recommendQueryService;
@@ -132,7 +134,7 @@ public class SirenApiController {
     })
     @GetMapping("/{sirenId}")
     public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("sirenId") Long sirenId) {
-        sirenCommandService.applyViewCountToRedis(sirenId);
+        sirenCacheService.applyViewCountToRedis(sirenId);
         Siren siren = sirenQueryService.getSirenByBoardId(sirenId);
         SirenDetailDto detailDto = SirenConverter.toSirenDetailDto(siren);
         detailDto.setViewCount(sirenQueryService.getViewCountInRedis(sirenId));

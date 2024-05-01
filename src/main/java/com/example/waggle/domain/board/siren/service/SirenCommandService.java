@@ -17,10 +17,4 @@ public interface SirenCommandService {
 
     void deleteSiren(Long boardId, Member member);
 
-    void increaseSirenViewCount(Long boardId);
-
-    void applyViewCountToRedis(Long boardId);
-
-    void applyViewCountToRDB();
-
 }
