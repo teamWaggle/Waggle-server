@@ -17,7 +17,7 @@ public class QuestionCacheService {
 
     private final RedisService redisService;
     private final QuestionRepository questionRepository;
-    private final String VIEW_COUNT_PREFIX = "viewCount::";
+    private final String VIEW_COUNT_PREFIX = "viewCounts::";
     private final String BOARD_PREFIX = "board::";
 
     @CachePut(value = "viewCounts", key = "#boardId")
