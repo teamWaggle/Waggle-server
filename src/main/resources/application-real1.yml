@@ -8,3 +8,5 @@ spring:
       - real-db
       - s3
       - real
+      - mongo
+      - kafka
