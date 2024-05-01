@@ -14,6 +14,8 @@ import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.CommentConverter;
 import com.example.waggle.web.dto.comment.CommentRequest;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
+import com.example.waggle.web.dto.comment.CommentResponse.QuestionCommentListDto;
+import com.example.waggle.web.dto.comment.CommentResponse.SirenCommentListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +25,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -55,12 +65,11 @@ public class CommentApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/members/{userUrl}/question/paged")
-    public ApiResponseDto<CommentListDto> getMyQuestionCommentsByPage(@PathVariable("userUrl") String userUrl,
-                                                                      @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<QuestionCommentListDto> getMyQuestionCommentsByPage(@PathVariable("userUrl") String userUrl,
+                                                                              @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, latestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedCommentsByUserUrl(userUrl, Question.class, pageable);
-        CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
-        return ApiResponseDto.onSuccess(listDto);
+        return ApiResponseDto.onSuccess(CommentConverter.toQuestionCommentListDto(pagedComments));
     }
 
     @Operation(summary = "마이페이지 Siren 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
@@ -68,12 +77,11 @@ public class CommentApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/members/{userUrl}/siren/paged")
-    public ApiResponseDto<CommentListDto> getMySirenCommentsByPage(@PathVariable("userUrl") String userUrl,
-                                                                   @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<SirenCommentListDto> getMySirenCommentsByPage(@PathVariable("userUrl") String userUrl,
+                                                                        @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, latestSorting);
         Page<Comment> pagedComments = commentQueryService.getPagedCommentsByUserUrl(userUrl, Siren.class, pageable);
-        CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
-        return ApiResponseDto.onSuccess(listDto);
+        return ApiResponseDto.onSuccess(CommentConverter.toSirenCommentListDto(pagedComments));
     }
 
 
