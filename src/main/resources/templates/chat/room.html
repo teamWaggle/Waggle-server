@@ -59,12 +59,17 @@
                     alert("방 제목을 입력해 주십시요.");
                     return;
                 }
+                var accessToken = prompt('access token을 입력해 주세요.');
+                if (!accessToken) {
+                    alert("Access Token을 입력해 주십시오.");
+                    return;
+                }
                 const roomData = {
                     name: this.room_name
                 };
                 axios.post('/api/chat/rooms', roomData, {
                     headers: {
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNmY1ZGZjYi0wZTk4LTQxOGEtYmIzMy05YmE0OWY0ZGQwZWQiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzE0NDgwODAxfQ.FZ630SRHlgfPqwGl3uguGxh5ri76VDWcpJZNv8F-y-c'
+                        'Authorization': 'Bearer ' + accessToken
                     }
                 })
                     .then(response => {
@@ -81,7 +86,7 @@
             },
             enterRoom: function (id) {
                 var accessToken = prompt('access token을 입력해 주세요.');
-                if (accessToken !== "") {
+                if (accessToken) {
                     localStorage.setItem('wschat.accessToken', accessToken);
                     localStorage.setItem('wschat.chatRoomId', id);
                     location.href = "/chat/rooms/" + id;
