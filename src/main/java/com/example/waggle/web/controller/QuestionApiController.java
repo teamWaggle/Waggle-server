@@ -12,6 +12,7 @@ import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.converter.QuestionConverter;
+import com.example.waggle.web.dto.question.QuestionFilterParam;
 import com.example.waggle.web.dto.question.QuestionRequest;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.web.dto.question.QuestionResponse.QuestionSummaryListDto;
@@ -99,6 +100,21 @@ public class QuestionApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, resolutionStatusSorting);
         Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
+        QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
+        setRecommendCntInList(listDto.getQuestionList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "질문 필터 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/filter")
+    public ApiResponseDto<QuestionSummaryListDto> getQuestionsByFilterParam(
+            @RequestParam(name = "filterParam") QuestionFilterParam filterParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
+        Page<Question> questions = questionQueryService.getPagedQuestionsByFilter(filterParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
