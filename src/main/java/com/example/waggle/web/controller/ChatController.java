@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/chat")
 @Controller
 public class ChatController {
-    
+
     @GetMapping("/rooms")
-    public String rooms(Model model) {
-        return "/chat/room";
+    public String rooms() {
+        return "chat/room";
     }
 
     @GetMapping("/rooms/{roomId}")
     public String roomDetail(Model model, @PathVariable String roomId) {
         model.addAttribute("roomId", roomId);
-        return "/chat/roomdetail";
+        return "chat/roomdetail";
     }
 
 }
