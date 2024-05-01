@@ -2,14 +2,16 @@ package com.example.waggle.domain.board.siren.service;
 
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
 import com.example.waggle.domain.member.service.RedisService;
-import java.time.Duration;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -17,9 +19,10 @@ public class SirenCacheService {
 
     private final RedisService redisService;
     private final SirenRepository sirenRepository;
-    private final String VIEW_COUNT_PREFIX = "viewCount::";
+    private final String VIEW_COUNT_PREFIX = "viewCounts::";
     private final String BOARD_PREFIX = "board::";
 
+    @CachePut(value = "viewCounts", key = "#boardId")
     public Long applyViewCountToRedis(Long boardId) {
         String viewCountKey = VIEW_COUNT_PREFIX + boardId;
         String currentViewCount = redisService.getValue(viewCountKey);
@@ -27,17 +30,11 @@ public class SirenCacheService {
             return redisService.increment(viewCountKey);
         } else {
             Long initialViewCount = sirenRepository.findViewCountByBoardId(boardId);
-            Long newViewCount = initialViewCount + 1;
-            redisService.setData(
-                    viewCountKey,
-                    String.valueOf(newViewCount),
-                    Duration.ofMinutes(3)
-            );
-            return newViewCount;
+            return initialViewCount + 1;
         }
     }
 
-    @Scheduled(cron = "0 0/3 * * * ?")
+    @Scheduled(fixedRate = 1000 * 60 * 3)
     public void applyViewCountToRDB() {
         Set<String> viewCountKeys = redisService.getKeysByPattern(VIEW_COUNT_PREFIX + "*");
         if (Objects.requireNonNull(viewCountKeys).isEmpty()) {

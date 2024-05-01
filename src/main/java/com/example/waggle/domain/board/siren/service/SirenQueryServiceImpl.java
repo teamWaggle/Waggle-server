@@ -7,7 +7,6 @@ import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
-import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -72,17 +71,4 @@ public class SirenQueryServiceImpl implements SirenQueryService {
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
 
-    @Override
-    public Integer getViewCountInRedis(Long boardId) {
-        String viewCountKey = "viewCount::" + boardId;
-        String viewCount = redisService.getValue(viewCountKey);
-        if (viewCount == null) {
-            redisService.setData(
-                    viewCountKey,
-                    String.valueOf(sirenRepository.findViewCountByBoardId(boardId)),
-                    Duration.ofMinutes(3)
-            );
-        }
-        return Integer.parseInt(viewCount);
-    }
 }
