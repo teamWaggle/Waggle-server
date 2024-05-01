@@ -123,7 +123,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         );
     }
 
-    @Scheduled(cron = "0 0/3 * * * ?")
+    @Scheduled(fixedRate = 1000 * 60 * 3)
     @Override
     public void applyViewCountToRDB() {
         Set<String> viewCountKeys = redisService.keys("viewCount*");

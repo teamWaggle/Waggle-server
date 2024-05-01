@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -18,9 +17,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Page<Question> findByMemberUsername(String username, Pageable pageable);
 
     Page<Question> findPageByMemberId(Long memberId, Pageable pageable);
-
-
-    void deleteAllByMemberUsername(String username);
 
     @Query("SELECT q.viewCount FROM Question q WHERE q.id = :boardId")
     Integer findViewCountByBoardId(@Param("boardId") Long boardId);
