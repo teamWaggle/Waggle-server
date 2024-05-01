@@ -53,7 +53,7 @@ public class QuestionResponse {
         private List<String> hashtagList;
         private MemberSummaryDto member;
         private int recommendCount;
-        private int viewCount;
+        private long viewCount;
     }
 
     @Data

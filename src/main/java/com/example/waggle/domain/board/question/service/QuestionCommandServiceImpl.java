@@ -1,5 +1,7 @@
 package com.example.waggle.domain.board.question.service;
 
+import static com.example.waggle.domain.board.service.BoardType.QUESTION;
+
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
@@ -10,12 +12,11 @@ import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
 import com.example.waggle.web.dto.question.QuestionRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.waggle.domain.board.service.BoardType.QUESTION;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -86,13 +87,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         recommendRepository.deleteAllByBoardId(question.getId());
         questionRepository.delete(question);
-    }
-
-    @Override
-    public void increaseQuestionViewCount(Long boardId) {
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-        question.increaseViewCount();
     }
 
     private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {

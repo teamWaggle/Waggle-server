@@ -16,6 +16,4 @@ public interface QuestionCommandService {
 
     void deleteQuestion(Long boardId, Member member);
 
-    void increaseQuestionViewCount(Long boardId);
-
 }
