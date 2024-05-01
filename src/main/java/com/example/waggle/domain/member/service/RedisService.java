@@ -94,8 +94,6 @@ public class RedisService {
     public Long getRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
         RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
-        log.info("class = {}",
-                hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey()).getClass());
         return hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
     }
 
