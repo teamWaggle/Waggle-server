@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.Siren;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.domain.board.siren.repository.SirenRepository;
+import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.SirenHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -28,6 +29,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
 
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
+    private final RedisService redisService;
 
     @Override
     public List<Siren> getAllSiren() {
@@ -83,4 +85,5 @@ public class SirenQueryServiceImpl implements SirenQueryService {
         return sirenRepository.findById(boardId)
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
+
 }

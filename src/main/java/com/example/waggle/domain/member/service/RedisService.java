@@ -95,7 +95,6 @@ public class RedisService {
     public Long getRecommendCnt(Long boardId) {
         HashOperations<String, String, Long> hashOperations = redisTemplate.opsForHash();
         RecommendationHashKey recommendationHashKey = buildHashKey(boardId);
-        log.info("class = {}", hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey()).getClass());
         return hashOperations.get(recommendationHashKey.getKey(), recommendationHashKey.getHashKey());
     }
 
@@ -125,7 +124,7 @@ public class RedisService {
 //        setOperations.add(boardSetKey.getKey(), boardSetKey.getValue());
     }
 
-    private Set<String> getKeysByPattern(String pattern) {
+    public Set<String> getKeysByPattern(String pattern) {
         RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
         ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).build();
         Cursor<byte[]> cursor = connection.scan(scanOptions);
@@ -214,5 +213,14 @@ public class RedisService {
 //                .value(value)
 //                .build();
 //    }
+
+    public Long increment(String key) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        return valueOperations.increment(key);
+    }
+
+    public void deleteData(String key) {
+        redisTemplate.delete(key);
+    }
 
 }
