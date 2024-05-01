@@ -26,4 +26,5 @@ public interface SirenQueryService {
     Page<Siren> getPagedSirenListByCategory(SirenCategory category, Pageable pageable);
 
     Siren getSirenByBoardId(Long boardId);
+
 }

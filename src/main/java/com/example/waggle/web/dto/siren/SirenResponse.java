@@ -53,7 +53,7 @@ public class SirenResponse {
         private MemberSummaryDto member;
         private ResolutionStatus status;
         private int recommendCount;
-        private int viewCount;
+        private long viewCount;
     }
 
     @Data

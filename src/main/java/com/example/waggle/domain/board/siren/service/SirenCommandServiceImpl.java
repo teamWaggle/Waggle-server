@@ -1,5 +1,7 @@
 package com.example.waggle.domain.board.siren.service;
 
+import static com.example.waggle.domain.board.service.BoardType.SIREN;
+
 import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.service.BoardService;
 import com.example.waggle.domain.board.siren.entity.Siren;
@@ -9,6 +11,7 @@ import com.example.waggle.domain.conversation.service.comment.CommentCommandServ
 import com.example.waggle.domain.media.service.MediaCommandService;
 import com.example.waggle.domain.member.entity.Gender;
 import com.example.waggle.domain.member.entity.Member;
+import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.exception.handler.SirenHandler;
@@ -18,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.waggle.domain.board.service.BoardType.SIREN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
+    private final RedisService redisService;
 
     @Override
     public Long createSiren(SirenRequest createSirenRequest, Member member) {
@@ -84,13 +86,6 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         recommendRepository.deleteAllByBoardId(boardId);
 
         sirenRepository.delete(siren);
-    }
-
-    @Override
-    public void increaseSirenViewCount(Long boardId) {
-        Siren siren = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
-        siren.increaseViewCount();
     }
 
     private Siren buildSiren(SirenRequest createSirenRequest, Member member) {

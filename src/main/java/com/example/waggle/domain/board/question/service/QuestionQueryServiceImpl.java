@@ -2,6 +2,7 @@ package com.example.waggle.domain.board.question.service;
 
 import com.example.waggle.domain.board.question.entity.Question;
 import com.example.waggle.domain.board.question.repository.QuestionRepository;
+import com.example.waggle.domain.member.service.RedisService;
 import com.example.waggle.domain.recommend.repository.RecommendRepository;
 import com.example.waggle.global.exception.handler.QuestionHandler;
 import com.example.waggle.global.payload.code.ErrorStatus;
@@ -26,6 +27,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
+    private final RedisService redisService;
 
     @Override
     public List<Question> getAllQuestion() {
