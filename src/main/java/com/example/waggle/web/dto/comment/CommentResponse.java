@@ -4,13 +4,12 @@ import com.example.waggle.domain.board.ResolutionStatus;
 import com.example.waggle.domain.board.siren.entity.SirenCategory;
 import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class CommentResponse {
 
@@ -45,9 +44,8 @@ public class CommentResponse {
         private Long commentId;
         private String content;
         private String questionTitle;
-        private ResolutionStatus status;
+        private ResolutionStatus questionStatus;
         private LocalDateTime createdDate;
-        private MemberSummaryDto member;
     }
 
     @Data
@@ -69,10 +67,9 @@ public class CommentResponse {
         private Long commentId;
         private String content;
         private String sirenTitle;
-        private ResolutionStatus status;
-        private SirenCategory category;
+        private ResolutionStatus sirenStatus;
+        private SirenCategory sirenCategory;
         private LocalDateTime createdDate;
-        private MemberSummaryDto member;
     }
 
     @Data
