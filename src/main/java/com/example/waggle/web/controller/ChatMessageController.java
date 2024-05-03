@@ -8,6 +8,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -21,7 +22,8 @@ public class ChatMessageController {
     private final SimpMessageSendingOperations sendingOperations;
     private final MemberQueryService memberQueryService;
     private final ChatMessageCommandService chatMessageCommandService;
-
+    private final KafkaTemplate<String, ChatMessageDto> kafkaTemplate;
+    private final String KAFKA_TOPIC = "waggle-chat";
 
     @MessageMapping("/message")
     public void sendMessage(Principal principal, @Payload ChatMessageDto message) {
@@ -43,8 +45,9 @@ public class ChatMessageController {
             case TALK:
                 break;
         }
+
+        kafkaTemplate.send(KAFKA_TOPIC, message);
         chatMessageCommandService.createChatMessage(message);
-        sendingOperations.convertAndSend("/subscribe/" + message.getChatRoomId(), message);
     }
 
 }
