@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "kafka.waggle")
 public class KafkaProperties {
+
     private String topic;
     private String groupId;
     private String broker;
+
 }
