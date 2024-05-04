@@ -46,6 +46,7 @@ public class CommentResponse {
         private String title;
         private ResolutionStatus status;
         private LocalDateTime createdDate;
+        private MemberSummaryDto member;
     }
 
     @Data
@@ -70,6 +71,7 @@ public class CommentResponse {
         private ResolutionStatus status;
         private SirenCategory category;
         private LocalDateTime createdDate;
+        private MemberSummaryDto member;
     }
 
     @Data
