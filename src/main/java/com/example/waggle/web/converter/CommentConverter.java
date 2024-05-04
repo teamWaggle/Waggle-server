@@ -4,10 +4,13 @@ import com.example.waggle.domain.conversation.entity.Comment;
 import com.example.waggle.global.util.PageUtil;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentListDto;
 import com.example.waggle.web.dto.comment.CommentResponse.CommentViewDto;
-import org.springframework.data.domain.Page;
-
+import com.example.waggle.web.dto.comment.CommentResponse.QuestionCommentListDto;
+import com.example.waggle.web.dto.comment.CommentResponse.QuestionCommentViewDto;
+import com.example.waggle.web.dto.comment.CommentResponse.SirenCommentListDto;
+import com.example.waggle.web.dto.comment.CommentResponse.SirenCommentViewDto;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class CommentConverter {
 
@@ -26,6 +29,20 @@ public class CommentConverter {
         return CommentListDto.builder()
                 .commentList(collect)
                 .nextPageParam(PageUtil.countNextPage(pagedComment))
+                .build();
+    }
+
+    public static QuestionCommentListDto toQuestionCommentListDto(Page<QuestionCommentViewDto> pagedComments) {
+        return QuestionCommentListDto.builder()
+                .commentList(pagedComments.getContent())
+                .nextPageParam(PageUtil.countNextPage(pagedComments))
+                .build();
+    }
+
+    public static SirenCommentListDto toSirenCommentListDto(Page<SirenCommentViewDto> pagedComments) {
+        return SirenCommentListDto.builder()
+                .commentList(pagedComments.getContent())
+                .nextPageParam(PageUtil.countNextPage(pagedComments))
                 .build();
     }
 }
