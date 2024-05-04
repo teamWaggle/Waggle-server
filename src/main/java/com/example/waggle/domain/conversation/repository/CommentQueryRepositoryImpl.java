@@ -24,66 +24,34 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
 
     @Override
     public Page<SirenCommentViewDto> findPagedSirenCommentsByUserUrl(String userUrl, Pageable pageable) {
-        List<SirenCommentViewDto> content = queryFactory
-                .select(Projections.constructor(SirenCommentViewDto.class,
-                        comment.id,
-                        comment.content,
-                        siren.title,
-                        siren.status,
-                        siren.category,
-                        comment.createdDate,
-                        Projections.fields(MemberSummaryDto.class,
-                                comment.member.id.as("memberId"),
-                                comment.member.userUrl.as("userUrl"),
-                                comment.member.nickname.as("nickname"),
-                                comment.member.profileImgUrl.as("profileImgUrl")
-                        )
-                ))
-                .from(siren)
-                .join(siren.comments, comment)
-                .where(siren.member.userUrl.eq(userUrl))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(comment.createdDate.desc())
-                .fetch();
+        List<SirenCommentViewDto> content = queryFactory.select(
+                        Projections.constructor(SirenCommentViewDto.class, comment.id, comment.content, siren.title,
+                                siren.status, siren.category, comment.createdDate,
+                                Projections.fields(MemberSummaryDto.class, comment.member.id.as("memberId"),
+                                        comment.member.userUrl.as("userUrl"), comment.member.nickname.as("nickname"),
+                                        comment.member.profileImgUrl.as("profileImgUrl")))).from(siren)
+                .join(siren.comments, comment).where(siren.member.userUrl.eq(userUrl)).offset(pageable.getOffset())
+                .limit(pageable.getPageSize()).orderBy(comment.createdDate.desc()).fetch();
 
-        long total = queryFactory
-                .selectFrom(siren)
-                .join(siren.comments, comment)
-                .where(siren.member.userUrl.eq(userUrl))
-                .stream().count();
+        long total = queryFactory.selectFrom(siren).join(siren.comments, comment)
+                .where(siren.member.userUrl.eq(userUrl)).stream().count();
 
         return new PageImpl<>(content, pageable, total);
     }
 
     @Override
     public Page<QuestionCommentViewDto> findPagedQuestionCommentsByUserUrl(String userUrl, Pageable pageable) {
-        List<QuestionCommentViewDto> content = queryFactory
-                .select(Projections.constructor(QuestionCommentViewDto.class,
-                        comment.id,
-                        comment.content,
-                        question.title,
-                        question.status,
-                        comment.createdDate,
-                        Projections.fields(MemberSummaryDto.class,
-                                comment.member.id.as("memberId"),
-                                comment.member.userUrl.as("userUrl"),
-                                comment.member.nickname.as("nickname"),
-                                comment.member.profileImgUrl.as("profileImgUrl")
-                ))
-                .from(question)
-                .join(question.comments, comment)
-                .where(question.member.userUrl.eq(userUrl))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(comment.createdDate.desc())
-                .fetch();
+        List<QuestionCommentViewDto> content = queryFactory.select(
+                        Projections.constructor(QuestionCommentViewDto.class, comment.id, comment.content, question.title,
+                                question.status, comment.createdDate,
+                                Projections.fields(MemberSummaryDto.class, comment.member.id.as("memberId"),
+                                        comment.member.userUrl.as("userUrl"), comment.member.nickname.as("nickname"),
+                                        comment.member.profileImgUrl.as("profileImgUrl")))).from(question)
+                .join(question.comments, comment).where(question.member.userUrl.eq(userUrl))
+                .offset(pageable.getOffset()).limit(pageable.getPageSize()).orderBy(comment.createdDate.desc()).fetch();
 
-        long total = queryFactory
-                .selectFrom(question)
-                .join(question.comments, comment)
-                .where(question.member.userUrl.eq(userUrl))
-                .stream().count();
+        long total = queryFactory.selectFrom(question).join(question.comments, comment)
+                .where(question.member.userUrl.eq(userUrl)).stream().count();
 
         return new PageImpl<>(content, pageable, total);
     }
