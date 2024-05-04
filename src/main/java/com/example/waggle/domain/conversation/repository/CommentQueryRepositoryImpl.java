@@ -6,6 +6,7 @@ import static com.example.waggle.domain.conversation.entity.QComment.comment;
 
 import com.example.waggle.web.dto.comment.CommentResponse.QuestionCommentViewDto;
 import com.example.waggle.web.dto.comment.CommentResponse.SirenCommentViewDto;
+import com.example.waggle.web.dto.member.MemberResponse.MemberSummaryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -30,7 +31,13 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         siren.title,
                         siren.status,
                         siren.category,
-                        comment.createdDate
+                        comment.createdDate,
+                        Projections.fields(MemberSummaryDto.class,
+                                comment.member.id.as("memberId"),
+                                comment.member.userUrl.as("userUrl"),
+                                comment.member.nickname.as("nickname"),
+                                comment.member.profileImgUrl.as("profileImgUrl")
+                        )
                 ))
                 .from(siren)
                 .join(siren.comments, comment)
@@ -57,7 +64,12 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         comment.content,
                         question.title,
                         question.status,
-                        comment.createdDate
+                        comment.createdDate,
+                        Projections.fields(MemberSummaryDto.class,
+                                comment.member.id.as("memberId"),
+                                comment.member.userUrl.as("userUrl"),
+                                comment.member.nickname.as("nickname"),
+                                comment.member.profileImgUrl.as("profileImgUrl")
                 ))
                 .from(question)
                 .join(question.comments, comment)
