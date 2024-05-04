@@ -70,7 +70,6 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                                 comment.member.userUrl.as("userUrl"),
                                 comment.member.nickname.as("nickname"),
                                 comment.member.profileImgUrl.as("profileImgUrl")
-                        )
                 ))
                 .from(question)
                 .join(question.comments, comment)

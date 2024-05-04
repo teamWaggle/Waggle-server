@@ -1,0 +1,69 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/waggle?useSSL=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: springproject
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  devtools:
+    livereload:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        #show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  profiles:
+    include:
+      - security
+      - s3
+      - kafka
+      - mongo
+
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: teamwagglewaggle@gmail.com
+    password: 1234
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
+server:
+  error:
+    include-exception: false
+    include-message: always
+    include-stacktrace: on_param
+    whitelabel.enabled: true
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
+  use-fqn: true
+
