@@ -33,10 +33,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         siren.category,
                         comment.createdDate,
                         Projections.fields(MemberSummaryDto.class,
-                                siren.member.id.as("memberId"),
-                                siren.member.userUrl.as("userUrl"),
-                                siren.member.nickname.as("nickname"),
-                                siren.member.profileImgUrl.as("profileImgUrl")
+                                comment.member.id.as("memberId"),
+                                comment.member.userUrl.as("userUrl"),
+                                comment.member.nickname.as("nickname"),
+                                comment.member.profileImgUrl.as("profileImgUrl")
                         )
                 ))
                 .from(siren)
@@ -66,10 +66,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         question.status,
                         comment.createdDate,
                         Projections.fields(MemberSummaryDto.class,
-                                question.member.id.as("memberId"),
-                                question.member.userUrl.as("userUrl"),
-                                question.member.nickname.as("nickname"),
-                                question.member.profileImgUrl.as("profileImgUrl")
+                                comment.member.id.as("memberId"),
+                                comment.member.userUrl.as("userUrl"),
+                                comment.member.nickname.as("nickname"),
+                                comment.member.profileImgUrl.as("profileImgUrl")
                         )
                 ))
                 .from(question)
