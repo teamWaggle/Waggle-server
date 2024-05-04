@@ -44,7 +44,7 @@ public class SwaggerConfig {
                         ---
                                                 
                         ### 🔑 테스트 사용자 인증 토큰
-                        eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiNmY1ZGZjYi0wZTk4LTQxOGEtYmIzMy05YmE0OWY0ZGQwZWQiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzE0NDgwODAxfQ.FZ630SRHlgfPqwGl3uguGxh5ri76VDWcpJZNv8F-y-c
+                        `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5YjJlZTgyMS0wZWM4LTQ5M2QtYTRkOS1jNzY2NDk3OWM1ZWEiLCJhdXRoIjoiUk9MRV9HVUVTVCIsImV4cCI6MTcyMDAyNjMxNH0.PRH0Lg9HZMbDLT6oRwDWTPM4PaLafa_xVb4Gdy5PKs8`
                                                 
                         """);
 
