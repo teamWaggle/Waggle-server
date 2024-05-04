@@ -43,8 +43,8 @@ public class CommentResponse {
     public static class QuestionCommentViewDto {
         private Long commentId;
         private String content;
-        private String questionTitle;
-        private ResolutionStatus questionStatus;
+        private String title;
+        private ResolutionStatus status;
         private LocalDateTime createdDate;
     }
 
@@ -66,9 +66,9 @@ public class CommentResponse {
     public static class SirenCommentViewDto {
         private Long commentId;
         private String content;
-        private String sirenTitle;
-        private ResolutionStatus sirenStatus;
-        private SirenCategory sirenCategory;
+        private String title;
+        private ResolutionStatus status;
+        private SirenCategory category;
         private LocalDateTime createdDate;
     }
 
