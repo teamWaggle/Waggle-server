@@ -13,8 +13,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.example.waggle.domain.board.question.entity.QQuestion.question;
-import static com.example.waggle.domain.recommend.entity.QRecommend.recommend;
+import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
+import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
+
 
 @Repository
 @RequiredArgsConstructor

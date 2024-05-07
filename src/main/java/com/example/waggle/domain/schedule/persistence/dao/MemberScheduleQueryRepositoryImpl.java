@@ -1,8 +1,5 @@
 package com.example.waggle.domain.schedule.persistence.dao;
 
-import static com.example.waggle.domain.member.entity.QMember.member;
-import static com.example.waggle.domain.schedule.entity.QMemberSchedule.memberSchedule;
-import static com.example.waggle.domain.schedule.entity.QSchedule.schedule;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
@@ -10,14 +7,17 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import static com.example.waggle.domain.member.persistence.entity.QMember.member;
+import static com.example.waggle.domain.schedule.persistence.entity.QMemberSchedule.memberSchedule;
+import static com.example.waggle.domain.schedule.persistence.entity.QSchedule.schedule;
 
 @RequiredArgsConstructor
 @Repository

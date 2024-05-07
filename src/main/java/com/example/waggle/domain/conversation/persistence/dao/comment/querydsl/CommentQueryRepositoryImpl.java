@@ -1,22 +1,22 @@
 package com.example.waggle.domain.conversation.persistence.dao.comment.querydsl;
 
-import static com.example.waggle.domain.board.question.entity.QQuestion.question;
-import static com.example.waggle.domain.board.siren.entity.QSiren.siren;
-import static com.example.waggle.domain.conversation.entity.QComment.comment;
 
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.QuestionCommentViewDto;
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.SirenCommentViewDto;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
+import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
+import static com.example.waggle.domain.conversation.persistence.entity.QComment.comment;
 
 @Repository
 public class CommentQueryRepositoryImpl implements CommentQueryRepository {

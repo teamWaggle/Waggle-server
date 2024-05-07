@@ -1,6 +1,5 @@
 package com.example.waggle.domain.member.presentation.dto;
 
-import com.example.waggle.global.validation.ValidationGroups;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -23,8 +22,8 @@ public class MemberRequest {
         @NotBlank
         private String email;
 
-        @NotBlank(message = "비밀번호를 작성해주세요.", groups = ValidationGroups.NotEmpty.class)
-        @Length(min = 10, message = "비밀번호는 최소 10자입니다.", groups = ValidationGroups.LimitCount.class)
+        @NotBlank(message = "비밀번호를 작성해주세요.")
+        @Length(min = 10, message = "비밀번호는 최소 10자입니다.")
         private String password;
     }
 
