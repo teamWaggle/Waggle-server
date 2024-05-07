@@ -1,14 +1,17 @@
 package com.example.waggle.domain.recommend.service;
 
-import com.example.waggle.domain.board.story.service.StoryCommandService;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberCommandService;
-import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.domain.member.service.RedisService;
-import com.example.waggle.domain.recommend.repository.RecommendRepository;
-import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.member.MemberRequest.MemberCredentialsDto;
-import com.example.waggle.web.dto.story.StoryRequest;
+import com.example.waggle.domain.board.application.story.StoryCommandService;
+import com.example.waggle.domain.board.presentation.dto.story.StoryRequest;
+import com.example.waggle.domain.member.application.MemberCommandService;
+import com.example.waggle.domain.member.application.MemberQueryService;
+import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberCredentialsDto;
+import com.example.waggle.domain.recommend.application.command.RecommendCommandService;
+import com.example.waggle.domain.recommend.application.query.RecommendQueryService;
+import com.example.waggle.domain.recommend.application.sync.RecommendSyncService;
+import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
+import com.example.waggle.global.service.redis.RedisService;
+import com.example.waggle.global.service.test.DatabaseCleanUp;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

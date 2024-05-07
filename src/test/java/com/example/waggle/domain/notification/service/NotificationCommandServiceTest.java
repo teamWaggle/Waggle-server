@@ -1,15 +1,16 @@
 package com.example.waggle.domain.notification.service;
 
-import com.example.waggle.domain.conversation.service.comment.CommentCommandService;
-import com.example.waggle.domain.follow.service.FollowCommandService;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.notification.entity.Notification;
-import com.example.waggle.domain.notification.repository.NotificationRepository;
-import com.example.waggle.domain.schedule.entity.TeamColor;
-import com.example.waggle.domain.schedule.service.team.TeamCommandService;
-import com.example.waggle.global.component.DatabaseCleanUp;
-import com.example.waggle.web.dto.schedule.TeamRequest;
+import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
+import com.example.waggle.domain.follow.application.FollowCommandService;
+import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.notification.application.NotificationCommandService;
+import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
+import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.schedule.application.team.TeamCommandService;
+import com.example.waggle.domain.schedule.persistence.entity.TeamColor;
+import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
+import com.example.waggle.global.service.test.DatabaseCleanUp;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.AfterEach;
@@ -21,8 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.example.waggle.domain.notification.entity.NotificationType.FOLLOWED;
-import static com.example.waggle.domain.notification.entity.NotificationType.PARTICIPATION_REQUEST;
+import static com.example.waggle.domain.notification.persistence.entity.NotificationType.FOLLOWED;
+import static com.example.waggle.domain.notification.persistence.entity.NotificationType.PARTICIPATION_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j

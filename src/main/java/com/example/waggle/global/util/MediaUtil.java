@@ -1,10 +1,10 @@
 package com.example.waggle.global.util;
 
-import com.example.waggle.domain.board.Board;
-import com.example.waggle.domain.media.service.AwsS3Service;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.pet.entity.Pet;
-import com.example.waggle.domain.schedule.entity.Team;
+import com.example.waggle.domain.board.persistence.entity.Board;
+import com.example.waggle.global.service.aws.AwsS3Service;
+import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.pet.persistence.entity.Pet;
+import com.example.waggle.domain.schedule.persistence.entity.Team;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 

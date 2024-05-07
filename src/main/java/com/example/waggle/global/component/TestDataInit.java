@@ -1,11 +1,11 @@
 //package com.example.waggle.global.component;
 //
 //import com.example.waggle.domain.board.help.service.HelpService;
-//import com.example.waggle.domain.board.story.entity.Story;
-//import com.example.waggle.domain.board.story.repository.StoryRepository;
+//import com.example.waggle.domain.board.persistence.entity.Story;
+//import com.example.waggle.domain.board.persistence.dao.story.jpa.StoryRepository;
 //import com.example.waggle.domain.member.entity.Member;
 //import com.example.waggle.domain.member.repository.MemberRepository;
-//import com.example.waggle.domain.member.service.MemberCommandService;
+//import com.example.waggle.domain.member.application.MemberCommandService;
 //import com.example.waggle.domain.schedule.service.schedule.ScheduleCommandService;
 //import com.example.waggle.domain.schedule.service.team.TeamCommandService;
 //import com.example.waggle.web.dto.help.HelpWriteDto;

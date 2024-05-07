@@ -1,16 +1,16 @@
 package com.example.waggle.global.util;
 
-import com.example.waggle.domain.schedule.entity.Schedule;
-import com.example.waggle.domain.schedule.entity.ScheduleStatus;
-import com.example.waggle.global.exception.handler.ScheduleHandler;
-import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.domain.schedule.persistence.entity.Schedule;
+import com.example.waggle.domain.schedule.persistence.entity.ScheduleStatus;
+import com.example.waggle.exception.object.handler.ScheduleHandler;
+import com.example.waggle.exception.payload.code.ErrorStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.example.waggle.domain.schedule.entity.ScheduleStatus.*;
+import static com.example.waggle.domain.schedule.persistence.entity.ScheduleStatus.*;
 
 public class ScheduleUtil {
 

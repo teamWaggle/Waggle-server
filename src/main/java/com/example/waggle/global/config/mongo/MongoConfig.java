@@ -1,5 +1,6 @@
 package com.example.waggle.global.config.mongo;
 
+import com.example.waggle.global.property.MongoProperties;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import lombok.RequiredArgsConstructor;
