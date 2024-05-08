@@ -1,4 +1,4 @@
-package com.example.waggle.global.config.spring;
+package com.example.waggle.global.config;
 
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.global.annotation.auth.CustomAuthenticationPrincipalArgumentResolver;
