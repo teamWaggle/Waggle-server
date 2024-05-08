@@ -18,5 +18,5 @@ public interface FollowQueryService {
 
     List<Follow> getFollowersByUserUrl(String userUrl);
 
-    Boolean checkFollowing(Member member, String userUrl);
+    Boolean isFollowingMemberWithUserUrl(Member member, String userUrl);
 }

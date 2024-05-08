@@ -49,7 +49,7 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     }
 
     @Override
-    public Boolean checkFollowing(Member member, String userUrl) {
+    public Boolean isFollowingMemberWithUserUrl(Member member, String userUrl) {
         return followRepository.existsFollowByFromMemberAndToMemberUserUrl(member, userUrl);
     }
 

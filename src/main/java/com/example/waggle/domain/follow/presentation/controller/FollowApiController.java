@@ -86,6 +86,6 @@ public class FollowApiController {
     @GetMapping("/following/{userUrl}")
     public ApiResponseDto<Boolean> checkFollowingTo(@PathVariable("userUrl") String userUrl,
                                                     @AuthUser Member member) {
-        return ApiResponseDto.onSuccess(followQueryService.checkFollowing(member, userUrl));
+        return ApiResponseDto.onSuccess(followQueryService.isFollowingMemberWithUserUrl(member, userUrl));
     }
 }
