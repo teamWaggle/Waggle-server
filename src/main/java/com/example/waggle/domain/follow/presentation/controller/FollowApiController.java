@@ -6,10 +6,10 @@ import com.example.waggle.domain.follow.persistence.entity.Follow;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,9 +36,9 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@RequestParam("toMemberId") Long toMemberId,
+    public ApiResponseDto<Long> requestFollow(@RequestParam("userUrl") String userUrl,
                                               @AuthUser Member member) {
-        Long follow = followCommandService.follow(member, toMemberId);
+        Long follow = followCommandService.follow(member, userUrl);
         return ApiResponseDto.onSuccess(follow);
     }
 
@@ -47,24 +47,12 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam("toMemberId") Long toMemberId,
+    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam("userUrl") String userUrl,
                                                    @AuthUser Member member) {
-        followCommandService.unFollow(member, toMemberId);
+        followCommandService.unFollow(member, userUrl);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "유저 팔로잉 목록 조회", description = "로그인한 유저의 팔로잉 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/list/following")
-
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberListByUsername(@AuthUser Member member) {
-        List<Follow> followings = followQueryService.getFollowingsByUsername(member.getUsername());
-        List<MemberSummaryDto> collect = followings.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(collect);
-    }
 
     @Operation(summary = "멤버 팔로잉 목록 조회", description = "조회한 멤버의 팔로잉 목록을 보여줍니다.")
     @ApiErrorCodeExample({
@@ -78,17 +66,6 @@ public class FollowApiController {
         return ApiResponseDto.onSuccess(collect);
     }
 
-    @Operation(summary = "유저 팔로워 목록 조회", description = "로그인한 유저의 팔로워 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/list/follower")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberListByUsername(@AuthUser Member member) {
-        List<Follow> followers = followQueryService.getFollowersByUsername(member.getUsername());
-        List<MemberSummaryDto> collect = followers.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(collect);
-    }
 
     @Operation(summary = "멤버 팔로워 목록 조회", description = "조회한 멤버의 팔로워 목록을 보여줍니다.")
     @ApiErrorCodeExample({
@@ -100,5 +77,15 @@ public class FollowApiController {
         List<MemberSummaryDto> collect = followers.stream()
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
+    }
+
+    @Operation(summary = "상대방 팔로우 상태 확인 🔑", description = "조회하는 상대방을 팔로우하고 있는지 확인합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/following/{userUrl}")
+    public ApiResponseDto<Boolean> checkFollowingTo(@PathVariable("userUrl") String userUrl,
+                                                    @AuthUser Member member) {
+        return ApiResponseDto.onSuccess(followQueryService.isFollowingMemberWithUserUrl(member, userUrl));
     }
 }

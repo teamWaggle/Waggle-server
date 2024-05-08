@@ -124,7 +124,8 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "api/teams/{teamId}/participation"),
                 antMatcher(HttpMethod.GET, "api/teams/{teamId}/participation/status"),
                 antMatcher(HttpMethod.GET, "api/schedules/teams/{teamId}/auth"),
-                antMatcher(HttpMethod.GET, "api/schdules/teams/{teamId}/period/auth")
+                antMatcher(HttpMethod.GET, "api/schdules/teams/{teamId}/period/auth"),
+                antMatcher(HttpMethod.GET, "api/follows/following/{userUrl}")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
@@ -155,7 +156,7 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/questions/**"),
                 antMatcher(HttpMethod.GET, "/api/sirens/**"),
                 antMatcher(HttpMethod.GET, "/api/recommends/{boardId}/memberList"),
-                antMatcher(HttpMethod.GET, "/api/follows/**"),
+                antMatcher(HttpMethod.GET, "/api/follows/list/**"),
                 antMatcher(HttpMethod.GET, "/api/chat/rooms/**"),
                 antMatcher("/ws/chat/**"),
                 antMatcher("/chat/**"),

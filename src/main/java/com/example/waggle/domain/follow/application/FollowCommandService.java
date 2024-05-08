@@ -6,10 +6,10 @@ public interface FollowCommandService {
 
     Long follow(String from, String to);
 
-    Long follow(Member from, Long to);
+    Long follow(Member from, String to);
 
     void unFollow(String from, String to);
 
-    void unFollow(Member from, Long to);
+    void unFollow(Member from, String to);
 
 }
