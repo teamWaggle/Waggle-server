@@ -1,9 +1,9 @@
 package com.example.waggle.domain.board.presentation.converter;
 
 import com.example.waggle.domain.board.persistence.entity.Siren;
-import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.RepresentativeSirenDto;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenDetailDto;
-import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenListDto;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenPageDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryDto;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
@@ -26,10 +26,10 @@ public class SirenConverter {
                 .build();
     }
 
-    public static SirenListDto toSirenListDto(Page<Siren> pagedSiren) {
+    public static SirenPageDto toSirenPageDto(Page<Siren> pagedSiren) {
         List<SirenSummaryDto> collect = pagedSiren.stream()
                 .map(SirenConverter::toSirenSummaryDto).collect(Collectors.toList());
-        return SirenListDto.builder()
+        return SirenPageDto.builder()
                 .sirenList(collect)
                 .isFirst(pagedSiren.isFirst())
                 .isLast(pagedSiren.isLast())
@@ -57,10 +57,10 @@ public class SirenConverter {
                 .build();
     }
 
-    public static RepresentativeSirenDto toRepresentativeSirenDto(List<Siren> sirenList) {
+    public static SirenSummaryListDto toSirenSummaryListDto(List<Siren> sirenList) {
         List<SirenSummaryDto> collect = sirenList.stream()
                 .map(SirenConverter::toSirenSummaryDto).collect(Collectors.toList());
-        return RepresentativeSirenDto.builder()
+        return SirenSummaryListDto.builder()
                 .sirenList(collect)
                 .build();
     }

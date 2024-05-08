@@ -86,4 +86,9 @@ public class SirenQueryServiceImpl implements SirenQueryService {
                 .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
 
+    @Override
+    public List<Siren> getRandomUnsolvedSirenList() {
+        return sirenRepository.findRandomUnresolvedSirens();
+    }
+
 }

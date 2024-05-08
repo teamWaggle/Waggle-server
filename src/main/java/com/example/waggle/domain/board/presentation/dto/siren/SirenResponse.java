@@ -61,7 +61,7 @@ public class SirenResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public static class SirenListDto {
+    public static class SirenPageDto {
         private List<SirenSummaryDto> sirenList;
         private long sirenCount;
         private Boolean isFirst;
@@ -73,7 +73,7 @@ public class SirenResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public static class RepresentativeSirenDto {
+    public static class SirenSummaryListDto {
         private List<SirenSummaryDto> sirenList;
     }
 

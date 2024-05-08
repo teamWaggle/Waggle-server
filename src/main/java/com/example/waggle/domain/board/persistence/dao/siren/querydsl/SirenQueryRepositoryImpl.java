@@ -1,20 +1,21 @@
 package com.example.waggle.domain.board.persistence.dao.siren.querydsl;
 
+import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
+import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
+
+import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
-import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,11 +40,17 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
         return new PageImpl<>(sirenList, pageable, count);
     }
 
+    @Override
+    public List<Siren> findRandomUnresolvedSirens() {
+        return query.selectFrom(siren)
+                .where(siren.status.eq(ResolutionStatus.UNRESOLVED))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(3)
+                .fetch();
+    }
+
     private OrderSpecifier[] createOrderFilter(SirenFilterParam filterParam) {
         switch (filterParam) {
-            case latest -> {
-                return new OrderSpecifier[]{siren.createdDate.desc()};
-            }
             case recommend -> {
                 return new OrderSpecifier[]{
                         recommend.count().desc(),
