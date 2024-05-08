@@ -6,10 +6,10 @@ import com.example.waggle.domain.follow.persistence.entity.Follow;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,9 +36,9 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/follow")
-    public ApiResponseDto<Long> requestFollow(@RequestParam("toMemberId") Long toMemberId,
+    public ApiResponseDto<Long> requestFollow(@RequestParam("userUrl") String userUrl,
                                               @AuthUser Member member) {
-        Long follow = followCommandService.follow(member, toMemberId);
+        Long follow = followCommandService.follow(member, userUrl);
         return ApiResponseDto.onSuccess(follow);
     }
 
@@ -47,9 +47,9 @@ public class FollowApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/unfollow")
-    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam("toMemberId") Long toMemberId,
+    public ApiResponseDto<Boolean> requestUnFollow(@RequestParam("userUrl") String userUrl,
                                                    @AuthUser Member member) {
-        followCommandService.unFollow(member, toMemberId);
+        followCommandService.unFollow(member, userUrl);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
