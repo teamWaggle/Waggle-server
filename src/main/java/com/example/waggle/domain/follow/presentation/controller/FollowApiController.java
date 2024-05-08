@@ -53,18 +53,6 @@ public class FollowApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "유저 팔로잉 목록 조회", description = "로그인한 유저의 팔로잉 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/list/following")
-
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberListByUsername(@AuthUser Member member) {
-        List<Follow> followings = followQueryService.getFollowingsByUsername(member.getUsername());
-        List<MemberSummaryDto> collect = followings.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getToMember())).collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(collect);
-    }
 
     @Operation(summary = "멤버 팔로잉 목록 조회", description = "조회한 멤버의 팔로잉 목록을 보여줍니다.")
     @ApiErrorCodeExample({
@@ -78,17 +66,6 @@ public class FollowApiController {
         return ApiResponseDto.onSuccess(collect);
     }
 
-    @Operation(summary = "유저 팔로워 목록 조회", description = "로그인한 유저의 팔로워 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/list/follower")
-    public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberListByUsername(@AuthUser Member member) {
-        List<Follow> followers = followQueryService.getFollowersByUsername(member.getUsername());
-        List<MemberSummaryDto> collect = followers.stream()
-                .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(collect);
-    }
 
     @Operation(summary = "멤버 팔로워 목록 조회", description = "조회한 멤버의 팔로워 목록을 보여줍니다.")
     @ApiErrorCodeExample({
