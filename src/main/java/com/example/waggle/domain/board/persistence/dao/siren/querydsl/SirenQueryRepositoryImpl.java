@@ -45,7 +45,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
         return query.selectFrom(siren)
                 .where(siren.status.eq(ResolutionStatus.UNRESOLVED))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(3)
+                .limit(4)
                 .fetch();
     }
 

@@ -118,7 +118,7 @@ public class SirenApiController {
     @GetMapping
     public ApiResponseDto<SirenPagedSummaryListDto> getAllSiren(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, 8, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
