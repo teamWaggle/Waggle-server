@@ -27,6 +27,6 @@ public interface SirenQueryService {
 
     Siren getSirenByBoardId(Long boardId);
 
-    List<Siren> getRandomUnsolvedSirenList();
+    List<Siren> getRandomUnresolvedSirenList();
 
 }

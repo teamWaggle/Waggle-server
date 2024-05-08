@@ -87,7 +87,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public List<Siren> getRandomUnsolvedSirenList() {
+    public List<Siren> getRandomUnresolvedSirenList() {
         return sirenRepository.findRandomUnresolvedSirens();
     }
 

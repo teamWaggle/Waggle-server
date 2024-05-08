@@ -196,10 +196,10 @@ public class SirenApiController {
     @Operation(summary = "랜덤 사이렌 조회", description = "임의의 사이렌을 조회합니다. 미해결 사이렌 중 임의로 3개의 사이렌을 반환합니다.")
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/random")
-    public ApiResponseDto<SirenSummaryListDto> getUnsolvedRandomSirenList() {
-        List<Siren> representativeSirenList = sirenQueryService.getRandomUnsolvedSirenList();
+    public ApiResponseDto<SirenSummaryListDto> getUnresolvedRandomSirenList() {
+        List<Siren> randomUnresolvedSirenList = sirenQueryService.getRandomUnresolvedSirenList();
         SirenSummaryListDto listDto = SirenConverter.toSirenSummaryListDto(
-                representativeSirenList);
+                randomUnresolvedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
     }
