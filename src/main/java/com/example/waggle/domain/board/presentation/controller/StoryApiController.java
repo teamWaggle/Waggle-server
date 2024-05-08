@@ -19,6 +19,7 @@ import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -47,7 +48,7 @@ public class StoryApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createStory(@RequestPart("createStoryRequest") StoryRequest createStoryRequest,
+    public ApiResponseDto<Long> createStory(@RequestPart("createStoryRequest") @Valid StoryRequest createStoryRequest,
                                             @AuthUser Member member) {
         List<String> removedPrefixMedia = createStoryRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());

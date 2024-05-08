@@ -1,4 +1,4 @@
-package com.example.waggle.global.config.spring;
+package com.example.waggle.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Type;

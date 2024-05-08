@@ -1,11 +1,13 @@
-package com.example.waggle.global.config.spring;
+package com.example.waggle.global.config;
 
 
-import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.holder.ExampleHolder;
+import static java.util.stream.Collectors.groupingBy;
+
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.code.Reason;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
+import com.example.waggle.exception.payload.holder.ExampleHolder;
+import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.Components;
@@ -20,16 +22,13 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Configuration
 public class SwaggerConfig {
@@ -45,7 +44,7 @@ public class SwaggerConfig {
                         ---
                                                 
                         ### 🔑 테스트 사용자 인증 토큰
-                        `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5YjJlZTgyMS0wZWM4LTQ5M2QtYTRkOS1jNzY2NDk3OWM1ZWEiLCJhdXRoIjoiUk9MRV9HVUVTVCIsImV4cCI6MTcyMDAyNjMxNH0.PRH0Lg9HZMbDLT6oRwDWTPM4PaLafa_xVb4Gdy5PKs8`
+                        `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODYzNmQ5OS0yYmE5LTQxYTYtOWVhMS04MWI5YmE4NzFmODMiLCJhdXRoIjoiUk9MRV9HVUVTVCIsImV4cCI6MTcyMjkzNDAyN30.WdYEP-lXt8NuBR5kR6oocoLQEXMBabbnK8Hb8Dw4fRU`
                                                 
                         """);
 

@@ -1,4 +1,4 @@
-package com.example.waggle.global.config.spring;
+package com.example.waggle.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
