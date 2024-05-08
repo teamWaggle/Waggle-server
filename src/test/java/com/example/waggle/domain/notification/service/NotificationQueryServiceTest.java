@@ -1,11 +1,13 @@
 package com.example.waggle.domain.notification.service;
 
-import com.example.waggle.domain.follow.service.FollowCommandService;
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.repository.MemberRepository;
-import com.example.waggle.domain.notification.entity.Notification;
-import com.example.waggle.domain.schedule.service.team.TeamCommandService;
-import com.example.waggle.global.component.DatabaseCleanUp;
+import com.example.waggle.domain.follow.application.FollowCommandService;
+import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.notification.application.NotificationCommandService;
+import com.example.waggle.domain.notification.application.NotificationQueryService;
+import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.schedule.application.team.TeamCommandService;
+import com.example.waggle.global.service.test.DatabaseCleanUp;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.waggle.domain.notification.entity.NotificationType.FOLLOWED;
+import static com.example.waggle.domain.notification.persistence.entity.NotificationType.FOLLOWED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j

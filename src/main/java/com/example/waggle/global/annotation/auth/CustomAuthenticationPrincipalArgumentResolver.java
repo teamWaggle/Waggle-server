@@ -1,9 +1,9 @@
 package com.example.waggle.global.annotation.auth;
 
-import com.example.waggle.domain.member.entity.Member;
-import com.example.waggle.domain.member.service.MemberQueryService;
-import com.example.waggle.global.exception.handler.SecurityHandler;
-import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.domain.member.application.MemberQueryService;
+import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.exception.object.handler.SecurityHandler;
+import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;

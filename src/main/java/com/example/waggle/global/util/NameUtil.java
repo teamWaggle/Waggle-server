@@ -1,7 +1,7 @@
 package com.example.waggle.global.util;
 
-import com.example.waggle.global.exception.handler.MemberHandler;
-import com.example.waggle.global.payload.code.ErrorStatus;
+import com.example.waggle.exception.object.handler.MemberHandler;
+import com.example.waggle.exception.payload.code.ErrorStatus;
 
 import java.util.UUID;
 
