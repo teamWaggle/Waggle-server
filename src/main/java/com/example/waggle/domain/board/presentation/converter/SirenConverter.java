@@ -3,10 +3,11 @@ package com.example.waggle.domain.board.presentation.converter;
 import com.example.waggle.domain.board.persistence.entity.Siren;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenDetailDto;
-import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenPageDto;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenPagedSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryDto;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
+import com.example.waggle.global.util.PageUtil;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -26,14 +27,12 @@ public class SirenConverter {
                 .build();
     }
 
-    public static SirenPageDto toSirenPageDto(Page<Siren> pagedSiren) {
+    public static SirenPagedSummaryListDto toSirenPageDto(Page<Siren> pagedSiren) {
         List<SirenSummaryDto> collect = pagedSiren.stream()
                 .map(SirenConverter::toSirenSummaryDto).collect(Collectors.toList());
-        return SirenPageDto.builder()
+        return SirenPagedSummaryListDto.builder()
                 .sirenList(collect)
-                .isFirst(pagedSiren.isFirst())
-                .isLast(pagedSiren.isLast())
-                .sirenCount(pagedSiren.getTotalElements())
+                .nextPageParam(PageUtil.countNextPage(pagedSiren))
                 .build();
     }
 
