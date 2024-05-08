@@ -78,4 +78,14 @@ public class FollowApiController {
                 .map(f -> MemberConverter.toMemberSummaryDto(f.getFromMember())).collect(Collectors.toList());
         return ApiResponseDto.onSuccess(collect);
     }
+
+    @Operation(summary = "상대방 팔로우 상태 확인 🔑", description = "조회하는 상대방을 팔로우하고 있는지 확인합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/following/{userUrl}")
+    public ApiResponseDto<Boolean> checkFollowingTo(@PathVariable("userUrl") String userUrl,
+                                                    @AuthUser Member member) {
+        return ApiResponseDto.onSuccess(followQueryService.checkFollowing(member, userUrl));
+    }
 }

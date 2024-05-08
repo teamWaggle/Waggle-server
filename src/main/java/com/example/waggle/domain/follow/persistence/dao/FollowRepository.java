@@ -32,4 +32,5 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     void deleteAllByFromMember(Member member);
 
+    Boolean existsFollowByFromMemberAndToMemberUserUrl(Member member, String userUrl);
 }
