@@ -1,21 +1,24 @@
 package com.example.waggle.domain.board.persistence.dao.siren.querydsl;
 
-import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
-import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
-
 import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
+import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
+import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,6 +36,25 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 .orderBy(createOrderFilter(filterParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .fetch();
+        Long count = query.select(siren.count())
+                .from(siren)
+                .fetchOne();
+        return new PageImpl<>(sirenList, pageable, count);
+    }
+
+    @Override
+    public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenCategory category, Pageable pageable) {
+        JPAQuery<Siren> baseQuery = query.selectFrom(siren);
+        if (filterParam.equals(SirenFilterParam.recommend)) {
+            baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
+            baseQuery.groupBy(siren);
+        }
+        List<Siren> sirenList = baseQuery
+                .orderBy(createOrderFilter(filterParam))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(selectCategory(category))
                 .fetch();
         Long count = query.select(siren.count())
                 .from(siren)
@@ -73,5 +95,9 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 return new OrderSpecifier[]{siren.createdDate.desc()};
             }
         }
+    }
+
+    private BooleanExpression selectCategory(SirenCategory category) {
+        return category != null ? siren.category.eq(category) : null;
     }
 }
