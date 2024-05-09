@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface SirenQueryRepository {
 
-    Page<Siren> findSirensByFilter(SirenSortParam filterParam, Pageable pageable);
-
     Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable);
 
     List<Siren> findRandomUnresolvedSirens();

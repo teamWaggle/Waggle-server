@@ -4,7 +4,6 @@ import com.example.waggle.domain.board.application.siren.SirenCacheService;
 import com.example.waggle.domain.board.application.siren.SirenCommandService;
 import com.example.waggle.domain.board.application.siren.SirenQueryService;
 import com.example.waggle.domain.board.persistence.entity.Siren;
-import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.converter.SirenConverter;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenRequest;
@@ -114,36 +113,6 @@ public class SirenApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 8, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
-        SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
-        setRecommendCntInList(listDto.getSirenList());
-        return ApiResponseDto.onSuccess(listDto);
-    }
-
-    @Operation(summary = "사이렌 필터 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/filter")
-    public ApiResponseDto<SirenPagedSummaryListDto> getSirensByFilter(
-            @RequestParam(name = "filterParam") SirenSortParam filterParam,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByFilter(filterParam, pageable);
-        SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
-        setRecommendCntInList(listDto.getSirenList());
-        return ApiResponseDto.onSuccess(listDto);
-    }
-
-    @Operation(summary = "사이렌 카테고리 조회", description = "카테고리 옵션에 맞추어 결과를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/category")
-    public ApiResponseDto<SirenPagedSummaryListDto> getSirensByCategory(
-            @RequestParam(name = "category") SirenCategory category,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByCategory(category, pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);

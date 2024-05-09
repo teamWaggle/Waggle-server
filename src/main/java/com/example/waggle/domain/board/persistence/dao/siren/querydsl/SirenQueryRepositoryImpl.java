@@ -27,24 +27,6 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public Page<Siren> findSirensByFilter(SirenSortParam sortParam, Pageable pageable) {
-        JPAQuery<Siren> baseQuery = query.selectFrom(siren);
-        if (sortParam.equals(SirenSortParam.recommend)) {
-            baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
-            baseQuery.groupBy(siren);
-        }
-        List<Siren> sirenList = baseQuery
-                .orderBy(createSortingOrder(sortParam))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-        Long count = query.select(siren.count())
-                .from(siren)
-                .fetchOne();
-        return new PageImpl<>(sirenList, pageable, count);
-    }
-
-    @Override
     public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
         JPAQuery<Siren> baseQuery = query.selectFrom(siren);
         if (sortParam.equals(SirenSortParam.recommend)) {

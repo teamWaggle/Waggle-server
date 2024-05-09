@@ -1,7 +1,6 @@
 package com.example.waggle.domain.board.application.siren;
 
 import com.example.waggle.domain.board.persistence.entity.Siren;
-import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenSortParam;
 import org.springframework.data.domain.Page;
@@ -21,10 +20,6 @@ public interface SirenQueryService {
     Page<Siren> getPagedSirenListByUserUrl(String userUrl, Pageable pageable);
 
     Page<Siren> getPagedSirenListByMemberId(Long memberId, Pageable pageable);
-
-    Page<Siren> getPagedSirenListByFilter(SirenSortParam filterParam, Pageable pageable);
-
-    Page<Siren> getPagedSirenListByCategory(SirenCategory category, Pageable pageable);
 
     Page<Siren> getPagedSirenListByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable);
 
