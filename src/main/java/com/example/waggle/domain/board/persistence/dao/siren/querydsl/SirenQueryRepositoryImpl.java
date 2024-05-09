@@ -4,6 +4,7 @@ import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
 import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenSortParam;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -26,14 +27,14 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public Page<Siren> findSirensByFilter(SirenFilterParam filterParam, Pageable pageable) {
+    public Page<Siren> findSirensByFilter(SirenSortParam sortParam, Pageable pageable) {
         JPAQuery<Siren> baseQuery = query.selectFrom(siren);
-        if (filterParam.equals(SirenFilterParam.recommend)) {
+        if (sortParam.equals(SirenSortParam.recommend)) {
             baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
             baseQuery.groupBy(siren);
         }
         List<Siren> sirenList = baseQuery
-                .orderBy(createOrderFilter(filterParam))
+                .orderBy(createSortingOrder(sortParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -44,17 +45,17 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     }
 
     @Override
-    public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenCategory category, Pageable pageable) {
+    public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
         JPAQuery<Siren> baseQuery = query.selectFrom(siren);
-        if (filterParam.equals(SirenFilterParam.recommend)) {
+        if (sortParam.equals(SirenSortParam.recommend)) {
             baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
             baseQuery.groupBy(siren);
         }
         List<Siren> sirenList = baseQuery
-                .orderBy(createOrderFilter(filterParam))
+                .orderBy(createSortingOrder(sortParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .where(selectCategory(category))
+                .where(selectCategory(filterParam))
                 .fetch();
         Long count = query.select(siren.count())
                 .from(siren)
@@ -71,8 +72,8 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 .fetch();
     }
 
-    private OrderSpecifier[] createOrderFilter(SirenFilterParam filterParam) {
-        switch (filterParam) {
+    private OrderSpecifier[] createSortingOrder(SirenSortParam sortParam) {
+        switch (sortParam) {
             case recommend -> {
                 return new OrderSpecifier[]{
                         recommend.count().desc(),
@@ -97,7 +98,26 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
         }
     }
 
-    private BooleanExpression selectCategory(SirenCategory category) {
-        return category != null ? siren.category.eq(category) : null;
+    private BooleanExpression selectCategory(SirenFilterParam filterParam) {
+        switch (filterParam) {
+            case ALL -> {
+                return null;
+            }
+            case ETC -> {
+                return siren.category.eq(SirenCategory.ETC);
+            }
+            case PROTECT -> {
+                return siren.category.eq(SirenCategory.PROTECT);
+            }
+            case FIND_PET -> {
+                return siren.category.eq(SirenCategory.FIND_PET);
+            }
+            case FIND_OWNER -> {
+                return siren.category.eq(SirenCategory.FIND_OWNER);
+            }
+            default -> {
+                return null;
+            }
+        }
     }
 }

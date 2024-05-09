@@ -1,7 +1,5 @@
 package com.example.waggle.domain.board.presentation.controller;
 
-import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
-
 import com.example.waggle.domain.board.application.siren.SirenCacheService;
 import com.example.waggle.domain.board.application.siren.SirenCommandService;
 import com.example.waggle.domain.board.application.siren.SirenQueryService;
@@ -10,10 +8,11 @@ import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.converter.SirenConverter;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenRequest;
-import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenDetailDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenPagedSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryDto;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryListDto;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenSortParam;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.application.query.RecommendQueryService;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -24,8 +23,6 @@ import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,15 +31,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -131,7 +125,7 @@ public class SirenApiController {
     })
     @GetMapping("/filter")
     public ApiResponseDto<SirenPagedSummaryListDto> getSirensByFilter(
-            @RequestParam(name = "filterParam") SirenFilterParam filterParam,
+            @RequestParam(name = "filterParam") SirenSortParam filterParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByFilter(filterParam, pageable);
@@ -150,6 +144,22 @@ public class SirenApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByCategory(category, pageable);
+        SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
+        setRecommendCntInList(listDto.getSirenList());
+        return ApiResponseDto.onSuccess(listDto);
+    }
+
+    @Operation(summary = "사이렌 정렬 및 필터 조회", description = "카테고리 옵션에 따라 필터링해주고 정렬 항목에 맞추어 결과를 조회합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/browse")
+    public ApiResponseDto<SirenPagedSummaryListDto> getSirensBySortAndFilter(
+            @RequestParam(name = "filterParam") SirenFilterParam filterParam,
+            @RequestParam(name = "sortParam") SirenSortParam sortParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByFilterAndSort(filterParam, sortParam, pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);

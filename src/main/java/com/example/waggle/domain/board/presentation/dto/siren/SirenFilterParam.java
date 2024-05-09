@@ -1,5 +1,5 @@
 package com.example.waggle.domain.board.presentation.dto.siren;
 
 public enum SirenFilterParam {
-    resolved, unresolved, recommend, latest;
+    FIND_PET, FIND_OWNER, PROTECT, ETC, ALL
 }

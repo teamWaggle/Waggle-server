@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
 import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenSortParam;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.SirenHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -71,13 +72,18 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public Page<Siren> getPagedSirenListByFilter(SirenFilterParam filterParam, Pageable pageable) {
+    public Page<Siren> getPagedSirenListByFilter(SirenSortParam filterParam, Pageable pageable) {
         return sirenRepository.findSirensByFilter(filterParam, pageable);
     }
 
     @Override
     public Page<Siren> getPagedSirenListByCategory(SirenCategory category, Pageable pageable) {
         return sirenRepository.findByCategory(category, pageable);
+    }
+
+    @Override
+    public Page<Siren> getPagedSirenListByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
+        return sirenRepository.findSirensByFilterAndSort(filterParam, sortParam, pageable);
     }
 
     @Override
