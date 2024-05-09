@@ -2,7 +2,6 @@ package com.example.waggle.domain.board.persistence.dao.siren.querydsl;
 
 import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
-import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenFilterParam;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenSortParam;
 import com.querydsl.core.types.OrderSpecifier;
@@ -81,25 +80,6 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     }
 
     private BooleanExpression selectCategory(SirenFilterParam filterParam) {
-        switch (filterParam) {
-            case ALL -> {
-                return null;
-            }
-            case ETC -> {
-                return siren.category.eq(SirenCategory.ETC);
-            }
-            case PROTECT -> {
-                return siren.category.eq(SirenCategory.PROTECT);
-            }
-            case FIND_PET -> {
-                return siren.category.eq(SirenCategory.FIND_PET);
-            }
-            case FIND_OWNER -> {
-                return siren.category.eq(SirenCategory.FIND_OWNER);
-            }
-            default -> {
-                return null;
-            }
-        }
+        return filterParam == SirenFilterParam.ALL ? null : siren.category.eq(filterParam.getCategory());
     }
 }
