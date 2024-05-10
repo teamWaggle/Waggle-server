@@ -1,6 +1,6 @@
 package com.example.waggle.domain.chat.presentation.controller;
 
-import com.example.waggle.domain.chat.application.chatMessage.ChatMessageCommandService;
+import com.example.waggle.domain.chat.application.message.ChatMessageCommandService;
 import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.application.MemberQueryService;

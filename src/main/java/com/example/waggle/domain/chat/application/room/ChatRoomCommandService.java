@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.application.chatRoom;
+package com.example.waggle.domain.chat.application.room;
 
 import com.example.waggle.domain.chat.presentation.dto.ChatRoomRequest;
 import com.example.waggle.domain.member.persistence.entity.Member;

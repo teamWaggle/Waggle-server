@@ -1,8 +1,8 @@
 package com.example.waggle.domain.chat.presentation.controller;
 
-import com.example.waggle.domain.chat.application.chatMessage.ChatMessageQueryService;
-import com.example.waggle.domain.chat.application.chatRoom.ChatRoomCommandService;
-import com.example.waggle.domain.chat.application.chatRoom.ChatRoomQueryService;
+import com.example.waggle.domain.chat.application.message.ChatMessageQueryService;
+import com.example.waggle.domain.chat.application.room.ChatRoomCommandService;
+import com.example.waggle.domain.chat.application.room.ChatRoomQueryService;
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.presentation.converter.ChatConverter;
@@ -10,24 +10,32 @@ import com.example.waggle.domain.chat.presentation.dto.ChatResponse;
 import com.example.waggle.domain.chat.presentation.dto.ChatRoomRequest;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +49,8 @@ public class ChatApiController {
     private final ChatRoomQueryService chatRoomQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final MemberQueryService memberQueryService;
+
+    private static final Sort SORT_BY_CREATED_DATE_DESC = Sort.by("createdDate").descending();
 
     @Operation(summary = "채팅방 생성 🔑", description = "사용자가 새로운 채팅방을 생성합니다. 생성 성공 시 채팅방의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -119,7 +129,7 @@ public class ChatApiController {
     @GetMapping("/rooms/paged")
     public ApiResponseDto<ChatResponse.ChatRoomListDto> getPagedChatRooms(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE, SORT_BY_CREATED_DATE_DESC);
         return ApiResponseDto.onSuccess(
                 ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRooms(pageable).getContent()));
     }
@@ -170,6 +180,8 @@ public class ChatApiController {
         List<ChatResponse.ChatMessageDto> chatMessageList = chatMessages.getContent().stream()
                 .map(this::buildChatMessageDto)
                 .collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now();
+        chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);   // TODO 채팅 종료 시 update 필요
         return ApiResponseDto.onSuccess(ChatConverter.toChatMessageListDto(chatMessageList));
     }
 

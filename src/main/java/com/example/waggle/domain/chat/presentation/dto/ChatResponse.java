@@ -33,8 +33,20 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
+    public static class ChatRoomSummaryDto {
+        private Long id;
+        private String name;
+        private String description;
+        private Long chatRoomMemberCount;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
     public static class ChatRoomListDto {
-        private List<ChatRoomDetailDto> chatRooms;
+        private List<ChatRoomSummaryDto> chatRooms;
     }
 
     @Data

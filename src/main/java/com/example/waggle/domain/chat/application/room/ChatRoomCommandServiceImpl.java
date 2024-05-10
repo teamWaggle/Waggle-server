@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.application.chatRoom;
+package com.example.waggle.domain.chat.application.room;
 
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
@@ -42,8 +42,16 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     public Long joinChatRoom(Member member, Long chatRoomId, String password) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+        checkIfMemberAlreadyInChatRoom(member, chatRoom);
         validateChatRoomPassword(chatRoom, password);
         return addMemberToChatRoom(member, chatRoom).getId();
+    }
+
+    private void checkIfMemberAlreadyInChatRoom(Member member, ChatRoom chatRoom) {
+        chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoom.getId(), member.getId())
+                .ifPresent(m -> {
+                    throw new ChatRoomHandler(ErrorStatus.CHAT_ROOM_MEMBER_ALREADY_EXISTS);
+                });
     }
 
     private void validateChatRoomPassword(ChatRoom chatRoom, String password) {

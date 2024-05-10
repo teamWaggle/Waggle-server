@@ -16,12 +16,21 @@ import java.util.stream.Collectors;
 public class ChatConverter {
 
     public static ChatResponse.ChatRoomListDto toChatRoomListDto(List<ChatRoom> chatRooms) {
-        List<ChatResponse.ChatRoomDetailDto> chatRoomDetailDtos = chatRooms.stream()
-                .map(ChatConverter::toChatRoomDetailDto)
+        List<ChatResponse.ChatRoomSummaryDto> chatRoomSummaryDtos = chatRooms.stream()
+                .map(ChatConverter::toChatRoomSummaryDto)
                 .collect(Collectors.toList());
 
         return ChatResponse.ChatRoomListDto.builder()
-                .chatRooms(chatRoomDetailDtos)
+                .chatRooms(chatRoomSummaryDtos)
+                .build();
+    }
+
+    public static ChatResponse.ChatRoomSummaryDto toChatRoomSummaryDto(ChatRoom chatRoom) {
+        return ChatResponse.ChatRoomSummaryDto.builder()
+                .id(chatRoom.getId())
+                .name(chatRoom.getName())
+                .description(chatRoom.getDescription())
+                .chatRoomMemberCount(chatRoom.getChatRoomMembers().stream().count())
                 .build();
     }
 
