@@ -23,6 +23,7 @@ public class ChatResponse {
         private Long id;
         private String name;
         private String description;
+        private String password;
         private MemberSummaryListDto chatRoomMembers;
         private MemberSummaryDto owner;
     }

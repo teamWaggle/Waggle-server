@@ -36,6 +36,7 @@ public class ChatConverter {
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
                 .description(chatRoom.getDescription())
+                .password(chatRoom.getPassword())
                 .chatRoomMembers(chatRoomMembers)
                 .owner(MemberConverter.toMemberSummaryDto(chatRoom.getOwner()))
                 .build();
