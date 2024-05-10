@@ -8,6 +8,7 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
 
+import com.example.waggle.global.util.MediaUtil;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
@@ -29,6 +30,7 @@ public class ChatConverter {
         return ChatResponse.ChatRoomSummaryDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
+                .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
                 .description(chatRoom.getDescription())
                 .chatRoomMemberCount(chatRoom.getChatRoomMembers().stream().count())
                 .build();
@@ -44,6 +46,7 @@ public class ChatConverter {
         return ChatResponse.ChatRoomDetailDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
+                .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
                 .description(chatRoom.getDescription())
                 .password(chatRoom.getPassword())
                 .chatRoomMembers(chatRoomMembers)
@@ -76,13 +79,17 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ActiveChatRoomDto toActiveChatRoomDto(ChatRoom chatRoom, long unreadCount,
-                                                                     String lastMessageContent) {
+    public static ChatResponse.ActiveChatRoomDto toActiveChatRoomDto(ChatRoom chatRoom,
+                                                                     long unreadCount,
+                                                                     String lastMessageContent,
+                                                                     String lastSenderProfileImgUrl) {
         return ChatResponse.ActiveChatRoomDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
+                .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
                 .unreadCount(unreadCount)
                 .lastMessageContent(lastMessageContent)
+                .lastSenderProfileImgUrl(MediaUtil.appendUri(lastSenderProfileImgUrl))
                 .build();
     }
 }

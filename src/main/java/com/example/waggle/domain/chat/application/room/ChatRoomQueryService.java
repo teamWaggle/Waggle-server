@@ -21,4 +21,6 @@ public interface ChatRoomQueryService {
 
     String getLastMessageContent(Long chatRoomId);
 
+    String getLastSenderProfileImgUrl(Long chatRoomId);
+
 }

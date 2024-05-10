@@ -23,6 +23,7 @@ public class ChatResponse {
         private Long id;
         private String name;
         private String description;
+        private Boolean isPrivate;
         private String password;
         private MemberSummaryListDto chatRoomMembers;
         private MemberSummaryDto owner;
@@ -36,6 +37,7 @@ public class ChatResponse {
     public static class ChatRoomSummaryDto {
         private Long id;
         private String name;
+        private Boolean isPrivate;
         private String description;
         private Long chatRoomMemberCount;
     }
@@ -57,8 +59,10 @@ public class ChatResponse {
     public static class ActiveChatRoomDto {
         private Long id;
         private String name;
+        private Boolean isPrivate;
         private long unreadCount;
         private String lastMessageContent;
+        private String lastSenderProfileImgUrl;
     }
 
     @Data

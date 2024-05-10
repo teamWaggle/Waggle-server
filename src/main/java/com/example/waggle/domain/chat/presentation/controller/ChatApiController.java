@@ -163,7 +163,8 @@ public class ChatApiController {
     private ChatResponse.ActiveChatRoomDto buildActiveChatRoomDto(Member member, ChatRoom room) {
         long unreadCount = chatRoomQueryService.getUnreadMessagesCount(member, room.getId());
         String lastMessageContent = chatRoomQueryService.getLastMessageContent(room.getId());
-        return ChatConverter.toActiveChatRoomDto(room, unreadCount, lastMessageContent);
+        String lastSenderProfileImgUrl = chatRoomQueryService.getLastSenderProfileImgUrl(room.getId());
+        return ChatConverter.toActiveChatRoomDto(room, unreadCount, lastMessageContent, lastSenderProfileImgUrl);
     }
 
     @Operation(summary = "특정 채팅 내역 목록 조회 (페이징 O)", description = "특정 채팅 내역 목록을 조회합니다. 페이지의 크기는 20입니다.")
