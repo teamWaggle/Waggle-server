@@ -25,7 +25,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
     @Override
     public Page<Question> findQuestionsByFilter(QuestionFilterParam filterParam, Pageable pageable) {
         JPAQuery<Question> baseQuery = query.selectFrom(question);
-        if (filterParam == QuestionFilterParam.recommend) {
+        if (filterParam == QuestionFilterParam.RECOMMEND) {
             baseQuery.leftJoin(recommend).on(recommend.board.eq(question._super));
             baseQuery.groupBy(question);
         }
@@ -45,22 +45,22 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
 
     private OrderSpecifier[] createOrderFilter(QuestionFilterParam filterParam) {
         switch (filterParam) {
-            case latest -> {
+            case LATEST -> {
                 return new OrderSpecifier[]{question.createdDate.desc()};
             }
-            case recommend -> {
+            case RECOMMEND -> {
                 return new OrderSpecifier[]{
                         recommend.count().desc(),
                         question.createdDate.desc()
                 };
             }
-            case resolved -> {
+            case RESOLVED -> {
                 return new OrderSpecifier[]{
                         question.status.asc(),
                         question.createdDate.desc()
                 };
             }
-            case unresolved -> {
+            case UNRESOLVED -> {
                 return new OrderSpecifier[]{
                         question.status.desc(),
                         question.createdDate.desc()

@@ -28,7 +28,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     @Override
     public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
         JPAQuery<Siren> baseQuery = query.selectFrom(siren);
-        if (sortParam.equals(SirenSortParam.recommend)) {
+        if (sortParam.equals(SirenSortParam.RECOMMEND)) {
             baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
             baseQuery.groupBy(siren);
         }
@@ -55,19 +55,19 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
 
     private OrderSpecifier[] createSortingOrder(SirenSortParam sortParam) {
         switch (sortParam) {
-            case recommend -> {
+            case RECOMMEND -> {
                 return new OrderSpecifier[]{
                         recommend.count().desc(),
                         siren.createdDate.desc()
                 };
             }
-            case resolved -> {
+            case RESOLVED -> {
                 return new OrderSpecifier[]{
                         siren.status.asc(),
                         siren.createdDate.desc()
                 };
             }
-            case unresolved -> {
+            case UNRESOLVED -> {
                 return new OrderSpecifier[]{
                         siren.status.desc(),
                         siren.createdDate.desc()
