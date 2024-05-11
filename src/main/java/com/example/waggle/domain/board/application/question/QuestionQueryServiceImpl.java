@@ -2,7 +2,7 @@ package com.example.waggle.domain.board.application.question;
 
 import com.example.waggle.domain.board.persistence.dao.question.jpa.QuestionRepository;
 import com.example.waggle.domain.board.persistence.entity.Question;
-import com.example.waggle.domain.board.presentation.dto.question.QuestionFilterParam;
+import com.example.waggle.domain.board.presentation.dto.question.QuestionSortParam;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -62,8 +62,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
-    public Page<Question> getPagedQuestionsByFilter(QuestionFilterParam filterParam, Pageable pageable) {
-        return questionRepository.findQuestionsByFilter(filterParam, pageable);
+    public Page<Question> getPagedQuestionsByFilter(QuestionSortParam sortParam, Pageable pageable) {
+        return questionRepository.findQuestionsByFilter(sortParam, pageable);
     }
 
     @Override

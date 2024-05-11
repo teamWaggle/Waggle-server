@@ -5,17 +5,17 @@ import com.example.waggle.domain.board.application.question.QuestionCommandServi
 import com.example.waggle.domain.board.application.question.QuestionQueryService;
 import com.example.waggle.domain.board.persistence.entity.Question;
 import com.example.waggle.domain.board.presentation.converter.QuestionConverter;
-import com.example.waggle.domain.board.presentation.dto.question.QuestionFilterParam;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionRequest;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.RepresentativeQuestionDto;
+import com.example.waggle.domain.board.presentation.dto.question.QuestionSortParam;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.application.query.RecommendQueryService;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -107,16 +107,16 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(listDto);
     }
 
-    @Operation(summary = "질문 필터 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
+    @Operation(summary = "질문 정렬 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/filter")
-    public ApiResponseDto<QuestionSummaryListDto> getQuestionsByFilterParam(
-            @RequestParam(name = "filterParam") QuestionFilterParam filterParam,
+    @GetMapping("/sort")
+    public ApiResponseDto<QuestionSummaryListDto> getQuestionsBySortParam(
+            @RequestParam(name = "filterParam") QuestionSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
-        Page<Question> questions = questionQueryService.getPagedQuestionsByFilter(filterParam, pageable);
+        Page<Question> questions = questionQueryService.getPagedQuestionsByFilter(sortParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);

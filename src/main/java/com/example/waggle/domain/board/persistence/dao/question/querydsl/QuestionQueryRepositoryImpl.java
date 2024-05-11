@@ -1,7 +1,7 @@
 package com.example.waggle.domain.board.persistence.dao.question.querydsl;
 
 import com.example.waggle.domain.board.persistence.entity.Question;
-import com.example.waggle.domain.board.presentation.dto.question.QuestionFilterParam;
+import com.example.waggle.domain.board.presentation.dto.question.QuestionSortParam;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,14 +23,14 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public Page<Question> findQuestionsByFilter(QuestionFilterParam filterParam, Pageable pageable) {
+    public Page<Question> findQuestionsByFilter(QuestionSortParam sortParam, Pageable pageable) {
         JPAQuery<Question> baseQuery = query.selectFrom(question);
-        if (filterParam == QuestionFilterParam.recommend) {
+        if (sortParam == QuestionSortParam.RECOMMEND) {
             baseQuery.leftJoin(recommend).on(recommend.board.eq(question._super));
             baseQuery.groupBy(question);
         }
         List<Question> questionList = baseQuery
-                .orderBy(createOrderFilter(filterParam))
+                .orderBy(createSortingOrder(sortParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -43,24 +43,24 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
         return new PageImpl<>(questionList, pageable, count);
     }
 
-    private OrderSpecifier[] createOrderFilter(QuestionFilterParam filterParam) {
-        switch (filterParam) {
-            case latest -> {
+    private OrderSpecifier[] createSortingOrder(QuestionSortParam sortParam) {
+        switch (sortParam) {
+            case LATEST -> {
                 return new OrderSpecifier[]{question.createdDate.desc()};
             }
-            case recommend -> {
+            case RECOMMEND -> {
                 return new OrderSpecifier[]{
                         recommend.count().desc(),
                         question.createdDate.desc()
                 };
             }
-            case resolved -> {
+            case RESOLVED -> {
                 return new OrderSpecifier[]{
                         question.status.asc(),
                         question.createdDate.desc()
                 };
             }
-            case unresolved -> {
+            case UNRESOLVED -> {
                 return new OrderSpecifier[]{
                         question.status.desc(),
                         question.createdDate.desc()
