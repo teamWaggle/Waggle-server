@@ -84,13 +84,34 @@
                     });
 
             },
-            enterRoom: function (id) {
-                var accessToken = prompt('access token을 입력해 주세요.');
-                if (accessToken) {
-                    localStorage.setItem('wschat.accessToken', accessToken);
-                    localStorage.setItem('wschat.chatRoomId', id);
-                    location.href = "/chat/rooms/" + id;
+            enterRoom: function (chatRoomId) {
+                if (!this.accessToken) {
+                    this.accessToken = prompt('access token을 입력해 주세요.');
+                    if (!this.accessToken) {
+                        alert("Access Token을 입력해 주십시오.");
+                        return;
+                    }
+                    localStorage.setItem('wschat.accessToken', this.accessToken);
                 }
+                localStorage.setItem('wschat.chatRoomId', chatRoomId);
+
+                axios.post(`/api/chat/rooms/${chatRoomId}/join`, {}, {
+                    headers: {'Authorization': 'Bearer ' + this.accessToken}
+                })
+                    .then(response => {
+                        const hasJoined = response.data.result.hasJoined;
+                        localStorage.setItem('wschat.hasJoined', hasJoined);
+                        if (hasJoined) {
+                            alert("채팅방에 처음으로 입장하였습니다.");
+                        } else {
+                            alert("채팅방에 재입장하였습니다.");
+                        }
+                        location.href = `/chat/rooms/${chatRoomId}`;
+                    })
+                    .catch(error => {
+                        console.error('Failed to join chat room: ', error);
+                        alert("채팅방 입장에 실패하였습니다.");
+                    });
             }
         }
     });

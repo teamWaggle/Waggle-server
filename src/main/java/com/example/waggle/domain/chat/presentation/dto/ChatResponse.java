@@ -19,6 +19,15 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
+    public static class ChatRoomJoinDto {
+        private Boolean hasJoined;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
     public static class ChatRoomDetailDto {
         private Long id;
         private String name;
@@ -98,5 +107,6 @@ public class ChatResponse {
         private List<ChatMessageDto> chatMessages;
         private int nextPageParam;
     }
+
 
 }

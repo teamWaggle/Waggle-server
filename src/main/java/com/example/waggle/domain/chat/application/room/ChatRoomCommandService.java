@@ -9,7 +9,7 @@ public interface ChatRoomCommandService {
 
     Long createChatRoom(Member member, ChatRoomRequest request);
 
-    Long joinChatRoom(Member member, Long chatRoomId, String password);
+    boolean joinChatRoom(Member member, Long chatRoomId, String password);
 
     void leaveChatRoom(Member member, Long chatRoomId);
 

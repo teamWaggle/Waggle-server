@@ -39,19 +39,20 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     @Override
-    public Long joinChatRoom(Member member, Long chatRoomId, String password) {
+    public boolean joinChatRoom(Member member, Long chatRoomId, String password) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
-        checkIfMemberAlreadyInChatRoom(member, chatRoom);
-        validateChatRoomPassword(chatRoom, password);
-        return addMemberToChatRoom(member, chatRoom).getId();
-    }
 
-    private void checkIfMemberAlreadyInChatRoom(Member member, ChatRoom chatRoom) {
-        chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoom.getId(), member.getId())
-                .ifPresent(m -> {
-                    throw new ChatRoomHandler(ErrorStatus.CHAT_ROOM_MEMBER_ALREADY_EXISTS);
-                });
+        boolean isAlreadyMember = chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoom.getId(), member.getId())
+                .isPresent();
+
+        if (isAlreadyMember) {
+            return false;
+        }
+
+        validateChatRoomPassword(chatRoom, password);
+        addMemberToChatRoom(member, chatRoom);
+        return true;
     }
 
     private void validateChatRoomPassword(ChatRoom chatRoom, String password) {

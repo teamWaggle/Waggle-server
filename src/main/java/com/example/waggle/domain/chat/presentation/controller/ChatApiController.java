@@ -67,12 +67,13 @@ public class ChatApiController {
             ErrorStatus.CHAT_ROOM_NOT_FOUND
     })
     @PostMapping("/rooms/{chatRoomId}/join")
-    public ApiResponseDto<Long> joinChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
-                                             @RequestParam(value = "password", required = false) String password) {
+    public ApiResponseDto<ChatResponse.ChatRoomJoinDto> joinChatRoom(@AuthUser Member member,
+                                                                     @PathVariable("chatRoomId") Long chatRoomId,
+                                                                     @RequestParam(value = "password", required = false) String password) {
         LocalDateTime now = LocalDateTime.now();
-        chatRoomCommandService.joinChatRoom(member, chatRoomId, password);
-        Long updatedChatRoomMemberId = chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);
-        return ApiResponseDto.onSuccess(updatedChatRoomMemberId);
+        boolean hasJoined = chatRoomCommandService.joinChatRoom(member, chatRoomId, password);
+        chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);
+        return ApiResponseDto.onSuccess(ChatConverter.toChatRoomJoinDto(hasJoined));
     }
 
     @Operation(summary = "채팅방 수정 🔑", description = "채팅방 호스트가 채팅방을 수정합니다. 호스트만 채팅방 수정 권한을 가지며, 성공적으로 수정 시 채팅방의 ID를 반환합니다.")

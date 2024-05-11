@@ -96,4 +96,10 @@ public class ChatConverter {
                 .lastSenderProfileImgUrl(lastSenderProfileImgUrl)
                 .build();
     }
+
+    public static ChatResponse.ChatRoomJoinDto toChatRoomJoinDto(boolean hasJoined) {
+        return ChatResponse.ChatRoomJoinDto.builder()
+                .hasJoined(hasJoined)
+                .build();
+    }
 }

@@ -47,7 +47,6 @@
 <script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
 <script>
-    //alert(document.title);
     // websocket & stomp initialize
     var sock = new SockJS("/ws/chat");
     var ws = Stomp.over(sock);
@@ -67,14 +66,12 @@
         created() {
             this.chatRoomId = localStorage.getItem('wschat.chatRoomId');
             this.accessToken = localStorage.getItem('wschat.accessToken');
+            this.hasJoined = localStorage.getItem('wschat.hasJoined') === 'true';
+            localStorage.removeItem("wschat.chatRoomId")
+            localStorage.removeItem("wschat.accessToken")
+            localStorage.removeItem("wschat.hasJoined")
             this.findRoom();
             this.fetchUserInfo();
-        },
-        beforeDestroy() {
-            // Ensure sending EXIT message when the Vue instance is destroyed
-            if (this.hasJoined) {
-                this.sendSystemMessage('EXIT');
-            }
         },
         methods: {
             fetchUserInfo: function () {
@@ -110,7 +107,7 @@
                             id: msg.id,
                             content: msg.content,
                             sendTime: msg.sendTime,
-                            senderNickname: msg.sender.nickname,
+                            senderNickname: msg.chatMessageType == 'JOIN' || msg.chatMessageType == 'LEAVE' ? '[알림]' : msg.sender.nickname,
                             senderProfileImgUrl: msg.sender.profileImgUrl,
                             chatMessageType: msg.chatMessageType
                         });
@@ -133,11 +130,11 @@
                 this.content = '';
             },
             recvMessage: function (recv) {
-                console.log('recv.senderUserUrl = ' + recv.senderUserUrl);
+                console.log('recv.chatMessageType = ' + recv.chatMessageType);
                 this.messages.unshift({
                     "chatMessageType": recv.chatMessageType,
                     "senderUserUrl": recv.senderUserUrl,
-                    "senderNickname": recv.chatMessageType == 'JOIN' ? '[알림]' : recv.senderNickname,
+                    "senderNickname": recv.chatMessageType == 'JOIN' || recv.chatMessageType == 'LEAVE' ? '[알림]' : recv.senderNickname,
                     "senderProfileImgUrl": recv.senderProfileImgUrl,
                     "content": recv.content,
                 })
@@ -150,6 +147,13 @@
                     chatRoomId: this.chatRoomId,
                     senderUserUrl: this.senderUserUrl,
                 }));
+            },
+            joinChatRoom: function () {
+                console.log('hasJoined = ', this.hasJoined);
+                if (this.hasJoined) {
+                    this.sendSystemMessage('JOIN');
+                    this.hasJoined = false;
+                }
             },
             connect: function () {
                 console.log('Attempting to connect...');
@@ -164,13 +168,7 @@
                     }, {
                         'Authorization': 'Bearer ' + this.accessToken
                     });
-                    this.ws.send("/publish/message", {
-                        'Authorization': 'Bearer ' + this.accessToken
-                    }, JSON.stringify({
-                        chatMessageType: 'JOIN',
-                        chatRoomId: this.chatRoomId,
-                        senderUserUrl: this.senderUserUrl,
-                    }));
+                    this.joinChatRoom();
                 }, (error) => {
                     if (this.reconnect++ <= 5) {
                         setTimeout(() => {
@@ -183,15 +181,8 @@
         }
     });
 
+
     function leaveChatRoom() {
-        if (!vm.hasJoined) {
-            alert('You are not currently in a chat room.');
-            return;
-        }
-
-        vm.sendSystemMessage('EXIT');
-        vm.hasJoined = false;
-
         axios.delete(`/api/chat/rooms/${vm.chatRoomId}/leave`, {
             headers: {
                 'Authorization': 'Bearer ' + vm.accessToken
@@ -200,6 +191,7 @@
             if (response.data.result) {
                 alert('You have left the chat room.');
                 window.location.href = '/chat/rooms';
+                vm.sendSystemMessage('LEAVE');
             } else {
                 alert('Failed to leave the chat room.');
             }

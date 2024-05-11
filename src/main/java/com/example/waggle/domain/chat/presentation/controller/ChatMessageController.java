@@ -40,8 +40,8 @@ public class ChatMessageController {
             case JOIN:
                 message.setContent("🐶 " + member.getNickname() + "님이 입장하셨습니다.");
                 break;
-            case EXIT:
-                message.setContent("👋 " + member.getNickname() + "님이 퇴장하셨습니다.");
+            case LEAVE:
+                message.setContent("👋🏻 " + member.getNickname() + "님이 퇴장하셨습니다.");
                 break;
             case TALK:
                 break;
