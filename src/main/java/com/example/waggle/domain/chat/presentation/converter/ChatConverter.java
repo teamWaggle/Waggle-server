@@ -3,7 +3,7 @@ package com.example.waggle.domain.chat.presentation.converter;
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoomMember;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.*;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
@@ -16,19 +16,19 @@ import org.springframework.data.domain.Page;
 
 public class ChatConverter {
 
-    public static ChatResponse.ChatRoomListDto toChatRoomListDto(Page<ChatRoom> chatRooms) {
-        List<ChatResponse.ChatRoomSummaryDto> chatRoomSummaryDtos = chatRooms.stream()
+    public static ChatRoomListDto toChatRoomListDto(Page<ChatRoom> chatRooms) {
+        List<ChatRoomSummaryDto> chatRoomSummaryDtos = chatRooms.stream()
                 .map(ChatConverter::toChatRoomSummaryDto)
                 .collect(Collectors.toList());
 
-        return ChatResponse.ChatRoomListDto.builder()
+        return ChatRoomListDto.builder()
                 .chatRooms(chatRoomSummaryDtos)
                 .nextPageParam(PageUtil.countNextPage(chatRooms))
                 .build();
     }
 
-    public static ChatResponse.ChatRoomSummaryDto toChatRoomSummaryDto(ChatRoom chatRoom) {
-        return ChatResponse.ChatRoomSummaryDto.builder()
+    public static ChatRoomSummaryDto toChatRoomSummaryDto(ChatRoom chatRoom) {
+        return ChatRoomSummaryDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
                 .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
@@ -37,14 +37,14 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ChatRoomDetailDto toChatRoomDetailDto(ChatRoom chatRoom) {
+    public static ChatRoomDetailDto toChatRoomDetailDto(ChatRoom chatRoom) {
         List<Member> members = chatRoom.getChatRoomMembers()
                 .stream()
                 .map(ChatRoomMember::getMember)
                 .collect(Collectors.toList());
         MemberSummaryListDto chatRoomMembers = MemberConverter.toMemberListDto(members);
 
-        return ChatResponse.ChatRoomDetailDto.builder()
+        return ChatRoomDetailDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
                 .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
@@ -56,16 +56,16 @@ public class ChatConverter {
     }
 
 
-    public static ChatResponse.ActiveChatRoomListDto toActiveChatRoomList(
-            List<ChatResponse.ActiveChatRoomDto> chatRooms, int nextPageParam) {
-        return ChatResponse.ActiveChatRoomListDto.builder()
+    public static ActiveChatRoomListDto toActiveChatRoomList(
+            List<ActiveChatRoomDto> chatRooms, int nextPageParam) {
+        return ActiveChatRoomListDto.builder()
                 .chatRooms(chatRooms)
                 .nextPageParam(nextPageParam)
                 .build();
     }
 
-    public static ChatResponse.ChatMessageDto toChatMessageDto(ChatMessage chatMessage, Member sender) {
-        return ChatResponse.ChatMessageDto.builder()
+    public static ChatMessageDto toChatMessageDto(ChatMessage chatMessage, Member sender) {
+        return ChatMessageDto.builder()
                 .id(chatMessage.getId())
                 .content(chatMessage.getContent())
                 .sendTime(Instant.ofEpochMilli(chatMessage.getSendTime()).atZone(ZoneId.of("Asia/Seoul"))
@@ -75,19 +75,19 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ChatMessageListDto toChatMessageListDto(List<ChatResponse.ChatMessageDto> chatMessages,
-                                                                       int nextPageParam) {
-        return ChatResponse.ChatMessageListDto.builder()
+    public static ChatMessageListDto toChatMessageListDto(List<ChatMessageDto> chatMessages,
+                                                          int nextPageParam) {
+        return ChatMessageListDto.builder()
                 .chatMessages(chatMessages)
                 .nextPageParam(nextPageParam)
                 .build();
     }
 
-    public static ChatResponse.ActiveChatRoomDto toActiveChatRoomDto(ChatRoom chatRoom,
-                                                                     long unreadCount,
-                                                                     String lastMessageContent,
-                                                                     String lastSenderProfileImgUrl) {
-        return ChatResponse.ActiveChatRoomDto.builder()
+    public static ActiveChatRoomDto toActiveChatRoomDto(ChatRoom chatRoom,
+                                                        long unreadCount,
+                                                        String lastMessageContent,
+                                                        String lastSenderProfileImgUrl) {
+        return ActiveChatRoomDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
                 .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
@@ -97,8 +97,8 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ChatRoomJoinDto toChatRoomJoinDto(boolean hasJoined) {
-        return ChatResponse.ChatRoomJoinDto.builder()
+    public static ChatRoomJoinDto toChatRoomJoinDto(boolean hasJoined) {
+        return ChatRoomJoinDto.builder()
                 .hasJoined(hasJoined)
                 .build();
     }
