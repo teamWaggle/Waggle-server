@@ -72,4 +72,8 @@ public class MediaUtil {
         }
         return subPrefixUrl;
     }
+
+    public static String getDefaultMemberProfileImgUrl() {
+        return appendUri(DEFAULT_MEMBER_PROFILE_IMG);
+    }
 }

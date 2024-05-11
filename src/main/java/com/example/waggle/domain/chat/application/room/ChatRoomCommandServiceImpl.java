@@ -68,6 +68,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
         return ChatRoomMember.builder()
                 .chatRoom(chatRoom)
                 .member(member)
+                .lastAccessTime(LocalDateTime.now())
                 .build();
     }
 

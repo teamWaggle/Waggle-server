@@ -7,22 +7,23 @@ import com.example.waggle.domain.chat.presentation.dto.ChatResponse;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
-
-import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.PageUtil;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class ChatConverter {
 
-    public static ChatResponse.ChatRoomListDto toChatRoomListDto(List<ChatRoom> chatRooms) {
+    public static ChatResponse.ChatRoomListDto toChatRoomListDto(Page<ChatRoom> chatRooms) {
         List<ChatResponse.ChatRoomSummaryDto> chatRoomSummaryDtos = chatRooms.stream()
                 .map(ChatConverter::toChatRoomSummaryDto)
                 .collect(Collectors.toList());
 
         return ChatResponse.ChatRoomListDto.builder()
                 .chatRooms(chatRoomSummaryDtos)
+                .nextPageParam(PageUtil.countNextPage(chatRooms))
                 .build();
     }
 
@@ -56,9 +57,10 @@ public class ChatConverter {
 
 
     public static ChatResponse.ActiveChatRoomListDto toActiveChatRoomList(
-            List<ChatResponse.ActiveChatRoomDto> chatRooms) {
+            List<ChatResponse.ActiveChatRoomDto> chatRooms, int nextPageParam) {
         return ChatResponse.ActiveChatRoomListDto.builder()
                 .chatRooms(chatRooms)
+                .nextPageParam(nextPageParam)
                 .build();
     }
 
@@ -73,9 +75,11 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ChatMessageListDto toChatMessageListDto(List<ChatResponse.ChatMessageDto> chatMessages) {
+    public static ChatResponse.ChatMessageListDto toChatMessageListDto(List<ChatResponse.ChatMessageDto> chatMessages,
+                                                                       int nextPageParam) {
         return ChatResponse.ChatMessageListDto.builder()
                 .chatMessages(chatMessages)
+                .nextPageParam(nextPageParam)
                 .build();
     }
 
@@ -89,7 +93,7 @@ public class ChatConverter {
                 .isPrivate(chatRoom.getPassword() != null && !chatRoom.getPassword().isEmpty())
                 .unreadCount(unreadCount)
                 .lastMessageContent(lastMessageContent)
-                .lastSenderProfileImgUrl(MediaUtil.appendUri(lastSenderProfileImgUrl))
+                .lastSenderProfileImgUrl(lastSenderProfileImgUrl)
                 .build();
     }
 }

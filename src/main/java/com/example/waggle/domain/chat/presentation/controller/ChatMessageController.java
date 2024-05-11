@@ -1,7 +1,7 @@
 package com.example.waggle.domain.chat.presentation.controller;
 
 import com.example.waggle.domain.chat.application.message.ChatMessageCommandService;
-import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
+import com.example.waggle.domain.chat.presentation.dto.MessageDto;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +23,21 @@ public class ChatMessageController {
     private final SimpMessageSendingOperations sendingOperations;
     private final MemberQueryService memberQueryService;
     private final ChatMessageCommandService chatMessageCommandService;
-    private final KafkaTemplate<String, ChatMessageDto> kafkaTemplate;
+    private final KafkaTemplate<String, MessageDto> kafkaTemplate;
     private final String KAFKA_TOPIC = "waggle-chat";
 
     @MessageMapping("/message")
-    public void sendMessage(Principal principal, @Payload ChatMessageDto message) {
+    public void sendMessage(Principal principal, @Payload MessageDto message) {
         log.info("principal = {}", principal);
         Member member = memberQueryService.getMemberByUsername(principal.getName());
         processMessage(member, message);
     }
 
-    private void processMessage(Member member, ChatMessageDto message) {
+    private void processMessage(Member member, MessageDto message) {
         message.setSendTimeAndSenderInfo(LocalDateTime.now(), member.getNickname(), member.getProfileImgUrl());
 
         switch (message.getChatMessageType()) {
-            case ENTER:
+            case JOIN:
                 message.setContent("🐶 " + member.getNickname() + "님이 입장하셨습니다.");
                 break;
             case EXIT:

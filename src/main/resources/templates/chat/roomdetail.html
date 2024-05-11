@@ -18,6 +18,9 @@
 <div>
     <button onclick="location.href=`/chat/rooms`">돌아가기</button>
 </div>
+<div>
+    <button onclick="leaveChatRoom()">채팅방 나가기</button>
+</div>
 <div class="container" id="app" v-cloak>
     <div>
         <h2>{{chatRoom.name}}</h2>
@@ -59,12 +62,19 @@
             senderUserUrl: '',
             content: '',
             messages: [],
+            hasJoined: false,
         },
         created() {
             this.chatRoomId = localStorage.getItem('wschat.chatRoomId');
             this.accessToken = localStorage.getItem('wschat.accessToken');
             this.findRoom();
             this.fetchUserInfo();
+        },
+        beforeDestroy() {
+            // Ensure sending EXIT message when the Vue instance is destroyed
+            if (this.hasJoined) {
+                this.sendSystemMessage('EXIT');
+            }
         },
         methods: {
             fetchUserInfo: function () {
@@ -127,10 +137,19 @@
                 this.messages.unshift({
                     "chatMessageType": recv.chatMessageType,
                     "senderUserUrl": recv.senderUserUrl,
-                    "senderNickname": recv.chatMessageType == 'ENTER' ? '[알림]' : recv.senderNickname,
+                    "senderNickname": recv.chatMessageType == 'JOIN' ? '[알림]' : recv.senderNickname,
                     "senderProfileImgUrl": recv.senderProfileImgUrl,
                     "content": recv.content,
                 })
+            },
+            sendSystemMessage: function (type) {
+                ws.send("/publish/message", {
+                    'Authorization': 'Bearer ' + this.accessToken
+                }, JSON.stringify({
+                    chatMessageType: type,
+                    chatRoomId: this.chatRoomId,
+                    senderUserUrl: this.senderUserUrl,
+                }));
             },
             connect: function () {
                 console.log('Attempting to connect...');
@@ -148,7 +167,7 @@
                     this.ws.send("/publish/message", {
                         'Authorization': 'Bearer ' + this.accessToken
                     }, JSON.stringify({
-                        chatMessageType: 'ENTER',
+                        chatMessageType: 'JOIN',
                         chatRoomId: this.chatRoomId,
                         senderUserUrl: this.senderUserUrl,
                     }));
@@ -164,6 +183,31 @@
         }
     });
 
+    function leaveChatRoom() {
+        if (!vm.hasJoined) {
+            alert('You are not currently in a chat room.');
+            return;
+        }
+
+        vm.sendSystemMessage('EXIT');
+        vm.hasJoined = false;
+
+        axios.delete(`/api/chat/rooms/${vm.chatRoomId}/leave`, {
+            headers: {
+                'Authorization': 'Bearer ' + vm.accessToken
+            }
+        }).then(response => {
+            if (response.data.result) {
+                alert('You have left the chat room.');
+                window.location.href = '/chat/rooms';
+            } else {
+                alert('Failed to leave the chat room.');
+            }
+        }).catch(error => {
+            console.error("Error leaving chat room:", error);
+            alert('Error leaving chat room.');
+        });
+    }
 </script>
 </body>
 </html>

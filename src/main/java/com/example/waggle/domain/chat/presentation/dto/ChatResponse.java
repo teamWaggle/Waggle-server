@@ -49,6 +49,7 @@ public class ChatResponse {
     @Schema
     public static class ChatRoomListDto {
         private List<ChatRoomSummaryDto> chatRooms;
+        private int nextPageParam;
     }
 
     @Data
@@ -72,6 +73,7 @@ public class ChatResponse {
     @Schema
     public static class ActiveChatRoomListDto {
         private List<ActiveChatRoomDto> chatRooms;
+        private int nextPageParam;
     }
 
     @Data
@@ -94,6 +96,7 @@ public class ChatResponse {
     @Schema
     public static class ChatMessageListDto {
         private List<ChatMessageDto> chatMessages;
+        private int nextPageParam;
     }
 
 }

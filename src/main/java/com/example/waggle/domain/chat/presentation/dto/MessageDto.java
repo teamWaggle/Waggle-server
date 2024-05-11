@@ -16,7 +16,7 @@ import java.time.ZoneId;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessageDto implements Serializable {
+public class MessageDto implements Serializable {
 
     private String id;
     @NotNull

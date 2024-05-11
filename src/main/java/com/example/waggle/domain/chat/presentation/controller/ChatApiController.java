@@ -113,15 +113,6 @@ public class ChatApiController {
         return ApiResponseDto.onSuccess(true);
     }
 
-    @Operation(summary = "채팅방 목록 전체 조회 (페이징 X)", description = "모든 채팅방의 목록을 조회합니다. (페이징 X, 테스트용)")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/rooms/all")
-    public ApiResponseDto<ChatResponse.ChatRoomListDto> getChatRooms() {
-        return ApiResponseDto.onSuccess(ChatConverter.toChatRoomListDto(chatRoomQueryService.getChatRooms()));
-    }
-
     @Operation(summary = "채팅방 목록 전체 조회 (페이징 O)", description = "채팅방 목록을 조회합니다. 페이지의 크기는 9입니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
@@ -131,7 +122,7 @@ public class ChatApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE, SORT_BY_CREATED_DATE_DESC);
         return ApiResponseDto.onSuccess(
-                ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRooms(pageable).getContent()));
+                ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRooms(pageable)));
     }
 
     @Operation(summary = "특정 채팅방 조회", description = "특정 채팅방을 조회합니다.")
@@ -145,7 +136,7 @@ public class ChatApiController {
                 ChatConverter.toChatRoomDetailDto(chatRoomQueryService.getChatRoomById(chatRoomId)));
     }
 
-    @Operation(summary = "특정 회원이 참여중인 채팅방 목록 전체 조회 (페이징 O)", description = "회원이 참여중인 채팅방 목록을 조회합니다. 페이지의 크기는 9입니다.")
+    @Operation(summary = "특정 회원이 참여중인 채팅방 목록 전체 조회 (페이징 O) 🔑", description = "회원이 참여중인 채팅방 목록을 조회합니다. 페이지의 크기는 9입니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
@@ -157,7 +148,8 @@ public class ChatApiController {
         List<ChatResponse.ActiveChatRoomDto> activeChatRooms = chatRooms.getContent().stream()
                 .map(room -> buildActiveChatRoomDto(member, room))
                 .collect(Collectors.toList());
-        return ApiResponseDto.onSuccess(ChatConverter.toActiveChatRoomList(activeChatRooms));
+        return ApiResponseDto.onSuccess(
+                ChatConverter.toActiveChatRoomList(activeChatRooms, PageUtil.countNextPage(chatRooms)));
     }
 
     private ChatResponse.ActiveChatRoomDto buildActiveChatRoomDto(Member member, ChatRoom room) {
@@ -167,7 +159,7 @@ public class ChatApiController {
         return ChatConverter.toActiveChatRoomDto(room, unreadCount, lastMessageContent, lastSenderProfileImgUrl);
     }
 
-    @Operation(summary = "특정 채팅 내역 목록 조회 (페이징 O)", description = "특정 채팅 내역 목록을 조회합니다. 페이지의 크기는 20입니다.")
+    @Operation(summary = "특정 채팅 내역 목록 조회 (페이징 O) 🔑", description = "특정 채팅 내역 목록을 조회합니다. 페이지의 크기는 20입니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
@@ -183,7 +175,8 @@ public class ChatApiController {
                 .collect(Collectors.toList());
         LocalDateTime now = LocalDateTime.now();
         chatRoomCommandService.updateLastAccessTime(member, chatRoomId, now);   // TODO 채팅 종료 시 update 필요
-        return ApiResponseDto.onSuccess(ChatConverter.toChatMessageListDto(chatMessageList));
+        return ApiResponseDto.onSuccess(
+                ChatConverter.toChatMessageListDto(chatMessageList, PageUtil.countNextPage(chatMessages)));
     }
 
     private ChatResponse.ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {

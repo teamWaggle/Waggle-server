@@ -10,8 +10,10 @@ import com.example.waggle.domain.member.persistence.dao.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.exception.object.handler.ChatRoomHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.util.MediaUtil;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -74,16 +76,28 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
 
     @Override
     public String getLastSenderProfileImgUrl(Long chatRoomId) {
-        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findByChatRoomIdSortedBySendTimeDesc(
-                chatRoomId, PageRequest.of(0, 1));
+        return findLastChatMessageByChatRoomId(chatRoomId)
+                .map(ChatMessage::getSenderUserUrl)
+                .flatMap(this::findProfileImgUrlByUserUrl)
+                .orElse(MediaUtil.getDefaultMemberProfileImgUrl());
+    }
 
-        if (!pagedChatMessage.hasContent()) {
-            return "최근 메시지가 없습니다.";
-        }
+    private Optional<ChatMessage> findLastChatMessageByChatRoomId(Long chatRoomId) {
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findByChatRoomIdSortedBySendTimeDesc(chatRoomId,
+                pageRequest);
+        return pagedChatMessage.getContent().stream().findFirst();
+    }
 
-        String senderUserUrl = pagedChatMessage.getContent().get(0).getSenderUserUrl();
-        return memberRepository.findByUserUrl(senderUserUrl)
-                .map(Member::getProfileImgUrl)
-                .orElse("");
+    private Optional<String> findProfileImgUrlByUserUrl(String userUrl) {
+        return memberRepository.findByUserUrl(userUrl)
+                .map(member -> getValidProfileImgUrlOrDefault(member));
+    }
+
+    private String getValidProfileImgUrlOrDefault(Member member) {
+        return Optional.ofNullable(member.getProfileImgUrl())
+                .filter(url -> !url.isEmpty())
+                .map(MediaUtil::appendUri)
+                .orElse(MediaUtil.getDefaultMemberProfileImgUrl());
     }
 }
