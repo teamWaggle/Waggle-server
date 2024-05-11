@@ -1,6 +1,6 @@
 package com.example.waggle.global.config.kafka;
 
-import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
+import com.example.waggle.domain.chat.presentation.dto.MessageDto;
 import com.example.waggle.global.property.KafkaProperties;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class KafkaProducerConfig {
     private final KafkaProperties kafkaProperties;
 
     @Bean
-    public ProducerFactory<String, ChatMessageDto> producerFactory() {
+    public ProducerFactory<String, MessageDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
@@ -38,7 +38,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, ChatMessageDto> kafkaTemplate() {
+    public KafkaTemplate<String, MessageDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

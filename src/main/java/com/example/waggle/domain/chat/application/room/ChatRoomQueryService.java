@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.application.chatRoom;
+package com.example.waggle.domain.chat.application.room;
 
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.member.persistence.entity.Member;
@@ -20,5 +20,7 @@ public interface ChatRoomQueryService {
     long getUnreadMessagesCount(Member member, Long chatRoomId);
 
     String getLastMessageContent(Long chatRoomId);
+
+    String getLastSenderProfileImgUrl(Long chatRoomId);
 
 }

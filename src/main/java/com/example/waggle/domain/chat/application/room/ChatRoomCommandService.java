@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.application.chatRoom;
+package com.example.waggle.domain.chat.application.room;
 
 import com.example.waggle.domain.chat.presentation.dto.ChatRoomRequest;
 import com.example.waggle.domain.member.persistence.entity.Member;
@@ -9,7 +9,7 @@ public interface ChatRoomCommandService {
 
     Long createChatRoom(Member member, ChatRoomRequest request);
 
-    Long joinChatRoom(Member member, Long chatRoomId, String password);
+    boolean joinChatRoom(Member member, Long chatRoomId, String password);
 
     void leaveChatRoom(Member member, Long chatRoomId);
 

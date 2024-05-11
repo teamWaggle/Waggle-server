@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.application.chatRoom;
+package com.example.waggle.domain.chat.application.room;
 
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
@@ -39,11 +39,20 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     }
 
     @Override
-    public Long joinChatRoom(Member member, Long chatRoomId, String password) {
+    public boolean joinChatRoom(Member member, Long chatRoomId, String password) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        boolean isAlreadyMember = chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoom.getId(), member.getId())
+                .isPresent();
+
+        if (isAlreadyMember) {
+            return false;
+        }
+
         validateChatRoomPassword(chatRoom, password);
-        return addMemberToChatRoom(member, chatRoom).getId();
+        addMemberToChatRoom(member, chatRoom);
+        return true;
     }
 
     private void validateChatRoomPassword(ChatRoom chatRoom, String password) {
@@ -60,6 +69,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
         return ChatRoomMember.builder()
                 .chatRoom(chatRoom)
                 .member(member)
+                .lastAccessTime(LocalDateTime.now())
                 .build();
     }
 

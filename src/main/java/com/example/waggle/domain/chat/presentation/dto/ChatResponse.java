@@ -19,10 +19,21 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
+    public static class ChatRoomJoinDto {
+        private Boolean hasJoined;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
     public static class ChatRoomDetailDto {
         private Long id;
         private String name;
         private String description;
+        private Boolean isPrivate;
+        private String password;
         private MemberSummaryListDto chatRoomMembers;
         private MemberSummaryDto owner;
     }
@@ -32,8 +43,22 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
+    public static class ChatRoomSummaryDto {
+        private Long id;
+        private String name;
+        private Boolean isPrivate;
+        private String description;
+        private Long chatRoomMemberCount;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema
     public static class ChatRoomListDto {
-        private List<ChatRoomDetailDto> chatRooms;
+        private List<ChatRoomSummaryDto> chatRooms;
+        private int nextPageParam;
     }
 
     @Data
@@ -44,8 +69,10 @@ public class ChatResponse {
     public static class ActiveChatRoomDto {
         private Long id;
         private String name;
+        private Boolean isPrivate;
         private long unreadCount;
         private String lastMessageContent;
+        private String lastSenderProfileImgUrl;
     }
 
     @Data
@@ -55,6 +82,7 @@ public class ChatResponse {
     @Schema
     public static class ActiveChatRoomListDto {
         private List<ActiveChatRoomDto> chatRooms;
+        private int nextPageParam;
     }
 
     @Data
@@ -77,6 +105,8 @@ public class ChatResponse {
     @Schema
     public static class ChatMessageListDto {
         private List<ChatMessageDto> chatMessages;
+        private int nextPageParam;
     }
+
 
 }

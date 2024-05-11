@@ -1,6 +1,8 @@
 package com.example.waggle.security.config;
 
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 import com.example.waggle.security.exception.JwtAccessDeniedHandler;
 import com.example.waggle.security.exception.JwtAuthenticationEntryPoint;
 import com.example.waggle.security.filter.JwtAuthenticationFilter;
@@ -8,6 +10,7 @@ import com.example.waggle.security.filter.JwtExceptionFilter;
 import com.example.waggle.security.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.waggle.security.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.example.waggle.security.oauth.service.CustomOAuth2UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +22,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.List;
-
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
@@ -79,13 +78,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(additionalSwaggerRequests()).permitAll()
                 .requestMatchers(authRelatedEndpoints()).permitAll()
+                .requestMatchers(authenticatedEndpoints()).authenticated()
                 .requestMatchers(permitAllRequest()).permitAll()
                 .requestMatchers("/ws/**", "/subscribe/**", "/publish/**").permitAll()
                 .requestMatchers(authorizationAdmin()).hasRole("ADMIN")
                 .requestMatchers(authorizationDormant()).hasRole("DORMANT")
                 .requestMatchers(authorizationGuest()).hasRole("GUEST")
                 .requestMatchers(authorizationUser()).hasRole("USER")
-                .requestMatchers(authenticatedEndpoints()).authenticated()
                 //정적 페이지 허가
                 .requestMatchers("/", "/.well-known/**", "/css/**", "/*.ico", "/error", "/images/**")
                 .permitAll() // 임시로 모든 API 허용
@@ -120,12 +119,18 @@ public class SecurityConfig {
 
     private RequestMatcher[] authenticatedEndpoints() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher(HttpMethod.GET, "api/recommends/"),
-                antMatcher(HttpMethod.GET, "api/teams/{teamId}/participation"),
-                antMatcher(HttpMethod.GET, "api/teams/{teamId}/participation/status"),
-                antMatcher(HttpMethod.GET, "api/schedules/teams/{teamId}/auth"),
-                antMatcher(HttpMethod.GET, "api/schdules/teams/{teamId}/period/auth"),
-                antMatcher(HttpMethod.GET, "api/follows/following/{userUrl}")
+                antMatcher(HttpMethod.GET, "/api/recommends/"),
+                antMatcher(HttpMethod.GET, "/api/teams/{teamId}/participation"),
+                antMatcher(HttpMethod.GET, "/api/teams/{teamId}/participation/status"),
+                antMatcher(HttpMethod.GET, "/api/schedules/teams/{teamId}/auth"),
+                antMatcher(HttpMethod.GET, "/api/schedules/teams/{teamId}/period/auth"),
+                antMatcher(HttpMethod.GET, "/api/follows/following/{userUrl}"),
+                antMatcher(HttpMethod.GET, "/api/chat/rooms/active"),
+                antMatcher(HttpMethod.GET, "/api/chat/rooms/{chatRoomId}/messages"),
+                antMatcher(HttpMethod.POST, "/api/chat/rooms/**"),
+                antMatcher(HttpMethod.PUT, "/api/chat/rooms/**"),
+                antMatcher(HttpMethod.DELETE, "/api/chat/rooms/**")
+
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
