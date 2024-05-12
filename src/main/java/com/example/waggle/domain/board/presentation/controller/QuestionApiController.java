@@ -113,10 +113,10 @@ public class QuestionApiController {
     })
     @GetMapping("/sort")
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsBySortParam(
-            @RequestParam(name = "filterParam") QuestionSortParam sortParam,
+            @RequestParam(name = "sortParam") QuestionSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
-        Page<Question> questions = questionQueryService.getPagedQuestionsByFilter(sortParam, pageable);
+        Page<Question> questions = questionQueryService.getPagedQuestionsBySortParam(sortParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);

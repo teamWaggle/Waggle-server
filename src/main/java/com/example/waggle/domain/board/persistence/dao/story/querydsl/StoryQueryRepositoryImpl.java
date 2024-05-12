@@ -1,7 +1,7 @@
 package com.example.waggle.domain.board.persistence.dao.story.querydsl;
 
 import com.example.waggle.domain.board.persistence.entity.Story;
-import com.example.waggle.domain.board.presentation.dto.story.StoryFilterParam;
+import com.example.waggle.domain.board.presentation.dto.story.StorySortParam;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,14 +23,14 @@ public class StoryQueryRepositoryImpl implements StoryQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public Page<Story> findStoriesByFilter(StoryFilterParam filterParam, Pageable pageable) {
+    public Page<Story> findStoriesBySortParam(StorySortParam sortParam, Pageable pageable) {
         JPAQuery<Story> baseQuery = query.selectFrom(story);
-        if (filterParam.equals(StoryFilterParam.recommend)) {
+        if (sortParam.equals(StorySortParam.RECOMMEND)) {
             baseQuery.leftJoin(recommend).on(story._super.eq(recommend.board));
             baseQuery.groupBy(story);
         }
         List<Story> storyList = baseQuery
-                .orderBy(createOrderFilter(filterParam))
+                .orderBy(createSortingOrder(sortParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -40,12 +40,12 @@ public class StoryQueryRepositoryImpl implements StoryQueryRepository {
         return new PageImpl<>(storyList, pageable, count);
     }
 
-    private OrderSpecifier[] createOrderFilter(StoryFilterParam filterParam) {
-        switch (filterParam) {
-            case latest -> {
+    private OrderSpecifier[] createSortingOrder(StorySortParam sortParam) {
+        switch (sortParam) {
+            case LATEST -> {
                 return new OrderSpecifier[]{story.createdDate.desc()};
             }
-            case recommend -> {
+            case RECOMMEND -> {
                 return new OrderSpecifier[]{
                         recommend.count().desc(),
                         story.createdDate.desc()

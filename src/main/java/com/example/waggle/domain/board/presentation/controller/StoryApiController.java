@@ -4,16 +4,16 @@ import com.example.waggle.domain.board.application.story.StoryCommandService;
 import com.example.waggle.domain.board.application.story.StoryQueryService;
 import com.example.waggle.domain.board.persistence.entity.Story;
 import com.example.waggle.domain.board.presentation.converter.StoryConverter;
-import com.example.waggle.domain.board.presentation.dto.story.StoryFilterParam;
 import com.example.waggle.domain.board.presentation.dto.story.StoryRequest;
 import com.example.waggle.domain.board.presentation.dto.story.StoryResponse.StoryDetailDto;
 import com.example.waggle.domain.board.presentation.dto.story.StoryResponse.StorySummaryListDto;
+import com.example.waggle.domain.board.presentation.dto.story.StorySortParam;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.application.query.RecommendQueryService;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,17 +85,17 @@ public class StoryApiController {
                 StoryConverter.toListDto(storyQueryService.getPagedStories(pageable)));
     }
 
-    @Operation(summary = "스토리 필터 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
+    @Operation(summary = "스토리 정렬 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/filter")
+    @GetMapping("/sort")
     public ApiResponseDto<StorySummaryListDto> getStoryByFilter(
-            @RequestParam(name = "filterParam") StoryFilterParam filterParam,
+            @RequestParam(name = "sortParam") StorySortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE);
         return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStoriesByFilter(filterParam, pageable)));
+                StoryConverter.toListDto(storyQueryService.getPagedStoriesBySortParam(sortParam, pageable)));
     }
 
     @Operation(summary = "사용자의 스토리 목록 조회", description = "특정 사용자가 작성한 스토리 목록을 조회합니다.")

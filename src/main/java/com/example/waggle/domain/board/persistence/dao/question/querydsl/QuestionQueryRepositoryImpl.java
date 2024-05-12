@@ -23,7 +23,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public Page<Question> findQuestionsByFilter(QuestionSortParam sortParam, Pageable pageable) {
+    public Page<Question> findQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable) {
         JPAQuery<Question> baseQuery = query.selectFrom(question);
         if (sortParam == QuestionSortParam.RECOMMEND) {
             baseQuery.leftJoin(recommend).on(recommend.board.eq(question._super));

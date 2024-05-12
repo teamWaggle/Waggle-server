@@ -2,7 +2,7 @@ package com.example.waggle.domain.board.application.story;
 
 import com.example.waggle.domain.board.persistence.dao.story.jpa.StoryRepository;
 import com.example.waggle.domain.board.persistence.entity.Story;
-import com.example.waggle.domain.board.presentation.dto.story.StoryFilterParam;
+import com.example.waggle.domain.board.presentation.dto.story.StorySortParam;
 import com.example.waggle.exception.object.handler.StoryHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +49,8 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     }
 
     @Override
-    public Page<Story> getPagedStoriesByFilter(StoryFilterParam filterParam, Pageable pageable) {
-        return storyRepository.findStoriesByFilter(filterParam, pageable);
+    public Page<Story> getPagedStoriesBySortParam(StorySortParam sortParam, Pageable pageable) {
+        return storyRepository.findStoriesBySortParam(sortParam, pageable);
     }
 
 

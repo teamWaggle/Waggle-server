@@ -62,8 +62,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
-    public Page<Question> getPagedQuestionsByFilter(QuestionSortParam sortParam, Pageable pageable) {
-        return questionRepository.findQuestionsByFilter(sortParam, pageable);
+    public Page<Question> getPagedQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable) {
+        return questionRepository.findQuestionsBySortParam(sortParam, pageable);
     }
 
     @Override

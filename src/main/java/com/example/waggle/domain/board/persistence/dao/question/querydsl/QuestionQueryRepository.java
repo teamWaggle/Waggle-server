@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface QuestionQueryRepository {
-    Page<Question> findQuestionsByFilter(QuestionSortParam sortParam, Pageable pageable);
+    Page<Question> findQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable);
 }
