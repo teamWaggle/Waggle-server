@@ -169,7 +169,7 @@ public class QuestionApiController {
     @DeleteMapping("/{questionId}")
     public ApiResponseDto<Boolean> deleteQuestion(@PathVariable("questionId") Long questionId,
                                                   @AuthUser Member member) {
-        questionCommandService.deleteQuestion(questionId, member);
+        questionCommandService.deleteQuestionWithRelations(questionId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

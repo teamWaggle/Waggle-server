@@ -6,7 +6,7 @@ import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRe
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +20,10 @@ import static com.example.waggle.domain.conversation.persistence.entity.QComment
 import static com.example.waggle.domain.conversation.persistence.entity.QReply.reply;
 
 @Repository
+@RequiredArgsConstructor
 public class CommentQueryRepositoryImpl implements CommentQueryRepository {
 
-    @Autowired
-    private JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public Page<SirenCommentViewDto> findPagedSirenCommentsByUserUrl(String userUrl, Pageable pageable) {

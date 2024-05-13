@@ -48,9 +48,9 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
     @Override
     public void deleteQuestionWithRelations(Long questionId) {
         query.delete(media).where(media.board.id.eq(questionId)).execute();
-        query.delete(boardHashtag).where(boardHashtag.board.id.eq(questionId));
-        query.delete(recommend).where(recommend.board.id.eq(questionId));
-        query.delete(question).where(question.id.eq(questionId));
+        query.delete(boardHashtag).where(boardHashtag.board.id.eq(questionId)).execute();
+        query.delete(recommend).where(recommend.board.id.eq(questionId)).execute();
+        query.delete(question).where(question.id.eq(questionId)).execute();
     }
 
     private OrderSpecifier[] createSortingOrder(QuestionSortParam sortParam) {

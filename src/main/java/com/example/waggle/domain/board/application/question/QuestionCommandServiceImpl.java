@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.persistence.dao.question.jpa.QuestionRepo
 import com.example.waggle.domain.board.persistence.entity.Question;
 import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionRequest;
+import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
@@ -25,6 +26,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
+    private final CommentRepository commentRepository;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
 
@@ -86,6 +88,15 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         recommendRepository.deleteAllByBoardId(question.getId());
         questionRepository.delete(question);
+    }
+
+    @Override
+    public void deleteQuestionWithRelations(Long boardId, Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        questionRepository.deleteQuestionWithRelations(boardId);
     }
 
     private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {
