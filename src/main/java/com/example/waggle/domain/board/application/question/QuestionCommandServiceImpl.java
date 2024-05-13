@@ -1,6 +1,7 @@
 package com.example.waggle.domain.board.application.question;
 
 import com.example.waggle.domain.board.application.board.BoardService;
+import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.dao.question.jpa.QuestionRepository;
 import com.example.waggle.domain.board.persistence.entity.Question;
 import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
@@ -27,6 +28,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
     private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
 
@@ -96,7 +98,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
-        questionRepository.deleteQuestionWithRelations(boardId);
+        boardRepository.deleteBoardsWithRelations(QUESTION, boardId);
     }
 
     private Question buildQuestion(QuestionRequest createQuestionRequest, Member member) {
