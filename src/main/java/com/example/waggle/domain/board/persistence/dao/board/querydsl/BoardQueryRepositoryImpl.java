@@ -13,6 +13,7 @@ import static com.example.waggle.domain.board.persistence.entity.QStory.story;
 import static com.example.waggle.domain.hashtag.persistence.entity.QBoardHashtag.boardHashtag;
 import static com.example.waggle.domain.media.persistence.entity.QMedia.media;
 import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
+import static com.example.waggle.domain.schedule.persistence.entity.QMemberSchedule.memberSchedule;
 import static com.example.waggle.domain.schedule.persistence.entity.QSchedule.schedule;
 
 @RequiredArgsConstructor
@@ -41,6 +42,7 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
                 queryFactory.delete(siren).where(siren.id.eq(boardId)).execute();
             }
             case SCHEDULE -> {
+                queryFactory.delete(memberSchedule).where(memberSchedule.schedule.id.eq(boardId)).execute();
                 queryFactory.delete(schedule).where(schedule.id.eq(boardId)).execute();
             }
             default -> {

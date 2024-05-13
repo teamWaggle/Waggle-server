@@ -12,10 +12,10 @@ import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResp
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse.OverlappedScheduleListDto;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse.ScheduleListDto;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.ScheduleUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -86,7 +86,7 @@ public class ScheduleApiController {
     @DeleteMapping("/{scheduleId}")
     public ApiResponseDto<Boolean> deleteScheduleInTeam(@PathVariable("scheduleId") Long scheduleId,
                                                         @AuthUser Member member) {
-        scheduleCommandService.deleteSchedule(scheduleId, member);
+        scheduleCommandService.deleteScheduleWithRelations(scheduleId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
