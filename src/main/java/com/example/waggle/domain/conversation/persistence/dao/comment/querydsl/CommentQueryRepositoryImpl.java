@@ -17,6 +17,7 @@ import java.util.List;
 import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
 import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
 import static com.example.waggle.domain.conversation.persistence.entity.QComment.comment;
+import static com.example.waggle.domain.conversation.persistence.entity.QReply.reply;
 
 @Repository
 public class CommentQueryRepositoryImpl implements CommentQueryRepository {
@@ -86,4 +87,11 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
 
         return new PageImpl<>(content, pageable, total);
     }
+
+    @Override
+    public void deleteCommentsWithRelationsByBoard(Long boardId) {
+        queryFactory.delete(reply).where(reply.comment.board.id.eq(boardId)).execute();
+        queryFactory.delete(comment).where(comment.board.id.eq(boardId)).execute();
+    }
+
 }

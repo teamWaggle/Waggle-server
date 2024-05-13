@@ -11,4 +11,6 @@ public interface CommentQueryRepository {
 
     Page<QuestionCommentViewDto> findPagedQuestionCommentsByUserUrl(String userUrl, Pageable pageable);
 
+    void deleteCommentsWithRelationsByBoard(Long boardId);
+
 }
