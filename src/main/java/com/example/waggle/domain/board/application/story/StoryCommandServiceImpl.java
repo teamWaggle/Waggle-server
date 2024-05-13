@@ -1,10 +1,12 @@
 package com.example.waggle.domain.board.application.story;
 
 import com.example.waggle.domain.board.application.board.BoardService;
+import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.dao.story.jpa.StoryRepository;
 import com.example.waggle.domain.board.persistence.entity.Story;
 import com.example.waggle.domain.board.presentation.dto.story.StoryRequest;
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
+import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
@@ -24,6 +26,8 @@ import static com.example.waggle.domain.board.persistence.entity.BoardType.STORY
 public class StoryCommandServiceImpl implements StoryCommandService {
 
     private final StoryRepository storyRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final RecommendRepository recommendRepository;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
@@ -75,6 +79,15 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(story.getId());
         storyRepository.delete(story);
+    }
+
+    @Override
+    public void deleteStoryWithRelations(Long boardId, Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
+            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        boardRepository.deleteBoardsWithRelations(STORY, boardId);
     }
 
     private Story buildStory(StoryRequest createStoryRequest, Member member) {

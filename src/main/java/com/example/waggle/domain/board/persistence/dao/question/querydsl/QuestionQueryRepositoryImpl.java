@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
-import static com.example.waggle.domain.hashtag.persistence.entity.QBoardHashtag.boardHashtag;
-import static com.example.waggle.domain.media.persistence.entity.QMedia.media;
 import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
 
 
@@ -43,14 +41,6 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .fetchOne();
 
         return new PageImpl<>(questionList, pageable, count);
-    }
-
-    @Override
-    public void deleteQuestionWithRelations(Long questionId) {
-        query.delete(media).where(media.board.id.eq(questionId)).execute();
-        query.delete(boardHashtag).where(boardHashtag.board.id.eq(questionId)).execute();
-        query.delete(recommend).where(recommend.board.id.eq(questionId)).execute();
-        query.delete(question).where(question.id.eq(questionId)).execute();
     }
 
     private OrderSpecifier[] createSortingOrder(QuestionSortParam sortParam) {

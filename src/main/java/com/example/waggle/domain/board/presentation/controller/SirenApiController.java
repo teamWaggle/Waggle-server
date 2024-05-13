@@ -99,7 +99,7 @@ public class SirenApiController {
     @DeleteMapping("/{sirenId}")
     public ApiResponseDto<Boolean> deleteSiren(@PathVariable("sirenId") Long sirenId,
                                                @AuthUser Member member) {
-        sirenCommandService.deleteSiren(sirenId, member);
+        sirenCommandService.deleteSirenWithRelations(sirenId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

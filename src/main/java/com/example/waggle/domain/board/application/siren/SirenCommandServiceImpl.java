@@ -1,12 +1,14 @@
 package com.example.waggle.domain.board.application.siren;
 
 import com.example.waggle.domain.board.application.board.BoardService;
+import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.dao.siren.jpa.SirenRepository;
 import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
 import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenRequest;
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
+import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Gender;
 import com.example.waggle.domain.member.persistence.entity.Member;
@@ -14,7 +16,6 @@ import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.object.handler.SirenHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
-import com.example.waggle.global.service.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,11 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
     private final BoardService boardService;
     private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
-    private final RedisService redisService;
 
     @Override
     public Long createSiren(SirenRequest createSirenRequest, Member member) {
@@ -86,6 +88,15 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         recommendRepository.deleteAllByBoardId(boardId);
 
         sirenRepository.delete(siren);
+    }
+
+    @Override
+    public void deleteSirenWithRelations(Long boardId, Member member) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
+            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        boardRepository.deleteBoardsWithRelations(SIREN, boardId);
     }
 
     private Siren buildSiren(SirenRequest createSirenRequest, Member member) {

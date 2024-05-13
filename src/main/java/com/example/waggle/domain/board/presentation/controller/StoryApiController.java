@@ -129,7 +129,7 @@ public class StoryApiController {
     @DeleteMapping("/{storyId}")
     public ApiResponseDto<Boolean> deleteStory(@PathVariable("storyId") Long storyId,
                                                @AuthUser Member member) {
-        storyCommandService.deleteStory(storyId, member);
+        storyCommandService.deleteStoryWithRelations(storyId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

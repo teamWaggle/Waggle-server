@@ -7,6 +7,4 @@ import org.springframework.data.domain.Pageable;
 
 public interface QuestionQueryRepository {
     Page<Question> findQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable);
-
-    void deleteQuestionWithRelations(Long questionId);
 }
