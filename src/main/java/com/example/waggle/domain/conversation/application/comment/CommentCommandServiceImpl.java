@@ -6,17 +6,25 @@ import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.Commen
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRequest;
+import com.example.waggle.domain.member.persistence.dao.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
+import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.schedule.persistence.dao.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
 import com.example.waggle.exception.object.handler.CommentHandler;
+import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -30,6 +38,8 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final MemberScheduleRepository memberScheduleRepository;
     private final ScheduleRepository scheduleRepository;
     private final BoardRepository boardRepository;
+    private final NotificationRepository notificationRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Long createComment(Long boardId, CommentRequest createCommentRequest, Member member) {
@@ -39,6 +49,15 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         Comment comment = buildComment(board, createCommentRequest, member);
         commentRepository.save(comment);
+
+        List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
+                .stream()
+                .map(userUrl -> memberRepository.findByUserUrl(userUrl)
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
+                .map(receiver -> Notification.of(member, comment, receiver))
+                .collect(Collectors.toList());
+        notificationList.add(Notification.of(member, comment));
+        notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
 
