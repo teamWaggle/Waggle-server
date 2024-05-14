@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ParseUtil {
 
-    private static final String MENTION_REGREX = "@\\[([^]]+)]\\(([^)]+)\\)";
-    private static final Pattern MENTION_PATTERN = Pattern.compile(MENTION_REGREX);
+    private static final String MENTION_REGEX = "@\\[([^]]+)]\\(([^)]+)\\)";
+    private static final Pattern MENTION_PATTERN = Pattern.compile(MENTION_REGEX);
 
     public static List<String> parsingUserUrl(Conversation conversation) {
         if (conversation == null || conversation.getContent() == null) {
