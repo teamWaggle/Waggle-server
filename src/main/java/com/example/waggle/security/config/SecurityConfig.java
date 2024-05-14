@@ -93,13 +93,12 @@ public class SecurityConfig {
 
     private static void configureCorsAndSecurity(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                //cors(다른 자원 허용)
+                .headers()
+                .frameOptions().disable().and()
                 .cors().and()
-                // REST API이므로 basic auth 및 csrf 보안을 사용하지 않음
                 .httpBasic().disable()
                 .csrf().disable()
                 .formLogin().disable()
-                // JWT를 사용하기 때문에 세션을 사용하지 않음
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
