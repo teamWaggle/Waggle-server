@@ -25,6 +25,7 @@ public class Team extends BaseEntity {
     private String name;
     private String description;
     private String coverImageUrl;
+    private Boolean isPrivate;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TeamColor teamColor;
@@ -57,6 +58,7 @@ public class Team extends BaseEntity {
         this.description = updateTeamRequest.getDescription();
         this.coverImageUrl = updateTeamRequest.getCoverImageUrl();
         this.teamColor = TeamColor.valueOf(updateTeamRequest.getTeamColor());
+        this.isPrivate = updateTeamRequest.getIsPrivate();
     }
 
     public void updateLeader(Member teamLeader) {

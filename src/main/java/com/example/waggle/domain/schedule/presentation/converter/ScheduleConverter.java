@@ -34,11 +34,16 @@ public class ScheduleConverter {
     public static ScheduleListDto toScheduleListDto(Page<Schedule> pagedSchedules) {
         List<ScheduleDetailDto> schedules = pagedSchedules.stream()
                 .map(ScheduleConverter::toScheduleDetailDto).collect(Collectors.toList());
+        boolean isPrivate = pagedSchedules.getContent().stream()
+                .map(schedule -> schedule.getTeam().getIsPrivate())
+                .allMatch(Boolean::booleanValue);
+
         return ScheduleListDto.builder()
                 .scheduleList(schedules)
                 .scheduleCount(pagedSchedules.getTotalElements())
                 .isFirst(pagedSchedules.isFirst())
                 .isLast(pagedSchedules.isLast())
+                .isPrivate(isPrivate)
                 .build();
     }
 

@@ -59,6 +59,7 @@ public class ScheduleResponse {
         private long scheduleCount;
         private Boolean isFirst;
         private Boolean isLast;
+        private Boolean isPrivate;
     }
 
     @Data

@@ -29,6 +29,7 @@ public class TeamConverter {
                 .coverImageUrl(MediaUtil.getCoverImg(team))
                 .teamColor(team.getTeamColor())
                 .teamSize(team.getTeamMembers().size())
+                .isPrivate(team.getIsPrivate())
                 .teamLeader(MemberConverter.toMemberSummaryDto(team.getLeader()))
                 .teamMemberList(
                         teamMembers.stream().map(MemberConverter::toMemberSummaryDto).collect(Collectors.toList()))
