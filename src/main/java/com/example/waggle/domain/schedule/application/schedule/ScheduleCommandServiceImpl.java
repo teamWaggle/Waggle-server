@@ -1,8 +1,9 @@
 package com.example.waggle.domain.schedule.application.schedule;
 
 import com.example.waggle.domain.board.application.board.BoardService;
-import com.example.waggle.domain.board.persistence.entity.BoardType;
+import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
+import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.dao.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.ScheduleRepository;
@@ -20,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.waggle.domain.board.persistence.entity.BoardType.SCHEDULE;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -27,6 +30,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     private final ScheduleRepository scheduleRepository;
     private final TeamRepository teamRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final CommentCommandService commentCommandService;
@@ -53,7 +58,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public Long updateSchedule(Long scheduleId, ScheduleRequest updateScheduleRequest, Member member) {
-        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
+        if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         validateOrderOfStartAndEnd(updateScheduleRequest);
@@ -67,7 +72,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public void deleteSchedule(Long scheduleId, Member member) {
-        if (!boardService.validateMemberUseBoard(scheduleId, BoardType.SCHEDULE, member)) {
+        if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Schedule schedule = scheduleRepository.findById(scheduleId)
@@ -76,6 +81,15 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         memberScheduleRepository.deleteAllByScheduleId(scheduleId);
         scheduleRepository.delete(schedule);
+    }
+
+    @Override
+    public void deleteScheduleWithRelations(Long scheduleId, Member member) {
+        if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
+            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        commentRepository.deleteCommentsWithRelationsByBoard(scheduleId);
+        boardRepository.deleteBoardsWithRelations(SCHEDULE, scheduleId);
     }
 
     @Override

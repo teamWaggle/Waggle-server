@@ -14,4 +14,6 @@ public interface StoryCommandService {
 
     void deleteStory(Long boardId, Member member);
 
+    void deleteStoryWithRelations(Long boardId, Member member);
+
 }

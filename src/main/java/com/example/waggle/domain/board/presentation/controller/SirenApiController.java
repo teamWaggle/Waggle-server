@@ -99,7 +99,7 @@ public class SirenApiController {
     @DeleteMapping("/{sirenId}")
     public ApiResponseDto<Boolean> deleteSiren(@PathVariable("sirenId") Long sirenId,
                                                @AuthUser Member member) {
-        sirenCommandService.deleteSiren(sirenId, member);
+        sirenCommandService.deleteSirenWithRelations(sirenId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
@@ -111,7 +111,7 @@ public class SirenApiController {
     @GetMapping
     public ApiResponseDto<SirenPagedSummaryListDto> getAllSiren(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 8, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
