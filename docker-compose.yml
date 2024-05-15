@@ -8,6 +8,8 @@ services:
       - kafka
       - redis
       - mongo
+    env_file:
+      - .env
 
   kafka:
     image: wurstmeister/kafka:latest
