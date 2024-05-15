@@ -152,6 +152,7 @@ public class SecurityConfig {
     private RequestMatcher[] permitAllRequest() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(HttpMethod.GET, "/"),
+                antMatcher(HttpMethod.GET, "/health-check"),
                 antMatcher(HttpMethod.GET, "/api/teams/**"),
                 antMatcher(HttpMethod.GET, "/api/replies/**"),
                 antMatcher(HttpMethod.GET, "/api/comments/**"),
