@@ -61,3 +61,10 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: method
   use-fqn: true
+
+logging:
+  level:
+    org.apache.kafka.clients.NetworkClient: ERROR
+    org.apache.kafka.clients.consumer.internals.ConsumerCoordinator: ERROR
+    org.apache.kafka.clients.Metadata: ERROR
+
