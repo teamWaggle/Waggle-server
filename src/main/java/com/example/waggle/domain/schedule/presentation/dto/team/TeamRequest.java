@@ -17,6 +17,7 @@ public class TeamRequest {
     private String name;
     private String description;
     private String coverImageUrl;
+    private Boolean isPrivate;
 
     @ValidEnum(target = TeamColor.class)
     private String teamColor;

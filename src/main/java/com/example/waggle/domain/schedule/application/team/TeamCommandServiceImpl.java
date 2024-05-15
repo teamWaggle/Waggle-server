@@ -49,6 +49,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .description(createTeamRequest.getDescription())
                 .coverImageUrl(createTeamRequest.getCoverImageUrl())
                 .teamColor(TeamColor.valueOf(createTeamRequest.getTeamColor()))
+                .isPrivate(createTeamRequest.getIsPrivate())
                 .leader(member)
                 .build();
     }

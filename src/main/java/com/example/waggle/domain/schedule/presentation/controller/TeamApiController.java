@@ -1,5 +1,7 @@
 package com.example.waggle.domain.schedule.presentation.controller;
 
+import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
+
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
@@ -13,14 +15,17 @@ import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.Par
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.ParticipationStatusResponse.Status;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamDetailDto;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamSummaryListDto;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,12 +34,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -159,7 +158,8 @@ public class TeamApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @GetMapping("/recommend")
-    public ApiResponseDto<TeamSummaryListDto> getRecommendedTeam(@RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<TeamSummaryListDto> getRecommendedTeam(
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, TEAM_RECOMMEND_SIZE);
         Page<Team> teamByContainName = teamQueryService.getPopularTeamListTop3(pageable);
         return ApiResponseDto.onSuccess(TeamConverter.toSummaryListDto(teamByContainName));

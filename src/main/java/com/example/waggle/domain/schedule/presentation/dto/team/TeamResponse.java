@@ -24,6 +24,7 @@ public class TeamResponse {
         private String coverImageUrl;
         private TeamColor teamColor;
         private Integer teamSize;
+        private Boolean isPrivate;
         private MemberSummaryDto teamLeader;
         private List<MemberSummaryDto> teamMemberList;
     }
