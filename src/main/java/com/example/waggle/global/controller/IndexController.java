@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class IndexController {
 
-    @GetMapping("/")
+    @GetMapping("/health-check")
     public ApiResponseDto<Boolean> healthCheck() {
         return ApiResponseDto.onSuccess(true);
     }
