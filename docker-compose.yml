@@ -1,16 +1,5 @@
 version: '3.8'
 services:
-  app:
-    image: 471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev
-    ports:
-      - "8080:8080"
-    depends_on:
-      - kafka
-      - redis
-      - mongo
-    env_file:
-      - .env
-
   kafka:
     image: wurstmeister/kafka:latest
     ports:
