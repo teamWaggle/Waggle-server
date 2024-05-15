@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.6'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.google.cloud.tools.jib' version '3.4.0'
 }
 
 group = 'com.example'
@@ -103,6 +104,12 @@ tasks.named('test') {
 
 tasks.named("jar") {
     enabled = false
+}
+
+if (project.hasProperty('dev')) {
+    apply from: project.file('profile-dev.gradle')
+} else if (project.hasProperty('prod')) {
+    apply from: project.file('profile-prod.gradle')
 }
 
 clean {

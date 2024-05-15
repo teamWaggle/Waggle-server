@@ -1,20 +1,21 @@
 package com.example.waggle.global.util;
 
 import com.example.waggle.domain.board.persistence.entity.Board;
-import com.example.waggle.global.service.aws.AwsS3Service;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.pet.persistence.entity.Pet;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.example.waggle.global.service.aws.AwsS3Service;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
+@Component
 public class MediaUtil {
 
-    private static final String SERVER_URI = "https://waggle-bucket.s3.ap-northeast-2.amazonaws.com/";
+    private static final String SERVER_URI = "https://waggle-dev-s3.s3.ap-northeast-2.amazonaws.com/";
     private static final String DEFAULT_MEMBER_PROFILE_IMG = "6d40e0b9-e675-45ce-ad84-c2032bfbb185.png";
     private static final String DEFAULT_PET_PROFILE_IMG = "1c463c40-a8df-405b-bbda-7b8c3763d886.png";
 

@@ -7,9 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class DateUtil {
-    public static void main(String[] args) {
-
-    }
 
     public static final int SEC = 60;
     public static final int MIN = 60;
@@ -19,9 +16,9 @@ public class DateUtil {
 
     /**
      * x초전, x분전, x시간 전m, x일 전, x개월전, x년전
+     *
      * @param 날짜
      * @return 분 표시
-     *
      */
     public static String simpleStoryTimeFormat(LocalDateTime tempDate) {
         long curTime = System.currentTimeMillis();
@@ -32,7 +29,7 @@ public class DateUtil {
 
         String msg = null;
 
-        if (diffTime < SEC){
+        if (diffTime < SEC) {
             msg = diffTime + "초 전";
         } else if ((diffTime /= SEC) < MIN) {
             msg = diffTime + "분 전";
@@ -43,7 +40,7 @@ public class DateUtil {
         } else if ((diffTime /= DAY) < MONTH) {
             msg = (diffTime) + "개월 전";
         } else {
-            SimpleDateFormat sdf = new SimpleDateFormat( "yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             String curYear = sdf.format(curTime);
             String passYear = sdf.format(tempDate);
             int diffYear = Integer.parseInt(curYear) - Integer.parseInt(passYear);

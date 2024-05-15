@@ -1,0 +1,81 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "containerPort": 8080
+        }
+      ]
+    },
+    {
+      "name": "kafka",
+      "image": "wurstmeister/kafka:latest",
+      "essential": false,
+      "portMappings": [
+        {
+          "hostPort": 9092,
+          "containerPort": 9092
+        }
+      ],
+      "environment": [
+        {
+          "name": "KAFKA_ADVERTISED_LISTENERS",
+          "value": "INSIDE://kafka:9092,OUTSIDE://localhost:9092"
+        },
+        {
+          "name": "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
+          "value": "INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT"
+        },
+        {
+          "name": "KAFKA_INTER_BROKER_LISTENER_NAME",
+          "value": "INSIDE"
+        },
+        {
+          "name": "KAFKA_ZOOKEEPER_CONNECT",
+          "value": "zookeeper:2181"
+        }
+      ],
+      "links": [
+        "zookeeper"
+      ]
+    },
+    {
+      "name": "zookeeper",
+      "image": "wurstmeister/zookeeper:latest",
+      "essential": false,
+      "portMappings": [
+        {
+          "hostPort": 2181,
+          "containerPort": 2181
+        }
+      ]
+    },
+    {
+      "name": "redis",
+      "image": "redis:latest",
+      "essential": false,
+      "portMappings": [
+        {
+          "hostPort": 6379,
+          "containerPort": 6379
+        }
+      ]
+    },
+    {
+      "name": "mongo",
+      "image": "mongo:latest",
+      "essential": false,
+      "portMappings": [
+        {
+          "hostPort": 27017,
+          "containerPort": 27017
+        }
+      ]
+    }
+  ]
+}
