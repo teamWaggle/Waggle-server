@@ -1,21 +1,15 @@
 package com.example.waggle.global.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/chat")
-@Controller
-@Slf4j
-public class IndexController implements ErrorController {
+@RestController
+public class IndexController {
 
-    @GetMapping({"/", "/error"})
-    public String index() {
-        return "index.html";
+    @GetMapping("/")
+    public ApiResponseDto<Boolean> healthCheck() {
+        return ApiResponseDto.onSuccess(true);
     }
 
 }
