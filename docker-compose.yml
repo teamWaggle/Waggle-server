@@ -5,10 +5,11 @@ services:
     ports:
       - "9092:9092"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
     depends_on:
       - zookeeper
 
@@ -26,3 +27,14 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
+
+  application:
+    image: 471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+      - redis
+      - mongo
+    env_file:
+      - .env
