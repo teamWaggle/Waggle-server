@@ -105,3 +105,7 @@ app:
     secret: ${JWT_SECRET}
   server:
     uri: ${SERVER_URI}
+
+mongodb:
+  client: mongodb://admin:12345678@mongo:27017/waggle?authSource=admin
+  name: waggle

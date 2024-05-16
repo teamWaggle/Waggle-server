@@ -4,3 +4,7 @@ spring:
     username: root
     password: springproject
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+mongodb:
+  client: mongodb://admin:12345678@localhost:27017/waggle?authSource=admin
+  name: waggle

@@ -16,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class MediaUtil {
 
     private static final String SERVER_URI = "https://waggle-dev-s3.s3.ap-northeast-2.amazonaws.com/";
-    private static final String DEFAULT_MEMBER_PROFILE_IMG = "6d40e0b9-e675-45ce-ad84-c2032bfbb185.png";
-    private static final String DEFAULT_PET_PROFILE_IMG = "1c463c40-a8df-405b-bbda-7b8c3763d886.png";
+    private static final String DEFAULT_MEMBER_PROFILE_IMG = "1d99fc66-0d87-49c7-b173-3093019e46c0.png";
+    private static final String DEFAULT_PET_PROFILE_IMG = "ee8020e7-86e6-435a-a12f-c02826b8d0fd.png";
 
     public static String appendUri(String s3URI) {
         StringBuffer stringBuffer = new StringBuffer(SERVER_URI);

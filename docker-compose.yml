@@ -26,6 +26,9 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 12345678
 
   application:
     image: 471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev:latest
