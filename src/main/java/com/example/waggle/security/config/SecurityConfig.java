@@ -178,7 +178,8 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.DELETE, "/api/members/{memberId}/force"),
                 antMatcher(HttpMethod.GET, "/api/recommends/sync"),
                 antMatcher(HttpMethod.GET, "/api/members/info"),
-                antMatcher(HttpMethod.DELETE, "/api/stories/{storyId}/admin")
+                antMatcher(HttpMethod.DELETE, "/api/stories/{storyId}/admin"),
+                antMatcher(HttpMethod.DELETE, "/api/questions/{questionId}/admin")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
