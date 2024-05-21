@@ -1,8 +1,6 @@
 package com.example.waggle.security.config;
 
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
 import com.example.waggle.security.exception.JwtAccessDeniedHandler;
 import com.example.waggle.security.exception.JwtAuthenticationEntryPoint;
 import com.example.waggle.security.filter.JwtAuthenticationFilter;
@@ -10,7 +8,6 @@ import com.example.waggle.security.filter.JwtExceptionFilter;
 import com.example.waggle.security.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.waggle.security.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.example.waggle.security.oauth.service.CustomOAuth2UserService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +19,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.List;
+
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
@@ -175,8 +176,9 @@ public class SecurityConfig {
     private RequestMatcher[] authorizationAdmin() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(HttpMethod.DELETE, "/api/members/{memberId}/force"),
-                antMatcher(HttpMethod.GET, "api/recommends/sync"),
-                antMatcher(HttpMethod.GET, "api/members/info")
+                antMatcher(HttpMethod.GET, "/api/recommends/sync"),
+                antMatcher(HttpMethod.GET, "/api/members/info"),
+                antMatcher(HttpMethod.DELETE, "/api/stories/{storyId}/admin")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

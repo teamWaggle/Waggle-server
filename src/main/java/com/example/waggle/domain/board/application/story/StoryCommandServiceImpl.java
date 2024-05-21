@@ -9,6 +9,7 @@ import com.example.waggle.domain.conversation.application.comment.CommentCommand
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.StoryHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -83,7 +84,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public void deleteStoryWithRelations(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
+        if (!boardService.validateMemberUseBoard(boardId, STORY, member) || !member.getRole().equals(Role.ADMIN)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
