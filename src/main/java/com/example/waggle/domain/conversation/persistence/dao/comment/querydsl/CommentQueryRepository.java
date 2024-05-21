@@ -13,4 +13,6 @@ public interface CommentQueryRepository {
 
     void deleteCommentsWithRelationsByBoard(Long boardId);
 
+    void deleteCommentsWithRelations(Long commentId);
+
 }
