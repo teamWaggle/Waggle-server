@@ -19,4 +19,6 @@ public interface SirenCommandService {
 
     void deleteSirenWithRelations(Long boardId, Member member);
 
+    void deleteSirenByAdmin(Long boardId, Member member);
+
 }
