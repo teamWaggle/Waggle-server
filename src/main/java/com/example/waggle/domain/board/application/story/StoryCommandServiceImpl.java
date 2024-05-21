@@ -94,7 +94,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
 
     @Override
     public void deleteStoryByAdmin(Long boardId, Member member) {
-        if (member.getRole().equals(Role.ADMIN)) {
+        if (!member.getRole().equals(Role.ADMIN)) {
             throw new AuthenticationHandler(ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);

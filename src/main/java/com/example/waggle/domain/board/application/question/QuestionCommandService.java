@@ -18,4 +18,6 @@ public interface QuestionCommandService {
 
     void deleteQuestionWithRelations(Long boardId, Member member);
 
+    void deleteQuestionByAdmin(Long boardId, Member member);
+
 }

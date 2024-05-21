@@ -187,6 +187,17 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
+    @Operation(summary = "질문 삭제 🔑", description = "특정 질문이 관리자에 의해 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{questionId}/admin")
+    public ApiResponseDto<Boolean> deleteQuestionByAdmin(@PathVariable("questionId") Long questionId,
+                                                         @AuthUser Member member) {
+        questionCommandService.deleteQuestionByAdmin(questionId, member);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
     private void setRecommendCntInList(List<QuestionSummaryDto> questionList) {
         questionList
                 .forEach(question ->
