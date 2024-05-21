@@ -1,7 +1,7 @@
 package com.example.waggle.domain.conversation.application.comment;
 
-import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRequest;
+import com.example.waggle.domain.member.persistence.entity.Member;
 
 public interface CommentCommandService {
 
@@ -11,6 +11,8 @@ public interface CommentCommandService {
 
     void deleteComment(Long commentId, Member member);
 
-    void deleteCommentForHardReset(Long commentId);
+    void deleteCommentForHardReset(Long commentId);     //TODO remove
+
+    void deleteCommentByAdmin(Long commentId, Member member);
 
 }
