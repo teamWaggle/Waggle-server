@@ -2,7 +2,7 @@ package com.example.waggle.domain.notification.service;
 
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.follow.application.FollowCommandService;
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.notification.application.NotificationCommandService;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;

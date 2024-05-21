@@ -1,5 +1,6 @@
-package com.example.waggle.domain.member.persistence.dao;
+package com.example.waggle.domain.member.persistence.dao.jpa;
 
+import com.example.waggle.domain.member.persistence.dao.querydsl.MemberQueryRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberQueryRepository {
     Optional<Member> findByUsername(String username);
 
     Optional<Member> findByUserUrl(String userUrl);

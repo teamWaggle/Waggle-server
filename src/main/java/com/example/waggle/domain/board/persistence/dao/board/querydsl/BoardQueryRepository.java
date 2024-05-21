@@ -4,4 +4,6 @@ import com.example.waggle.domain.board.persistence.entity.BoardType;
 
 public interface BoardQueryRepository {
     void deleteBoardsWithRelations(BoardType boardType, Long boardId);
+
+    void deleteBoardsWithRelationsByMemberId(Long memberId);
 }

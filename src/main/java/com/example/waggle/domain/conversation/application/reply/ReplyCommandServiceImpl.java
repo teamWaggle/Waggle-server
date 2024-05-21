@@ -5,7 +5,7 @@ import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyReposit
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.conversation.persistence.entity.Reply;
 import com.example.waggle.domain.conversation.presentation.dto.reply.ReplyRequest;
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;

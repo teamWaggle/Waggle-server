@@ -4,10 +4,9 @@ package com.example.waggle.domain.schedule.persistence.dao;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.persistence.entity.TeamMember;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
@@ -19,4 +18,5 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     void deleteAllByTeam(Team team);
 
+    void deleteAllByMemberId(Long memberId);
 }

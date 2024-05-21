@@ -2,7 +2,7 @@ package com.example.waggle.domain.follow.application;
 
 import com.example.waggle.domain.follow.persistence.dao.FollowRepository;
 import com.example.waggle.domain.follow.persistence.entity.Follow;
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;

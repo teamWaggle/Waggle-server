@@ -2,7 +2,7 @@ package com.example.waggle.domain.recommend.application.query;
 
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.domain.recommend.persistence.entity.Recommend;
