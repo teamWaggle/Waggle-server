@@ -14,6 +14,6 @@ public interface SirenQueryRepository {
 
     List<Siren> findRandomUnresolvedSirens();
 
-    Page<Siren> findSirensForSearching(String keyword, Pageable pageable);
+    Page<Siren> findSirensByKeyword(String keyword, Pageable pageable);
 
 }

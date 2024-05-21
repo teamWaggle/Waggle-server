@@ -27,4 +27,6 @@ public interface SirenQueryService {
 
     List<Siren> getRandomUnresolvedSirenList();
 
+    Page<Siren> getPagedSirenListByKeyword(String keyword, Pageable pageable);
+
 }
