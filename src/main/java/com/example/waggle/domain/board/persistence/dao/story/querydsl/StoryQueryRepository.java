@@ -7,4 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface StoryQueryRepository {
     Page<Story> findStoriesBySortParam(StorySortParam sortParam, Pageable pageable);
+
+    Page<Story> findStoriesByKeyword(String keyword, Pageable pageable);
 }
