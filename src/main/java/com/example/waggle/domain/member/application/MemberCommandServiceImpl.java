@@ -9,7 +9,7 @@ import com.example.waggle.domain.conversation.persistence.entity.Reply;
 import com.example.waggle.domain.follow.persistence.dao.FollowRepository;
 import com.example.waggle.domain.hashtag.persistence.dao.BoardHashtagRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberCredentialsDto;
@@ -153,11 +153,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void deleteMemberAsAdmin(Member member, Long memberId) {
+    public void deleteMemberByAdmin(Member member, Long memberId) {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
-        deleteMember(memberId);
+        memberScheduleRepository.deleteAllByMemberId(memberId);
+        teamMemberRepository.deleteAllByMemberId(memberId);
+        boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
+        memberRepository.deleteMemberWithRelations(memberId);
     }
 
     private void deleteAllDataLinkedToMember(Member member) {

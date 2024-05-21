@@ -30,6 +30,6 @@ public interface MemberCommandService {
 
     void deleteDormantMember();
 
-    void deleteMemberAsAdmin(Member member, Long memberId);
+    void deleteMemberByAdmin(Member member, Long memberId);
 
 }

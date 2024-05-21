@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import static com.example.waggle.domain.board.persistence.entity.QBoard.board;
 import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
 import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
 import static com.example.waggle.domain.board.persistence.entity.QStory.story;
@@ -28,6 +29,14 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
         queryFactory.delete(boardHashtag).where(boardHashtag.board.id.eq(boardId)).execute();
         queryFactory.delete(recommend).where(recommend.board.id.eq(boardId)).execute();
         deleteByBoardType(boardType, boardId);
+    }
+
+    @Override
+    public void deleteBoardsWithRelationsByMemberId(Long memberId) {
+        queryFactory.delete(media).where(media.board.member.id.eq(memberId)).execute();
+        queryFactory.delete(boardHashtag).where(boardHashtag.board.member.id.eq(memberId));
+        queryFactory.delete(recommend).where(recommend.board.member.id.eq(memberId)).execute();
+        queryFactory.delete(board).where(board.member.id.eq(memberId)).execute();
     }
 
     private void deleteByBoardType(BoardType boardType, Long boardId) {

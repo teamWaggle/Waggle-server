@@ -1,6 +1,6 @@
 package com.example.waggle.domain.recommend.application.query;
 
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.domain.recommend.presentation.dto.RecommendResponse;

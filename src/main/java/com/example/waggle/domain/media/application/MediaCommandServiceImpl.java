@@ -3,7 +3,7 @@ package com.example.waggle.domain.media.application;
 import com.example.waggle.domain.board.persistence.entity.Board;
 import com.example.waggle.domain.media.persistence.dao.MediaRepository;
 import com.example.waggle.domain.media.persistence.entity.Media;
-import com.example.waggle.domain.member.persistence.dao.MemberRepository;
+import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.pet.persistence.dao.PetRepository;
 import com.example.waggle.domain.schedule.persistence.dao.TeamRepository;
 import com.example.waggle.exception.object.handler.MediaHandler;
