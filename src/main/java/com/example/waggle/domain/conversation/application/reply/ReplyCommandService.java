@@ -1,7 +1,7 @@
 package com.example.waggle.domain.conversation.application.reply;
 
-import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.conversation.presentation.dto.reply.ReplyRequest;
+import com.example.waggle.domain.member.persistence.entity.Member;
 
 public interface ReplyCommandService {
 
@@ -10,5 +10,7 @@ public interface ReplyCommandService {
     Long updateReply(Long replyId, ReplyRequest updateReplyRequest, Member member);
 
     void deleteReply(Long replyId, Member member);
+
+    void deleteReplyByAdmin(Long replyId, Member member);
 
 }
