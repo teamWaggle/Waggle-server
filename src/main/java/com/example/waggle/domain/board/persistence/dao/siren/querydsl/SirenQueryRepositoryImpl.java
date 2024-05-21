@@ -56,7 +56,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     @Override
     public Page<Siren> findSirensByKeyword(String keyword, Pageable pageable) {
         List<Siren> sirenList = queryFactory
-                .select(siren)
+                .selectFrom(siren)
                 .where(siren.title.contains(keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
