@@ -80,4 +80,9 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 .collect(Collectors.toList());
 
     }
+
+    @Override
+    public Page<Question> getPagedQuestionsByKeyword(String keyword, Pageable pageable) {
+        return questionRepository.findQuestionsByKeyword(keyword, pageable);
+    }
 }
