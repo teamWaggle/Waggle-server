@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
+import static com.example.waggle.domain.hashtag.persistence.entity.QBoardHashtag.boardHashtag;
+import static com.example.waggle.domain.hashtag.persistence.entity.QHashtag.hashtag;
 import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.recommend;
 
 
@@ -41,6 +43,23 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .fetch();
 
         return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchCount);
+    }
+
+    @Override
+    public Page<Question> findQuestionsByKeyword(String keyword, Pageable pageable) {
+        List<Question> questionList = queryFactory
+                .selectFrom(question)
+                .join(question.boardHashtags, boardHashtag)
+                .join(boardHashtag.hashtag, hashtag)
+                .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        JPAQuery<Long> countQuery = queryFactory
+                .select(question.count())
+                .from(question)
+                .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));
+        return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchOne);
     }
 
     private OrderSpecifier[] createSortingOrder(QuestionSortParam sortParam) {
