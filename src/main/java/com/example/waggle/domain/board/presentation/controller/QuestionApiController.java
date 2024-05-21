@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionDetailDto;
+import static com.example.waggle.global.util.PageUtil.QUESTION_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -159,6 +160,16 @@ public class QuestionApiController {
         detailDto.setViewCount(questionCacheService.applyViewCountToRedis(questionId));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(questionId));
         return ApiResponseDto.onSuccess(detailDto);
+    }
+
+    @Operation(summary = "질문 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/search")
+    public ApiResponseDto<QuestionSummaryListDto> searchQuestionList(@RequestParam String keyword,
+                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
+        Page<Question> pagedQuestionList = questionQueryService.getPagedQuestionsByKeyword(keyword, pageable);
+        return ApiResponseDto.onSuccess(QuestionConverter.toListDto(pagedQuestionList));
     }
 
 

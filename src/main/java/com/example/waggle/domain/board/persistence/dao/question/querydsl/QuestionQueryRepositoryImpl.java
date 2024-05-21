@@ -58,6 +58,8 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
         JPAQuery<Long> countQuery = queryFactory
                 .select(question.count())
                 .from(question)
+                .join(question.boardHashtags, boardHashtag)
+                .join(boardHashtag.hashtag, hashtag)
                 .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));
         return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchOne);
     }

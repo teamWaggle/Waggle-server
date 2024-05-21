@@ -25,4 +25,6 @@ public interface QuestionQueryService {
 
     List<Question> getRepresentativeQuestionList();
 
+    Page<Question> getPagedQuestionsByKeyword(String keyword, Pageable pageable);
+
 }

@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
+import static com.example.waggle.global.util.PageUtil.STORY_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -128,9 +128,9 @@ public class StoryApiController {
     @Operation(summary = "스토리 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다.")
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/search")
-    public ApiResponseDto<StorySummaryListDto> searchSirenList(@RequestParam String keyword,
+    public ApiResponseDto<StorySummaryListDto> searchStoryList(@RequestParam String keyword,
                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, STORY_SIZE, latestSorting);
         Page<Story> pagedStories = storyQueryService.getPagedStoriesByKeyword(keyword, pageable);
         return ApiResponseDto.onSuccess(StoryConverter.toListDto(pagedStories));
     }
