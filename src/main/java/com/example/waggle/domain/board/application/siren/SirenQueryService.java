@@ -11,22 +11,22 @@ import java.util.List;
 public interface SirenQueryService {
     List<Siren> getAllSiren();
 
-    Page<Siren> getPagedSirenList(Pageable pageable);
+    Page<Siren> getPagedSirens(Pageable pageable);
 
     List<Siren> getRepresentativeSirenList();
 
     Page<Siren> getPagedSirenListByUsername(String username, Pageable pageable);
 
-    Page<Siren> getPagedSirenListByUserUrl(String userUrl, Pageable pageable);
+    Page<Siren> getPagedSirensByUserUrl(String userUrl, Pageable pageable);
 
     Page<Siren> getPagedSirenListByMemberId(Long memberId, Pageable pageable);
 
-    Page<Siren> getPagedSirenListByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable);
+    Page<Siren> getPagedSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable);
 
     Siren getSirenByBoardId(Long boardId);
 
     List<Siren> getRandomUnresolvedSirenList();
 
-    Page<Siren> getPagedSirenListByKeyword(String keyword, Pageable pageable);
+    Page<Siren> getPagedSirensByKeyword(String keyword, Pageable pageable);
 
 }
