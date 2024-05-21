@@ -54,7 +54,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     }
 
     @Override
-    public Page<Siren> findSirensForSearching(String keyword, Pageable pageable) {
+    public Page<Siren> findSirensByKeyword(String keyword, Pageable pageable) {
         List<Siren> sirenList = queryFactory
                 .select(siren)
                 .where(siren.title.contains(keyword))

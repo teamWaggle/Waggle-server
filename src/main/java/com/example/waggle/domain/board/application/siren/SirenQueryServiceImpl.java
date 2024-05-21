@@ -86,4 +86,9 @@ public class SirenQueryServiceImpl implements SirenQueryService {
         return sirenRepository.findRandomUnresolvedSirens();
     }
 
+    @Override
+    public Page<Siren> getPagedSirenListByKeyword(String keyword, Pageable pageable) {
+        return sirenRepository.findSirensByKeyword(keyword, pageable);
+    }
+
 }
