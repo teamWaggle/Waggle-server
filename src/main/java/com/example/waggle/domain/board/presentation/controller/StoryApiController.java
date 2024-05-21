@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -120,6 +123,16 @@ public class StoryApiController {
         StoryDetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
         detailDto.setRecommendCount(recommendQueryService.countRecommend(storyId));
         return ApiResponseDto.onSuccess(detailDto);
+    }
+
+    @Operation(summary = "스토리 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/search")
+    public ApiResponseDto<StorySummaryListDto> searchSirenList(@RequestParam String keyword,
+                                                               @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Page<Story> pagedStories = storyQueryService.getPagedStoriesByKeyword(keyword, pageable);
+        return ApiResponseDto.onSuccess(StoryConverter.toListDto(pagedStories));
     }
 
     @Operation(summary = "스토리 삭제 🔑", description = "특정 스토리를 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")

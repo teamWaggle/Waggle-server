@@ -23,5 +23,7 @@ public interface StoryQueryService {
 
     Story getStoryByBoardId(Long boardId);
 
+    Page<Story> getPagedStoriesByKeyword(String keyword, Pageable pageable);
+
 
 }

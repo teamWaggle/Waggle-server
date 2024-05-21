@@ -59,4 +59,9 @@ public class StoryQueryServiceImpl implements StoryQueryService {
         return storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
+
+    @Override
+    public Page<Story> getPagedStoriesByKeyword(String keyword, Pageable pageable) {
+        return storyRepository.findStoriesByKeyword(keyword, pageable);
+    }
 }
