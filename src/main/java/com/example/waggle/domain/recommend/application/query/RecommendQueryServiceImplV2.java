@@ -3,7 +3,6 @@ package com.example.waggle.domain.recommend.application.query;
 import com.example.waggle.domain.member.persistence.dao.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.domain.recommend.presentation.dto.RecommendResponse;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.redis.RedisService;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,19 +55,8 @@ public class RecommendQueryServiceImplV2 implements RecommendQueryService {
 
     @Override
     public List<Member> getRecommendingMembers(Long boardId) {
-        List<Member> fromRDB = recommendRepository.findByBoardId(boardId).stream()
+        return recommendRepository.findByBoardId(boardId).stream()
                 .map(recommend -> recommend.getMember()).collect(Collectors.toList());
-        List<Member> fromRedis = redisService.getAllRecommendingMemberList().stream()
-                .filter(memberId -> redisService.existRecommend(memberId, boardId))
-                .map(memberRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get).collect(Collectors.toList());
-        fromRDB.addAll(fromRedis);
-        return fromRDB;
     }
 
-    @Override
-    public RecommendResponse.RecommendationInfo getRecommendationInfo(Long boardId, String username) {
-        return null;
-    }
 }

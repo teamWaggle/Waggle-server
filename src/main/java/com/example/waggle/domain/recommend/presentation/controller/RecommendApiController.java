@@ -6,10 +6,10 @@ import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSu
 import com.example.waggle.domain.recommend.application.command.RecommendCommandService;
 import com.example.waggle.domain.recommend.application.query.RecommendQueryService;
 import com.example.waggle.domain.recommend.application.sync.RecommendSyncService;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,6 +47,7 @@ public class RecommendApiController {
     })
     @GetMapping("/{boardId}/memberList")
     public ApiResponseDto<MemberSummaryListDto> getRecommendingMembers(@PathVariable("boardId") Long boardId) {
+        recommendSyncService.syncRecommendation();
         List<Member> recommendingMembers = recommendQueryService.getRecommendingMembers(boardId);
         return ApiResponseDto.onSuccess(MemberConverter.toMemberListDto(recommendingMembers));
     }

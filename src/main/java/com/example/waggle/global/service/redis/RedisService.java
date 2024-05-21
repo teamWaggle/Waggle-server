@@ -151,13 +151,12 @@ public class RedisService {
                 .map(board -> Long.valueOf(board)).collect(Collectors.toList());
     }
 
-//    public List<Long> getRecommendingMemberList(Long boardId) {
-//            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-//            String key = recommendBoardKeyPrefix + boardId;
-//            Set<String> members = setOperations.members(key);
-//        return members.stream()
-//                .map(member -> Long.valueOf(member)).collect(Collectors.toList());
-//    }
+    public List<Long> getAllInitMemberList() {
+        Set<String> keysByPattern = getKeysByPattern(initKeyPrefix + "*");
+        return keysByPattern.stream()
+                .map(key -> Long.valueOf(key.substring(initKeyPrefix.length())))
+                .collect(Collectors.toList());
+    }
 
     public List<Long> getAllRecommendingMemberList() {
         Set<String> keysByPattern = getKeysByPattern(recommendMemberKeyPrefix + "*");

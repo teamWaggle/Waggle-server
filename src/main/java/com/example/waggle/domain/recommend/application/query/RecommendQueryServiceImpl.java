@@ -6,7 +6,6 @@ import com.example.waggle.domain.member.persistence.dao.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.domain.recommend.persistence.entity.Recommend;
-import com.example.waggle.domain.recommend.presentation.dto.RecommendResponse.RecommendationInfo;
 import com.example.waggle.exception.object.general.GeneralException;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -51,14 +50,6 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
     public List<Member> getRecommendingMembers(Long boardId) {
         List<Recommend> byBoardId = recommendRepository.findByBoardId(boardId);
         return byBoardId.stream().map(r -> r.getMember()).collect(Collectors.toList());
-    }
-
-    @Override
-    public RecommendationInfo getRecommendationInfo(Long boardId, String username) {
-        return RecommendationInfo.builder()
-                .isRecommend(checkRecommend(boardId, username))
-                .recommendCount(countRecommend(boardId))
-                .build();
     }
 
 
