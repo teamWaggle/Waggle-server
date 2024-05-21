@@ -23,11 +23,11 @@ import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.
 @Repository
 @RequiredArgsConstructor
 public class SirenQueryRepositoryImpl implements SirenQueryRepository {
-    private final JPAQueryFactory query;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
-        JPAQuery<Siren> baseQuery = query.selectFrom(siren);
+        JPAQuery<Siren> baseQuery = queryFactory.selectFrom(siren);
         if (sortParam.equals(SirenSortParam.RECOMMEND)) {
             baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
             baseQuery.groupBy(siren);
@@ -38,7 +38,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 .limit(pageable.getPageSize())
                 .where(selectCategory(filterParam))
                 .fetch();
-        Long count = query.select(siren.count())
+        Long count = queryFactory.select(siren.count())
                 .from(siren)
                 .fetchOne();
         return new PageImpl<>(sirenList, pageable, count);
@@ -46,11 +46,26 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
 
     @Override
     public List<Siren> findRandomUnresolvedSirens() {
-        return query.selectFrom(siren)
+        return queryFactory.selectFrom(siren)
                 .where(siren.status.eq(ResolutionStatus.UNRESOLVED))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(4)
                 .fetch();
+    }
+
+    @Override
+    public Page<Siren> findSirensForSearching(String keyword, Pageable pageable) {
+        List<Siren> sirenList = queryFactory
+                .select(siren)
+                .where(siren.title.contains(keyword))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long count = queryFactory
+                .select(siren.count())
+                .from(siren)
+                .fetchOne();
+        return new PageImpl<>(sirenList, pageable, count);
     }
 
     private OrderSpecifier[] createSortingOrder(SirenSortParam sortParam) {
