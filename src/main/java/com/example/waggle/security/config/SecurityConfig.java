@@ -180,7 +180,8 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/members/info"),
                 antMatcher(HttpMethod.DELETE, "/api/stories/{storyId}/admin"),
                 antMatcher(HttpMethod.DELETE, "/api/questions/{questionId}/admin"),
-                antMatcher(HttpMethod.DELETE, "/api/sirens/{sirenId}/admin")
+                antMatcher(HttpMethod.DELETE, "/api/sirens/{sirenId}/admin"),
+                antMatcher(HttpMethod.DELETE, "/api/comments/{commentId}/admin")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

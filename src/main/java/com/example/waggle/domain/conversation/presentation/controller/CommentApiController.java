@@ -7,10 +7,10 @@ import com.example.waggle.domain.conversation.presentation.converter.CommentConv
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRequest;
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.*;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -108,6 +108,17 @@ public class CommentApiController {
     public ApiResponseDto<Boolean> deleteComment(@PathVariable("commentId") Long commentId,
                                                  @AuthUser Member member) {
         commentCommandService.deleteComment(commentId, member);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "댓글 강제 삭제 🔑", description = "특정 댓글이 관리자에 의해 삭제됩니다. 하위 대댓글들도 모두 삭제됩니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{commentId}/admin")
+    public ApiResponseDto<Boolean> deleteCommentByAdmin(@PathVariable("commentId") Long commentId,
+                                                        @AuthUser Member member) {
+        commentCommandService.deleteCommentByAdmin(commentId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

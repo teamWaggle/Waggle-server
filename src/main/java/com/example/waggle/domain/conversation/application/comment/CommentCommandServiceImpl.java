@@ -8,11 +8,13 @@ import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRequest;
 import com.example.waggle.domain.member.persistence.dao.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.schedule.persistence.dao.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
+import com.example.waggle.exception.object.handler.AuthenticationHandler;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
@@ -89,6 +91,14 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                     commentRepository.delete(comment);
                 }
         );
+    }
+
+    @Override
+    public void deleteCommentByAdmin(Long commentId, Member member) {
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new AuthenticationHandler(ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI);
+        }
+        commentRepository.deleteCommentsWithRelations(commentId);
     }
 
     public void validateMember(Comment comment, Member member) {
