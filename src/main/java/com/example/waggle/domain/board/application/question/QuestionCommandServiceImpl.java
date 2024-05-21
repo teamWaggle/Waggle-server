@@ -9,6 +9,7 @@ import com.example.waggle.domain.board.presentation.dto.question.QuestionRequest
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -94,7 +95,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public void deleteQuestionWithRelations(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member) || !member.getRole().equals(Role.ADMIN)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);

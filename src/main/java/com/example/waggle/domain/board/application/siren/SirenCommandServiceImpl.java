@@ -12,6 +12,7 @@ import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.Commen
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Gender;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.object.handler.SirenHandler;
@@ -92,7 +93,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public void deleteSirenWithRelations(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member) || !member.getRole().equals(Role.ADMIN)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);

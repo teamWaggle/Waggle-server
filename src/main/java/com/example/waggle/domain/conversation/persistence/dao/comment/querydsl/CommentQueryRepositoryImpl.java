@@ -94,4 +94,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
         queryFactory.delete(comment).where(comment.board.id.eq(boardId)).execute();
     }
 
+    @Override
+    public void deleteCommentsWithRelations(Long commentId) {
+        queryFactory.delete(reply).where(reply.comment.id.eq(commentId)).execute();
+        queryFactory.delete(comment).where(comment.id.eq(commentId)).execute();
+    }
+
 }
