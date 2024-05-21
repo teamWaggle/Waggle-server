@@ -7,8 +7,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,14 +20,19 @@ import static com.example.waggle.domain.recommend.persistence.entity.QRecommend.
 @Repository
 @RequiredArgsConstructor
 public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
-    private final JPAQueryFactory query;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public Page<Question> findQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable) {
-        JPAQuery<Question> baseQuery = query.selectFrom(question);
+        JPAQuery<Question> baseQuery = queryFactory.selectFrom(question);
+        JPAQuery<Long> countQuery = queryFactory.select(question.count()).from(question);
         if (sortParam == QuestionSortParam.RECOMMEND) {
-            baseQuery.leftJoin(recommend).on(recommend.board.eq(question._super));
-            baseQuery.groupBy(question);
+            baseQuery
+                    .leftJoin(recommend).on(recommend.board.eq(question._super))
+                    .groupBy(question);
+            countQuery
+                    .leftJoin(recommend).on(recommend.board.eq(question._super))
+                    .groupBy(question);
         }
         List<Question> questionList = baseQuery
                 .orderBy(createSortingOrder(sortParam))
@@ -35,12 +40,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long count = query
-                .select(question.count())
-                .from(question)
-                .fetchOne();
-
-        return new PageImpl<>(questionList, pageable, count);
+        return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchCount);
     }
 
     private OrderSpecifier[] createSortingOrder(QuestionSortParam sortParam) {

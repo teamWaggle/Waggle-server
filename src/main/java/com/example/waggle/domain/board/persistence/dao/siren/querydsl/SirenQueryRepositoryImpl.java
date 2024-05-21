@@ -11,8 +11,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,9 +28,12 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     @Override
     public Page<Siren> findSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
         JPAQuery<Siren> baseQuery = queryFactory.selectFrom(siren);
+        JPAQuery<Long> countQuery = queryFactory.select(siren.count()).from(siren);
         if (sortParam.equals(SirenSortParam.RECOMMEND)) {
-            baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board));
-            baseQuery.groupBy(siren);
+            baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board))
+                    .groupBy(siren);
+            countQuery.leftJoin(recommend).on(siren._super.eq(recommend.board))
+                    .groupBy(siren);
         }
         List<Siren> sirenList = baseQuery
                 .orderBy(createSortingOrder(sortParam))
@@ -38,10 +41,8 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 .limit(pageable.getPageSize())
                 .where(selectCategory(filterParam))
                 .fetch();
-        Long count = queryFactory.select(siren.count())
-                .from(siren)
-                .fetchOne();
-        return new PageImpl<>(sirenList, pageable, count);
+
+        return PageableExecutionUtils.getPage(sirenList, pageable, countQuery::fetchCount);
     }
 
     @Override
@@ -61,11 +62,11 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        Long count = queryFactory
+        JPAQuery<Long> countQuery = queryFactory
                 .select(siren.count())
                 .from(siren)
-                .fetchOne();
-        return new PageImpl<>(sirenList, pageable, count);
+                .where(siren.title.contains(keyword));
+        return PageableExecutionUtils.getPage(sirenList, pageable, countQuery::fetchOne);
     }
 
     private OrderSpecifier[] createSortingOrder(SirenSortParam sortParam) {

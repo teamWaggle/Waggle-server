@@ -7,7 +7,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -28,19 +27,20 @@ public class StoryQueryRepositoryImpl implements StoryQueryRepository {
     @Override
     public Page<Story> findStoriesBySortParam(StorySortParam sortParam, Pageable pageable) {
         JPAQuery<Story> baseQuery = queryFactory.selectFrom(story);
+        JPAQuery<Long> countQuery = queryFactory.select(story.count()).from(story);
         if (sortParam.equals(StorySortParam.RECOMMEND)) {
-            baseQuery.leftJoin(recommend).on(story._super.eq(recommend.board));
-            baseQuery.groupBy(story);
+            baseQuery.leftJoin(recommend).on(story._super.eq(recommend.board))
+                    .groupBy(story);
+            countQuery.leftJoin(recommend).on(story._super.eq(recommend.board))
+                    .groupBy(story);
         }
         List<Story> storyList = baseQuery
                 .orderBy(createSortingOrder(sortParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        Long count = queryFactory.select(story.count())
-                .from(story)
-                .fetchOne();
-        return new PageImpl<>(storyList, pageable, count);
+
+        return PageableExecutionUtils.getPage(storyList, pageable, countQuery::fetchCount);
     }
 
     @Override
