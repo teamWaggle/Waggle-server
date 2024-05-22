@@ -13,4 +13,4 @@ kafka:
   waggle:
     topic: waggle-chat
     groupId: waggle-chat-group
-    broker: localhost:9092
+    broker: kafka:9092
