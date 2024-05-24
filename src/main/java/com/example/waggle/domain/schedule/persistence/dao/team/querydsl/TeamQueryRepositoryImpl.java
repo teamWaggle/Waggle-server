@@ -32,6 +32,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
         queryFactory.delete(memberSchedule).where(memberSchedule.schedule.id.in(scheduleSubQuery)).execute();
         queryFactory.delete(comment).where(comment.board.id.in(scheduleSubQuery)).execute();
         queryFactory.delete(participation).where(participation.team.id.eq(teamId)).execute();
+        queryFactory.delete(schedule).where(schedule.id.in(scheduleSubQuery)).execute();
         queryFactory.delete(team).where(team.id.eq(teamId)).execute();
     }
 
