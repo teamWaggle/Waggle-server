@@ -2,6 +2,7 @@ package com.example.waggle.domain.schedule.application.team;
 
 import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.schedule.application.schedule.ScheduleCommandService;
@@ -102,6 +103,14 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         memberScheduleRepository.deleteAllByMemberId(member.getId());
         participationRepository.deleteByMemberAndTeam(member, team);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(member.getId(), teamId);
+    }
+
+    @Override
+    public void deleteTeamByAdmin(Long teamId, Member member) {
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+        }
+
     }
 
     @Override

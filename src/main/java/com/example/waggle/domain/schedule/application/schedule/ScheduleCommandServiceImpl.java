@@ -5,6 +5,7 @@ import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.ScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamMemberRepository;
@@ -13,6 +14,7 @@ import com.example.waggle.domain.schedule.persistence.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleRequest;
+import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -87,6 +89,15 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public void deleteScheduleWithRelations(Long scheduleId, Member member) {
         if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
+        }
+        commentRepository.deleteCommentsWithRelationsByBoard(scheduleId);
+        boardRepository.deleteBoardsWithRelations(SCHEDULE, scheduleId);
+    }
+
+    @Override
+    public void deleteScheduleByAdmin(Long scheduleId, Member member) {
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(scheduleId);
         boardRepository.deleteBoardsWithRelations(SCHEDULE, scheduleId);
