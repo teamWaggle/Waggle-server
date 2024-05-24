@@ -110,7 +110,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
-
+        teamRepository.deleteTeamWithRelations(teamId);
     }
 
     @Override
