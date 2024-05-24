@@ -11,19 +11,19 @@ public interface StoryQueryService {
 
     List<Story> getStories();
 
-    Page<Story> getPagedStoriesByUsername(String username, Pageable pageable);
+    Page<Story> getPagedStoryListByUsername(String username, Pageable pageable);
 
-    Page<Story> getPagedStoriesByUserUrl(String userUrl, Pageable pageable);
+    Page<Story> getPagedStoryListByUserUrl(String userUrl, Pageable pageable);
 
-    Page<Story> getPagedStoriesByMemberId(Long memberId, Pageable pageable);
+    Page<Story> getPagedStoryListByMemberId(Long memberId, Pageable pageable);
 
-    Page<Story> getPagedStories(Pageable pageable);
+    Page<Story> getPagedStoryList(Pageable pageable);
 
-    Page<Story> getPagedStoriesBySortParam(StorySortParam sortParam, Pageable pageable);
+    Page<Story> getPagedStoryListBySortParam(StorySortParam sortParam, Pageable pageable);
 
     Story getStoryByBoardId(Long boardId);
 
-    Page<Story> getPagedStoriesByKeyword(String keyword, Pageable pageable);
+    Page<Story> getPagedStoryListByKeyword(String keyword, Pageable pageable);
 
 
 }

@@ -36,17 +36,17 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
-    public Page<Question> getPagedQuestionsByUsername(String username, Pageable pageable) {
+    public Page<Question> getPagedQuestionListByUsername(String username, Pageable pageable) {
         return questionRepository.findByMemberUsername(username, pageable);
     }
 
     @Override
-    public Page<Question> getPagedQuestionsByUserUrl(String userUrl, Pageable pageable) {
+    public Page<Question> getPagedQuestionListByUserUrl(String userUrl, Pageable pageable) {
         return questionRepository.findByMemberUserUrl(userUrl, pageable);
     }
 
     @Override
-    public Page<Question> getPagedQuestionByMemberId(Long memberId, Pageable pageable) {
+    public Page<Question> getPagedQuestionListByMemberId(Long memberId, Pageable pageable) {
         return questionRepository.findPageByMemberId(memberId, pageable);
     }
 
@@ -57,12 +57,12 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
-    public Page<Question> getPagedQuestions(Pageable pageable) {
+    public Page<Question> getPagedQuestionList(Pageable pageable) {
         return questionRepository.findAll(pageable);
     }
 
     @Override
-    public Page<Question> getPagedQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable) {
+    public Page<Question> getPagedQuestionListBySortParam(QuestionSortParam sortParam, Pageable pageable) {
         return questionRepository.findQuestionsBySortParam(sortParam, pageable);
     }
 
@@ -82,7 +82,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
-    public Page<Question> getPagedQuestionsByKeyword(String keyword, Pageable pageable) {
+    public Page<Question> getPagedQuestionListByKeyword(String keyword, Pageable pageable) {
         return questionRepository.findQuestionsByKeyword(keyword, pageable);
     }
 }

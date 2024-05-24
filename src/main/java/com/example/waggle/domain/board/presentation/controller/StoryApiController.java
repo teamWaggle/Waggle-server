@@ -15,6 +15,7 @@ import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -85,7 +86,7 @@ public class StoryApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE, latestSorting);
         return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStories(pageable)));
+                StoryConverter.toListDto(storyQueryService.getPagedStoryList(pageable)));
     }
 
     @Operation(summary = "스토리 정렬 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
@@ -98,7 +99,7 @@ public class StoryApiController {
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE);
         return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStoriesBySortParam(sortParam, pageable)));
+                StoryConverter.toListDto(storyQueryService.getPagedStoryListBySortParam(sortParam, pageable)));
     }
 
     @Operation(summary = "사용자의 스토리 목록 조회", description = "특정 사용자가 작성한 스토리 목록을 조회합니다.")
@@ -110,7 +111,7 @@ public class StoryApiController {
                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE, latestSorting);
         return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStoriesByUserUrl(userUrl, pageable)));
+                StoryConverter.toListDto(storyQueryService.getPagedStoryListByUserUrl(userUrl, pageable)));
     }
 
     @Operation(summary = "특정 스토리 조회", description = "특정 스토리의 상세 정보를 조회합니다.")
@@ -128,11 +129,13 @@ public class StoryApiController {
     @Operation(summary = "스토리 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다.")
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/search")
-    public ApiResponseDto<StorySummaryListDto> searchStoryList(@RequestParam String keyword,
-                                                               @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<StorySummaryListDto> searchStoryList(
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
         Pageable pageable = PageRequest.of(currentPage, STORY_SIZE, latestSorting);
-        Page<Story> pagedStories = storyQueryService.getPagedStoriesByKeyword(keyword, pageable);
-        return ApiResponseDto.onSuccess(StoryConverter.toListDto(pagedStories));
+        Page<Story> PagedStoryList = storyQueryService.getPagedStoryListByKeyword(keyword, pageable);
+        return ApiResponseDto.onSuccess(StoryConverter.toListDto(PagedStoryList));
     }
 
     @Operation(summary = "스토리 삭제 🔑", description = "특정 스토리를 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")

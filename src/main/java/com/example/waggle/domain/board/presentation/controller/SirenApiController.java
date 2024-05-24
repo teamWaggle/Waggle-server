@@ -19,6 +19,7 @@ import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.ObjectUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -112,7 +113,7 @@ public class SirenApiController {
     public ApiResponseDto<SirenPagedSummaryListDto> getAllSiren(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirens(pageable);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
@@ -128,7 +129,7 @@ public class SirenApiController {
             @RequestParam(name = "sortParam") SirenSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirensByFilterAndSort(filterParam, sortParam, pageable);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByFilterAndSort(filterParam, sortParam, pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
@@ -153,7 +154,7 @@ public class SirenApiController {
     public ApiResponseDto<SirenPagedSummaryListDto> getSirenListByUsername(@PathVariable("userUrl") String userUrl,
                                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirensByUserUrl(userUrl, pageable);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByUserUrl(userUrl, pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
@@ -186,10 +187,12 @@ public class SirenApiController {
     @Operation(summary = "사이렌 검색", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다.")
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/search")
-    public ApiResponseDto<SirenPagedSummaryListDto> searchSirenList(@RequestParam String keyword,
-                                                                    @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<SirenPagedSummaryListDto> searchSirenList(
+            @RequestParam String keyword,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
         Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirensByKeyword(keyword, pageable);
+        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByKeyword(keyword, pageable);
         SirenPagedSummaryListDto sirenPageDto = SirenConverter.toSirenPageDto(
                 pagedSirenList);
         setRecommendCntInList(sirenPageDto.getSirenList());

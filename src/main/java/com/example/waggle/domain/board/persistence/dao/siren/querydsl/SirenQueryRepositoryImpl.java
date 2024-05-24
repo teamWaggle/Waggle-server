@@ -58,14 +58,14 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     public Page<Siren> findSirensByKeyword(String keyword, Pageable pageable) {
         List<Siren> sirenList = queryFactory
                 .selectFrom(siren)
-                .where(siren.title.contains(keyword))
+                .where(siren.title.containsIgnoreCase(keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
         JPAQuery<Long> countQuery = queryFactory
                 .select(siren.count())
                 .from(siren)
-                .where(siren.title.contains(keyword));
+                .where(siren.title.containsIgnoreCase(keyword));
         return PageableExecutionUtils.getPage(sirenList, pageable, countQuery::fetchOne);
     }
 

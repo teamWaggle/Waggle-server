@@ -28,28 +28,28 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     }
 
     @Override
-    public Page<Story> getPagedStoriesByUsername(String username, Pageable pageable) {
+    public Page<Story> getPagedStoryListByUsername(String username, Pageable pageable) {
         return storyRepository.findByMemberUsername(username, pageable);
     }
 
     @Override
-    public Page<Story> getPagedStoriesByUserUrl(String userUrl, Pageable pageable) {
+    public Page<Story> getPagedStoryListByUserUrl(String userUrl, Pageable pageable) {
         return storyRepository.findByMemberUserUrl(userUrl, pageable);
     }
 
     @Override
-    public Page<Story> getPagedStoriesByMemberId(Long memberId, Pageable pageable) {
+    public Page<Story> getPagedStoryListByMemberId(Long memberId, Pageable pageable) {
         return storyRepository.findByMemberId(memberId, pageable);
     }
 
 
     @Override
-    public Page<Story> getPagedStories(Pageable pageable) {
+    public Page<Story> getPagedStoryList(Pageable pageable) {
         return storyRepository.findAll(pageable);
     }
 
     @Override
-    public Page<Story> getPagedStoriesBySortParam(StorySortParam sortParam, Pageable pageable) {
+    public Page<Story> getPagedStoryListBySortParam(StorySortParam sortParam, Pageable pageable) {
         return storyRepository.findStoriesBySortParam(sortParam, pageable);
     }
 
@@ -61,7 +61,7 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     }
 
     @Override
-    public Page<Story> getPagedStoriesByKeyword(String keyword, Pageable pageable) {
+    public Page<Story> getPagedStoryListByKeyword(String keyword, Pageable pageable) {
         return storyRepository.findStoriesByKeyword(keyword, pageable);
     }
 }

@@ -1,16 +1,10 @@
 package com.example.waggle.exception.payload.code;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -69,6 +63,7 @@ public enum ErrorStatus implements BaseCode {
     BOARD_TYPE_CANNOT_BE_FOUND_WHEN_CHECK_RECOMMEND(BAD_REQUEST, 4160, "좋아요를 확인할 때 검증하는 게시글 타입이 아닙니다"),
     RECOMMEND_WAS_NOT_INITIATED(BAD_REQUEST, 4161, "redis에 해당 멤버의 recommend정보가 초기화되지 않았습니다."),
     RECOMMEND_WAS_ALREADY_INITIATED(BAD_REQUEST, 4162, "redis에 해당 멤버의 recommend정보를 이미 초기화했습니다."),
+    BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT(BAD_REQUEST, 4163, "검색어는 최소 2자입니다."),
 
 
     // 스케줄 관련 오류 (4200 ~ 4249)
