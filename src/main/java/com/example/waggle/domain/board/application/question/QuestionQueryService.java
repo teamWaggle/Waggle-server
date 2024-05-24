@@ -11,20 +11,20 @@ public interface QuestionQueryService {
 
     List<Question> getAllQuestion();
 
-    Page<Question> getPagedQuestionsByUsername(String username, Pageable pageable);
+    Page<Question> getPagedQuestionListByUsername(String username, Pageable pageable);
 
-    Page<Question> getPagedQuestionsByUserUrl(String userUrl, Pageable pageable);
+    Page<Question> getPagedQuestionListByUserUrl(String userUrl, Pageable pageable);
 
-    Page<Question> getPagedQuestionByMemberId(Long memberId, Pageable pageable);
+    Page<Question> getPagedQuestionListByMemberId(Long memberId, Pageable pageable);
 
     Question getQuestionByBoardId(Long boardId);
 
-    Page<Question> getPagedQuestions(Pageable pageable);
+    Page<Question> getPagedQuestionList(Pageable pageable);
 
-    Page<Question> getPagedQuestionsBySortParam(QuestionSortParam sortParam, Pageable pageable);
+    Page<Question> getPagedQuestionListBySortParam(QuestionSortParam sortParam, Pageable pageable);
 
     List<Question> getRepresentativeQuestionList();
 
-    Page<Question> getPagedQuestionsByKeyword(String keyword, Pageable pageable);
+    Page<Question> getPagedQuestionListByKeyword(String keyword, Pageable pageable);
 
 }

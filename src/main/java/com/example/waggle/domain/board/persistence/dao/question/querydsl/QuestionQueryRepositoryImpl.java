@@ -51,7 +51,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .selectFrom(question)
                 .join(question.boardHashtags, boardHashtag)
                 .join(boardHashtag.hashtag, hashtag)
-                .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)))
+                .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -60,7 +60,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .from(question)
                 .join(question.boardHashtags, boardHashtag)
                 .join(boardHashtag.hashtag, hashtag)
-                .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));
+                .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)));
         return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchOne);
     }
 

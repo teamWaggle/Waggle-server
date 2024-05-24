@@ -37,7 +37,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public Page<Siren> getPagedSirens(Pageable pageable) {
+    public Page<Siren> getPagedSirenList(Pageable pageable) {
         return sirenRepository.findAll(pageable);
     }
 
@@ -61,7 +61,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public Page<Siren> getPagedSirensByUserUrl(String userUrl, Pageable pageable) {
+    public Page<Siren> getPagedSirenListByUserUrl(String userUrl, Pageable pageable) {
         return sirenRepository.findByMemberUserUrl(userUrl, pageable);
     }
 
@@ -71,7 +71,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public Page<Siren> getPagedSirensByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
+    public Page<Siren> getPagedSirenListByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
         return sirenRepository.findSirensByFilterAndSort(filterParam, sortParam, pageable);
     }
 
@@ -87,7 +87,7 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public Page<Siren> getPagedSirensByKeyword(String keyword, Pageable pageable) {
+    public Page<Siren> getPagedSirenListByKeyword(String keyword, Pageable pageable) {
         return sirenRepository.findSirensByKeyword(keyword, pageable);
     }
 

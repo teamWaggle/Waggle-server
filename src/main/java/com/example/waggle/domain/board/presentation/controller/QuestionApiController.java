@@ -17,6 +17,7 @@ import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -102,7 +103,7 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, resolutionStatusSorting);
-        Page<Question> questions = questionQueryService.getPagedQuestions(pageable);
+        Page<Question> questions = questionQueryService.getPagedQuestionList(pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
@@ -117,7 +118,7 @@ public class QuestionApiController {
             @RequestParam(name = "sortParam") QuestionSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
-        Page<Question> questions = questionQueryService.getPagedQuestionsBySortParam(sortParam, pageable);
+        Page<Question> questions = questionQueryService.getPagedQuestionListBySortParam(sortParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
@@ -142,7 +143,7 @@ public class QuestionApiController {
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(@PathVariable("userUrl") String userUrl,
                                                                          @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, latestSorting);
-        Page<Question> questions = questionQueryService.getPagedQuestionsByUserUrl(userUrl, pageable);
+        Page<Question> questions = questionQueryService.getPagedQuestionListByUserUrl(userUrl, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
         return ApiResponseDto.onSuccess(listDto);
@@ -165,10 +166,12 @@ public class QuestionApiController {
     @Operation(summary = "질문 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다.")
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/search")
-    public ApiResponseDto<QuestionSummaryListDto> searchQuestionList(@RequestParam String keyword,
-                                                                     @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+    public ApiResponseDto<QuestionSummaryListDto> searchQuestionList(
+            @RequestParam String keyword,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
         Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
-        Page<Question> pagedQuestionList = questionQueryService.getPagedQuestionsByKeyword(keyword, pageable);
+        Page<Question> pagedQuestionList = questionQueryService.getPagedQuestionListByKeyword(keyword, pageable);
         return ApiResponseDto.onSuccess(QuestionConverter.toListDto(pagedQuestionList));
     }
 
