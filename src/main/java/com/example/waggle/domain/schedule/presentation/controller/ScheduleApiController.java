@@ -90,6 +90,17 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
+    @Operation(summary = "일정 강제 삭제 🔑", description = "특정 일정이 관리자에 의해 삭제합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{scheduleId}/admin")
+    public ApiResponseDto<Boolean> deleteScheduleByAdmin(@PathVariable("scheduleId") Long scheduleId,
+                                                         @AuthUser Member member) {
+        scheduleCommandService.deleteScheduleByAdmin(scheduleId, member);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
     @Operation(summary = "일정 수정 🔑", description = "특정 일정의 정보를 수정합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR

@@ -15,6 +15,8 @@ public interface TeamCommandService {
 
     void deleteTeamMemberByMyself(Long teamId, Member member);
 
+    void deleteTeamByAdmin(Long teamId, Member member);
+
     void changeTeamLeader(Long teamId, Long newLeaderId, Member leader);
 
     Long requestParticipation(Long teamId, Member member);
