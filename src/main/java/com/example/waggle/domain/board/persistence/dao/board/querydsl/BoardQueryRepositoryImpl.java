@@ -37,16 +37,9 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
     @Override
     public void deleteBoardsWithRelationsByMemberId(Long memberId) {
         JPAQuery<Long> subQuery = queryFactory.select(board.id).from(board).where(board.member.id.eq(memberId));
-        queryFactory.delete(media).where(media.board.id.in(subQuery)).execute();
-        queryFactory.delete(boardHashtag).where(boardHashtag.board.id.in(subQuery)).execute();
-        queryFactory.delete(recommend).where(recommend.board.id.in(subQuery)).execute();
-        queryFactory.delete(reply).where(reply.comment.board.id.in(subQuery)).execute();
-        queryFactory.delete(comment).where(comment.board.id.in(subQuery)).execute();
-        queryFactory.delete(siren).where(siren.member.id.eq(memberId)).execute();
-        queryFactory.delete(story).where(story.member.id.eq(memberId)).execute();
-        queryFactory.delete(question).where(question.member.id.eq(memberId)).execute();
-        queryFactory.delete(memberSchedule).where(memberSchedule.schedule.id.in(subQuery)).execute();
-        queryFactory.delete(schedule).where(schedule.member.id.eq(memberId)).execute();
+        deleteRelatedDataAboutBoard(subQuery, memberId);
+        deleteBoards(memberId);
+
     }
 
     private void deleteByBoardType(BoardType boardType, Long boardId) {
@@ -68,5 +61,22 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
                 throw new GeneralException(ErrorStatus.BOARD_INVALID_TYPE);
             }
         }
+    }
+
+    private void deleteRelatedDataAboutBoard(JPAQuery<Long> subQuery, Long memberId) {
+        queryFactory.delete(media).where(media.board.id.in(subQuery)).execute();
+        queryFactory.delete(boardHashtag).where(boardHashtag.board.id.in(subQuery)).execute();
+        queryFactory.delete(recommend).where(recommend.member.id.eq(memberId)).execute();
+        queryFactory.delete(recommend).where(recommend.board.id.in(subQuery)).execute();
+        queryFactory.delete(reply).where(reply.comment.board.id.in(subQuery)).execute();
+        queryFactory.delete(comment).where(comment.board.id.in(subQuery)).execute();
+        queryFactory.delete(memberSchedule).where(memberSchedule.schedule.id.in(subQuery)).execute();
+    }
+
+    private void deleteBoards(Long memberId) {
+        queryFactory.delete(siren).where(siren.member.id.eq(memberId)).execute();
+        queryFactory.delete(story).where(story.member.id.eq(memberId)).execute();
+        queryFactory.delete(question).where(question.member.id.eq(memberId)).execute();
+        queryFactory.delete(schedule).where(schedule.member.id.eq(memberId)).execute();
     }
 }

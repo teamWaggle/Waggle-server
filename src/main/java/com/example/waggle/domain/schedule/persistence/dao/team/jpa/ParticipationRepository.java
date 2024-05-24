@@ -1,14 +1,13 @@
-package com.example.waggle.domain.schedule.persistence.dao;
+package com.example.waggle.domain.schedule.persistence.dao.team.jpa;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
 import com.example.waggle.domain.schedule.persistence.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 

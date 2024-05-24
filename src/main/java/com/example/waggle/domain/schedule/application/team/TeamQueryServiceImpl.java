@@ -1,8 +1,8 @@
 package com.example.waggle.domain.schedule.application.team;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
-import com.example.waggle.domain.schedule.persistence.dao.ParticipationRepository;
-import com.example.waggle.domain.schedule.persistence.dao.TeamRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.ParticipationRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
 import com.example.waggle.domain.schedule.persistence.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.persistence.entity.Team;

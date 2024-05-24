@@ -10,7 +10,7 @@ import com.example.waggle.domain.hashtag.persistence.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.persistence.entity.Hashtag;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
-import com.example.waggle.domain.schedule.persistence.dao.ScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
