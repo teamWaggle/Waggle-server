@@ -3,9 +3,11 @@ package com.example.waggle.domain.pet.application;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Gender;
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.pet.persistence.dao.PetRepository;
 import com.example.waggle.domain.pet.persistence.entity.Pet;
 import com.example.waggle.domain.pet.presentation.dto.PetRequest;
+import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.PetHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +49,14 @@ public class PetCommandServiceImpl implements PetCommandService {
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         validateIsOwner(member, pet);
         petRepository.delete(pet);
+    }
+
+    @Override
+    public void deletePetByAdmin(Long petId, Member member) {
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+        }
+        petRepository.deleteById(petId);
     }
 
     @Override

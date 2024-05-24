@@ -7,10 +7,10 @@ import com.example.waggle.domain.pet.persistence.entity.Pet;
 import com.example.waggle.domain.pet.presentation.converter.PetConverter;
 import com.example.waggle.domain.pet.presentation.dto.PetRequest;
 import com.example.waggle.domain.pet.presentation.dto.PetResponse;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -78,6 +78,17 @@ public class PetApiController {
     public ApiResponseDto<Boolean> deletePet(@PathVariable("petId") Long petId,
                                              @AuthUser Member member) {
         petCommandService.deletePet(petId, member);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "반려견 강제 삭제 🔑", description = "회원의 특정 반려견의 정보가 관리자에 의해 삭제됩니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{petId}/admin")
+    public ApiResponseDto<Boolean> deletePetByAdmin(@PathVariable("petId") Long petId,
+                                                    @AuthUser Member member) {
+        petCommandService.deletePetByAdmin(petId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }
