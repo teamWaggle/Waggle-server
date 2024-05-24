@@ -14,7 +14,7 @@ import com.example.waggle.domain.member.persistence.entity.Gender;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.exception.object.handler.AuthenticationHandler;
+import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.object.handler.SirenHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -104,7 +104,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
     @Override
     public void deleteSirenByAdmin(Long boardId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new AuthenticationHandler(ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI);
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
         boardRepository.deleteBoardsWithRelations(SIREN, boardId);

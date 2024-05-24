@@ -10,7 +10,6 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
-import com.example.waggle.exception.object.handler.AuthenticationHandler;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ReplyHandler;
@@ -72,8 +71,8 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
     @Override
     public void deleteReplyByAdmin(Long replyId, Member member) {
-        if (member.getRole().equals(Role.ADMIN)) {
-            throw new AuthenticationHandler(ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI);
+        if (!member.getRole().equals(Role.ADMIN)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
         replyRepository.deleteById(replyId);
     }

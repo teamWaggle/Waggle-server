@@ -16,10 +16,10 @@ import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberMe
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberStorageDto;
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailSendDto;
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailVerificationDto;
+import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
-import com.example.waggle.exception.payload.dto.ApiResponseDto;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.email.EmailService;
 import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -244,9 +244,9 @@ public class MemberApiController {
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
-    @DeleteMapping("/{memberId}/force")
+    @DeleteMapping("/{memberId}/admin")
     public ApiResponseDto<Boolean> deleteMemberForce(@AuthUser Member admin, @PathVariable Long memberId) {
-        memberCommandService.deleteMemberAsAdmin(admin, memberId);
+        memberCommandService.deleteMemberByAdmin(admin, memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

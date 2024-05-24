@@ -22,4 +22,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     List<Reply> findByMember(Member member);
 
+    void deleteAllByMemberId(Long memberId);
 }
