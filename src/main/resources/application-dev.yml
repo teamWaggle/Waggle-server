@@ -105,6 +105,9 @@ app:
     secret: ${JWT_SECRET}
   server:
     uri: ${SERVER_URI}
+  profile:
+    member: ${MEMBER_DEFAULT_IMG}
+    pet: ${PET_DEFAULT_IMG}
 
 mongodb:
   client: ${MONGODB_CLIENT}

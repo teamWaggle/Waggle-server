@@ -5,19 +5,38 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.pet.persistence.entity.Pet;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.global.service.aws.AwsS3Service;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class MediaUtil {
 
-    private static final String SERVER_URI = "https://waggle-dev-s3.s3.ap-northeast-2.amazonaws.com/";
-    private static final String DEFAULT_MEMBER_PROFILE_IMG = "1d99fc66-0d87-49c7-b173-3093019e46c0.png";
-    private static final String DEFAULT_PET_PROFILE_IMG = "ee8020e7-86e6-435a-a12f-c02826b8d0fd.png";
+    private static String SERVER_URI;
+
+    private static String DEFAULT_MEMBER_PROFILE_IMG;
+
+    private static String DEFAULT_PET_PROFILE_IMG;
+
+    @Value("${app.server.uri}")
+    public void setServerUri(String SERVER_URI) {
+        this.SERVER_URI = SERVER_URI;
+    }
+
+    @Value("${app.profile.member}")
+    public void setDefaultMemberProfileImg(String DEFAULT_MEMBER_PROFILE_IMG) {
+        this.DEFAULT_MEMBER_PROFILE_IMG = DEFAULT_MEMBER_PROFILE_IMG;
+    }
+
+    @Value("${app.profile.pet}")
+    public void setDefaultPetProfileImg(String DEFAULT_PET_PROFILE_IMG) {
+        this.DEFAULT_PET_PROFILE_IMG = DEFAULT_PET_PROFILE_IMG;
+    }
 
     public static String appendUri(String s3URI) {
         StringBuffer stringBuffer = new StringBuffer(SERVER_URI);
