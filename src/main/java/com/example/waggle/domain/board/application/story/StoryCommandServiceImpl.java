@@ -11,7 +11,7 @@ import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.exception.object.handler.AuthenticationHandler;
+import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.StoryHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +95,7 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     @Override
     public void deleteStoryByAdmin(Long boardId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new AuthenticationHandler(ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI);
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
         boardRepository.deleteBoardsWithRelations(STORY, boardId);

@@ -14,7 +14,6 @@ import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.schedule.persistence.dao.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
-import com.example.waggle.exception.object.handler.AuthenticationHandler;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
@@ -96,7 +95,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     @Override
     public void deleteCommentByAdmin(Long commentId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new AuthenticationHandler(ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI);
+            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
         commentRepository.deleteCommentsWithRelations(commentId);
     }

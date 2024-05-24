@@ -158,6 +158,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
         memberScheduleRepository.deleteAllByMemberId(memberId);
+        replyRepository.deleteAllByMemberId(memberId);
+        commentRepository.deleteAllByMemberId(memberId);
         teamMemberRepository.deleteAllByMemberId(memberId);
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
         memberRepository.deleteMemberWithRelations(memberId);
