@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.persistence.dao;
+package com.example.waggle.domain.schedule.persistence.dao.schedule.querydsl;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;

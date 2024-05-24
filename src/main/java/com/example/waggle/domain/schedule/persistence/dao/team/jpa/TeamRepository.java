@@ -1,6 +1,7 @@
-package com.example.waggle.domain.schedule.persistence.dao;
+package com.example.waggle.domain.schedule.persistence.dao.team.jpa;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.schedule.persistence.dao.team.querydsl.TeamQueryRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface TeamRepository extends JpaRepository<Team, Long> {
+public interface TeamRepository extends JpaRepository<Team, Long>, TeamQueryRepository {
 
     List<Team> findAllByLeader(Member leader);
 

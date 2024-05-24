@@ -18,7 +18,11 @@ import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberUpd
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailVerificationDto;
 import com.example.waggle.domain.pet.persistence.dao.PetRepository;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.domain.schedule.persistence.dao.*;
+import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.ScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.ParticipationRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamMemberRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.persistence.entity.TeamMember;
@@ -157,11 +161,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
         }
-        memberScheduleRepository.deleteAllByMemberId(memberId);
         replyRepository.deleteAllByMemberId(memberId);
         commentRepository.deleteAllByMemberId(memberId);
-        teamMemberRepository.deleteAllByMemberId(memberId);
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
+        teamRepository.deleteTeamWithRelationsByMemberId(memberId);
         memberRepository.deleteMemberWithRelations(memberId);
     }
 

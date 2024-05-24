@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.persistence.dao;
+package com.example.waggle.domain.schedule.persistence.dao.team.jpa;
 
 
 import com.example.waggle.domain.member.persistence.entity.Member;
@@ -17,6 +17,4 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     List<TeamMember> findAllByMember(Member member);
 
     void deleteAllByTeam(Team team);
-
-    void deleteAllByMemberId(Long memberId);
 }

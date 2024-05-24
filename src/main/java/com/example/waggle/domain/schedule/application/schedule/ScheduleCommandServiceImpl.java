@@ -5,10 +5,10 @@ import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
-import com.example.waggle.domain.schedule.persistence.dao.MemberScheduleRepository;
-import com.example.waggle.domain.schedule.persistence.dao.ScheduleRepository;
-import com.example.waggle.domain.schedule.persistence.dao.TeamMemberRepository;
-import com.example.waggle.domain.schedule.persistence.dao.TeamRepository;
+import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.ScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamMemberRepository;
+import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
