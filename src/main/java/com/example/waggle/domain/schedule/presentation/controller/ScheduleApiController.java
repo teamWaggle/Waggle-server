@@ -90,7 +90,7 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
-    @Operation(summary = "일정 강제 삭제 🔑", description = "특정 일정이 관리자에 의해 삭제합니다.")
+    @Operation(summary = "일정 강제 삭제 🔑", description = "특정 일정이 관리자에 의해 삭제됩니.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
     })

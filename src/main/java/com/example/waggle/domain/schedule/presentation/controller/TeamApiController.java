@@ -1,7 +1,5 @@
 package com.example.waggle.domain.schedule.presentation.controller;
 
-import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
-
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
@@ -23,9 +21,6 @@ import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +29,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -79,6 +80,17 @@ public class TeamApiController {
     public ApiResponseDto<Boolean> deleteTeam(@PathVariable("teamId") Long teamId,
                                               @AuthUser Member member) {
         teamCommandService.deleteTeam(teamId, member);
+        return ApiResponseDto.onSuccess(Boolean.TRUE);
+    }
+
+    @Operation(summary = "팀 강제 삭제 🔑", description = "팀이 관리자에 의해 삭제됩니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/{teamId}/admin")
+    public ApiResponseDto<Boolean> deleteTeamByAdmin(@PathVariable("teamId") Long teamId,
+                                                     @AuthUser Member member) {
+        teamCommandService.deleteTeamByAdmin(teamId, member);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
