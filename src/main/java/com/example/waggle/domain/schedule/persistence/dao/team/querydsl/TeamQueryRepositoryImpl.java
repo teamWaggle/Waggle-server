@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import static com.example.waggle.domain.conversation.persistence.entity.QComment.comment;
 import static com.example.waggle.domain.schedule.persistence.entity.QMemberSchedule.memberSchedule;
 import static com.example.waggle.domain.schedule.persistence.entity.QParticipation.participation;
 import static com.example.waggle.domain.schedule.persistence.entity.QSchedule.schedule;
@@ -22,6 +23,16 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
         deleteRelatedDataAboutSchedule(memberId);
         queryFactory.delete(team).where(team.leader.id.eq(memberId)).execute();
 
+    }
+
+    @Override
+    public void deleteTeamWithRelations(Long teamId) {
+        queryFactory.delete(teamMember).where(teamMember.team.id.eq(teamId)).execute();
+        JPAQuery<Long> scheduleSubQuery = queryFactory.select(schedule.id).from(schedule).join(schedule.team, team).where(team.id.eq(teamId));
+        queryFactory.delete(memberSchedule).where(memberSchedule.schedule.id.in(scheduleSubQuery)).execute();
+        queryFactory.delete(comment).where(comment.board.id.in(scheduleSubQuery)).execute();
+        queryFactory.delete(participation).where(participation.team.id.eq(teamId)).execute();
+        queryFactory.delete(team).where(team.id.eq(teamId)).execute();
     }
 
     private void deleteRelatedDataAboutTeam(Long memberId) {
