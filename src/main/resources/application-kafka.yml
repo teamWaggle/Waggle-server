@@ -13,4 +13,3 @@ kafka:
   waggle:
     topic: waggle-chat
     groupId: waggle-chat-group
-    broker: kafka:9092
