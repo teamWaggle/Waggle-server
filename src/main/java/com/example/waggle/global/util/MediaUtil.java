@@ -25,7 +25,7 @@ public class MediaUtil {
 
     @Value("${app.server.uri}")
     public void setServerUri(String SERVER_URI) {
-        this.SERVER_URI = SERVER_URI;
+        this.SERVER_URI = SERVER_URI + "/";
     }
 
     @Value("${app.profile.member}")

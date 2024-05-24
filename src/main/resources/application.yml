@@ -67,3 +67,8 @@ logging:
     org.apache.kafka.clients.NetworkClient: ERROR
     org.apache.kafka.clients.consumer.internals.ConsumerCoordinator: ERROR
     org.apache.kafka.clients.Metadata: ERROR
+
+app:
+  profile:
+    member: ${MEMBER_DEFAULT_IMG}
+    pet: ${PET_DEFAULT_IMG}
