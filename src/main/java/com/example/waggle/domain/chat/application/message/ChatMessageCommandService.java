@@ -1,9 +1,9 @@
 package com.example.waggle.domain.chat.application.message;
 
-import com.example.waggle.domain.chat.presentation.dto.MessageDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 
 public interface ChatMessageCommandService {
 
-    String createChatMessage(MessageDto chatMessageDto);
+    String createChatMessage(ChatMessageDto chatMessageDto);
 
 }

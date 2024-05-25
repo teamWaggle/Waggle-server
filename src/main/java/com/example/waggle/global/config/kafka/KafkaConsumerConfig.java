@@ -1,6 +1,6 @@
 package com.example.waggle.global.config.kafka;
 
-import com.example.waggle.domain.chat.presentation.dto.MessageDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.global.property.KafkaProperties;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +24,15 @@ public class KafkaConsumerConfig {
     private final KafkaProperties kafkaProperties;
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, MessageDto> consumerFactory() {
-        JsonDeserializer<MessageDto> deserializer = new JsonDeserializer<>();
+    public ConsumerFactory<String, ChatMessageDto> consumerFactory() {
+        JsonDeserializer<ChatMessageDto> deserializer = new JsonDeserializer<>();
         deserializer.addTrustedPackages("*");
 
         Map<String, Object> consumerConfigurations =

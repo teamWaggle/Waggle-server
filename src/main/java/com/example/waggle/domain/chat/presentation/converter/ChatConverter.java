@@ -3,13 +3,18 @@ package com.example.waggle.domain.chat.presentation.converter;
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoomMember;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.*;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ActiveChatRoomDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ActiveChatRoomListDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatMessageListDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomDetailDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomJoinDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomListDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomSummaryDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.global.util.PageUtil;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
@@ -67,11 +72,13 @@ public class ChatConverter {
     public static ChatMessageDto toChatMessageDto(ChatMessage chatMessage, Member sender) {
         return ChatMessageDto.builder()
                 .id(chatMessage.getId())
-                .content(chatMessage.getContent())
-                .sendTime(Instant.ofEpochMilli(chatMessage.getSendTime()).atZone(ZoneId.of("Asia/Seoul"))
-                        .toLocalDateTime())
+                .chatRoomId(chatMessage.getChatRoomId())
                 .chatMessageType(chatMessage.getChatMessageType())
-                .sender(MemberConverter.toMemberSummaryDto(sender))
+                .content(chatMessage.getContent())
+                .senderUserUrl(sender.getUserUrl())
+                .senderNickname(sender.getNickname())
+                .senderProfileImgUrl(sender.getProfileImgUrl())
+                .sendTime(chatMessage.getSendTime())
                 .build();
     }
 

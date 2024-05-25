@@ -1,7 +1,7 @@
 package com.example.waggle.domain.chat.presentation.controller;
 
 import com.example.waggle.domain.chat.application.message.ChatMessageCommandService;
-import com.example.waggle.domain.chat.presentation.dto.MessageDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import java.security.Principal;
@@ -20,17 +20,17 @@ public class ChatMessageController {
 
     private final MemberQueryService memberQueryService;
     private final ChatMessageCommandService chatMessageCommandService;
-    private final KafkaTemplate<String, MessageDto> kafkaTemplate;
+    private final KafkaTemplate<String, ChatMessageDto> kafkaTemplate;
     private final String KAFKA_TOPIC = "waggle-chat";
 
     @MessageMapping("/message")
-    public void sendMessage(Principal principal, @Payload MessageDto message) {
-        log.info("principal = {}", principal);
+    public void sendMessage(Principal principal, @Payload ChatMessageDto message) {
+        log.info("principal.getName() = {}", principal.getName());
         Member member = memberQueryService.getMemberByUsername(principal.getName());
         processMessage(member, message);
     }
 
-    private void processMessage(Member member, MessageDto message) {
+    private void processMessage(Member member, ChatMessageDto message) {
         message.setSendTimeAndSenderInfo(LocalDateTime.now(), member.getNickname(), member.getProfileImgUrl());
 
         switch (message.getChatMessageType()) {
