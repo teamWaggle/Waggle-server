@@ -1,16 +1,13 @@
 package com.example.waggle.domain.chat.presentation.dto;
 
-import com.example.waggle.domain.chat.persistence.entity.ChatMessageType;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class ChatResponse {
 
@@ -90,23 +87,9 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema
-    public static class ChatMessageDto {
-        private String id;
-        private String content;
-        private LocalDateTime sendTime;
-        private MemberSummaryDto sender;
-        private ChatMessageType chatMessageType;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema
     public static class ChatMessageListDto {
         private List<ChatMessageDto> chatMessages;
         private int nextPageParam;
     }
-
 
 }

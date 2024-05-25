@@ -107,8 +107,8 @@
                             id: msg.id,
                             content: msg.content,
                             sendTime: msg.sendTime,
-                            senderNickname: msg.chatMessageType == 'JOIN' || msg.chatMessageType == 'LEAVE' ? '[알림]' : msg.sender.nickname,
-                            senderProfileImgUrl: msg.sender.profileImgUrl,
+                            senderNickname: msg.chatMessageType == 'JOIN' || msg.chatMessageType == 'LEAVE' ? '[알림]' : msg.senderNickname,
+                            senderProfileImgUrl: msg.senderProfileImgUrl,
                             chatMessageType: msg.chatMessageType
                         });
                     });
