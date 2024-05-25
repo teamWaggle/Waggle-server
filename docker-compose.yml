@@ -30,7 +30,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: 12345678
     volumes:
-      - /mnt/ebs/mongo:/data/db
+      - /mnt/ebs/mongodb_data:/data/db
 
   application:
     image: 471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev:latest
