@@ -22,16 +22,6 @@ services:
     ports:
       - "6379:6379"
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: 12345678
-    volumes:
-      - /mnt/ebs/mongodb_data:/data/db
-
   application:
     image: 471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev:latest
     ports:
@@ -39,7 +29,6 @@ services:
     depends_on:
       - kafka
       - redis
-      - mongo
     env_file:
       - .env
 
