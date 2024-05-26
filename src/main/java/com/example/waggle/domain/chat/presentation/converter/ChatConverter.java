@@ -16,6 +16,7 @@ import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
@@ -85,6 +86,8 @@ public class ChatConverter {
 
     public static ChatMessageListDto toChatMessageListDto(List<ChatMessageDto> chatMessages,
                                                           int nextPageParam) {
+        Collections.reverse(chatMessages);
+
         return ChatMessageListDto.builder()
                 .chatMessages(chatMessages)
                 .nextPageParam(nextPageParam)
