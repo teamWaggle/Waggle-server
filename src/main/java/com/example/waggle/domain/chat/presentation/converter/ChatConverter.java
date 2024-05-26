@@ -14,6 +14,7 @@ import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,7 +78,7 @@ public class ChatConverter {
                 .content(chatMessage.getContent())
                 .senderUserUrl(sender.getUserUrl())
                 .senderNickname(sender.getNickname())
-                .senderProfileImgUrl(sender.getProfileImgUrl())
+                .senderProfileImgUrl(MediaUtil.getProfileImg(sender))
                 .sendTime(chatMessage.getSendTime())
                 .build();
     }
