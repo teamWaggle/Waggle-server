@@ -113,7 +113,8 @@ public class CommentApiController {
 
     @Operation(summary = "댓글 강제 삭제 🔑", description = "특정 댓글이 관리자에 의해 삭제됩니다. 하위 대댓글들도 모두 삭제됩니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{commentId}/admin")
     public ApiResponseDto<Boolean> deleteCommentByAdmin(@PathVariable("commentId") Long commentId,

@@ -175,7 +175,8 @@ public class QuestionApiController {
 
     @Operation(summary = "질문 강제 삭제 🔑", description = "특정 질문이 관리자에 의해 삭제됩니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{questionId}/admin")
     public ApiResponseDto<Boolean> deleteQuestionByAdmin(@PathVariable("questionId") Long questionId,
