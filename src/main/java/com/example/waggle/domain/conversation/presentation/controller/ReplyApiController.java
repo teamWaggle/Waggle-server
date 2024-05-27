@@ -90,8 +90,8 @@ public class ReplyApiController {
     })
     @DeleteMapping("/{replyId}/admin")
     public ApiResponseDto<Boolean> deleteReplyByAdmin(@PathVariable("replyId") Long replyId,
-                                                      @AuthUser Member member) {
-        replyCommandService.deleteReplyByAdmin(replyId, member);
+                                                      @AuthUser Member admin) {
+        replyCommandService.deleteReplyByAdmin(replyId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

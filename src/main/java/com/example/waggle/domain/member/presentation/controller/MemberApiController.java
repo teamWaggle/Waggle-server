@@ -245,7 +245,8 @@ public class MemberApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @DeleteMapping("/{memberId}/admin")
-    public ApiResponseDto<Boolean> deleteMemberForce(@AuthUser Member admin, @PathVariable Long memberId) {
+    public ApiResponseDto<Boolean> deleteMemberForce(@PathVariable Long memberId,
+                                                     @AuthUser Member admin) {
         memberCommandService.deleteMemberByAdmin(admin, memberId);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }

@@ -109,8 +109,8 @@ public class SirenApiController {
     })
     @DeleteMapping("/{sirenId}/admin")
     public ApiResponseDto<Boolean> deleteSirenByAdmin(@PathVariable("sirenId") Long sirenId,
-                                                      @AuthUser Member member) {
-        sirenCommandService.deleteSirenByAdmin(sirenId, member);
+                                                      @AuthUser Member admin) {
+        sirenCommandService.deleteSirenByAdmin(sirenId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

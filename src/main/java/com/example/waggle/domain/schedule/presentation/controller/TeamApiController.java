@@ -89,8 +89,8 @@ public class TeamApiController {
     })
     @DeleteMapping("/{teamId}/admin")
     public ApiResponseDto<Boolean> deleteTeamByAdmin(@PathVariable("teamId") Long teamId,
-                                                     @AuthUser Member member) {
-        teamCommandService.deleteTeamByAdmin(teamId, member);
+                                                     @AuthUser Member admin) {
+        teamCommandService.deleteTeamByAdmin(teamId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 
