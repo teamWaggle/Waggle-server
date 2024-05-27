@@ -87,8 +87,8 @@ public class PetApiController {
     })
     @DeleteMapping("/{petId}/admin")
     public ApiResponseDto<Boolean> deletePetByAdmin(@PathVariable("petId") Long petId,
-                                                    @AuthUser Member member) {
-        petCommandService.deletePetByAdmin(petId, member);
+                                                    @AuthUser Member admin) {
+        petCommandService.deletePetByAdmin(petId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

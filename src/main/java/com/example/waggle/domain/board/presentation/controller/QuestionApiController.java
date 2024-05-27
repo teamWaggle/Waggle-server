@@ -193,8 +193,8 @@ public class QuestionApiController {
     })
     @DeleteMapping("/{questionId}/admin")
     public ApiResponseDto<Boolean> deleteQuestionByAdmin(@PathVariable("questionId") Long questionId,
-                                                         @AuthUser Member member) {
-        questionCommandService.deleteQuestionByAdmin(questionId, member);
+                                                         @AuthUser Member admin) {
+        questionCommandService.deleteQuestionByAdmin(questionId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

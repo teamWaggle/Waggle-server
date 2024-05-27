@@ -96,8 +96,8 @@ public class ScheduleApiController {
     })
     @DeleteMapping("/{scheduleId}/admin")
     public ApiResponseDto<Boolean> deleteScheduleByAdmin(@PathVariable("scheduleId") Long scheduleId,
-                                                         @AuthUser Member member) {
-        scheduleCommandService.deleteScheduleByAdmin(scheduleId, member);
+                                                         @AuthUser Member admin) {
+        scheduleCommandService.deleteScheduleByAdmin(scheduleId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 

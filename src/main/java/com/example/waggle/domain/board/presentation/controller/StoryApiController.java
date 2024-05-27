@@ -155,8 +155,8 @@ public class StoryApiController {
     })
     @DeleteMapping("/{storyId}/admin")
     public ApiResponseDto<Boolean> deleteStoryByAdmin(@PathVariable("storyId") Long storyId,
-                                                      @AuthUser Member member) {
-        storyCommandService.deleteStoryByAdmin(storyId, member);
+                                                      @AuthUser Member admin) {
+        storyCommandService.deleteStoryByAdmin(storyId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }

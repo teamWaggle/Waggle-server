@@ -117,8 +117,8 @@ public class CommentApiController {
     })
     @DeleteMapping("/{commentId}/admin")
     public ApiResponseDto<Boolean> deleteCommentByAdmin(@PathVariable("commentId") Long commentId,
-                                                        @AuthUser Member member) {
-        commentCommandService.deleteCommentByAdmin(commentId, member);
+                                                        @AuthUser Member admin) {
+        commentCommandService.deleteCommentByAdmin(commentId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
 }
