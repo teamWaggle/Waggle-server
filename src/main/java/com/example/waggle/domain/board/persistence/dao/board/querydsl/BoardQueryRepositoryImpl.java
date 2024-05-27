@@ -37,7 +37,7 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
     @Override
     public void deleteBoardsWithRelationsByMemberId(Long memberId) {
         JPAQuery<Long> subQuery = queryFactory.select(board.id).from(board).where(board.member.id.eq(memberId));
-        deleteRelatedDataAboutBoard(subQuery, memberId);
+        deleteRelatedDataBySubQuery(subQuery, memberId);
         deleteBoards(memberId);
 
     }
@@ -63,7 +63,7 @@ public class BoardQueryRepositoryImpl implements BoardQueryRepository {
         }
     }
 
-    private void deleteRelatedDataAboutBoard(JPAQuery<Long> subQuery, Long memberId) {
+    private void deleteRelatedDataBySubQuery(JPAQuery<Long> subQuery, Long memberId) {
         queryFactory.delete(media).where(media.board.id.in(subQuery)).execute();
         queryFactory.delete(boardHashtag).where(boardHashtag.board.id.in(subQuery)).execute();
         queryFactory.delete(recommend).where(recommend.member.id.eq(memberId)).execute();

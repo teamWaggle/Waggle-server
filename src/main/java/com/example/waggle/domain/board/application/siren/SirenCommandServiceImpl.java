@@ -94,7 +94,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
 
     @Override
     public void deleteSirenWithRelations(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, SIREN, member) || !member.getRole().equals(Role.ADMIN)) {
+        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
