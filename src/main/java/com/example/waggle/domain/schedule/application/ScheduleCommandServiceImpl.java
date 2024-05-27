@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.application.schedule;
+package com.example.waggle.domain.schedule.application;
 
 import com.example.waggle.domain.board.application.board.BoardService;
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
@@ -97,7 +97,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Override
     public void deleteScheduleByAdmin(Long scheduleId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+            throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(scheduleId);
         boardRepository.deleteBoardsWithRelations(SCHEDULE, scheduleId);

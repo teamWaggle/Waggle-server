@@ -72,7 +72,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     @Override
     public void deleteReplyByAdmin(Long replyId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+            throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
         replyRepository.deleteById(replyId);
     }

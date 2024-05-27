@@ -155,7 +155,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public void deleteMemberByAdmin(Member member, Long memberId) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+            throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
         replyRepository.deleteAllByMemberId(memberId);
         commentRepository.deleteAllByMemberId(memberId);
