@@ -85,7 +85,8 @@ public class TeamApiController {
 
     @Operation(summary = "팀 강제 삭제 🔑", description = "팀이 관리자에 의해 삭제됩니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{teamId}/admin")
     public ApiResponseDto<Boolean> deleteTeamByAdmin(@PathVariable("teamId") Long teamId,

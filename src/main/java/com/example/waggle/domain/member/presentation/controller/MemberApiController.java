@@ -242,7 +242,8 @@ public class MemberApiController {
 
     @Operation(summary = "회원 강제 삭제 🔑", description = "특정 회원을 관리자가 강제 삭제합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{memberId}/admin")
     public ApiResponseDto<Boolean> deleteMemberForce(@PathVariable Long memberId,

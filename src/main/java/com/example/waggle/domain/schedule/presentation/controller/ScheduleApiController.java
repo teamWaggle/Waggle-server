@@ -92,7 +92,8 @@ public class ScheduleApiController {
 
     @Operation(summary = "일정 강제 삭제 🔑", description = "특정 일정이 관리자에 의해 삭제됩니.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{scheduleId}/admin")
     public ApiResponseDto<Boolean> deleteScheduleByAdmin(@PathVariable("scheduleId") Long scheduleId,

@@ -86,7 +86,8 @@ public class ReplyApiController {
 
     @Operation(summary = "대댓글 강제 삭제 🔑", description = "특정 대댓글이 관리자에 의해 삭제됩니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{replyId}/admin")
     public ApiResponseDto<Boolean> deleteReplyByAdmin(@PathVariable("replyId") Long replyId,

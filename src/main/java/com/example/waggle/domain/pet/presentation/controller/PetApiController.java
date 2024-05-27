@@ -83,7 +83,8 @@ public class PetApiController {
 
     @Operation(summary = "반려견 강제 삭제 🔑", description = "회원의 특정 반려견의 정보가 관리자에 의해 삭제됩니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{petId}/admin")
     public ApiResponseDto<Boolean> deletePetByAdmin(@PathVariable("petId") Long petId,

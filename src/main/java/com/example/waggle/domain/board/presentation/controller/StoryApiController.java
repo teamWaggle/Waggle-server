@@ -151,7 +151,8 @@ public class StoryApiController {
 
     @Operation(summary = "스토리 강제 삭제 🔑", description = "특정 스토리가 관리자에 의해 삭제됩니다. 게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
     })
     @DeleteMapping("/{storyId}/admin")
     public ApiResponseDto<Boolean> deleteStoryByAdmin(@PathVariable("storyId") Long storyId,
