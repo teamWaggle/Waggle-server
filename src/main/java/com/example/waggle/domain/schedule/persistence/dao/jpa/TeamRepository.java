@@ -1,7 +1,7 @@
-package com.example.waggle.domain.schedule.persistence.dao.team.jpa;
+package com.example.waggle.domain.schedule.persistence.dao.jpa;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
-import com.example.waggle.domain.schedule.persistence.dao.team.querydsl.TeamQueryRepository;
+import com.example.waggle.domain.schedule.persistence.dao.querydsl.TeamQueryRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

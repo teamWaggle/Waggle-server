@@ -1,6 +1,6 @@
-package com.example.waggle.domain.schedule.persistence.dao.schedule.jpa;
+package com.example.waggle.domain.schedule.persistence.dao.jpa;
 
-import com.example.waggle.domain.schedule.persistence.dao.schedule.querydsl.MemberScheduleQueryRepository;
+import com.example.waggle.domain.schedule.persistence.dao.querydsl.MemberScheduleQueryRepository;
 import com.example.waggle.domain.schedule.persistence.entity.MemberSchedule;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
