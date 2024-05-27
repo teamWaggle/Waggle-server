@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.application.team;
+package com.example.waggle.domain.schedule.application;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;

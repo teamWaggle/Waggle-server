@@ -1,11 +1,10 @@
-package com.example.waggle.domain.schedule.application.team;
+package com.example.waggle.domain.schedule.application;
 
 import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
-import com.example.waggle.domain.schedule.application.schedule.ScheduleCommandService;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.*;
 import com.example.waggle.domain.schedule.persistence.entity.*;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
@@ -104,7 +103,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     @Override
     public void deleteTeamByAdmin(Long teamId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+            throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
         teamRepository.deleteTeamWithRelations(teamId);
     }

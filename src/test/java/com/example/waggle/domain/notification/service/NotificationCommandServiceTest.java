@@ -7,7 +7,7 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.notification.application.NotificationCommandService;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
-import com.example.waggle.domain.schedule.application.team.TeamCommandService;
+import com.example.waggle.domain.schedule.application.TeamCommandService;
 import com.example.waggle.domain.schedule.persistence.entity.TeamColor;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
 import com.example.waggle.global.service.test.DatabaseCleanUp;

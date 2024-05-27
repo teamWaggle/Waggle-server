@@ -106,7 +106,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Override
     public void deleteQuestionByAdmin(Long boardId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_REQUEST_IS_UNACCEPTABLE_BECAUSE_OF_AUTHORIZATION);
+            throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
         boardRepository.deleteBoardsWithRelations(QUESTION, boardId);
