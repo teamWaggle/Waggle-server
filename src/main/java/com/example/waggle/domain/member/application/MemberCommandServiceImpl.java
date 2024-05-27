@@ -18,11 +18,7 @@ import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberUpd
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailVerificationDto;
 import com.example.waggle.domain.pet.persistence.dao.PetRepository;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.MemberScheduleRepository;
-import com.example.waggle.domain.schedule.persistence.dao.schedule.jpa.ScheduleRepository;
-import com.example.waggle.domain.schedule.persistence.dao.team.jpa.ParticipationRepository;
-import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamMemberRepository;
-import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.*;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.persistence.entity.TeamMember;

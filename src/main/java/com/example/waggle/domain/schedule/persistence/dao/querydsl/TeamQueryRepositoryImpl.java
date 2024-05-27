@@ -1,4 +1,4 @@
-package com.example.waggle.domain.schedule.persistence.dao.team.querydsl;
+package com.example.waggle.domain.schedule.persistence.dao.querydsl;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;

@@ -5,7 +5,7 @@ import com.example.waggle.domain.media.persistence.dao.MediaRepository;
 import com.example.waggle.domain.media.persistence.entity.Media;
 import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.pet.persistence.dao.PetRepository;
-import com.example.waggle.domain.schedule.persistence.dao.team.jpa.TeamRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
 import com.example.waggle.exception.object.handler.MediaHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.aws.AwsS3Service;
