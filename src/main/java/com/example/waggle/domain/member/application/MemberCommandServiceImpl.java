@@ -162,6 +162,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
+        //TODO remove img in s3
         replyRepository.deleteAllByMemberId(memberId);
         commentRepository.deleteAllByMemberId(memberId);
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);

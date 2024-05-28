@@ -82,7 +82,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         }
     }
 
-    @Override
+    @Override   //TODO remove(no usages)
     public void deleteQuestion(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -99,7 +99,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         if (!boardService.validateMemberUseBoard(boardId, QUESTION, member) || !member.getRole().equals(Role.ADMIN)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        mediaCommandService.deleteMedia(question);
         boardRepository.deleteBoardsWithRelations(QUESTION, boardId);
     }
 
@@ -108,7 +111,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
+        Question question = questionRepository.findById(boardId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        mediaCommandService.deleteMedia(question);
         boardRepository.deleteBoardsWithRelations(QUESTION, boardId);
     }
 
