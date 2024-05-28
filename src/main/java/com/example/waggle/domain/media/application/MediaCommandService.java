@@ -12,6 +12,4 @@ public interface MediaCommandService {
 
     void deleteMedia(Board board);
 
-    void deleteMediaFileInS3();
-
 }
