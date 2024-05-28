@@ -70,16 +70,16 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     }
 
 
-    @Override
+    @Override   //TODO remove(not usages)
     public void deleteStory(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Story story = storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-
         story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
         recommendRepository.deleteAllByBoardId(story.getId());
+        mediaCommandService.deleteMedia(story);
         storyRepository.delete(story);
     }
 
@@ -88,6 +88,9 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
             throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+        mediaCommandService.deleteMedia(story);
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
         boardRepository.deleteBoardsWithRelations(STORY, boardId);
     }
@@ -97,6 +100,9 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
+        Story story = storyRepository.findById(boardId)
+                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
+        mediaCommandService.deleteMedia(story);
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
         boardRepository.deleteBoardsWithRelations(STORY, boardId);
     }

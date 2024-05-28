@@ -78,7 +78,7 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         }
     }
 
-    @Override
+    @Override       //TODO remove(no usages)
     public void deleteSiren(Long boardId, Member member) {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -97,7 +97,10 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
             throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        mediaCommandService.deleteMedia(siren);
         boardRepository.deleteBoardsWithRelations(SIREN, boardId);
     }
 
@@ -106,7 +109,10 @@ public class SirenCommandServiceImpl implements SirenCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
+        Siren siren = sirenRepository.findById(boardId)
+                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
         commentRepository.deleteCommentsWithRelationsByBoard(boardId);
+        mediaCommandService.deleteMedia(siren);
         boardRepository.deleteBoardsWithRelations(SIREN, boardId);
     }
 
