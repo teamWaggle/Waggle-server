@@ -152,6 +152,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void deleteDormantMember() {
         List<Member> memberList = memberRepository.findByRole(Role.DORMANT);
         LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+        List<Board> allByMemberIn = boardRepository.findAllByMemberIn(memberList);
+        allByMemberIn.forEach(mediaCommandService::deleteMedia);
         memberList.stream()
                 .filter(member -> member.getLastModifiedDate().isBefore(today.minusDays(1)))
                 .forEach(member -> deleteMember(member.getId()));
@@ -162,7 +164,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
-        //TODO remove img in s3
+        boardRepository.findAllByMember(member)
+                .forEach(mediaCommandService::deleteMedia);
         replyRepository.deleteAllByMemberId(memberId);
         commentRepository.deleteAllByMemberId(memberId);
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);

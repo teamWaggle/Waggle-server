@@ -11,4 +11,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardQueryR
 
     List<Board> findAllByMember(Member member);
 
+    List<Board> findAllByMemberIn(List<Member> memberList);
+
 }
