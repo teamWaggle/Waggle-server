@@ -24,6 +24,7 @@ import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.persistence.entity.TeamMember;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.service.aws.AwsS3Service;
 import com.example.waggle.global.service.redis.RedisService;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
@@ -67,6 +68,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberQueryService memberQueryService;
     private final RedisService redisService;
     private final MediaCommandService mediaCommandService;
+    private final AwsS3Service awsS3Service;
 
     private final PasswordEncoder passwordEncoder;
     private static final String AUTH_CODE_PREFIX = "AuthCode ";
@@ -105,6 +107,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
                                     Member member) {
+        if (!member.getProfileImgUrl().equals(updateMemberRequest.getMemberProfileImg())) {
+            awsS3Service.deleteFile(member.getProfileImgUrl());
+        }
         member.updateInfo(updateMemberRequest);
         return member.getId();
     }

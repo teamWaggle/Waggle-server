@@ -10,6 +10,7 @@ import com.example.waggle.domain.pet.presentation.dto.PetRequest;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.PetHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.service.aws.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class PetCommandServiceImpl implements PetCommandService {
 
     private final PetRepository petRepository;
     private final MemberQueryService memberQueryService;
+    private final AwsS3Service awsS3Service;
 
     @Override
     public Long createPet(PetRequest createPetRequest, Member member) {
@@ -39,6 +41,9 @@ public class PetCommandServiceImpl implements PetCommandService {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         validateIsOwner(member, pet);
+        if (!pet.getProfileImgUrl().equals(updatePetRequest.getPetProfileImg())) {
+            awsS3Service.deleteFile(pet.getProfileImgUrl());
+        }
         pet.update(updatePetRequest);
         return pet.getId();
     }
@@ -48,6 +53,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         validateIsOwner(member, pet);
+        awsS3Service.deleteFile(pet.getProfileImgUrl());
         petRepository.delete(pet);
     }
 
@@ -63,7 +69,10 @@ public class PetCommandServiceImpl implements PetCommandService {
     public void deleteAllPetByUser(String username) {
         Member member = memberQueryService.getMemberByUsername(username);
         List<Pet> pets = petRepository.findByMemberUsername(member.getUsername());
-        pets.stream().forEach(pet -> petRepository.delete(pet));
+        pets.stream().forEach(pet -> {
+            awsS3Service.deleteFile(pet.getProfileImgUrl());
+            petRepository.delete(pet);
+        });
     }
 
 
