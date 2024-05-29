@@ -17,7 +17,10 @@ public class ObjectUtil {
     }
 
     public static void validateKeywordLength(String keyword) {
-        if (keyword.length() == 1) {
+        if (keyword == null) {
+            return;
+        }
+        if (keyword.length() < 2) {
             throw new GeneralException(ErrorStatus.BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT);
         }
     }

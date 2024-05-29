@@ -65,7 +65,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
         JPAQuery<Long> countQuery = queryFactory
                 .select(siren.count())
                 .from(siren)
-                .where(siren.title.containsIgnoreCase(keyword));
+                .where(siren.title.contains(keyword));
         return PageableExecutionUtils.getPage(sirenList, pageable, countQuery::fetchOne);
     }
 
@@ -76,9 +76,9 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                                               Pageable pageable) {
         JPAQuery<Siren> baseQuery = queryFactory.selectFrom(siren);
         JPAQuery<Long> countQuery = queryFactory.select(siren.count()).from(siren);
-        if (keyword != null || !keyword.isEmpty()) {
-            baseQuery.where(siren.title.containsIgnoreCase(keyword));
-            countQuery.where(siren.title.containsIgnoreCase(keyword));
+        if (keyword != null) {
+            baseQuery.where(siren.title.contains(keyword));
+            countQuery.where(siren.title.contains(keyword));
         }
         if (sortParam.equals(SirenSortParam.RECOMMEND)) {
             baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board))

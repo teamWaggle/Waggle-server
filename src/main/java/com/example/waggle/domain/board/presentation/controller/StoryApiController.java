@@ -143,7 +143,7 @@ public class StoryApiController {
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/v2/search")
     public ApiResponseDto<StorySummaryListDto> searchStoryListBySorting(
-            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sortParam") StorySortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         ObjectUtil.validateKeywordLength(keyword);
