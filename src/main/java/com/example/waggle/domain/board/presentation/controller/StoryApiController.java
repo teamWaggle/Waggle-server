@@ -138,6 +138,19 @@ public class StoryApiController {
         return ApiResponseDto.onSuccess(StoryConverter.toListDto(PagedStoryList));
     }
 
+    @Operation(summary = "스토리 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/v2/search")
+    public ApiResponseDto<StorySummaryListDto> searchStoryListBySorting(
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "sortParam") StorySortParam sortParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
+        Pageable pageable = PageRequest.of(currentPage, STORY_SIZE, latestSorting);
+        Page<Story> PagedStoryList = storyQueryService.getPagedStoryListByKeywordAndSortParam(keyword, sortParam, pageable);
+        return ApiResponseDto.onSuccess(StoryConverter.toListDto(PagedStoryList));
+    }
+
     @Operation(summary = "스토리 삭제 🔑", description = "특정 스토리를 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
