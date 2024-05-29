@@ -39,7 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("set Authentication to security context for '{}', uri: '{}', Role '{}'",
                     authentication.getName(), ((HttpServletRequest) request).getRequestURI(), authentication.getAuthorities());
         } else {
-            log.info("no valid JWT token found, uri: {}", ((HttpServletRequest) request).getRequestURI());
+            String uri = ((HttpServletRequest) request).getRequestURI();
+            if (!uri.equals("/health-check")) {
+                log.info("no valid JWT token found, uri: {}", uri);
+            }
         }
 
         chain.doFilter(request, response);
