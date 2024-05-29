@@ -211,6 +211,25 @@ public class SirenApiController {
         return ApiResponseDto.onSuccess(sirenPageDto);
     }
 
+    @Operation(summary = "사이렌 검색 및 정렬", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다." +
+            "이때 정렬 파라미터와 필터 파라미터를 통해 검색 결과를 정렬합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/v2/search")
+    public ApiResponseDto<SirenPagedSummaryListDto> searchSirenListBySorting(
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "sortParam") SirenSortParam sortParam,
+            @RequestParam(name = "filterParam") SirenFilterParam filterParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Page<Siren> pagedSirenList = sirenQueryService
+                .getPagedSirenListBySearchingAndSorting(keyword, sortParam, filterParam, pageable);
+        SirenPagedSummaryListDto sirenPageDto = SirenConverter.toSirenPageDto(
+                pagedSirenList);
+        setRecommendCntInList(sirenPageDto.getSirenList());
+        return ApiResponseDto.onSuccess(sirenPageDto);
+    }
+
 
     private void setRecommendCntInList(List<SirenSummaryDto> sirenList) {
         sirenList

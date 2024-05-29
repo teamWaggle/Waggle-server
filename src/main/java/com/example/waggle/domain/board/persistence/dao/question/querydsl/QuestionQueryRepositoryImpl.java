@@ -84,7 +84,8 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                     .leftJoin(recommend).on(recommend.board.eq(question._super))
                     .groupBy(question);
         }
-        List<Question> questionList = baseQuery.orderBy(createSortingOrder(sortParam))
+        List<Question> questionList = baseQuery
+                .orderBy(createSortingOrder(sortParam))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

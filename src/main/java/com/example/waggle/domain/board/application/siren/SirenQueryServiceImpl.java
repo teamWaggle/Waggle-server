@@ -91,4 +91,12 @@ public class SirenQueryServiceImpl implements SirenQueryService {
         return sirenRepository.findSirensByKeyword(keyword, pageable);
     }
 
+    @Override
+    public Page<Siren> getPagedSirenListBySearchingAndSorting(String keyword,
+                                                              SirenSortParam sortParam,
+                                                              SirenFilterParam filterParam,
+                                                              Pageable pageable) {
+        return sirenRepository.searchAndSortSirenList(keyword, sortParam, filterParam, pageable);
+    }
+
 }

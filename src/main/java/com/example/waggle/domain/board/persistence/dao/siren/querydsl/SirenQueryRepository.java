@@ -16,4 +16,9 @@ public interface SirenQueryRepository {
 
     Page<Siren> findSirensByKeyword(String keyword, Pageable pageable);
 
+    Page<Siren> searchAndSortSirenList(String keyword,
+                                       SirenSortParam sortParam,
+                                       SirenFilterParam filterParam,
+                                       Pageable pageable);
+
 }

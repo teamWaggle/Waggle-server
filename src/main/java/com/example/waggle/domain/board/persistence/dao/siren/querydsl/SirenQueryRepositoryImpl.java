@@ -58,7 +58,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
     public Page<Siren> findSirensByKeyword(String keyword, Pageable pageable) {
         List<Siren> sirenList = queryFactory
                 .selectFrom(siren)
-                .where(siren.title.containsIgnoreCase(keyword))
+                .where(siren.title.contains(keyword))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -67,6 +67,32 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                 .from(siren)
                 .where(siren.title.containsIgnoreCase(keyword));
         return PageableExecutionUtils.getPage(sirenList, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<Siren> searchAndSortSirenList(String keyword,
+                                              SirenSortParam sortParam,
+                                              SirenFilterParam filterParam,
+                                              Pageable pageable) {
+        JPAQuery<Siren> baseQuery = queryFactory.selectFrom(siren);
+        JPAQuery<Long> countQuery = queryFactory.select(siren.count()).from(siren);
+        if (keyword != null || !keyword.isEmpty()) {
+            baseQuery.where(siren.title.containsIgnoreCase(keyword));
+            countQuery.where(siren.title.containsIgnoreCase(keyword));
+        }
+        if (sortParam.equals(SirenSortParam.RECOMMEND)) {
+            baseQuery.leftJoin(recommend).on(siren._super.eq(recommend.board))
+                    .groupBy(siren);
+            countQuery.leftJoin(recommend).on(siren._super.eq(recommend.board))
+                    .groupBy(siren);
+        }
+        List<Siren> sirenList = baseQuery
+                .orderBy(createSortingOrder(sortParam))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(selectCategory(filterParam))
+                .fetch();
+        return PageableExecutionUtils.getPage(sirenList, pageable, countQuery::fetchCount);
     }
 
     private OrderSpecifier[] createSortingOrder(SirenSortParam sortParam) {
