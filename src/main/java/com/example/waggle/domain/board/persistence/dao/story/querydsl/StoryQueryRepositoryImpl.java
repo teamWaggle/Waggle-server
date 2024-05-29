@@ -62,6 +62,32 @@ public class StoryQueryRepositoryImpl implements StoryQueryRepository {
         return PageableExecutionUtils.getPage(storyList, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public Page<Story> findStoryListByKeywordAndSortParam(String keyword, StorySortParam sortParam, Pageable pageable) {
+        JPAQuery<Story> baseQuery = queryFactory.selectFrom(story);
+        JPAQuery<Long> countQuery = queryFactory.select(story.count()).from(story);
+        if (keyword != null && !keyword.isEmpty()) {
+            baseQuery.join(story.boardHashtags, boardHashtag)
+                    .join(boardHashtag.hashtag, hashtag)
+                    .where(hashtag.content.contains(keyword).or(story.content.contains(keyword)));
+            countQuery.join(story.boardHashtags, boardHashtag)
+                    .join(boardHashtag.hashtag, hashtag)
+                    .where(hashtag.content.contains(keyword).or(story.content.contains(keyword)));
+        }
+        if (sortParam.equals(StorySortParam.RECOMMEND)) {
+            baseQuery.leftJoin(recommend).on(story._super.eq(recommend.board))
+                    .groupBy(story);
+            countQuery.leftJoin(recommend).on(story._super.eq(recommend.board))
+                    .groupBy(story);
+        }
+        List<Story> storyList = baseQuery
+                .orderBy(createSortingOrder(sortParam))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        return PageableExecutionUtils.getPage(storyList, pageable, countQuery::fetchOne);
+    }
+
     private OrderSpecifier[] createSortingOrder(StorySortParam sortParam) {
         switch (sortParam) {
             case LATEST -> {

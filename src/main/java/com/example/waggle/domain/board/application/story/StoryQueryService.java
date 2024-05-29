@@ -25,5 +25,7 @@ public interface StoryQueryService {
 
     Page<Story> getPagedStoryListByKeyword(String keyword, Pageable pageable);
 
+    Page<Story> getPagedStoryListByKeywordAndSortParam(String keyword, StorySortParam sortParam, Pageable pageable);
+
 
 }
