@@ -29,4 +29,9 @@ public interface SirenQueryService {
 
     Page<Siren> getPagedSirenListByKeyword(String keyword, Pageable pageable);
 
+    Page<Siren> getPagedSirenListBySearchingAndSorting(String keyword,
+                                                       SirenSortParam sortParam,
+                                                       SirenFilterParam filterParam,
+                                                       Pageable pageable);
+
 }
