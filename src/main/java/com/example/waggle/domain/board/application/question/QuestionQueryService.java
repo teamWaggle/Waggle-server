@@ -27,4 +27,6 @@ public interface QuestionQueryService {
 
     Page<Question> getPagedQuestionListByKeyword(String keyword, Pageable pageable);
 
+    Page<Question> getPagedQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable);
+
 }

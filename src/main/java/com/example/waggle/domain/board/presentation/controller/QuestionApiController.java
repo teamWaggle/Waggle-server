@@ -175,6 +175,21 @@ public class QuestionApiController {
         return ApiResponseDto.onSuccess(QuestionConverter.toListDto(pagedQuestionList));
     }
 
+    @Operation(summary = "질문 검색 및 정렬", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다." +
+            "이때 정렬 파라미터를 통해 검색 결과를 정렬합니다.")
+    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @GetMapping("/v2/search")
+    public ApiResponseDto<QuestionSummaryListDto> searchQuestionListBySortParam(
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "sortParam") QuestionSortParam sortParam,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
+        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
+        Page<Question> pagedQuestionList = questionQueryService
+                .getPagedQuestionListByKeywordAndSortParam(keyword, sortParam, pageable);
+        return ApiResponseDto.onSuccess(QuestionConverter.toListDto(pagedQuestionList));
+    }
+
 
     @Operation(summary = "질문 삭제 🔑", description = "특정 질문을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
     @ApiErrorCodeExample({

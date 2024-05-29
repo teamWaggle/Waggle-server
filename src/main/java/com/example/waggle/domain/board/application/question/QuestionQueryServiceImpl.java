@@ -85,4 +85,9 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     public Page<Question> getPagedQuestionListByKeyword(String keyword, Pageable pageable) {
         return questionRepository.findQuestionsByKeyword(keyword, pageable);
     }
+
+    @Override
+    public Page<Question> getPagedQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable) {
+        return questionRepository.findQuestionListByKeywordAndSortParam(keyword, sortParam, pageable);
+    }
 }

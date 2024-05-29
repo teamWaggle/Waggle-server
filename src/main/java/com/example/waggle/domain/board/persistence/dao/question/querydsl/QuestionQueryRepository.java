@@ -10,4 +10,6 @@ public interface QuestionQueryRepository {
 
     Page<Question> findQuestionsByKeyword(String keyword, Pageable pageable);
 
+    Page<Question> findQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable);
+
 }

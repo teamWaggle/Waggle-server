@@ -64,6 +64,33 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
         return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public Page<Question> findQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable) {
+        JPAQuery<Question> baseQuery = queryFactory.selectFrom(question);
+        JPAQuery<Long> countQuery = queryFactory.select(question.count()).from(question);
+        if (keyword != null || !keyword.isEmpty()) {
+            baseQuery.join(question.boardHashtags, boardHashtag)
+                    .join(boardHashtag.hashtag, hashtag)
+                    .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)));
+            countQuery.join(question.boardHashtags, boardHashtag)
+                    .join(boardHashtag.hashtag, hashtag)
+                    .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)));
+        }
+        if (sortParam.equals(QuestionSortParam.RECOMMEND)) {
+            baseQuery
+                    .leftJoin(recommend).on(recommend.board.eq(question._super))
+                    .groupBy(question);
+            countQuery
+                    .leftJoin(recommend).on(recommend.board.eq(question._super))
+                    .groupBy(question);
+        }
+        List<Question> questionList = baseQuery.orderBy(createSortingOrder(sortParam))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchCount);
+    }
+
     private OrderSpecifier[] createSortingOrder(QuestionSortParam sortParam) {
         switch (sortParam) {
             case LATEST -> {
