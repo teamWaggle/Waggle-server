@@ -64,4 +64,9 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     public Page<Story> getPagedStoryListByKeyword(String keyword, Pageable pageable) {
         return storyRepository.findStoriesByKeyword(keyword, pageable);
     }
+
+    @Override
+    public Page<Story> getPagedStoryListByKeywordAndSortParam(String keyword, StorySortParam sortParam, Pageable pageable) {
+        return storyRepository.findStoryListByKeywordAndSortParam(keyword, sortParam, pageable);
+    }
 }
