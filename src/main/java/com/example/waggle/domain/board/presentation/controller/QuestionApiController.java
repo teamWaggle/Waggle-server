@@ -172,7 +172,9 @@ public class QuestionApiController {
         ObjectUtil.validateKeywordLength(keyword);
         Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
         Page<Question> pagedQuestionList = questionQueryService.getPagedQuestionListByKeyword(keyword, pageable);
-        return ApiResponseDto.onSuccess(QuestionConverter.toListDto(pagedQuestionList));
+        QuestionSummaryListDto listDto = QuestionConverter.toListDto(pagedQuestionList);
+        setRecommendCntInList(listDto.getQuestionList());
+        return ApiResponseDto.onSuccess(listDto);
     }
 
     @Operation(summary = "질문 검색 및 정렬", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다." +
@@ -180,14 +182,16 @@ public class QuestionApiController {
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/v2/search")
     public ApiResponseDto<QuestionSummaryListDto> searchQuestionListBySortParam(
-            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sortParam") QuestionSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         ObjectUtil.validateKeywordLength(keyword);
         Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
         Page<Question> pagedQuestionList = questionQueryService
                 .getPagedQuestionListByKeywordAndSortParam(keyword, sortParam, pageable);
-        return ApiResponseDto.onSuccess(QuestionConverter.toListDto(pagedQuestionList));
+        QuestionSummaryListDto listDto = QuestionConverter.toListDto(pagedQuestionList);
+        setRecommendCntInList(listDto.getQuestionList());
+        return ApiResponseDto.onSuccess(listDto);
     }
 
 

@@ -51,7 +51,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .selectFrom(question)
                 .join(question.boardHashtags, boardHashtag)
                 .join(boardHashtag.hashtag, hashtag)
-                .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)))
+                .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -60,7 +60,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
                 .from(question)
                 .join(question.boardHashtags, boardHashtag)
                 .join(boardHashtag.hashtag, hashtag)
-                .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)));
+                .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));
         return PageableExecutionUtils.getPage(questionList, pageable, countQuery::fetchOne);
     }
 
@@ -68,13 +68,13 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
     public Page<Question> findQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable) {
         JPAQuery<Question> baseQuery = queryFactory.selectFrom(question);
         JPAQuery<Long> countQuery = queryFactory.select(question.count()).from(question);
-        if (keyword != null || !keyword.isEmpty()) {
+        if (keyword != null) {
             baseQuery.join(question.boardHashtags, boardHashtag)
                     .join(boardHashtag.hashtag, hashtag)
-                    .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)));
+                    .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));
             countQuery.join(question.boardHashtags, boardHashtag)
                     .join(boardHashtag.hashtag, hashtag)
-                    .where(hashtag.content.containsIgnoreCase(keyword).or(question.title.containsIgnoreCase(keyword)));
+                    .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));
         }
         if (sortParam.equals(QuestionSortParam.RECOMMEND)) {
             baseQuery

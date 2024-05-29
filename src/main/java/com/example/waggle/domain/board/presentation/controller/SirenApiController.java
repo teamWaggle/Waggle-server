@@ -216,7 +216,7 @@ public class SirenApiController {
     @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
     @GetMapping("/v2/search")
     public ApiResponseDto<SirenPagedSummaryListDto> searchSirenListBySorting(
-            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sortParam") SirenSortParam sortParam,
             @RequestParam(name = "filterParam") SirenFilterParam filterParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
