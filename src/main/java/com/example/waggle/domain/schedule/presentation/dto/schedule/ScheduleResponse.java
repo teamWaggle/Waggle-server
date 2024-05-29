@@ -1,8 +1,8 @@
 package com.example.waggle.domain.schedule.presentation.dto.schedule;
 
+import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import com.example.waggle.domain.schedule.persistence.entity.ScheduleStatus;
 import com.example.waggle.domain.schedule.persistence.entity.TeamColor;
-import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +35,7 @@ public class ScheduleResponse {
         private Long boardId;
         private Long teamId;
         private TeamColor teamColor;
+        private String teamName;
         private String title;
         private String content;
         private LocalDateTime startDate;

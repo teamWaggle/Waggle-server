@@ -2,11 +2,12 @@ package com.example.waggle.domain.schedule.presentation.converter;
 
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
-import com.example.waggle.global.util.ScheduleUtil;
+import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse.OverlappedScheduleDto;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse.ScheduleDetailDto;
 import com.example.waggle.domain.schedule.presentation.dto.schedule.ScheduleResponse.ScheduleListDto;
+import com.example.waggle.global.util.ScheduleUtil;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class ScheduleConverter {
 
     public static ScheduleDetailDto toScheduleDetailDto(Schedule schedule) {
+        Team team = schedule.getTeam();
         return ScheduleDetailDto.builder()
                 .boardId(schedule.getId())
-                .teamId(schedule.getTeam().getId())
-                .teamColor(schedule.getTeam().getTeamColor())
+                .teamId(team.getId())
+                .teamColor(team.getTeamColor())
+                .teamName(team.getName())
                 .title(schedule.getTitle())
                 .content(schedule.getContent())
                 .startDate(LocalDateTime.of(schedule.getStartDate(), schedule.getStartTime()))
