@@ -19,7 +19,7 @@ public class ObjectUtil {
     }
 
     public static void validateKeywordLength(String keyword) {
-        if (keyword == null) {
+        if (keyword == null || keyword.isEmpty()) {
             return;
         }
         if (keyword.length() < MIN_KEYWORD_LENGTH) {
