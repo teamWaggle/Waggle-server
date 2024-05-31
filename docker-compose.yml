@@ -17,11 +17,6 @@ services:
     ports:
       - "2181:2181"
 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-
   application:
     image: 471112861132.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev:latest
     ports:
