@@ -8,6 +8,8 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 
 public class ObjectUtil {
+    private static final int MIN_KEYWORD_LENGTH = 2;
+
     public static boolean isPresent(@Nullable Object[] array) {
         return !ObjectUtils.isEmpty(array);
     }
@@ -20,7 +22,7 @@ public class ObjectUtil {
         if (keyword == null) {
             return;
         }
-        if (keyword.length() < 2) {
+        if (keyword.length() < MIN_KEYWORD_LENGTH) {
             throw new GeneralException(ErrorStatus.BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT);
         }
     }
