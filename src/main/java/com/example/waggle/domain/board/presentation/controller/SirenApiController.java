@@ -148,7 +148,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "대표 사이렌 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
-    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/representative")
     public ApiResponseDto<SirenSummaryListDto> getRepresentativeSirenList() {
         List<Siren> representativeSirenList = sirenQueryService.getRepresentativeSirenList();
@@ -186,7 +188,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "랜덤 사이렌 조회", description = "임의의 사이렌을 조회합니다. 미해결 사이렌 중 임의로 3개의 사이렌을 반환합니다.")
-    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/random")
     public ApiResponseDto<SirenSummaryListDto> getUnresolvedRandomSirenList() {
         List<Siren> randomUnresolvedSirenList = sirenQueryService.getRandomUnresolvedSirenList();
@@ -197,7 +201,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 검색", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다.")
-    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/search")
     public ApiResponseDto<SirenPagedSummaryListDto> searchSirenList(
             @RequestParam String keyword,
@@ -213,7 +219,9 @@ public class SirenApiController {
 
     @Operation(summary = "사이렌 검색 및 정렬", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다." +
             "이때 정렬 파라미터와 필터 파라미터를 통해 검색 결과를 정렬합니다.")
-    @ApiErrorCodeExample({ErrorStatus._INTERNAL_SERVER_ERROR})
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
     @GetMapping("/v2/search")
     public ApiResponseDto<SirenPagedSummaryListDto> searchSirenListBySorting(
             @RequestParam(name = "keyword", required = false) String keyword,
