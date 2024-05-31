@@ -3,9 +3,11 @@ package com.example.waggle.domain.pet.presentation.dto;
 import com.example.waggle.domain.member.persistence.entity.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PetResponse {
@@ -44,7 +46,7 @@ public class PetResponse {
     @AllArgsConstructor
     @Builder
     public static class PetListDto {
-        private List<PetDetailDto> petList = new ArrayList<>();
+        private List<PetDetailDto> petList;
     }
 
 }
