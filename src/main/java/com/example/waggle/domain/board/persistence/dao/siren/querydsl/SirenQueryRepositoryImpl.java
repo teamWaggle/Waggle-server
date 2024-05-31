@@ -76,7 +76,7 @@ public class SirenQueryRepositoryImpl implements SirenQueryRepository {
                                               Pageable pageable) {
         JPAQuery<Siren> baseQuery = queryFactory.selectFrom(siren);
         JPAQuery<Long> countQuery = queryFactory.select(siren.count()).from(siren);
-        if (keyword != null) {
+        if (!(keyword == null || keyword.isEmpty())) {
             baseQuery.where(siren.title.contains(keyword));
             countQuery.where(siren.title.contains(keyword));
         }

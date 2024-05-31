@@ -68,7 +68,7 @@ public class QuestionQueryRepositoryImpl implements QuestionQueryRepository {
     public Page<Question> findQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable) {
         JPAQuery<Question> baseQuery = queryFactory.selectFrom(question);
         JPAQuery<Long> countQuery = queryFactory.select(question.count()).from(question);
-        if (keyword != null) {
+        if (!(keyword == null || keyword.isEmpty())) {
             baseQuery.join(question.boardHashtags, boardHashtag)
                     .join(boardHashtag.hashtag, hashtag)
                     .where(hashtag.content.contains(keyword).or(question.title.contains(keyword)));

@@ -66,7 +66,7 @@ public class StoryQueryRepositoryImpl implements StoryQueryRepository {
     public Page<Story> findStoryListByKeywordAndSortParam(String keyword, StorySortParam sortParam, Pageable pageable) {
         JPAQuery<Story> baseQuery = queryFactory.selectFrom(story);
         JPAQuery<Long> countQuery = queryFactory.select(story.count()).from(story);
-        if (keyword != null) {
+        if (!(keyword == null || keyword.isEmpty())) {
             baseQuery.join(story.boardHashtags, boardHashtag)
                     .join(boardHashtag.hashtag, hashtag)
                     .where(hashtag.content.contains(keyword).or(story.content.contains(keyword)));
