@@ -14,8 +14,8 @@ public class PageUtil {
     public static int CHAT_MESSAGE_SIZE = 20;
     public static int TEAM_RECOMMEND_SIZE = 3;
 
-    private static Sort LATEST_SORTING = Sort.by("createdDate").descending();
-    private static Sort OLDEST_SORTING = Sort.by("createdDate").ascending();
+    public static Sort LATEST_SORTING = Sort.by("createdDate").descending();
+    public static Sort OLDEST_SORTING = Sort.by("createdDate").ascending();
 
     public static int countNextPage(Page<?> pagedList) {
         if (pagedList.isLast()) {
@@ -26,16 +26,10 @@ public class PageUtil {
 
     public static Sort getCommentSortingMethod(BoardType boardType) {
         switch (boardType) {
-            case STORY -> {
+            case STORY, SCHEDULE -> {
                 return LATEST_SORTING;
             }
-            case SCHEDULE -> {
-                return LATEST_SORTING;
-            }
-            case SIREN -> {
-                return OLDEST_SORTING;
-            }
-            case QUESTION -> {
+            case SIREN, QUESTION -> {
                 return OLDEST_SORTING;
             }
             default -> {
