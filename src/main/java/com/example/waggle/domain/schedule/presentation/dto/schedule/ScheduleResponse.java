@@ -23,6 +23,7 @@ public class ScheduleResponse {
         private String teamName;
         private TeamColor teamColor;
         private String scheduleTitle;
+        private Long scheduleId;
     }
 
 
