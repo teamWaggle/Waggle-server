@@ -1,12 +1,12 @@
 package com.example.waggle.domain.board.presentation.converter;
 
 import com.example.waggle.domain.board.persistence.entity.Siren;
-import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenDetailDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenPagedSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryDto;
-import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.domain.board.presentation.dto.siren.SirenResponse.SirenSummaryListDto;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import org.springframework.data.domain.Page;
 
@@ -53,6 +53,7 @@ public class SirenConverter {
                 .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .viewCount(siren.getViewCount())
+                .commentCount(siren.getComments().size())
                 .build();
     }
 
