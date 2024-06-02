@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionDetailDto;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.*;
 import static com.example.waggle.global.util.PageUtil.QUESTION_SIZE;
 
 @Slf4j
@@ -71,10 +71,8 @@ public class QuestionApiController {
 
     @Operation(summary = "질문 수정 🔑", description = "사용자가 질문 수정합니다. 수정한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample(value = {
-            ErrorStatus.MEDIA_PREFIX_IS_WRONG,
-            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
-            ErrorStatus.BOARD_NOT_FOUND
-    }, status = AUTH)
+            ErrorStatus.MEDIA_PREFIX_IS_WRONG
+    }, status = BOARD_DATA_CHANGE)
     @PutMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
                                                @RequestPart("updateQuestionRequest") @Validated QuestionRequest updateQuestionRequest,
@@ -88,10 +86,8 @@ public class QuestionApiController {
 
     @Operation(summary = "질문 상태 변경 🔑", description = "사용자가 질문 상태 변경합니다.")
     @ApiErrorCodeExample(value = {
-            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
-            ErrorStatus.BOARD_NOT_FOUND,
             ErrorStatus.BOARD_INVALID_TYPE
-    }, status = AUTH)
+    }, status = BOARD_DATA_CHANGE)
     @PutMapping(value = "/{questionId}/status")
     public ApiResponseDto<Long> convertStatus(@PathVariable("questionId") Long questionId,
                                               @AuthUser Member member) {
@@ -101,7 +97,7 @@ public class QuestionApiController {
 
 
     @Operation(summary = "대표 질문 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
-    @ApiErrorCodeExample(value = {})
+    @ApiErrorCodeExample
     @GetMapping("/representative")
     public ApiResponseDto<RepresentativeQuestionDto> getRepresentativeQuestionList() {
         List<Question> representativeQuestionList = questionQueryService.getRepresentativeQuestionList();
@@ -112,9 +108,7 @@ public class QuestionApiController {
     }
 
     @Operation(summary = "사용자의 질문 목록 조회", description = "특정 사용자가 작성한 질문 목록을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/member/{userUrl}")
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(@PathVariable("userUrl") String userUrl,
                                                                          @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -159,10 +153,7 @@ public class QuestionApiController {
 
 
     @Operation(summary = "질문 삭제 🔑", description = "특정 질문을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
-    @ApiErrorCodeExample(value = {
-            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
-            ErrorStatus.BOARD_NOT_FOUND
-    }, status = AUTH)
+    @ApiErrorCodeExample(status = BOARD_DATA_CHANGE)
     @DeleteMapping("/{questionId}")
     public ApiResponseDto<Boolean> deleteQuestion(@PathVariable("questionId") Long questionId,
                                                   @AuthUser Member member) {
@@ -172,10 +163,9 @@ public class QuestionApiController {
 
     @Operation(summary = "질문 강제 삭제 🔑", description = "특정 질문이 관리자에 의해 삭제됩니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
     @ApiErrorCodeExample(value = {
-            ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI,
             ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION,
             ErrorStatus.BOARD_NOT_FOUND
-    }, status = AUTH)
+    }, status = ADMIN)
     @DeleteMapping("/{questionId}/admin")
     public ApiResponseDto<Boolean> deleteQuestionByAdmin(@PathVariable("questionId") Long questionId,
                                                          @AuthUser Member admin) {
