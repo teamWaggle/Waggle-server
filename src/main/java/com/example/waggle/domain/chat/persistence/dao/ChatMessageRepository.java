@@ -12,6 +12,10 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     long countByChatRoomIdAndSendTimeAfter(Long chatRoomId, long lastAccessTime);
 
     @Query(value = "{'chatRoomId': ?0}", sort = "{'sendTime': -1}")
-    Page<ChatMessage> findByChatRoomIdSortedBySendTimeDesc(Long chatRoomId, Pageable pageable);
+    Page<ChatMessage> findRecentMessagesByChatRoomId(Long chatRoomId, Pageable pageable);
+
+    @Query(value = "{'chatRoomId': ?0, 'sendTime': {$gt: ?1}}", sort = "{'sendTime': -1}")
+    Page<ChatMessage> findMessagesByChatRoomIdAfterMemberEnterTime(Long chatRoomId, Long memberEnterTime,
+                                                                   Pageable pageable);
 
 }

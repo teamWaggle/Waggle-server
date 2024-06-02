@@ -67,7 +67,7 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
 
     @Override
     public String getLastMessageContent(Long chatRoomId) {
-        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findByChatRoomIdSortedBySendTimeDesc(
+        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findRecentMessagesByChatRoomId(
                 chatRoomId, PageRequest.of(0, 1));
         if (!pagedChatMessage.hasContent()) {
             return "최근 메시지가 없습니다.";
@@ -90,7 +90,7 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
 
     private Optional<ChatMessage> findLastChatMessageByChatRoomId(Long chatRoomId) {
         PageRequest pageRequest = PageRequest.of(0, 1);
-        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findByChatRoomIdSortedBySendTimeDesc(chatRoomId,
+        Page<ChatMessage> pagedChatMessage = chatMessageRepository.findRecentMessagesByChatRoomId(chatRoomId,
                 pageRequest);
         return pagedChatMessage.getContent().stream().findFirst();
     }
