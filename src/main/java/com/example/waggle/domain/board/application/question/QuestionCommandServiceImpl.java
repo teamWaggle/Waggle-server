@@ -10,7 +10,6 @@ import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.Commen
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
-import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -28,7 +27,6 @@ import static com.example.waggle.domain.board.persistence.entity.BoardType.QUEST
 public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     private final QuestionRepository questionRepository;
-    private final RecommendRepository recommendRepository;
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final BoardService boardService;
@@ -80,18 +78,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
             case UNRESOLVED -> question.changeStatus(ResolutionStatus.RESOLVED);
             default -> throw new QuestionHandler(ErrorStatus.BOARD_INVALID_TYPE);
         }
-    }
-
-    @Override   //TODO remove(no usages)
-    public void deleteQuestion(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
-            throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Question question = questionRepository.findById(boardId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        recommendRepository.deleteAllByBoardId(question.getId());
-        questionRepository.delete(question);
     }
 
     @Override
