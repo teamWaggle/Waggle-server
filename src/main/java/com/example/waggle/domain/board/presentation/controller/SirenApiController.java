@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.*;
+import static com.example.waggle.global.util.PageUtil.LATEST_SORTING;
 import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
 
 @Slf4j
@@ -50,16 +51,14 @@ public class SirenApiController {
     private final SirenCommandService sirenCommandService;
     private final SirenQueryService sirenQueryService;
     private final RecommendQueryService recommendQueryService;
-    private Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "사이렌 작성 🔑", description = "사용자가 사이렌을 작성합니다. 작성한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.MEDIA_PREFIX_IS_WRONG
+    }, status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createSiren(
-            @RequestPart("createSirenRequest") @Validated SirenRequest createSirenRequest,
-            @AuthUser Member member) {
+    public ApiResponseDto<Long> createSiren(@RequestPart("createSirenRequest") @Validated SirenRequest createSirenRequest,
+                                            @AuthUser Member member) {
         List<String> removedPrefixMedia = createSirenRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
         createSirenRequest.setMediaList(removedPrefixMedia);
@@ -68,9 +67,7 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 수정 🔑", description = "사용자가 사이렌을 수정합니다. 수정한 사이렌의 정보를 저장하고 사이렌의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = BOARD_DATA_CHANGE)
     @PutMapping(value = "/{sirenId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
                                             @RequestPart("updateSirenRequest") @Validated SirenRequest updateSirenRequest,
@@ -83,9 +80,9 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 상태 변경 🔑", description = "사용자가 사이렌 상태 변경합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.BOARD_INVALID_TYPE
+    }, status = BOARD_DATA_CHANGE)
     @PutMapping(value = "/{sirenId}/status")
     public ApiResponseDto<Long> convertStatus(@PathVariable("sirenId") Long sirenId,
                                               @AuthUser Member member) {
@@ -94,9 +91,7 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 삭제 🔑", description = "특정 사이렌을 삭제합니다.게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = BOARD_DATA_CHANGE)
     @DeleteMapping("/{sirenId}")
     public ApiResponseDto<Boolean> deleteSiren(@PathVariable("sirenId") Long sirenId,
                                                @AuthUser Member member) {
@@ -105,22 +100,20 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사이렌 강제 삭제 🔑", description = "특정 사이렌이 관리자에 의해 삭제됩니다. 게시글과 관련된 댓글, 대댓글, 미디어 등을 모두 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR,
-            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION,
+            ErrorStatus.BOARD_NOT_FOUND
+    }, status = ADMIN)
     @DeleteMapping("/{sirenId}/admin")
     public ApiResponseDto<Boolean> deleteSirenByAdmin(@PathVariable("sirenId") Long sirenId,
                                                       @AuthUser Member admin) {
         sirenCommandService.deleteSirenByAdmin(sirenId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
-    
+
 
     @Operation(summary = "대표 사이렌 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/representative")
     public ApiResponseDto<SirenSummaryListDto> getRepresentativeSirenList() {
         List<Siren> representativeSirenList = sirenQueryService.getRepresentativeSirenList();
@@ -131,13 +124,11 @@ public class SirenApiController {
     }
 
     @Operation(summary = "사용자의 사이렌 목록 조회", description = "특정 사용자가 작성한 사이렌 목록을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/member/{userUrl}")
     public ApiResponseDto<SirenPagedSummaryListDto> getSirenListByUsername(@PathVariable("userUrl") String userUrl,
                                                                            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, LATEST_SORTING);
         Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByUserUrl(userUrl, pageable);
         SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
         setRecommendCntInList(listDto.getSirenList());
@@ -146,7 +137,7 @@ public class SirenApiController {
 
     @Operation(summary = "특정 사이렌 조회", description = "특정 사이렌의 상세 정보를 조회합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.BOARD_NOT_FOUND
     })
     @GetMapping("/{sirenId}")
     public ApiResponseDto<SirenDetailDto> getSirenByBoardId(@PathVariable("sirenId") Long sirenId) {
@@ -158,9 +149,7 @@ public class SirenApiController {
     }
 
     @Operation(summary = "랜덤 사이렌 조회", description = "임의의 사이렌을 조회합니다. 미해결 사이렌 중 임의로 3개의 사이렌을 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/random")
     public ApiResponseDto<SirenSummaryListDto> getUnresolvedRandomSirenList() {
         List<Siren> randomUnresolvedSirenList = sirenQueryService.getRandomUnresolvedSirenList();
@@ -173,16 +162,16 @@ public class SirenApiController {
     @Operation(summary = "사이렌 검색 및 정렬", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다." +
             "이때 정렬 파라미터와 필터 파라미터를 통해 검색 결과를 정렬합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT
     })
-    @GetMapping("/v2/search")
+    @GetMapping("/search")
     public ApiResponseDto<SirenPagedSummaryListDto> searchSirenListBySorting(
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sortParam") SirenSortParam sortParam,
             @RequestParam(name = "filterParam") SirenFilterParam filterParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         ObjectUtil.validateKeywordLength(keyword);
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, LATEST_SORTING);
         Page<Siren> pagedSirenList = sirenQueryService
                 .getPagedSirenListBySearchingAndSorting(keyword, sortParam, filterParam, pageable);
         SirenPagedSummaryListDto sirenPageDto = SirenConverter.toSirenPageDto(
