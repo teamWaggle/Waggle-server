@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,8 +50,6 @@ public class QuestionApiController {
     private final QuestionCommandService questionCommandService;
     private final QuestionQueryService questionQueryService;
     private final RecommendQueryService recommendQueryService;
-    //TODO remove latestSorting and use PageUtil variable
-    private final Sort latestSorting = Sort.by("createdDate").descending();
 
     @Operation(summary = "질문 작성 🔑", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample(value = {
@@ -112,7 +109,7 @@ public class QuestionApiController {
     @GetMapping("/member/{userUrl}")
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(@PathVariable("userUrl") String userUrl,
                                                                          @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, PageUtil.LATEST_SORTING);
         Page<Question> questions = questionQueryService.getPagedQuestionListByUserUrl(userUrl, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
@@ -143,7 +140,7 @@ public class QuestionApiController {
             @RequestParam(name = "sortParam") QuestionSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         ObjectUtil.validateKeywordLength(keyword);
-        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, PageUtil.LATEST_SORTING);
         Page<Question> pagedQuestionList = questionQueryService
                 .getPagedQuestionListByKeywordAndSortParam(keyword, sortParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(pagedQuestionList);
