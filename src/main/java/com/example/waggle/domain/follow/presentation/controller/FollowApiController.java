@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -32,9 +34,7 @@ public class FollowApiController {
     private final FollowQueryService followQueryService;
 
     @Operation(summary = "팔로우 신청 🔑", description = "사용자가 다른 유저에게 팔로우를 신청합니다. 해당 유저는 사용자의 팔로잉 멤버가 됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PostMapping("/follow")
     public ApiResponseDto<Long> requestFollow(@RequestParam("userUrl") String userUrl,
                                               @AuthUser Member member) {
@@ -43,9 +43,9 @@ public class FollowApiController {
     }
 
     @Operation(summary = "언팔로우 신청 🔑", description = "사용자의 팔로잉 멤버를 언팔로우 신청합니다. 해당 유저는 사용자와 팔로잉 멤버에서 제외됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.FOLLOW_NOT_FOUND
+    }, status = AUTH)
     @PostMapping("/unfollow")
     public ApiResponseDto<Boolean> requestUnFollow(@RequestParam("userUrl") String userUrl,
                                                    @AuthUser Member member) {
@@ -55,9 +55,7 @@ public class FollowApiController {
 
 
     @Operation(summary = "멤버 팔로잉 목록 조회", description = "조회한 멤버의 팔로잉 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/list/following/{userUrl}")
     public ApiResponseDto<List<MemberSummaryDto>> getFollowingMemberList(@PathVariable("userUrl") String userUrl) {
         List<Follow> followings = followQueryService.getFollowingsByUserUrl(userUrl);
@@ -68,9 +66,7 @@ public class FollowApiController {
 
 
     @Operation(summary = "멤버 팔로워 목록 조회", description = "조회한 멤버의 팔로워 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/list/follower/{userUrl}")
     public ApiResponseDto<List<MemberSummaryDto>> getFollowerMemberList(@PathVariable("userUrl") String userUrl) {
         List<Follow> followers = followQueryService.getFollowersByUserUrl(userUrl);
@@ -80,9 +76,7 @@ public class FollowApiController {
     }
 
     @Operation(summary = "상대방 팔로우 상태 확인 🔑", description = "조회하는 상대방을 팔로우하고 있는지 확인합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/following/{userUrl}")
     public ApiResponseDto<Boolean> checkFollowingTo(@PathVariable("userUrl") String userUrl,
                                                     @AuthUser Member member) {
