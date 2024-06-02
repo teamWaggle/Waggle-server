@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/recommends")
@@ -31,9 +33,7 @@ public class RecommendApiController {
     private final RecommendSyncService recommendSyncService;
 
     @Operation(summary = "게시글 좋아요 혹은 취소 🔑", description = "사용자가 좋아요 버튼을 누릅니다(추가 혹은 취소). 게시글의 좋아요 수가 추가되거나 감소됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> recommendBoard(@PathVariable("boardId") Long boardId,
                                                @AuthUser Member member) {
@@ -42,9 +42,7 @@ public class RecommendApiController {
     }
 
     @Operation(summary = "게시글 좋아요를 누른 사람들 목록 확인", description = "해당 게시글의 좋아요를 클릭한 사람의 목록을 보여줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/{boardId}/memberList")
     public ApiResponseDto<MemberSummaryListDto> getRecommendingMembers(@PathVariable("boardId") Long boardId) {
         recommendSyncService.syncRecommendation();
@@ -53,18 +51,17 @@ public class RecommendApiController {
     }
 
     @Operation(summary = "로그인 유저의 게시글 좋아요 유무 확인 🔑", description = "로그인 유저가 해당 게시글에 좋아요를 눌렀는지 확인합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/{boardId}")
     public ApiResponseDto<Boolean> getIsRecommend(@PathVariable("boardId") Long boardId,
                                                   @AuthUser Member member) {
-        return ApiResponseDto.onSuccess(recommendQueryService.checkRecommend(boardId, member.getUsername()));
+        return ApiResponseDto.onSuccess(recommendQueryService.checkRecommend(boardId, member));
     }
 
     @Operation(summary = "캐시 -> 데이터베이스 동기화 🔑", description = "유저의 활동을 위해 좋아요 정보를 rdb -> redis 로 옮깁니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI
     })
     @GetMapping("/sync")
     public ApiResponseDto<Boolean> syncRecommendInfo() {

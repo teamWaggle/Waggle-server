@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RecommendQueryService {
 
-    boolean checkRecommend(Long boardId, String username);
+    boolean checkRecommend(Long boardId, Member member);
 
     int countRecommend(Long boardId);
 
