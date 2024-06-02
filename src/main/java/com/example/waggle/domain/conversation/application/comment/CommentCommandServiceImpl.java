@@ -83,16 +83,6 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
-    public void deleteCommentForHardReset(Long commentId) {
-        commentRepository.findById(commentId).ifPresent(
-                comment -> {
-                    replyRepository.deleteAllByCommentId(commentId);
-                    commentRepository.delete(comment);
-                }
-        );
-    }
-
-    @Override
     public void deleteCommentByAdmin(Long commentId, Member member) {
         if (!member.getRole().equals(Role.ADMIN)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);

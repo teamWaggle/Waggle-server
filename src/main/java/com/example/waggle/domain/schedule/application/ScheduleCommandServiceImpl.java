@@ -77,6 +77,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
+        //TODO add validator : remove only memberSchedule count is zero(need to talk when meeting)
         commentRepository.deleteCommentsWithRelationsByBoard(scheduleId);
         boardRepository.deleteBoardsWithRelations(SCHEDULE, scheduleId);
     }

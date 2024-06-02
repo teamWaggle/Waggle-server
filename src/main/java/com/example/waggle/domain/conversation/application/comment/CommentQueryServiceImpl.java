@@ -11,19 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class CommentQueryServiceImpl implements CommentQueryService {
     private final CommentRepository commentRepository;
-
-    @Override
-    public List<Comment> getComments(Long boardId) {
-        return commentRepository.findByBoardId(boardId);
-    }
 
     @Override
     public Page<Comment> getPagedComments(Long boardId, Pageable pageable) {
