@@ -26,19 +26,12 @@ public class RecommendCommandServiceImpl implements RecommendCommandService {
     public void handleRecommendation(Long boardId, Member member) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
-//        validateRecommendMyself(member, board);
 
         boolean isRecommended = recommendRepository.existsByMemberAndBoard(member, board);
         if (isRecommended) {
             cancelRecommendation(board, member);
         } else {
             createRecommendation(board, member);
-        }
-    }
-
-    private static void validateRecommendMyself(Member member, Board board) {
-        if (board.getMember().equals(member)) {
-            throw new RecommendHandler(ErrorStatus.BOARD_CANNOT_RECOMMEND_OWN);
         }
     }
 
