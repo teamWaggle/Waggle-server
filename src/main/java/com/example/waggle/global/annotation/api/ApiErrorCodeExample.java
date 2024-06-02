@@ -13,7 +13,7 @@ import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.DEF
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiErrorCodeExample {
 
-    ErrorStatus[] value();
+    ErrorStatus[] value() default {ErrorStatus._INTERNAL_SERVER_ERROR};
 
     PredefinedErrorStatus status() default DEFAULT;
 }

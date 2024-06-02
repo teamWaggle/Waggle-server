@@ -10,6 +10,19 @@ public enum PredefinedErrorStatus {
             ErrorStatus._INTERNAL_SERVER_ERROR,
             ErrorStatus._UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR,
             ErrorStatus._ASSIGNABLE_PARAMETER
+    )),
+    BOARD_DATA_CHANGE(List.of(
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus._UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR,
+            ErrorStatus._ASSIGNABLE_PARAMETER,
+            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
+            ErrorStatus.BOARD_NOT_FOUND
+    )),
+    ADMIN(List.of(
+            ErrorStatus._INTERNAL_SERVER_ERROR,
+            ErrorStatus._UNAUTHORIZED_LOGIN_DATA_RETRIEVAL_ERROR,
+            ErrorStatus._ASSIGNABLE_PARAMETER,
+            ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI
     ));
 
     private final List<ErrorStatus> errorStatuses;
