@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.persistence.dao.jpa;
+package com.example.waggle.domain.chat.persistence.dao;
 
 import com.example.waggle.domain.chat.persistence.entity.ChatRoomMember;
 import java.util.List;
