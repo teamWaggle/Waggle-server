@@ -15,6 +15,4 @@ public interface PetCommandService {
 
     void deletePetByAdmin(Long petId, Member member);
 
-    void deleteAllPetByUser(String username);
-
 }

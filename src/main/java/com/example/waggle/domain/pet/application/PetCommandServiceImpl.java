@@ -1,6 +1,5 @@
 package com.example.waggle.domain.pet.application;
 
-import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Gender;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
@@ -15,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 
 @RequiredArgsConstructor
 @Transactional
@@ -24,7 +21,6 @@ import java.util.List;
 public class PetCommandServiceImpl implements PetCommandService {
 
     private final PetRepository petRepository;
-    private final MemberQueryService memberQueryService;
     private final AwsS3Service awsS3Service;
 
     @Override
@@ -63,16 +59,6 @@ public class PetCommandServiceImpl implements PetCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION);
         }
         petRepository.deleteById(petId);
-    }
-
-    @Override
-    public void deleteAllPetByUser(String username) {
-        Member member = memberQueryService.getMemberByUsername(username);
-        List<Pet> pets = petRepository.findByMemberUsername(member.getUsername());
-        pets.stream().forEach(pet -> {
-            awsS3Service.deleteFile(pet.getProfileImgUrl());
-            petRepository.delete(pet);
-        });
     }
 
 
