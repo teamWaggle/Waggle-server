@@ -1,5 +1,6 @@
 package com.example.waggle.domain.conversation.presentation.controller;
 
+import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.application.comment.CommentQueryService;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
@@ -20,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -33,7 +33,7 @@ public class CommentApiController {
 
     private final CommentCommandService commentCommandService;
     private final CommentQueryService commentQueryService;
-    private Sort latestSorting = Sort.by("createdDate").descending();
+
 
     @Operation(summary = "특정 게시글(로그, 질답, 사이렌) 댓글 페이징 조회", description = "게시글의 댓글 목록을 페이징 조회합니다.")
     @ApiErrorCodeExample({
@@ -41,8 +41,9 @@ public class CommentApiController {
     })
     @GetMapping("/{boardId}/paged")
     public ApiResponseDto<CommentListDto> getCommentsByPage(@PathVariable("boardId") Long boardId,
+                                                            @RequestParam(name = "boardType") BoardType boardType,
                                                             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, PageUtil.getCommentSortingMethod(boardType));
         Page<Comment> pagedComments = commentQueryService.getPagedComments(boardId, pageable);
         CommentListDto listDto = CommentConverter.toCommentListDto(pagedComments);
         return ApiResponseDto.onSuccess(listDto);
