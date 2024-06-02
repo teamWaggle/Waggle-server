@@ -11,8 +11,6 @@ public interface CommentCommandService {
 
     void deleteComment(Long commentId, Member member);
 
-    void deleteCommentForHardReset(Long commentId);     //TODO remove
-
     void deleteCommentByAdmin(Long commentId, Member member);
 
 }
