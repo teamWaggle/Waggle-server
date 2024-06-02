@@ -37,25 +37,8 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     }
 
     @Override
-    public List<Schedule> getTeamSchedules(Long teamId) {
-        return scheduleRepository.findAllByTeamId(teamId);
-    }
-
-    @Override
     public Page<Schedule> getPagedTeamSchedules(Long teamId, Pageable pageable) {
         return scheduleRepository.findPagedByTeamId(teamId, pageable);
-    }
-
-    @Override
-    public List<Schedule> getSchedulesByOwner(Long memberId) {
-        return scheduleRepository.findListByMemberId(memberId);
-    }
-
-    @Override
-    public List<Schedule> getSchedulesByMember(Long memberId) {
-        return memberScheduleRepository.findByMemberId(memberId).stream()
-                .map(MemberSchedule::getSchedule)
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -110,9 +93,6 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         return memberScheduleRepository.findOverlappingScheduleList(member, schedule);
     }
 
-    //사실 scheduleListDto안에 바로 값을 넣어주는게 더 깔끔할 것 같은데
-    //수경님이 예전에 그런식으로 짜는 걸 별로 안좋아하시는 것 같아서 일단 이렇게 짜봤습니다
-    //뭐가 나을지 코멘트 부탁드려요
     @Override
     public HashMap<Long, Long> getMapOfOverlappedScheduleCount(Member member, ScheduleListDto scheduleListDto) {
         HashMap<Long, Long> countHashMap = new HashMap<>();

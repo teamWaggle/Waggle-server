@@ -86,7 +86,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         validateRemovedIsLeader(memberId, team);
         Participation participation = participationRepository.findByTeamIdAndMemberId(teamId, memberId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.PARTICIPATION_NOT_FOUND));
-        participation.setStatus(ParticipationStatus.REJECTED);
+        participation.setStatus(ParticipationStatus.REJECTED);      //TODO not rejected, delete participation entity
         memberScheduleRepository.deleteAllByMemberId(memberId);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(memberId, teamId);
     }
