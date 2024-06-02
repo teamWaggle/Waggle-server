@@ -1,5 +1,6 @@
 package com.example.waggle.domain.member.presentation.controller;
 
+import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
 import com.example.waggle.domain.follow.application.FollowQueryService;
 import com.example.waggle.domain.member.application.MemberCommandService;
 import com.example.waggle.domain.member.application.MemberQueryService;
@@ -45,6 +46,7 @@ public class MemberApiController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
     private final FollowQueryService followQueryService;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final EmailService emailService;
 
 
@@ -93,6 +95,7 @@ public class MemberApiController {
         MemberDetailDto memberDetailDto = MemberConverter.toMemberDetailDto(member);
         memberDetailDto.setFollowerCount(followQueryService.getFollowersByUserUrl(userUrl).stream().count());
         memberDetailDto.setFollowingCount(followQueryService.getFollowingsByUserUrl(userUrl).stream().count());
+        memberDetailDto.setChatRoomCount(chatRoomMemberRepository.findAllByMemberId(member.getId()).stream().count());
         return ApiResponseDto.onSuccess(memberDetailDto);
     }
 

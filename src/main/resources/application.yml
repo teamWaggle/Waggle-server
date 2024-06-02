@@ -72,3 +72,5 @@ app:
   profile:
     member: ${MEMBER_DEFAULT_IMG}
     pet: ${PET_DEFAULT_IMG}
+  server:
+    uri: ${SERVER_URI}
