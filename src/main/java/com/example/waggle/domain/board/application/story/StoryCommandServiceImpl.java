@@ -5,12 +5,10 @@ import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository
 import com.example.waggle.domain.board.persistence.dao.story.jpa.StoryRepository;
 import com.example.waggle.domain.board.persistence.entity.Story;
 import com.example.waggle.domain.board.presentation.dto.story.StoryRequest;
-import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
-import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.StoryHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -30,10 +28,8 @@ public class StoryCommandServiceImpl implements StoryCommandService {
     private final StoryRepository storyRepository;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
-    private final RecommendRepository recommendRepository;
     private final BoardService boardService;
     private final MediaCommandService mediaCommandService;
-    private final CommentCommandService commentCommandService;
 
 
     @Override
@@ -69,19 +65,6 @@ public class StoryCommandServiceImpl implements StoryCommandService {
         return story.getId();
     }
 
-
-    @Override   //TODO remove(not usages)
-    public void deleteStory(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, STORY, member)) {
-            throw new StoryHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Story story = storyRepository.findById(boardId)
-                .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-        story.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-        recommendRepository.deleteAllByBoardId(story.getId());
-        mediaCommandService.deleteMedia(story);
-        storyRepository.delete(story);
-    }
 
     @Override
     public void deleteStoryWithRelations(Long boardId, Member member) {
