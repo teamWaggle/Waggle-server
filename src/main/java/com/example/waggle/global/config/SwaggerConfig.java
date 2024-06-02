@@ -112,10 +112,10 @@ public class SwaggerConfig {
     }
 
     private void generateErrorCodeResponseExample(
-            Operation operation, ErrorStatus[] errorStatuses, PredefinedErrorStatus authenticationEnum) {
+            Operation operation, ErrorStatus[] errorStatuses, PredefinedErrorStatus status) {
         ApiResponses responses = operation.getResponses();
         List<ErrorStatus> showErrorStatus = new ArrayList<>();
-        showErrorStatus.addAll(authenticationEnum.getErrorStatuses());
+        showErrorStatus.addAll(status.getErrorStatuses());
         showErrorStatus.addAll(Arrays.asList(errorStatuses));
 
         Map<Integer, List<ExampleHolder>> statusWithExampleHolders =

@@ -82,7 +82,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
     @Override
     public void deleteQuestionWithRelations(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member) || !member.getRole().equals(Role.ADMIN)) {
+        if (!boardService.validateMemberUseBoard(boardId, QUESTION, member)) {
             throw new QuestionHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
         }
         Question question = questionRepository.findById(boardId)
