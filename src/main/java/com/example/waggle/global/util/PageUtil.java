@@ -10,6 +10,7 @@ public class PageUtil {
     public static int QUESTION_SIZE = 9;
     public static int SIREN_SIZE = 8;
     public static int COMMENT_SIZE = 5;
+    public static int REPLY_SIZE = 10;
     public static int CHAT_ROOM_SIZE = 9;
     public static int CHAT_MESSAGE_SIZE = 20;
     public static int TEAM_RECOMMEND_SIZE = 3;
