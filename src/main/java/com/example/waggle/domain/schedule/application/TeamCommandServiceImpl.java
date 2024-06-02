@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,10 +73,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
         awsS3Service.deleteFile(team.getCoverImageUrl());
-        List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
-        allByTeamId.stream()
-                .forEach(schedule -> scheduleCommandService.deleteScheduleForHardReset(schedule.getId()));
-        teamRepository.delete(team);
+        teamRepository.deleteTeamWithRelations(teamId);
     }
 
     @Override
