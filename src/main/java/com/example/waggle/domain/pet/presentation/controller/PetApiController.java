@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/pets")
@@ -35,9 +38,7 @@ public class PetApiController {
     private final PetQueryService petQueryService;
 
     @Operation(summary = "반려견 정보 입력 🔑", description = "반려견 정보를 입력합니다. 입력한 반려견의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createPet(@RequestPart("createPetRequest") @Validated PetRequest createPetRequest,
                                           @AuthUser Member member) {
@@ -48,9 +49,10 @@ public class PetApiController {
 
 
     @Operation(summary = "반려견 정보 수정 🔑", description = "반려견 정보를 수정합니다. 입력한 반려견의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.PET_NOT_FOUND,
+            ErrorStatus.MEDIA_REQUEST_IS_EMPTY
+    }, status = AUTH)
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
                                           @RequestPart("updatePetRequest") @Validated PetRequest updatePetRequest,
@@ -61,9 +63,7 @@ public class PetApiController {
     }
 
     @Operation(summary = "반려견 정보 조회", description = "회원 ID를 통해 반려견의 정보를 목록으로 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/{userUrl}")
     public ApiResponseDto<List<PetResponse.PetDetailDto>> findPets(@PathVariable("userUrl") String userUrl) {
         List<Pet> petsByUsername = petQueryService.getPetsByUserUrl(userUrl);
@@ -71,9 +71,10 @@ public class PetApiController {
     }
 
     @Operation(summary = "반려견 삭제 🔑", description = "회원의 특정 반려견의 정보를 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.PET_NOT_FOUND,
+            ErrorStatus.MEDIA_REQUEST_IS_EMPTY
+    }, status = AUTH)
     @DeleteMapping("/{petId}")
     public ApiResponseDto<Boolean> deletePet(@PathVariable("petId") Long petId,
                                              @AuthUser Member member) {
@@ -82,10 +83,7 @@ public class PetApiController {
     }
 
     @Operation(summary = "반려견 강제 삭제 🔑", description = "회원의 특정 반려견의 정보가 관리자에 의해 삭제됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR,
-            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
-    })
+    @ApiErrorCodeExample(status = ADMIN)
     @DeleteMapping("/{petId}/admin")
     public ApiResponseDto<Boolean> deletePetByAdmin(@PathVariable("petId") Long petId,
                                                     @AuthUser Member admin) {
