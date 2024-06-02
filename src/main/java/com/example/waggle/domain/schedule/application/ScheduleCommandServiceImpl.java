@@ -2,7 +2,6 @@ package com.example.waggle.domain.schedule.application;
 
 import com.example.waggle.domain.board.application.board.BoardService;
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
-import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
@@ -36,7 +35,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     private final CommentRepository commentRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final MemberScheduleRepository memberScheduleRepository;
-    private final CommentCommandService commentCommandService;
     private final BoardService boardService;
 
 

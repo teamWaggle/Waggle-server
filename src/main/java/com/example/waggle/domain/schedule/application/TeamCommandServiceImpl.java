@@ -5,7 +5,10 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
-import com.example.waggle.domain.schedule.persistence.dao.jpa.*;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.*;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
 import com.example.waggle.exception.object.handler.MemberHandler;
@@ -27,11 +30,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final ScheduleRepository scheduleRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final ParticipationRepository participationRepository;
     private final NotificationRepository notificationRepository;
-    private final ScheduleCommandService scheduleCommandService;
     private final AwsS3Service awsS3Service;
     private final int teamCapacityLimit = 15;
 

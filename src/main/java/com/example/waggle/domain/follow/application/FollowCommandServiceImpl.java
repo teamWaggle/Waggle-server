@@ -24,18 +24,6 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     private final NotificationRepository notificationRepository;
 
     @Override
-    public Long follow(String from, String to) {
-        Member member = memberRepository.findByUsername(from)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Member followee = memberRepository.findByNickname(to)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        validateFollowing(member, followee);
-        Follow follow = buildFollow(member, followee);
-        followRepository.save(follow);
-        return follow.getId();
-    }
-
-    @Override
     public Long follow(Member from, String to) {
         Member followee = memberRepository.findByUserUrl(to)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -46,18 +34,6 @@ public class FollowCommandServiceImpl implements FollowCommandService {
                 Notification.of(from, follow)
         );
         return follow.getId();
-    }
-
-    @Override
-    public void unFollow(String from, String to) {
-        Member fromMember = memberRepository.findByUsername(from)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Member toMember = memberRepository.findByNickname(to)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Follow follow = followRepository
-                .findByToMemberAndFromMember(toMember, fromMember)
-                .orElseThrow(() -> new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND));
-        followRepository.delete(follow);
     }
 
     @Override
@@ -80,10 +56,9 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     }
 
     private static Follow buildFollow(Member member, Member followee) {
-        Follow follow = Follow.builder()
+        return Follow.builder()
                 .fromMember(member)
                 .toMember(followee)
                 .build();
-        return follow;
     }
 }
