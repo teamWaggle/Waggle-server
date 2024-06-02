@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionDetailDto;
 import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.*;
+import static com.example.waggle.global.util.PageUtil.LATEST_SORTING;
 import static com.example.waggle.global.util.PageUtil.QUESTION_SIZE;
 
 @Slf4j
@@ -109,7 +110,7 @@ public class QuestionApiController {
     @GetMapping("/member/{userUrl}")
     public ApiResponseDto<QuestionSummaryListDto> getQuestionsByUsername(@PathVariable("userUrl") String userUrl,
                                                                          @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, PageUtil.LATEST_SORTING);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, LATEST_SORTING);
         Page<Question> questions = questionQueryService.getPagedQuestionListByUserUrl(userUrl, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
         setRecommendCntInList(listDto.getQuestionList());
@@ -140,7 +141,7 @@ public class QuestionApiController {
             @RequestParam(name = "sortParam") QuestionSortParam sortParam,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         ObjectUtil.validateKeywordLength(keyword);
-        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, PageUtil.LATEST_SORTING);
+        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, LATEST_SORTING);
         Page<Question> pagedQuestionList = questionQueryService
                 .getPagedQuestionListByKeywordAndSortParam(keyword, sortParam, pageable);
         QuestionSummaryListDto listDto = QuestionConverter.toListDto(pagedQuestionList);
