@@ -14,8 +14,6 @@ public interface QuestionCommandService {
 
     void convertStatus(Long boardId, Member member);
 
-    void deleteQuestion(Long boardId, Member member);
-
     void deleteQuestionWithRelations(Long boardId, Member member);
 
     void deleteQuestionByAdmin(Long boardId, Member member);

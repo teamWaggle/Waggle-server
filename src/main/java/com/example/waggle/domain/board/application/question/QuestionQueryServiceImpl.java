@@ -6,7 +6,6 @@ import com.example.waggle.domain.board.presentation.dto.question.QuestionSortPar
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
-import com.example.waggle.global.service.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,28 +26,12 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final QuestionRepository questionRepository;
     private final RecommendRepository recommendRepository;
-    private final RedisService redisService;
-
-    @Override
-    public List<Question> getAllQuestion() {
-        List<Question> questions = questionRepository.findAll();
-        return questions;
-    }
-
-    @Override
-    public Page<Question> getPagedQuestionListByUsername(String username, Pageable pageable) {
-        return questionRepository.findByMemberUsername(username, pageable);
-    }
 
     @Override
     public Page<Question> getPagedQuestionListByUserUrl(String userUrl, Pageable pageable) {
         return questionRepository.findByMemberUserUrl(userUrl, pageable);
     }
 
-    @Override
-    public Page<Question> getPagedQuestionListByMemberId(Long memberId, Pageable pageable) {
-        return questionRepository.findPageByMemberId(memberId, pageable);
-    }
 
     @Override
     public Question getQuestionByBoardId(Long boardId) {
@@ -56,15 +39,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.BOARD_NOT_FOUND));
     }
 
-    @Override
-    public Page<Question> getPagedQuestionList(Pageable pageable) {
-        return questionRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<Question> getPagedQuestionListBySortParam(QuestionSortParam sortParam, Pageable pageable) {
-        return questionRepository.findQuestionsBySortParam(sortParam, pageable);
-    }
 
     @Override
     public List<Question> getRepresentativeQuestionList() {
@@ -81,10 +55,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     }
 
-    @Override
-    public Page<Question> getPagedQuestionListByKeyword(String keyword, Pageable pageable) {
-        return questionRepository.findQuestionsByKeyword(keyword, pageable);
-    }
 
     @Override
     public Page<Question> getPagedQuestionListByKeywordAndSortParam(String keyword, QuestionSortParam sortParam, Pageable pageable) {
