@@ -1,8 +1,8 @@
 package com.example.waggle.domain.chat.application.room;
 
-import com.example.waggle.domain.chat.persistence.dao.ChatMessageRepository;
-import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
-import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
+import com.example.waggle.domain.chat.persistence.dao.jpa.ChatMessageRepository;
+import com.example.waggle.domain.chat.persistence.dao.jpa.ChatRoomMemberRepository;
+import com.example.waggle.domain.chat.persistence.dao.jpa.ChatRoomRepository;
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoomMember;
@@ -81,6 +81,11 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
                 .map(ChatMessage::getSenderUserUrl)
                 .flatMap(this::findProfileImgUrlByUserUrl)
                 .orElse(MediaUtil.getDefaultMemberProfileImgUrl());
+    }
+
+    @Override
+    public Long countChatRoomsByMemberId(Long memberId) {
+        return chatRoomRepository.countChatRoomsByMemberId(memberId);
     }
 
     private Optional<ChatMessage> findLastChatMessageByChatRoomId(Long chatRoomId) {

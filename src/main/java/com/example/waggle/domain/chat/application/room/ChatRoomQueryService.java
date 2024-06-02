@@ -23,4 +23,6 @@ public interface ChatRoomQueryService {
 
     String getLastSenderProfileImgUrl(Long chatRoomId);
 
+    Long countChatRoomsByMemberId(Long memberId);
+
 }
