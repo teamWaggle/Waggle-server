@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.persistence.dao;
+package com.example.waggle.domain.chat.persistence.dao.jpa;
 
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import org.springframework.data.domain.Page;
