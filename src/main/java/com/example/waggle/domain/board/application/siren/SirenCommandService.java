@@ -15,8 +15,6 @@ public interface SirenCommandService {
 
     void convertStatus(Long boardId, Member member);
 
-    void deleteSiren(Long boardId, Member member);
-
     void deleteSirenWithRelations(Long boardId, Member member);
 
     void deleteSirenByAdmin(Long boardId, Member member);
