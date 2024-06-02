@@ -7,7 +7,6 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.domain.recommend.persistence.entity.Recommend;
 import com.example.waggle.exception.object.general.GeneralException;
-import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,18 +26,12 @@ public class RecommendQueryServiceImpl implements RecommendQueryService {
     private final MemberRepository memberRepository;
 
     @Override
-    public boolean checkRecommend(Long boardId, String username) {
-        if ("anonymousUser".equals(username)) {
-            return false;
-        }
+    public boolean checkRecommend(Long boardId, Member member) {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
 
-        Member signInMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        return recommendRepository.existsByMemberAndBoard(signInMember, board);
+        return recommendRepository.existsByMemberAndBoard(member, board);
     }
 
     @Override

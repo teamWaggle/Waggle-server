@@ -1,10 +1,7 @@
 package com.example.waggle.domain.recommend.application.query;
 
-import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.exception.object.handler.MemberHandler;
-import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +16,11 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Service
 public class RecommendQueryServiceImplV2 implements RecommendQueryService {
-    private final MemberRepository memberRepository;
     private final RecommendRepository recommendRepository;
     private final RedisService redisService;
 
     @Override
-    public boolean checkRecommend(Long boardId, String username) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.RECOMMEND_NOT_FOUND));
+    public boolean checkRecommend(Long boardId, Member member) {
         validateInitRecommend(member);
         if (redisService.existRecommend(member.getId(), boardId)) {
             return true;
