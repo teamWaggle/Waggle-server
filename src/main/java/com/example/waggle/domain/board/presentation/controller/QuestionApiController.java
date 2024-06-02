@@ -93,36 +93,7 @@ public class QuestionApiController {
         questionCommandService.convertStatus(questionId, member);
         return ApiResponseDto.onSuccess(questionId);
     }
-
-
-    @Operation(summary = "전체 질문 목록 조회", description = "전체 질문 목록을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping
-    public ApiResponseDto<QuestionSummaryListDto> getAllQuestions(
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE, resolutionStatusSorting);
-        Page<Question> questions = questionQueryService.getPagedQuestionList(pageable);
-        QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        setRecommendCntInList(listDto.getQuestionList());
-        return ApiResponseDto.onSuccess(listDto);
-    }
-
-    @Operation(summary = "질문 정렬 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/sort")
-    public ApiResponseDto<QuestionSummaryListDto> getQuestionsBySortParam(
-            @RequestParam(name = "sortParam") QuestionSortParam sortParam,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.QUESTION_SIZE);
-        Page<Question> questions = questionQueryService.getPagedQuestionListBySortParam(sortParam, pageable);
-        QuestionSummaryListDto listDto = QuestionConverter.toListDto(questions);
-        setRecommendCntInList(listDto.getQuestionList());
-        return ApiResponseDto.onSuccess(listDto);
-    }
+    
 
     @Operation(summary = "대표 질문 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
     @ApiErrorCodeExample({
@@ -163,22 +134,6 @@ public class QuestionApiController {
         detailDto.setViewCount(questionCacheService.applyViewCountToRedis(questionId));
         detailDto.setRecommendCount(recommendQueryService.countRecommend(questionId));
         return ApiResponseDto.onSuccess(detailDto);
-    }
-
-    @Operation(summary = "질문 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/search")
-    public ApiResponseDto<QuestionSummaryListDto> searchQuestionList(
-            @RequestParam String keyword,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        ObjectUtil.validateKeywordLength(keyword);
-        Pageable pageable = PageRequest.of(currentPage, QUESTION_SIZE, latestSorting);
-        Page<Question> pagedQuestionList = questionQueryService.getPagedQuestionListByKeyword(keyword, pageable);
-        QuestionSummaryListDto listDto = QuestionConverter.toListDto(pagedQuestionList);
-        setRecommendCntInList(listDto.getQuestionList());
-        return ApiResponseDto.onSuccess(listDto);
     }
 
     @Operation(summary = "질문 검색 및 정렬", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다." +
