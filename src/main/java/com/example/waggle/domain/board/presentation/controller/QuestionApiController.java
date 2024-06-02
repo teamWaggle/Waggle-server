@@ -15,7 +15,6 @@ import com.example.waggle.domain.recommend.application.query.RecommendQueryServi
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
-import com.example.waggle.global.annotation.api.PredefinedErrorStatus;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.ObjectUtil;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionDetailDto;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
 import static com.example.waggle.global.util.PageUtil.QUESTION_SIZE;
 
 @Slf4j
@@ -57,7 +57,7 @@ public class QuestionApiController {
     @Operation(summary = "질문 작성 🔑", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample(value = {
             ErrorStatus.MEDIA_PREFIX_IS_WRONG
-    }, status = PredefinedErrorStatus.AUTH)
+    }, status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createQuestion(
             @RequestPart("createQuestionRequest") @Validated QuestionRequest createQuestionRequest,
@@ -70,9 +70,11 @@ public class QuestionApiController {
     }
 
     @Operation(summary = "질문 수정 🔑", description = "사용자가 질문 수정합니다. 수정한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.MEDIA_PREFIX_IS_WRONG,
+            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
+            ErrorStatus.BOARD_NOT_FOUND
+    }, status = AUTH)
     @PutMapping(value = "/{questionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateQuestion(@PathVariable("questionId") Long questionId,
                                                @RequestPart("updateQuestionRequest") @Validated QuestionRequest updateQuestionRequest,
@@ -85,9 +87,11 @@ public class QuestionApiController {
     }
 
     @Operation(summary = "질문 상태 변경 🔑", description = "사용자가 질문 상태 변경합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
+            ErrorStatus.BOARD_NOT_FOUND,
+            ErrorStatus.BOARD_INVALID_TYPE
+    }, status = AUTH)
     @PutMapping(value = "/{questionId}/status")
     public ApiResponseDto<Long> convertStatus(@PathVariable("questionId") Long questionId,
                                               @AuthUser Member member) {
@@ -97,9 +101,7 @@ public class QuestionApiController {
 
 
     @Operation(summary = "대표 질문 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {})
     @GetMapping("/representative")
     public ApiResponseDto<RepresentativeQuestionDto> getRepresentativeQuestionList() {
         List<Question> representativeQuestionList = questionQueryService.getRepresentativeQuestionList();
@@ -125,11 +127,10 @@ public class QuestionApiController {
 
     @Operation(summary = "특정 질문 조회", description = "특정 질문의 상세 정보를 조회합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.BOARD_NOT_FOUND
     })
     @GetMapping("/{questionId}")
-    public ApiResponseDto<QuestionDetailDto> getQuestionByBoardId(
-            @PathVariable("questionId") Long questionId) {
+    public ApiResponseDto<QuestionDetailDto> getQuestionByBoardId(@PathVariable("questionId") Long questionId) {
         Question questionByBoardId = questionQueryService.getQuestionByBoardId(questionId);
         QuestionDetailDto detailDto = QuestionConverter.toDetailDto(questionByBoardId);
         detailDto.setViewCount(questionCacheService.applyViewCountToRedis(questionId));
@@ -140,9 +141,9 @@ public class QuestionApiController {
     @Operation(summary = "질문 검색 및 정렬", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 질문을 조회합니다." +
             "이때 정렬 파라미터를 통해 검색 결과를 정렬합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT
     })
-    @GetMapping("/v2/search")
+    @GetMapping("/search")
     public ApiResponseDto<QuestionSummaryListDto> searchQuestionListBySortParam(
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "sortParam") QuestionSortParam sortParam,
@@ -158,9 +159,10 @@ public class QuestionApiController {
 
 
     @Operation(summary = "질문 삭제 🔑", description = "특정 질문을 삭제합니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
+            ErrorStatus.BOARD_NOT_FOUND
+    }, status = AUTH)
     @DeleteMapping("/{questionId}")
     public ApiResponseDto<Boolean> deleteQuestion(@PathVariable("questionId") Long questionId,
                                                   @AuthUser Member member) {
@@ -169,10 +171,11 @@ public class QuestionApiController {
     }
 
     @Operation(summary = "질문 강제 삭제 🔑", description = "특정 질문이 관리자에 의해 삭제됩니다. 게시글과 관련된 댓글, 대댓글, 미디어 등 모두 삭제됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR,
-            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.AUTH_ROLE_CANNOT_EXECUTE_URI,
+            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION,
+            ErrorStatus.BOARD_NOT_FOUND
+    }, status = AUTH)
     @DeleteMapping("/{questionId}/admin")
     public ApiResponseDto<Boolean> deleteQuestionByAdmin(@PathVariable("questionId") Long questionId,
                                                          @AuthUser Member admin) {
