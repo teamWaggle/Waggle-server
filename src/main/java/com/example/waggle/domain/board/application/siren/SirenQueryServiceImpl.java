@@ -8,7 +8,6 @@ import com.example.waggle.domain.board.presentation.dto.siren.SirenSortParam;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.SirenHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
-import com.example.waggle.global.service.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,17 +28,6 @@ public class SirenQueryServiceImpl implements SirenQueryService {
 
     private final SirenRepository sirenRepository;
     private final RecommendRepository recommendRepository;
-    private final RedisService redisService;
-
-    @Override
-    public List<Siren> getAllSiren() {
-        return sirenRepository.findAll();
-    }
-
-    @Override
-    public Page<Siren> getPagedSirenList(Pageable pageable) {
-        return sirenRepository.findAll(pageable);
-    }
 
     @Override
     public List<Siren> getRepresentativeSirenList() {
@@ -56,23 +44,8 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     }
 
     @Override
-    public Page<Siren> getPagedSirenListByUsername(String username, Pageable pageable) {
-        return sirenRepository.findByMemberUsername(username, pageable);
-    }
-
-    @Override
     public Page<Siren> getPagedSirenListByUserUrl(String userUrl, Pageable pageable) {
         return sirenRepository.findByMemberUserUrl(userUrl, pageable);
-    }
-
-    @Override
-    public Page<Siren> getPagedSirenListByMemberId(Long memberId, Pageable pageable) {
-        return sirenRepository.findByMemberId(memberId, pageable);
-    }
-
-    @Override
-    public Page<Siren> getPagedSirenListByFilterAndSort(SirenFilterParam filterParam, SirenSortParam sortParam, Pageable pageable) {
-        return sirenRepository.findSirensByFilterAndSort(filterParam, sortParam, pageable);
     }
 
     @Override
@@ -84,11 +57,6 @@ public class SirenQueryServiceImpl implements SirenQueryService {
     @Override
     public List<Siren> getRandomUnresolvedSirenList() {
         return sirenRepository.findRandomUnresolvedSirens();
-    }
-
-    @Override
-    public Page<Siren> getPagedSirenListByKeyword(String keyword, Pageable pageable) {
-        return sirenRepository.findSirensByKeyword(keyword, pageable);
     }
 
     @Override

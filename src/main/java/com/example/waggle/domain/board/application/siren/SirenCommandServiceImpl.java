@@ -7,13 +7,11 @@ import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.Siren;
 import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.board.presentation.dto.siren.SirenRequest;
-import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.media.application.MediaCommandService;
 import com.example.waggle.domain.member.persistence.entity.Gender;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
-import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.QuestionHandler;
 import com.example.waggle.exception.object.handler.SirenHandler;
@@ -32,11 +30,9 @@ import static com.example.waggle.domain.board.persistence.entity.BoardType.SIREN
 public class SirenCommandServiceImpl implements SirenCommandService {
 
     private final SirenRepository sirenRepository;
-    private final RecommendRepository recommendRepository;
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final BoardService boardService;
-    private final CommentCommandService commentCommandService;
     private final MediaCommandService mediaCommandService;
 
     @Override
@@ -76,20 +72,6 @@ public class SirenCommandServiceImpl implements SirenCommandService {
             case UNRESOLVED -> siren.changeStatus(ResolutionStatus.RESOLVED);
             default -> throw new QuestionHandler(ErrorStatus.BOARD_INVALID_TYPE);
         }
-    }
-
-    @Override       //TODO remove(no usages)
-    public void deleteSiren(Long boardId, Member member) {
-        if (!boardService.validateMemberUseBoard(boardId, SIREN, member)) {
-            throw new SirenHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Siren siren = sirenRepository.findById(boardId)
-                .orElseThrow(() -> new SirenHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        siren.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-        recommendRepository.deleteAllByBoardId(boardId);
-
-        sirenRepository.delete(siren);
     }
 
     @Override
