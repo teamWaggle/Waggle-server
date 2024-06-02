@@ -72,9 +72,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
+        validateTeamMemberIsOnlyOne(team);
         awsS3Service.deleteFile(team.getCoverImageUrl());
         teamRepository.deleteTeamWithRelations(teamId);
     }
+
 
     @Override
     public void deleteTeamMemberByLeader(Long teamId, Long memberId, Member leader) {
@@ -228,5 +230,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .member(member)
                 .status(ParticipationStatus.PENDING)
                 .build();
+    }
+
+    private void validateTeamMemberIsOnlyOne(Team team) {
+        if (teamMemberRepository.countByTeam(team) > 1) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_IS_OVER_THAN_ONE);
+        }
     }
 }
