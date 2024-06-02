@@ -5,9 +5,9 @@ import com.example.waggle.domain.board.presentation.dto.question.QuestionRespons
 import com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionSummaryDto;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.QuestionSummaryListDto;
 import com.example.waggle.domain.board.presentation.dto.question.QuestionResponse.RepresentativeQuestionDto;
+import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
-import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -49,6 +49,7 @@ public class QuestionConverter {
                 .mediaList(MediaUtil.getBoardMedias(question))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
                 .viewCount(question.getViewCount())
+                .commentCount(question.getComments().size())
                 .build();
     }
 
