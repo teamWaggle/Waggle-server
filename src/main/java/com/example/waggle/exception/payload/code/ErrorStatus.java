@@ -85,6 +85,7 @@ public enum ErrorStatus implements BaseCode {
     TEAM_SIZE_IS_OVER_THAN_MAX_SIZE(BAD_REQUEST, 4215, "수용할 수 있는 팀멤버를 초과하는 요청입니다"),
     SCHEDULE_WAS_ALREADY_CHOSEN(BAD_REQUEST, 4216, " 이미 선택하신 스케줄입니다."),
     PARTICIPATION_NOT_FOUND(NOT_FOUND, 4217, "존재하지 않는 참가 지원입니다."),
+    TEAM_MEMBER_IS_OVER_THAN_ONE(BAD_REQUEST, 4218, "팀 멤버 수가 1명보다 많습니다. 팀 삭제는 한명이 남았을 때만 가능합니다."),
 
 
     // 펫 관련 오류 (4250 ~ 4299)
