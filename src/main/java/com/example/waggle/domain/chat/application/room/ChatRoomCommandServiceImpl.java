@@ -1,7 +1,7 @@
 package com.example.waggle.domain.chat.application.room;
 
-import com.example.waggle.domain.chat.persistence.dao.jpa.ChatRoomMemberRepository;
-import com.example.waggle.domain.chat.persistence.dao.jpa.ChatRoomRepository;
+import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
+import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoomMember;
 import com.example.waggle.domain.chat.presentation.dto.ChatRoomRequest;
