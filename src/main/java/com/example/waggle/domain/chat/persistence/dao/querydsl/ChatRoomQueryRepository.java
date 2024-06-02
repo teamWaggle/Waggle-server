@@ -10,4 +10,6 @@ public interface ChatRoomQueryRepository {
 
     Long countChatRoomsByMemberId(Long memberId);
 
+    Page<ChatRoom> searchByKeyword(String keyword, Pageable pageable);
+
 }

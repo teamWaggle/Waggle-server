@@ -37,10 +37,25 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
 
     @Override
     public Long countChatRoomsByMemberId(Long memberId) {
-        return queryFactory
-                .select(chatRoomMember.count())
+        return queryFactory.select(chatRoomMember.count())
                 .from(chatRoomMember)
                 .where(chatRoomMember.member.id.eq(memberId))
                 .fetchFirst();
+    }
+
+    @Override
+    public Page<ChatRoom> searchByKeyword(String keyword, Pageable pageable) {
+        List<ChatRoom> chatRooms = queryFactory.selectFrom(chatRoom)
+                .where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = queryFactory.select(chatRoom.count())
+                .from(chatRoom)
+                .where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)))
+                .fetchFirst();
+
+        return new PageImpl<>(chatRooms, pageable, total);
     }
 }

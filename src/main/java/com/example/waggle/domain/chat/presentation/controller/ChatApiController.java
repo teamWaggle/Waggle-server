@@ -1,5 +1,7 @@
 package com.example.waggle.domain.chat.presentation.controller;
 
+import static com.example.waggle.global.util.PageUtil.CHAT_ROOM_SIZE;
+
 import com.example.waggle.domain.chat.application.message.ChatMessageQueryService;
 import com.example.waggle.domain.chat.application.room.ChatRoomCommandService;
 import com.example.waggle.domain.chat.application.room.ChatRoomQueryService;
@@ -20,6 +22,7 @@ import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
+import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -186,6 +189,21 @@ public class ChatApiController {
     private ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {
         Member sender = memberQueryService.getMemberByUserUrl(chatMessage.getSenderUserUrl());
         return ChatConverter.toChatMessageDto(chatMessage, sender);
+    }
+
+    @Operation(summary = "채팅방 검색",
+            description = "주어진 키워드를 기반으로 채팅방을 검색합니다.(name, description) 키워드는 최소 2자 이상이어야 합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/rooms/search")
+    public ApiResponseDto<ChatRoomListDto> searchChatRoomList(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
+        Pageable pageable = PageRequest.of(currentPage, CHAT_ROOM_SIZE, PageUtil.LATEST_SORTING);
+        return ApiResponseDto.onSuccess(
+                ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRoomListByKeyword(keyword, pageable)));
     }
 
 }
