@@ -21,26 +21,14 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     public Member getMemberByUsername(String username) {
-        Member member = memberRepository.findByUsername(username)
+        return memberRepository.findByUsername(username)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        return member;
     }
 
     @Override
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
-
-    @Override
-    public Member getSignInMember() {
-        //check login
-        if (isAuthenticated()) {
-            //check exist user
-            Member signInMember = getMemberByUsername(SecurityUtil.getCurrentUsername());
-            return signInMember;
-        }
-        throw new MemberHandler(ErrorStatus.MEMBER_REFRESH_TOKEN_NOT_FOUND);
     }
 
     @Override

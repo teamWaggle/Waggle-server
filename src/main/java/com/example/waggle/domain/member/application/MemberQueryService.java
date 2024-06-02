@@ -11,8 +11,6 @@ public interface MemberQueryService {
 
     Member getMemberByEmail(String email);
 
-    Member getSignInMember();
-
     Member getMemberById(Long memberId);
 
     Member getMemberByUserUrl(String userUrl);
