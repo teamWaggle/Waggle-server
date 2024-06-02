@@ -8,7 +8,6 @@ import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.hashtag.persistence.dao.HashtagRepository;
 import com.example.waggle.domain.hashtag.persistence.entity.BoardHashtag;
 import com.example.waggle.domain.hashtag.persistence.entity.Hashtag;
-import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
@@ -33,16 +32,6 @@ public class BoardServiceImpl implements BoardService {
     private final SirenRepository sirenRepository;
     private final ScheduleRepository scheduleRepository;
     private final HashtagRepository hashtagRepository;
-    private final MemberQueryService memberQueryService;
-
-
-    @Override
-    public boolean validateMemberUseBoard(Long boardId, BoardType boardType) {
-        Member signInMember = memberQueryService.getSignInMember();
-
-        Board board = findBoard(boardId, boardType);
-        return board.getMember().equals(signInMember);
-    }
 
 
     @Override

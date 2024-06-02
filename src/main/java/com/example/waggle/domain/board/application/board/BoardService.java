@@ -11,8 +11,6 @@ public interface BoardService {
 
     Hashtag getHashtag(String tag);
 
-    boolean validateMemberUseBoard(Long boardId, BoardType boardType);
-
     boolean validateMemberUseBoard(Long boardId, BoardType boardType, Member member);
 
 
