@@ -6,6 +6,7 @@ import com.example.waggle.domain.chat.application.room.ChatRoomQueryService;
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.presentation.converter.ChatConverter;
+import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ActiveChatRoomDto;
 import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ActiveChatRoomListDto;
 import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatMessageListDto;
@@ -13,7 +14,6 @@ import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomDeta
 import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomJoinDto;
 import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomListDto;
 import com.example.waggle.domain.chat.presentation.dto.ChatRoomRequest;
-import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,8 +54,6 @@ public class ChatApiController {
     private final ChatRoomQueryService chatRoomQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final MemberQueryService memberQueryService;
-
-    private static final Sort SORT_BY_CREATED_DATE_DESC = Sort.by("createdDate").descending();
 
     @Operation(summary = "채팅방 생성 🔑", description = "사용자가 새로운 채팅방을 생성합니다. 생성 성공 시 채팅방의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -127,7 +124,7 @@ public class ChatApiController {
     @GetMapping("/rooms/paged")
     public ApiResponseDto<ChatRoomListDto> getPagedChatRooms(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE, SORT_BY_CREATED_DATE_DESC);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.CHAT_ROOM_SIZE, PageUtil.LATEST_SORTING);
         return ApiResponseDto.onSuccess(
                 ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRooms(pageable)));
     }
