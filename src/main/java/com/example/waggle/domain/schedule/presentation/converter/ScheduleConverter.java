@@ -63,6 +63,7 @@ public class ScheduleConverter {
                 .scheduleTitle(schedule.getTitle())
                 .teamName(schedule.getTeam().getName())
                 .teamColor(schedule.getTeam().getTeamColor())
+                .scheduleId(schedule.getId())
                 .build();
     }
 
