@@ -6,7 +6,6 @@ import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -25,12 +24,6 @@ public class ScheduleUtil {
         } else if (!currentDate.isBefore(schedule.getStartDate()) && !currentDate.isAfter(schedule.getEndDate())) {
             return IN_PROGRESS;
         } else {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME);
-        }
-    }
-
-    public static void validateSchedule(LocalDateTime start, LocalDateTime end) {
-        if (start.isAfter(end)) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME);
         }
     }
