@@ -47,6 +47,7 @@ public class MemberResponse {
         private String profileImgUrl;
         private Long followingCount;
         private Long followerCount;
+        private Long chatRoomCount;
     }
 
     @Data
