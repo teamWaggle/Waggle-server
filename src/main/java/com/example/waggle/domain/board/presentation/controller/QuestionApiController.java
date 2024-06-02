@@ -15,6 +15,7 @@ import com.example.waggle.domain.recommend.application.query.RecommendQueryServi
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.api.PredefinedErrorStatus;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.ObjectUtil;
@@ -50,13 +51,13 @@ public class QuestionApiController {
     private final QuestionCommandService questionCommandService;
     private final QuestionQueryService questionQueryService;
     private final RecommendQueryService recommendQueryService;
+    //TODO remove latestSorting and use PageUtil variable
     private final Sort latestSorting = Sort.by("createdDate").descending();
-    private final Sort resolutionStatusSorting = Sort.by("status").descending().and(latestSorting);
 
     @Operation(summary = "질문 작성 🔑", description = "사용자가 질문을 작성합니다. 작성한 질문의 정보를 저장하고 질문의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.MEDIA_PREFIX_IS_WRONG
+    }, status = PredefinedErrorStatus.AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createQuestion(
             @RequestPart("createQuestionRequest") @Validated QuestionRequest createQuestionRequest,
@@ -93,7 +94,7 @@ public class QuestionApiController {
         questionCommandService.convertStatus(questionId, member);
         return ApiResponseDto.onSuccess(questionId);
     }
-    
+
 
     @Operation(summary = "대표 질문 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
     @ApiErrorCodeExample({
