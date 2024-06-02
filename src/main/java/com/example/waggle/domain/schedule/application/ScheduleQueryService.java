@@ -15,13 +15,7 @@ public interface ScheduleQueryService {
 
     Schedule getScheduleById(Long scheduleId);
 
-    List<Schedule> getTeamSchedules(Long teamId);
-
     Page<Schedule> getPagedTeamSchedules(Long teamId, Pageable pageable);
-
-    List<Schedule> getSchedulesByOwner(Long memberId);
-
-    List<Schedule> getSchedulesByMember(Long memberId);
 
     List<Schedule> getMonthlySchedulesByMemberUserUrl(String userUrl, int year, int month);
 

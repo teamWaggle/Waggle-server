@@ -9,13 +9,9 @@ public interface ScheduleCommandService {
 
     Long updateSchedule(Long scheduleId, ScheduleRequest updateScheduleRequest, Member member);
 
-    void deleteSchedule(Long scheduleId, Member member);
-
     void deleteScheduleWithRelations(Long scheduleId, Member member);
 
     void deleteScheduleByAdmin(Long scheduleId, Member member);
-
-    void deleteScheduleForHardReset(Long scheduleId);
 
     Long addMemberSchedule(Long scheduleId, Member member);
 

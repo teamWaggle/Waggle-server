@@ -73,19 +73,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
-    public void deleteSchedule(Long scheduleId, Member member) {
-        if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
-            throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
-        }
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        schedule.getComments().forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-
-        memberScheduleRepository.deleteAllByScheduleId(scheduleId);
-        scheduleRepository.delete(schedule);
-    }
-
-    @Override
     public void deleteScheduleWithRelations(Long scheduleId, Member member) {
         if (!boardService.validateMemberUseBoard(scheduleId, SCHEDULE, member)) {
             throw new ScheduleHandler(ErrorStatus.BOARD_CANNOT_EDIT_OTHERS);
@@ -101,18 +88,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
         commentRepository.deleteCommentsWithRelationsByBoard(scheduleId);
         boardRepository.deleteBoardsWithRelations(SCHEDULE, scheduleId);
-    }
-
-    @Override
-    public void deleteScheduleForHardReset(Long scheduleId) {
-        scheduleRepository.findById(scheduleId).ifPresent(
-                schedule -> {
-                    schedule.getComments()
-                            .forEach(comment -> commentCommandService.deleteCommentForHardReset(comment.getId()));
-                    memberScheduleRepository.deleteAllByScheduleId(scheduleId);
-                    scheduleRepository.delete(schedule);
-                }
-        );
     }
 
     @Override
