@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -23,34 +21,8 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     private final StoryRepository storyRepository;
 
     @Override
-    public List<Story> getStories() {
-        return storyRepository.findAll();
-    }
-
-    @Override
-    public Page<Story> getPagedStoryListByUsername(String username, Pageable pageable) {
-        return storyRepository.findByMemberUsername(username, pageable);
-    }
-
-    @Override
     public Page<Story> getPagedStoryListByUserUrl(String userUrl, Pageable pageable) {
         return storyRepository.findByMemberUserUrl(userUrl, pageable);
-    }
-
-    @Override
-    public Page<Story> getPagedStoryListByMemberId(Long memberId, Pageable pageable) {
-        return storyRepository.findByMemberId(memberId, pageable);
-    }
-
-
-    @Override
-    public Page<Story> getPagedStoryList(Pageable pageable) {
-        return storyRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<Story> getPagedStoryListBySortParam(StorySortParam sortParam, Pageable pageable) {
-        return storyRepository.findStoriesBySortParam(sortParam, pageable);
     }
 
 
@@ -58,11 +30,6 @@ public class StoryQueryServiceImpl implements StoryQueryService {
     public Story getStoryByBoardId(Long boardId) {
         return storyRepository.findById(boardId)
                 .orElseThrow(() -> new StoryHandler(ErrorStatus.BOARD_NOT_FOUND));
-    }
-
-    @Override
-    public Page<Story> getPagedStoryListByKeyword(String keyword, Pageable pageable) {
-        return storyRepository.findStoriesByKeyword(keyword, pageable);
     }
 
     @Override

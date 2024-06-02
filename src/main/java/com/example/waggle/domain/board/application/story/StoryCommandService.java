@@ -12,8 +12,6 @@ public interface StoryCommandService {
                      StoryRequest updateStoryRequest,
                      Member member);
 
-    void deleteStory(Long boardId, Member member);
-
     void deleteStoryWithRelations(Long boardId, Member member);
 
     void deleteStoryByAdmin(Long boardId, Member member);
