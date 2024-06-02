@@ -76,32 +76,6 @@ public class StoryApiController {
         return ApiResponseDto.onSuccess(storyId);
     }
 
-
-    @Operation(summary = "전체 스토리 목록 조회", description = "전체 스토리 목록을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping
-    public ApiResponseDto<StorySummaryListDto> getAllStories(
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE, latestSorting);
-        return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStoryList(pageable)));
-    }
-
-    @Operation(summary = "스토리 정렬 조회", description = "필터 옵션에 맞추어 결과를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/sort")
-    public ApiResponseDto<StorySummaryListDto> getStoryByFilter(
-            @RequestParam(name = "sortParam") StorySortParam sortParam,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.STORY_SIZE);
-        return ApiResponseDto.onSuccess(
-                StoryConverter.toListDto(storyQueryService.getPagedStoryListBySortParam(sortParam, pageable)));
-    }
-
     @Operation(summary = "사용자의 스토리 목록 조회", description = "특정 사용자가 작성한 스토리 목록을 조회합니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR
@@ -124,20 +98,6 @@ public class StoryApiController {
         StoryDetailDto detailDto = StoryConverter.toDetailDto(storyByBoardId);
         detailDto.setRecommendCount(recommendQueryService.countRecommend(storyId));
         return ApiResponseDto.onSuccess(detailDto);
-    }
-
-    @Operation(summary = "스토리 검색", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/search")
-    public ApiResponseDto<StorySummaryListDto> searchStoryList(
-            @RequestParam(name = "keyword") String keyword,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        ObjectUtil.validateKeywordLength(keyword);
-        Pageable pageable = PageRequest.of(currentPage, STORY_SIZE, latestSorting);
-        Page<Story> PagedStoryList = storyQueryService.getPagedStoryListByKeyword(keyword, pageable);
-        return ApiResponseDto.onSuccess(StoryConverter.toListDto(PagedStoryList));
     }
 
     @Operation(summary = "스토리 검색 및 정렬", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다." +

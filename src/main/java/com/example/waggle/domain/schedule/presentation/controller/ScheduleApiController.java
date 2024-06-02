@@ -172,26 +172,6 @@ public class ScheduleApiController {
         return ApiResponseDto.onSuccess(ScheduleConverter.toOverlappedScheduleListDto(overlappingSchedules));
     }
 
-    @Operation(summary = "특정 사용자의 모든 일정 조회", description = "특정 사용자가 선택한 모든 일정을 가져옵니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/members/{memberId}")
-    public ApiResponseDto<ScheduleListDto> getSchedulesByMember(@PathVariable("memberId") Long memberId) {
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByMember(memberId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
-    }
-
-    @Operation(summary = "특정 사용자가 작성한 일정 조회", description = "특정 사용자가 작성한 모든 일정을 가져옵니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/owners/{memberId}")
-    public ApiResponseDto<ScheduleListDto> getSchedulesByOwner(@PathVariable("memberId") Long memberId) {
-        List<Schedule> schedules = scheduleQueryService.getSchedulesByOwner(memberId);
-        return ApiResponseDto.onSuccess(ScheduleConverter.toScheduleListDto(schedules));
-    }
-
     @Operation(summary = "특정 팀의 월간 일정 조회", description = "특정 팀의 스케줄 전체를 월 단위로 가져옵니다.")
     @ApiErrorCodeExample({
             ErrorStatus._INTERNAL_SERVER_ERROR

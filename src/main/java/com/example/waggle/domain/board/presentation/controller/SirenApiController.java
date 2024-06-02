@@ -115,37 +115,7 @@ public class SirenApiController {
         sirenCommandService.deleteSirenByAdmin(sirenId, admin);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
-
-
-    @Operation(summary = "전체 사이렌 목록 조회", description = "전체 사이렌 목록을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping
-    public ApiResponseDto<SirenPagedSummaryListDto> getAllSiren(
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenList(pageable);
-        SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
-        setRecommendCntInList(listDto.getSirenList());
-        return ApiResponseDto.onSuccess(listDto);
-    }
-
-    @Operation(summary = "사이렌 정렬 및 필터 조회", description = "카테고리 옵션에 따라 필터링해주고 정렬 항목에 맞추어 결과를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/browse")
-    public ApiResponseDto<SirenPagedSummaryListDto> getSirensBySortAndFilter(
-            @RequestParam(name = "filterParam") SirenFilterParam filterParam,
-            @RequestParam(name = "sortParam") SirenSortParam sortParam,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByFilterAndSort(filterParam, sortParam, pageable);
-        SirenPagedSummaryListDto listDto = SirenConverter.toSirenPageDto(pagedSirenList);
-        setRecommendCntInList(listDto.getSirenList());
-        return ApiResponseDto.onSuccess(listDto);
-    }
+    
 
     @Operation(summary = "대표 사이렌 조회", description = "대표 사이렌을 조회합니다. 미해결 인기순으로 정렬하고, 상단 3개의 사이렌을 반환합니다.")
     @ApiErrorCodeExample({
@@ -198,23 +168,6 @@ public class SirenApiController {
                 randomUnresolvedSirenList);
         setRecommendCntInList(listDto.getSirenList());
         return ApiResponseDto.onSuccess(listDto);
-    }
-
-    @Operation(summary = "사이렌 검색", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/search")
-    public ApiResponseDto<SirenPagedSummaryListDto> searchSirenList(
-            @RequestParam String keyword,
-            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        ObjectUtil.validateKeywordLength(keyword);
-        Pageable pageable = PageRequest.of(currentPage, SIREN_SIZE, latestSorting);
-        Page<Siren> pagedSirenList = sirenQueryService.getPagedSirenListByKeyword(keyword, pageable);
-        SirenPagedSummaryListDto sirenPageDto = SirenConverter.toSirenPageDto(
-                pagedSirenList);
-        setRecommendCntInList(sirenPageDto.getSirenList());
-        return ApiResponseDto.onSuccess(sirenPageDto);
     }
 
     @Operation(summary = "사이렌 검색 및 정렬", description = "키워드를 포함하고 있는 타이틀을 지닌 사이렌을 조회합니다." +
