@@ -57,7 +57,7 @@ public class CommentApiController {
     public ApiResponseDto<QuestionCommentListDto> getPagedQuestionCommentsByUserUrl(
             @PathVariable("userUrl") String userUrl,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, PageUtil.LATEST_SORTING);
         Page<QuestionCommentViewDto> pagedQuestionComments = commentQueryService.getPagedQuestionCommentsByUserUrl(
                 userUrl, pageable);
         return ApiResponseDto.onSuccess(CommentConverter.toQuestionCommentListDto(pagedQuestionComments));
@@ -70,7 +70,7 @@ public class CommentApiController {
     @GetMapping("/members/{userUrl}/siren/paged")
     public ApiResponseDto<SirenCommentListDto> getPagedSirenCommentsByUserUrl(@PathVariable("userUrl") String userUrl,
                                                                               @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, latestSorting);
+        Pageable pageable = PageRequest.of(currentPage, PageUtil.COMMENT_SIZE, PageUtil.LATEST_SORTING);
         Page<SirenCommentViewDto> pagedSirenComments = commentQueryService.getPagedSirenCommentsByUserUrl(
                 userUrl, pageable);
         return ApiResponseDto.onSuccess(CommentConverter.toSirenCommentListDto(pagedSirenComments));
