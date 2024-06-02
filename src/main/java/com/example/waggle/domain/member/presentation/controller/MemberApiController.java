@@ -7,10 +7,10 @@ import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
-import com.example.waggle.domain.member.presentation.dto.MemberRequest;
 import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberCredentialsDto;
 import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberProfileDto;
 import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberUpdateDto;
+import com.example.waggle.domain.member.presentation.dto.MemberRequest.PasswordDto;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberDetailDto;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberMentionListDto;
@@ -23,6 +23,7 @@ import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.service.email.EmailService;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.ObjectUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,19 +55,15 @@ public class MemberApiController {
 
 
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 임의의 userUrl과 nickname을 넣어줍니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody MemberCredentialsDto registerMemberRequest) {
+    public ApiResponseDto<Long> signUp(@RequestBody @Validated MemberCredentialsDto registerMemberRequest) {
         Long memberId = memberCommandService.signUp(registerMemberRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
     @Operation(summary = "회원 정보 등록 🔑", description = "회원가입 후 회원정보를 처음 등록합니다. 서버에서 임의로 설정해둔 정보들을 수정합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> initializeMemberProfile(
             @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
@@ -74,9 +74,9 @@ public class MemberApiController {
     }
 
     @Operation(summary = "회원 정보 수정 🔑", description = "회원정보를 수정합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.MEDIA_REQUEST_IS_EMPTY
+    }, status = AUTH)
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateInfo(@RequestPart("updateMemberRequest") MemberUpdateDto updateMemberRequest,
                                            @AuthUser Member member) {
@@ -87,7 +87,7 @@ public class MemberApiController {
 
     @Operation(summary = "회원 정보 조회", description = "userUrl을 통해 userUrl, nickname, profileImg를 조회합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_NOT_FOUND
     })
     @GetMapping("/{userUrl}")
     public ApiResponseDto<MemberDetailDto> getMemberInfo(@PathVariable("userUrl") String userUrl) {
@@ -100,9 +100,7 @@ public class MemberApiController {
     }
 
     @Operation(summary = "프론트 저장용 회원 정보 조회 🔑", description = "Access Token을 통해 memberId, userUrl을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/info")
     public ApiResponseDto<MemberStorageDto> getMemberInfoByAuth(@AuthUser Member member) {
         return ApiResponseDto.onSuccess(MemberConverter.toMemberStorageDto(member));
@@ -110,19 +108,18 @@ public class MemberApiController {
 
     @Operation(summary = "회원 검색", description = "nickname 일부 혹은 전체를 검색하여 검색어에 해당하는 모든 회원을 조회합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.SEARCHING_KEYWORD_IS_TOO_SHORT
     })
     @GetMapping("/by-nickname/{nickname}")
     public ApiResponseDto<MemberMentionListDto> searchMembersByNicknameContaining(
             @PathVariable("nickname") String nickname) {
+        ObjectUtil.validateKeywordLength(nickname);
         List<Member> members = memberQueryService.getMembersByNicknameContaining(nickname);
         return ApiResponseDto.onSuccess(MemberConverter.toMentionListDto(members));
     }
 
     @Operation(summary = "이메일 전송", description = "사용자에게 인증 메일을 전송합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @PostMapping("/email/send")
     public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto sendEmailRequest) {
         emailService.sendMail(sendEmailRequest.getEmail(), "email");
@@ -131,7 +128,7 @@ public class MemberApiController {
 
     @Operation(summary = "이메일 인증", description = "받은 이메일을 통해 사용자의 이메일 인증을 진행합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_NOT_FOUND
     })
     @PostMapping("/email/verify")
     public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto verifyEmailRequest) {
@@ -141,30 +138,27 @@ public class MemberApiController {
 
     @Operation(summary = "비밀번호 변경 시 이메일 인증", description = "비밀번호 변경 전 이메일 인증을 시도합니다. 결과값으로 member의 id를 반환합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_NOT_FOUND
     })
     @PostMapping("/email/verify/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(
-            @RequestBody EmailVerificationDto emailVerificationRequest) {
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody EmailVerificationDto emailVerificationRequest) {
         Long memberId = memberCommandService.verifyEmailForPasswordChange(emailVerificationRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
 
     @Operation(summary = "비밀번호 변경", description = "앞서 받은 멤버아이디와 일치하는 회원의 비밀번호를 변경합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_NOT_FOUND
     })
     @PutMapping("/{memberId}/password")
     public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable("memberId") Long memberId,
-                                                              @RequestBody MemberRequest.PasswordDto updatePasswordRequest) {
+                                                              @RequestBody PasswordDto updatePasswordRequest) {
         memberCommandService.updatePassword(memberId, updatePasswordRequest.getPassword());
         return ApiResponseDto.onSuccess(memberId);
     }
 
     @Operation(summary = "이메일 찾기", description = "성명과 생년월일을 통해 이메일을 찾습니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/email/find")
     public ApiResponseDto<MemberResponse.EmailListDto> findEmail(@RequestParam("name") String name,
                                                                  @RequestParam("birthday") LocalDate birthday) {
@@ -174,7 +168,7 @@ public class MemberApiController {
 
     @Operation(summary = "이메일 중복 검사", description = "제공된 이메일이 이미 사용 중인지 확인합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_DUPLICATE_EMAIL
     })
     @GetMapping("/check-email")
     public ApiResponseDto<Boolean> checkEmail(@RequestParam("email") String email) {
@@ -184,7 +178,7 @@ public class MemberApiController {
 
     @Operation(summary = "회원 URL 중복 검사", description = "제공된 회원 URL이 이미 사용 중인지 확인합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_DUPLICATE_USER_URL
     })
     @GetMapping("/check-user-url")
     public ApiResponseDto<Boolean> checkUsername(@RequestParam("userUrl") String userUrl) {
@@ -194,7 +188,7 @@ public class MemberApiController {
 
     @Operation(summary = "닉네임 중복 검사", description = "제공된 닉네임이 이미 사용 중인지 확인합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.MEMBER_DUPLICATE_NICKNAME
     })
     @GetMapping("/check-nickname")
     public ApiResponseDto<Boolean> checkNickname(@RequestParam("nickname") String nickname) {
@@ -213,9 +207,7 @@ public class MemberApiController {
     }
 
     @Operation(summary = "휴면계정 등록 🔑", description = "특정 회원을 휴면계정으로 전환합니다. 하루동안 휴면계정을 풀지 않으면 회원관련 정보가 모두 삭제됩니다")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PutMapping("/role/dormant")
     public ApiResponseDto<Boolean> convertDormant(@AuthUser Member member) {
         memberCommandService.convertRole(member, Role.DORMANT);
@@ -223,9 +215,7 @@ public class MemberApiController {
     }
 
     @Operation(summary = "휴면계정 해제 🔑", description = "특정 회원을 휴면계정에서 일반회원으로 전환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PutMapping("/role/user")
     public ApiResponseDto<Boolean> convertUser(@AuthUser Member member) {
         memberCommandService.convertRole(member, Role.USER);
@@ -233,21 +223,18 @@ public class MemberApiController {
     }
 
     @Operation(summary = "비밀번호 재설정 🔑", description = "인증된 회원의 비밀번호를 재설정합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PutMapping("/password")
     public ApiResponseDto<Long> updatePassword(@AuthUser Member member,
-                                               @RequestBody MemberRequest.PasswordDto updatePasswordRequest) {
+                                               @RequestBody PasswordDto updatePasswordRequest) {
         memberCommandService.updatePassword(member.getId(), updatePasswordRequest.getPassword());
         return ApiResponseDto.onSuccess(member.getId());
     }
 
     @Operation(summary = "회원 강제 삭제 🔑", description = "특정 회원을 관리자가 강제 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR,
-            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.MEDIA_REQUEST_IS_EMPTY
+    }, status = ADMIN)
     @DeleteMapping("/{memberId}/admin")
     public ApiResponseDto<Boolean> deleteMemberForce(@PathVariable Long memberId,
                                                      @AuthUser Member admin) {

@@ -23,7 +23,7 @@ public class ObjectUtil {
             return;
         }
         if (keyword.length() < MIN_KEYWORD_LENGTH) {
-            throw new GeneralException(ErrorStatus.BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT);
+            throw new GeneralException(ErrorStatus.SEARCHING_KEYWORD_IS_TOO_SHORT);
         }
     }
 

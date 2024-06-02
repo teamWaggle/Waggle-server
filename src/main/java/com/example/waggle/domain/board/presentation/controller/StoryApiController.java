@@ -98,7 +98,7 @@ public class StoryApiController {
     @Operation(summary = "스토리 검색 및 정렬", description = "키워드를 포함하고 있는 해시태그, 혹은 내용을 지닌 스토리를 조회합니다." +
             "이때 정렬 파라미터를 통해 검색 결과를 정렬합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus.BOARD_SEARCHING_KEYWORD_IS_TOO_SHORT
+            ErrorStatus.SEARCHING_KEYWORD_IS_TOO_SHORT
     })
     @GetMapping("/search")
     public ApiResponseDto<StorySummaryListDto> searchStoryListBySorting(
