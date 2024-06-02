@@ -1,13 +1,12 @@
 package com.example.waggle.global.config;
 
 
-import static java.util.stream.Collectors.groupingBy;
-
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.code.Reason;
 import com.example.waggle.exception.payload.dto.ApiResponseDto;
 import com.example.waggle.exception.payload.holder.ExampleHolder;
 import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
+import com.example.waggle.global.annotation.api.PredefinedErrorStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.Components;
@@ -22,14 +21,20 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
+
+@Slf4j
 @Configuration
 public class SwaggerConfig {
 
@@ -77,7 +82,7 @@ public class SwaggerConfig {
             ApiErrorCodeExample apiErrorCodeExample =
                     handlerMethod.getMethodAnnotation(ApiErrorCodeExample.class);
             if (apiErrorCodeExample != null) {
-                generateErrorCodeResponseExample(operation, apiErrorCodeExample.value());
+                generateErrorCodeResponseExample(operation, apiErrorCodeExample.value(), apiErrorCodeExample.status());
             }
             return operation;
         };
@@ -89,6 +94,32 @@ public class SwaggerConfig {
 
         Map<Integer, List<ExampleHolder>> statusWithExampleHolders =
                 Arrays.stream(errorStatuses)
+                        .map(
+                                errorStatus -> {
+                                    Reason errorReason = errorStatus.getReason();
+                                    return ExampleHolder.builder()
+                                            .holder(
+                                                    getSwaggerExample(
+                                                            errorReason.getMessage(),
+                                                            errorReason))
+                                            .code(errorReason.getCode())
+                                            .name(errorReason.getCode().toString())
+                                            .build();
+                                })
+                        .collect(groupingBy(ExampleHolder::getCode));
+
+        addExamplesToResponses(responses, statusWithExampleHolders);
+    }
+
+    private void generateErrorCodeResponseExample(
+            Operation operation, ErrorStatus[] errorStatuses, PredefinedErrorStatus authenticationEnum) {
+        ApiResponses responses = operation.getResponses();
+        List<ErrorStatus> showErrorStatus = new ArrayList<>();
+        showErrorStatus.addAll(authenticationEnum.getErrorStatuses());
+        showErrorStatus.addAll(Arrays.asList(errorStatuses));
+
+        Map<Integer, List<ExampleHolder>> statusWithExampleHolders =
+                showErrorStatus.stream()
                         .map(
                                 errorStatus -> {
                                     Reason errorReason = errorStatus.getReason();
