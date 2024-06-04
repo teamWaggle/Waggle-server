@@ -53,7 +53,6 @@ public class SirenConverter {
                 .status(siren.getStatus())
                 .member(MemberConverter.toMemberSummaryDto(siren.getMember()))
                 .viewCount(siren.getViewCount())
-                .commentCount(siren.getComments().size())
                 .build();
     }
 

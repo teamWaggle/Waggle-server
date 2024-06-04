@@ -54,7 +54,6 @@ public class SirenResponse {
         private ResolutionStatus status;
         private int recommendCount;
         private long viewCount;
-        private int commentCount;
     }
 
     @Data

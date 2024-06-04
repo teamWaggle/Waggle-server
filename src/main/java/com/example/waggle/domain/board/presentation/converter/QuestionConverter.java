@@ -49,7 +49,6 @@ public class QuestionConverter {
                 .mediaList(MediaUtil.getBoardMedias(question))
                 .member(MemberConverter.toMemberSummaryDto(question.getMember()))
                 .viewCount(question.getViewCount())
-                .commentCount(question.getComments().size())
                 .build();
     }
 
