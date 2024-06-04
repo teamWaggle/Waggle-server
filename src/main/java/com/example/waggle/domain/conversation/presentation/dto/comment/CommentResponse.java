@@ -4,14 +4,13 @@ import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.SirenCategory;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class CommentResponse {
 
@@ -35,6 +34,7 @@ public class CommentResponse {
     public static class CommentListDto {
         private List<CommentViewDto> commentList;
         private int nextPageParam;
+        private long totalCount;
     }
 
     @Data
