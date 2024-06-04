@@ -10,7 +10,6 @@ import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.presentation.converter.TeamConverter;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.ParticipationStatusResponse;
-import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.ParticipationStatusResponse.Status;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamDetailDto;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamSummaryListDto;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -34,6 +33,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
 import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
 
 @Slf4j
@@ -48,9 +49,7 @@ public class TeamApiController {
     private final TeamQueryService teamQueryService;
 
     @Operation(summary = "팀 생성 🔑", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
                                            @AuthUser Member member) {
@@ -60,9 +59,10 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 정보 수정 🔑", description = "팀의 정보를 업데이트합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_UNAUTHORIZED
+    }, status = AUTH)
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
                                            @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
@@ -73,9 +73,11 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 삭제 🔑", description = "팀을 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_UNAUTHORIZED,
+            ErrorStatus.TEAM_MEMBER_IS_OVER_THAN_ONE
+    }, status = AUTH)
     @DeleteMapping("/{teamId}")
     public ApiResponseDto<Boolean> deleteTeam(@PathVariable("teamId") Long teamId,
                                               @AuthUser Member member) {
@@ -84,10 +86,7 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 강제 삭제 🔑", description = "팀이 관리자에 의해 삭제됩니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR,
-            ErrorStatus.MEMBER_ACCESS_DENIED_BY_AUTHORIZATION
-    })
+    @ApiErrorCodeExample(status = ADMIN)
     @DeleteMapping("/{teamId}/admin")
     public ApiResponseDto<Boolean> deleteTeamByAdmin(@PathVariable("teamId") Long teamId,
                                                      @AuthUser Member admin) {
@@ -96,9 +95,12 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀원 삭제(수동) 🔑", description = "리더에 의해 지정된 팀에서 특정 팀원을 삭제합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.PARTICIPATION_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_UNAUTHORIZED,
+            ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED
+    }, status = AUTH)
     @DeleteMapping("/{teamId}/members/{memberId}")
     public ApiResponseDto<Boolean> deleteTeamMemberByLeader(@PathVariable("teamId") Long teamId,
                                                             @PathVariable("memberId") Long memberId,
@@ -108,9 +110,10 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀원 삭제(능동) 🔑", description = "자신이 속한 팀으로부터 탈퇴합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED
+    }, status = AUTH)
     @DeleteMapping("/{teamId}/members")
     public ApiResponseDto<Boolean> deleteTeamMemberByMyself(@PathVariable Long teamId,
                                                             @AuthUser Member member) {
@@ -119,9 +122,13 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 리더 변경 🔑", description = "지정된 팀의 리더를 변경합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.MEMBER_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_UNAUTHORIZED,
+            ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED,
+            ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM
+    }, status = AUTH)
     @PutMapping("/{teamId}/leader/{newLeaderId}")
     public ApiResponseDto<Boolean> changeTeamLeader(@PathVariable("teamId") Long teamId,
                                                     @PathVariable("newLeaderId") Long newLeaderId,
@@ -132,7 +139,11 @@ public class TeamApiController {
 
     @Operation(summary = "팀 참여 요청 승인/거절 🔑", description = "팀 리더가 팀 참여 요청을 승인하거나 거절합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.MEMBER_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_UNAUTHORIZED,
+            ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND,
+            ErrorStatus.TEAM_SIZE_IS_OVER_THAN_MAX_SIZE
     })
     @PutMapping("/{teamId}/participation/{memberId}")
     public ApiResponseDto<Boolean> respondToParticipation(@PathVariable("teamId") Long teamId,
@@ -145,7 +156,7 @@ public class TeamApiController {
 
     @Operation(summary = "팀 조회", description = "팀의 정보를 조회합니다.")
     @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
+            ErrorStatus.TEAM_NOT_FOUND
     })
     @GetMapping("/{teamId}")
     public ApiResponseDto<TeamDetailDto> getTeam(@PathVariable("teamId") Long teamId) {
@@ -154,9 +165,7 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 검색", description = "팀의 이름을 검색하여 팀 정보를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/by-name/{name}")
     public ApiResponseDto<TeamSummaryListDto> getTeamsBySearch(@PathVariable("name") String name,
                                                                @RequestParam(name = "currentPage", defaultValue = "0") int currentPage,
@@ -167,9 +176,7 @@ public class TeamApiController {
     }
 
     @Operation(summary = "추천 팀 조회", description = "가장 참여 인원이 많은 팀을 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/recommend")
     public ApiResponseDto<TeamSummaryListDto> getRecommendedTeam(
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
@@ -179,11 +186,13 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 참여 요청 목록 조회 🔑", description = "팀의 참여 요청 목록을 조회합니다. 팀의 리더 권한을 가진 회원만 조회할 수 있습니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.TEAM_LEADER_UNAUTHORIZED
+    }, status = AUTH)
     @GetMapping("/{teamId}/participation")
-    public ApiResponseDto<MemberSummaryListDto> getTeam(@AuthUser Member member, @PathVariable("teamId") Long teamId) {
+    public ApiResponseDto<MemberSummaryListDto> getTeam(@AuthUser Member member,
+                                                        @PathVariable("teamId") Long teamId) {
         List<Participation> participationList = teamQueryService.getParticipationList(member, teamId);
         List<Member> members = participationList.stream()
                 .map(Participation::getMember)
@@ -192,9 +201,9 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 참여 상태 조회 🔑", description = "팀의 참여 요청 상태를 조회합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND
+    }, status = AUTH)
     @GetMapping("/{teamId}/participation/status")
     public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
                                                                                   @PathVariable("teamId") Long teamId) {
@@ -203,20 +212,8 @@ public class TeamApiController {
         return ApiResponseDto.onSuccess(TeamConverter.toStatusDto(participation, isMember));
     }
 
-    private Status getParticipationStatus(Member member, Long teamId) {
-        Optional<Participation> participation = teamQueryService.getParticipation(member, teamId);
-        if (participation.isPresent()) {
-            return Status.valueOf(String.valueOf(participation.get().getStatus()));
-        } else if (teamQueryService.isMemberOfTeam(member, teamId)) {
-            return Status.ACCEPTED;
-        }
-        return Status.NONE;
-    }
-
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample
     @GetMapping("/user/{memberId}/teams")
     public ApiResponseDto<TeamSummaryListDto> getTeamsByMemberId(@PathVariable("memberId") Long memberId,
                                                                  @RequestParam(defaultValue = "0") int page,
@@ -227,9 +224,10 @@ public class TeamApiController {
     }
 
     @Operation(summary = "팀 참여 요청 🔑", description = "사용자가 팀에 참여 요청을 합니다.")
-    @ApiErrorCodeExample({
-            ErrorStatus._INTERNAL_SERVER_ERROR
-    })
+    @ApiErrorCodeExample(value = {
+            ErrorStatus.TEAM_NOT_FOUND,
+            ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS
+    }, status = AUTH)
     @PostMapping("/{teamId}/participation")
     public ApiResponseDto<Long> requestParticipation(@PathVariable("teamId") Long teamId,
                                                      @AuthUser Member member) {
