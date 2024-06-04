@@ -124,7 +124,6 @@ public class TeamApiController {
     @Operation(summary = "팀 리더 변경 🔑", description = "지정된 팀의 리더를 변경합니다.")
     @ApiErrorCodeExample(value = {
             ErrorStatus.TEAM_NOT_FOUND,
-            ErrorStatus.MEMBER_NOT_FOUND,
             ErrorStatus.TEAM_LEADER_UNAUTHORIZED,
             ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED,
             ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM
@@ -140,7 +139,6 @@ public class TeamApiController {
     @Operation(summary = "팀 참여 요청 승인/거절 🔑", description = "팀 리더가 팀 참여 요청을 승인하거나 거절합니다.")
     @ApiErrorCodeExample({
             ErrorStatus.TEAM_NOT_FOUND,
-            ErrorStatus.MEMBER_NOT_FOUND,
             ErrorStatus.TEAM_LEADER_UNAUTHORIZED,
             ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND,
             ErrorStatus.TEAM_SIZE_IS_OVER_THAN_MAX_SIZE
