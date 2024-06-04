@@ -198,8 +198,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     private void validateNonExistenceOfParticipationRequest(Team team, Member member) {
         if (participationRepository.existsByTeamAndMember(team, member)) {
-            throw new TeamHandler(
-                    ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS);
+            throw new TeamHandler(ErrorStatus.TEAM_PARTICIPATION_REQUEST_ALREADY_EXISTS);
         }
     }
 
