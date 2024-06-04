@@ -1,19 +1,13 @@
 package com.example.waggle.domain.conversation.presentation.converter;
 
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
+import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.*;
+import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.global.util.PageUtil;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.CommentListDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.CommentViewDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.QuestionCommentListDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.QuestionCommentViewDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.SirenCommentListDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.SirenCommentViewDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.example.waggle.domain.member.presentation.converter.MemberConverter;
-import org.springframework.data.domain.Page;
 
 public class CommentConverter {
 
@@ -32,6 +26,7 @@ public class CommentConverter {
         return CommentListDto.builder()
                 .commentList(collect)
                 .nextPageParam(PageUtil.countNextPage(pagedComment))
+                .totalCount(pagedComment.getTotalElements())
                 .build();
     }
 
