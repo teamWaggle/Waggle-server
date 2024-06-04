@@ -51,7 +51,6 @@ public class ScheduleApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.TEAM_NOT_FOUND,
             ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM,
-            ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME,
             ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME
     }, status = AUTH)
     @PostMapping("/{teamId}")
@@ -109,7 +108,6 @@ public class ScheduleApiController {
     @ApiErrorCodeExample(value = {
             ErrorStatus.BOARD_CANNOT_EDIT_OTHERS,
             ErrorStatus.SCHEDULE_NOT_FOUND,
-            ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME,
             ErrorStatus.SCHEDULE_START_TIME_IS_LATER_THAN_END_TIME
     }, status = AUTH)
     @PutMapping("/{scheduleId}")
