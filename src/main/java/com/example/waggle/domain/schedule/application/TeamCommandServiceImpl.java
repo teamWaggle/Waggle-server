@@ -11,6 +11,7 @@ import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.service.aws.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final ParticipationRepository participationRepository;
     private final NotificationRepository notificationRepository;
     private final ScheduleCommandService scheduleCommandService;
+    private final AwsS3Service awsS3Service;
     private final int teamCapacityLimit = 15;
 
     @Override
@@ -59,6 +61,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
+        if (!team.getCoverImageUrl().equals(updateTeamRequest.getCoverImageUrl())) {
+            awsS3Service.deleteFile(team.getCoverImageUrl());
+        }
         team.update(updateTeamRequest);
         return team.getId();
     }
@@ -69,6 +74,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
+        awsS3Service.deleteFile(team.getCoverImageUrl());
         List<Schedule> allByTeamId = scheduleRepository.findAllByTeamId(teamId);
         allByTeamId.stream()
                 .forEach(schedule -> scheduleCommandService.deleteScheduleForHardReset(schedule.getId()));
