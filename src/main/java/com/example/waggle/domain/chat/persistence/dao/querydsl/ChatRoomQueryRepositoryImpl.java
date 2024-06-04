@@ -4,12 +4,14 @@ import static com.example.waggle.domain.chat.persistence.entity.QChatRoom.chatRo
 import static com.example.waggle.domain.chat.persistence.entity.QChatRoomMember.chatRoomMember;
 
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -27,12 +29,12 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(chatRoomMember.count())
-                .from(chatRoomMember)
-                .where(chatRoomMember.member.id.eq(memberId))
-                .fetchFirst();
+        JPAQuery<Long> countQuery = queryFactory.select(chatRoom.count())
+                .from(chatRoom)
+                .join(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(chatRoomMember.member.id.eq(memberId));
 
-        return new PageImpl<>(chatRooms, pageable, total);
+        return PageableExecutionUtils.getPage(chatRooms, pageable, countQuery::fetchOne);
     }
 
     @Override
