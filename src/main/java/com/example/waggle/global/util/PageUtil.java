@@ -9,6 +9,7 @@ public class PageUtil {
     public static int STORY_SIZE = 9;
     public static int QUESTION_SIZE = 9;
     public static int SIREN_SIZE = 8;
+    public static int SCHEDULE_SIZE = 12;
     public static int COMMENT_SIZE = 5;
     public static int REPLY_SIZE = 10;
     public static int CHAT_ROOM_SIZE = 9;
