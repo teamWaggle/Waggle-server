@@ -27,10 +27,10 @@ public class PageUtil {
     public static Sort getCommentSortingMethod(BoardType boardType) {
         switch (boardType) {
             case STORY, SCHEDULE -> {
-                return LATEST_SORTING;
+                return OLDEST_SORTING;
             }
             case SIREN, QUESTION -> {
-                return OLDEST_SORTING;
+                return LATEST_SORTING;
             }
             default -> {
                 return LATEST_SORTING;
