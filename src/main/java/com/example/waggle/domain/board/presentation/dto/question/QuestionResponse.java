@@ -54,7 +54,6 @@ public class QuestionResponse {
         private MemberSummaryDto member;
         private int recommendCount;
         private long viewCount;
-        private int commentCount;
     }
 
     @Data
