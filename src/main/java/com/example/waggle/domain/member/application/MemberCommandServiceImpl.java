@@ -4,6 +4,7 @@ import static com.example.waggle.security.oauth.factory.OAuth2UserInfoFactory.Au
 
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
+import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
@@ -70,6 +71,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
 
     private final MemberQueryService memberQueryService;
     private final RedisService redisService;
@@ -186,6 +188,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         followRepository.deleteAllByFromMember(member);
         participationRepository.deleteAllByMember(member);
         recommendRepository.deleteAllByMember(member);
+        chatRoomMemberRepository.deleteAllByMember(member);
         chatRoomRepository.deleteAllByOwner(member);
     }
 
