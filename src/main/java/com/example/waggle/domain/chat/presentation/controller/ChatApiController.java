@@ -206,4 +206,20 @@ public class ChatApiController {
                 ChatConverter.toChatRoomListDto(chatRoomQueryService.getPagedChatRoomListByKeyword(keyword, pageable)));
     }
 
+    @Operation(summary = "채팅방 검색 🔑",
+            description = "주어진 키워드를 기반으로 회원이 속하지 않은 채팅방을 검색합니다.(name, description) 키워드는 최소 2자 이상이어야 합니다.")
+    @ApiErrorCodeExample({
+            ErrorStatus._INTERNAL_SERVER_ERROR
+    })
+    @GetMapping("/rooms/search/auth")
+    public ApiResponseDto<ChatRoomListDto> searchChatRoomListExcludingUser(
+            @AuthUser Member member,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
+        ObjectUtil.validateKeywordLength(keyword);
+        Pageable pageable = PageRequest.of(currentPage, CHAT_ROOM_SIZE, PageUtil.LATEST_SORTING);
+        return ApiResponseDto.onSuccess(
+                ChatConverter.toChatRoomListDto(
+                        chatRoomQueryService.getPagedChatRoomListByKeywordExcludingMember(member, keyword, pageable)));
+    }
 }
