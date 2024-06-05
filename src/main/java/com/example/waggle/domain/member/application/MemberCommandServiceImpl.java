@@ -1,7 +1,10 @@
 package com.example.waggle.domain.member.application;
 
+import static com.example.waggle.security.oauth.factory.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
+import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
@@ -18,7 +21,11 @@ import com.example.waggle.domain.member.presentation.dto.MemberRequest.MemberUpd
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailVerificationDto;
 import com.example.waggle.domain.pet.persistence.dao.PetRepository;
 import com.example.waggle.domain.recommend.persistence.dao.RecommendRepository;
-import com.example.waggle.domain.schedule.persistence.dao.jpa.*;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.ScheduleRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Schedule;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.domain.schedule.persistence.entity.TeamMember;
@@ -29,21 +36,18 @@ import com.example.waggle.global.service.redis.RedisService;
 import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static com.example.waggle.security.oauth.factory.OAuth2UserInfoFactory.AuthProvider.WAGGLE;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -65,6 +69,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     private final MemberQueryService memberQueryService;
     private final RedisService redisService;
@@ -180,6 +185,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         followRepository.deleteAllByFromMember(member);
         participationRepository.deleteAllByMember(member);
         recommendRepository.deleteAllByMember(member);
+        chatRoomRepository.deleteAllByOwner(member);
     }
 
     private void deleteMemberContent(Member member) {
