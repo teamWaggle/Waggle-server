@@ -198,7 +198,7 @@ public class ChatApiController {
     })
     @GetMapping("/rooms/search")
     public ApiResponseDto<ChatRoomListDto> searchChatRoomList(
-            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(name = "currentPage", defaultValue = "0") int currentPage) {
         ObjectUtil.validateKeywordLength(keyword);
         Pageable pageable = PageRequest.of(currentPage, CHAT_ROOM_SIZE, PageUtil.LATEST_SORTING);
