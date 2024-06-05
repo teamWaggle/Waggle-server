@@ -93,6 +93,12 @@ public class ChatRoomQueryServiceImpl implements ChatRoomQueryService {
         return chatRoomRepository.findChatRoomsByKeyword(keyword, pageable);
     }
 
+    @Override
+    public Page<ChatRoom> getPagedChatRoomListByKeywordExcludingMember(Member member, String keyword,
+                                                                       Pageable pageable) {
+        return chatRoomRepository.findChatRoomsByKeywordExcludingMember(member, keyword, pageable);
+    }
+
     private Optional<ChatMessage> findLastChatMessageByChatRoomId(Long chatRoomId) {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ChatMessage> pagedChatMessage = chatMessageRepository.findRecentMessagesByChatRoomId(chatRoomId,
