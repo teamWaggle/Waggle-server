@@ -4,8 +4,10 @@ import static com.example.waggle.security.oauth.factory.OAuth2UserInfoFactory.Au
 
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
+import com.example.waggle.domain.chat.persistence.dao.ChatMessageRepository;
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomMemberRepository;
 import com.example.waggle.domain.chat.persistence.dao.ChatRoomRepository;
+import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
@@ -72,6 +74,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     private final MemberQueryService memberQueryService;
     private final RedisService redisService;
@@ -151,6 +154,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         deleteAllDataLinkedToMember(member);
         deleteMemberContent(member);
         deleteMemberTeams(member);
+        deleteChatRoomsAndMessages(member);
 
         memberRepository.delete(member);
     }
@@ -239,6 +243,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         List<TeamMember> teamMemberships = teamMemberRepository.findAllByMember(member);
         teamMemberRepository.deleteAll(teamMemberships);
+    }
+
+    private void deleteChatRoomsAndMessages(Member member) {
+        List<ChatRoom> chatRooms = chatRoomRepository.findByOwner(member);
+        for (ChatRoom chatRoom : chatRooms) {
+            chatMessageRepository.deleteAllByChatRoomId(chatRoom.getId());
+            chatRoomRepository.delete(chatRoom);
+        }
     }
 
     @Override

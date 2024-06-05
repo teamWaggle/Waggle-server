@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
     @Query(value = "{'chatRoomId': ?0, 'sendTime': {$gt: ?1}}", count = true)
@@ -17,5 +19,7 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     @Query(value = "{'chatRoomId': ?0, 'sendTime': {$gt: ?1}}", sort = "{'sendTime': -1}")
     Page<ChatMessage> findMessagesByChatRoomIdAfterMemberEnterTime(Long chatRoomId, Long memberEnterTime,
                                                                    Pageable pageable);
+
+    void deleteAllByChatRoomId(Long chatRoomId);
 
 }
