@@ -98,7 +98,7 @@ public class MediaUtil {
     }
 
     public static boolean validateRemoveImgInS3(String previous, String current) {
-        if (previous == null && current != null) {
+        if (previous == null) {
             return false;
         }
         return !previous.equals(current);
