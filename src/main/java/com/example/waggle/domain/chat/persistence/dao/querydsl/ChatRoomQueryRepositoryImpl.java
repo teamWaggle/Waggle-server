@@ -9,7 +9,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -46,18 +45,21 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
     }
 
     @Override
-    public Page<ChatRoom> searchByKeyword(String keyword, Pageable pageable) {
-        List<ChatRoom> chatRooms = queryFactory.selectFrom(chatRoom)
-                .where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)))
+    public Page<ChatRoom> findChatRoomsByKeyword(String keyword, Pageable pageable) {
+        JPAQuery<ChatRoom> baseQuery = queryFactory.selectFrom(chatRoom);
+        JPAQuery<Long> countQuery = queryFactory.select(chatRoom.count()).from(chatRoom);
+
+        if (!(keyword == null || keyword.isEmpty())) {
+            baseQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+            countQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+        }
+
+        List<ChatRoom> chatRooms = baseQuery
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(chatRoom.count())
-                .from(chatRoom)
-                .where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)))
-                .fetchFirst();
-
-        return new PageImpl<>(chatRooms, pageable, total);
+        return PageableExecutionUtils.getPage(chatRooms, pageable, countQuery::fetchOne);
     }
+
 }
