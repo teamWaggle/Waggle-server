@@ -249,6 +249,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         List<ChatRoom> chatRooms = chatRoomRepository.findByOwner(member);
         for (ChatRoom chatRoom : chatRooms) {
             chatMessageRepository.deleteAllByChatRoomId(chatRoom.getId());
+            chatRoomMemberRepository.deleteAllByChatRoom(chatRoom);
             chatRoomRepository.delete(chatRoom);
         }
     }
