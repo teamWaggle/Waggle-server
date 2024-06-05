@@ -1,6 +1,6 @@
 package com.example.waggle.domain.member.presentation.controller;
 
-import com.example.waggle.domain.chat.application.room.ChatRoomQueryService;
+import com.example.waggle.domain.chat.application.ChatRoomQueryService;
 import com.example.waggle.domain.follow.application.FollowQueryService;
 import com.example.waggle.domain.member.application.MemberCommandService;
 import com.example.waggle.domain.member.application.MemberQueryService;
@@ -141,7 +141,8 @@ public class MemberApiController {
             ErrorStatus.MEMBER_NOT_FOUND
     })
     @PostMapping("/email/verify/password")
-    public ApiResponseDto<Long> verifyMailForPasswordChanging(@RequestBody EmailVerificationDto emailVerificationRequest) {
+    public ApiResponseDto<Long> verifyMailForPasswordChanging(
+            @RequestBody EmailVerificationDto emailVerificationRequest) {
         Long memberId = memberCommandService.verifyEmailForPasswordChange(emailVerificationRequest);
         return ApiResponseDto.onSuccess(memberId);
     }

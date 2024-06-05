@@ -2,9 +2,9 @@ package com.example.waggle.domain.chat.presentation.controller;
 
 import static com.example.waggle.global.util.PageUtil.CHAT_ROOM_SIZE;
 
-import com.example.waggle.domain.chat.application.message.ChatMessageQueryService;
-import com.example.waggle.domain.chat.application.room.ChatRoomCommandService;
-import com.example.waggle.domain.chat.application.room.ChatRoomQueryService;
+import com.example.waggle.domain.chat.application.ChatMessageQueryService;
+import com.example.waggle.domain.chat.application.ChatRoomCommandService;
+import com.example.waggle.domain.chat.application.ChatRoomQueryService;
 import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.presentation.converter.ChatConverter;

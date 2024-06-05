@@ -4,7 +4,7 @@ import static org.springframework.messaging.simp.stomp.StompCommand.CONNECT;
 import static org.springframework.messaging.simp.stomp.StompCommand.SEND;
 import static org.springframework.messaging.simp.stomp.StompCommand.SUBSCRIBE;
 
-import com.example.waggle.domain.chat.application.room.ChatRoomCommandService;
+import com.example.waggle.domain.chat.application.ChatRoomCommandService;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.exception.object.handler.MemberHandler;

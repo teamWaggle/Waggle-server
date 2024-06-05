@@ -1,4 +1,4 @@
-package com.example.waggle.domain.chat.application.message;
+package com.example.waggle.domain.chat.application;
 
 import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
 
