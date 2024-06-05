@@ -5,12 +5,12 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.SecurityUtil;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -40,6 +40,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public Member getMemberByUserUrl(String userUrl) {
         return memberRepository.findByUserUrl(userUrl)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public Optional<Member> findOptionalMemberByUserUrl(String userUrl) {
+        return memberRepository.findByUserUrl(userUrl);
     }
 
     @Override
