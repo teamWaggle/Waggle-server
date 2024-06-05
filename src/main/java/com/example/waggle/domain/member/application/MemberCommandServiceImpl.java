@@ -182,8 +182,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         commentRepository.deleteAllByMemberId(memberId);
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
         teamRepository.deleteTeamWithRelationsByMemberId(memberId);
+        deleteChatRoomsAndMessages(member);
         chatRoomMemberRepository.deleteAllByMember(member);
-        chatRoomRepository.deleteAllByOwner(member);
         memberRepository.deleteMemberWithRelations(memberId);
     }
 
