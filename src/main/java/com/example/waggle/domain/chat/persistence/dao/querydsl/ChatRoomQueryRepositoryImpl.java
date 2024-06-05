@@ -4,6 +4,7 @@ import static com.example.waggle.domain.chat.persistence.entity.QChatRoom.chatRo
 import static com.example.waggle.domain.chat.persistence.entity.QChatRoomMember.chatRoomMember;
 
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
+import com.example.waggle.domain.member.persistence.entity.Member;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -61,5 +62,31 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
 
         return PageableExecutionUtils.getPage(chatRooms, pageable, countQuery::fetchOne);
     }
+
+    @Override
+    public Page<ChatRoom> findChatRoomsByKeywordExcludingMember(Member member,
+                                                                String keyword,
+                                                                Pageable pageable) {
+        JPAQuery<ChatRoom> baseQuery = queryFactory.selectFrom(chatRoom);
+        JPAQuery<Long> countQuery = queryFactory.select(chatRoom.count()).from(chatRoom);
+
+        if (!(keyword == null || keyword.isEmpty())) {
+            baseQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+            countQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+        }
+
+        baseQuery.leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(chatRoomMember.member.id.ne(member.getId()).or(chatRoomMember.member.id.isNull()));
+        countQuery.leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(chatRoomMember.member.id.ne(member.getId()).or(chatRoomMember.member.id.isNull()));
+
+        List<ChatRoom> chatRooms = baseQuery
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(chatRooms, pageable, countQuery::fetchOne);
+    }
+
 
 }
