@@ -4,6 +4,7 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberQueryService {
 
@@ -14,6 +15,8 @@ public interface MemberQueryService {
     Member getMemberById(Long memberId);
 
     Member getMemberByUserUrl(String userUrl);
+
+    Optional<Member> findOptionalMemberByUserUrl(String userUrl);
 
     List<Member> getMembersByNameAndBirthday(String name, LocalDate birthday);
 

@@ -72,14 +72,18 @@ public class ChatConverter {
     }
 
     public static ChatMessageDto toChatMessageDto(ChatMessage chatMessage, Member sender) {
+        String nickname = sender != null ? sender.getNickname() : "알 수 없음";
+        String profileImg =
+                sender != null ? MediaUtil.getProfileImg(sender) : MediaUtil.getDefaultMemberProfileImgUrl();
+
         return ChatMessageDto.builder()
                 .id(chatMessage.getId())
                 .chatRoomId(chatMessage.getChatRoomId())
                 .chatMessageType(chatMessage.getChatMessageType())
                 .content(chatMessage.getContent())
                 .senderUserUrl(sender.getUserUrl())
-                .senderNickname(sender.getNickname())
-                .senderProfileImgUrl(MediaUtil.getProfileImg(sender))
+                .senderNickname(nickname)
+                .senderProfileImgUrl(profileImg)
                 .sendTime(chatMessage.getSendTime())
                 .build();
     }

@@ -187,7 +187,7 @@ public class ChatApiController {
     }
 
     private ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {
-        Member sender = memberQueryService.getMemberByUserUrl(chatMessage.getSenderUserUrl());
+        Member sender = memberQueryService.findOptionalMemberByUserUrl(chatMessage.getSenderUserUrl()).orElse(null);
         return ChatConverter.toChatMessageDto(chatMessage, sender);
     }
 
