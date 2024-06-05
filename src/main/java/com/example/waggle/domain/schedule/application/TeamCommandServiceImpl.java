@@ -15,6 +15,7 @@ import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.aws.AwsS3Service;
+import com.example.waggle.global.util.MediaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
-        if (!team.getCoverImageUrl().equals(updateTeamRequest.getCoverImageUrl())) {
+        if (MediaUtil.validateRemoveImgInS3(team.getCoverImageUrl(), updateTeamRequest.getCoverImageUrl())) {
             awsS3Service.deleteFile(team.getCoverImageUrl());
         }
         team.update(updateTeamRequest);

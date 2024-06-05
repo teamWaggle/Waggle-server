@@ -10,6 +10,7 @@ import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.PetHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.aws.AwsS3Service;
+import com.example.waggle.global.util.MediaUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetHandler(ErrorStatus.PET_NOT_FOUND));
         validateIsOwner(member, pet);
-        if (!pet.getProfileImgUrl().equals(updatePetRequest.getPetProfileImg())) {
+        if (MediaUtil.validateRemoveImgInS3(pet.getProfileImgUrl(), updatePetRequest.getPetProfileImg())) {
             awsS3Service.deleteFile(pet.getProfileImgUrl());
         }
         pet.update(updatePetRequest);

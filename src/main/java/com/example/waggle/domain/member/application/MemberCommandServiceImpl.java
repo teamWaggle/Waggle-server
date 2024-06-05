@@ -26,6 +26,7 @@ import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.aws.AwsS3Service;
 import com.example.waggle.global.service.redis.RedisService;
+import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.NameUtil;
 import com.example.waggle.global.util.NameUtil.NameType;
 import lombok.RequiredArgsConstructor;
@@ -107,7 +108,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Long updateMemberProfile(MemberUpdateDto updateMemberRequest,
                                     Member member) {
-        if (!member.getProfileImgUrl().equals(updateMemberRequest.getMemberProfileImg())) {
+        if (MediaUtil.validateRemoveImgInS3(member.getProfileImgUrl(), updateMemberRequest.getMemberProfileImg())) {
             awsS3Service.deleteFile(member.getProfileImgUrl());
         }
         member.updateInfo(updateMemberRequest);

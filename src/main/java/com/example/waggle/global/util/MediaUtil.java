@@ -96,4 +96,11 @@ public class MediaUtil {
     public static String getDefaultMemberProfileImgUrl() {
         return appendUri(DEFAULT_MEMBER_PROFILE_IMG);
     }
+
+    public static boolean validateRemoveImgInS3(String previous, String current) {
+        if (previous == null && current != null) {
+            return false;
+        }
+        return !previous.equals(current);
+    }
 }
