@@ -44,13 +44,8 @@
 <!-- JavaScript -->
 <script src="/webjars/vue/2.5.16/dist/vue.min.js"></script>
 <script src="/webjars/axios/0.17.1/dist/axios.min.js"></script>
-<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
 <script>
-    // websocket & stomp initialize
-    var sock = new SockJS("/ws/chat");
-    var ws = Stomp.over(sock);
-    var reconnect = 0;
     // vue.js
     var vm = new Vue({
         el: '#app',
@@ -62,6 +57,8 @@
             content: '',
             messages: [],
             hasJoined: false,
+            ws: null,
+            reconnect: 0
         },
         created() {
             this.chatRoomId = localStorage.getItem('wschat.chatRoomId');
@@ -140,7 +137,7 @@
                 })
             },
             sendSystemMessage: function (type) {
-                ws.send("/publish/message", {
+                this.ws.send("/publish/message", {
                     'Authorization': 'Bearer ' + this.accessToken
                 }, JSON.stringify({
                     chatMessageType: type,
@@ -157,7 +154,7 @@
             },
             connect: function () {
                 console.log('Attempting to connect...');
-                this.ws = Stomp.over(new SockJS("/ws/chat"));
+                this.ws = Stomp.over(new WebSocket("ws://" + window.location.host + "/ws/chat"));
                 this.ws.connect({
                     'Authorization': 'Bearer ' + this.accessToken
                 }, (frame) => {
@@ -180,7 +177,6 @@
             }
         }
     });
-
 
     function leaveChatRoom() {
         axios.delete(`/api/chat/rooms/${vm.chatRoomId}/leave`, {
