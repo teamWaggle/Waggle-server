@@ -183,7 +183,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
         teamRepository.deleteTeamWithRelationsByMemberId(memberId);
         deleteChatRoomsAndMessages(member);
-        chatRoomMemberRepository.deleteAllByMember(member);
         memberRepository.deleteMemberWithRelations(memberId);
     }
 
@@ -193,8 +192,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         followRepository.deleteAllByFromMember(member);
         participationRepository.deleteAllByMember(member);
         recommendRepository.deleteAllByMember(member);
-        chatRoomMemberRepository.deleteAllByMember(member);
-        chatRoomRepository.deleteAllByOwner(member);
     }
 
     private void deleteMemberContent(Member member) {
@@ -252,6 +249,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             chatRoomMemberRepository.deleteAllByChatRoom(chatRoom);
             chatRoomRepository.delete(chatRoom);
         }
+        chatRoomMemberRepository.deleteAllByMember(member);
     }
 
     @Override
