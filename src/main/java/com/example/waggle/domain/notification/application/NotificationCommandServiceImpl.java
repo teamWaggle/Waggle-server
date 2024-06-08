@@ -20,21 +20,13 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
     public void markNotificationAsRead(Member receiver, Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_FOUND));
-        validateNotification(receiver, notification);
         notification.readNotification();
     }
 
     @Override
-    public void convertIsRead(Member receiver, Long targetId, NotificationType type) {
-        Notification notification = notificationRepository.findByReceiverIdAndTargetIdAndType(receiver.getId(), targetId, type)
+    public void convertIsRead(Member receiver, Long notificationId, NotificationType type) {
+        Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_FOUND));
-        validateNotification(receiver, notification);
         notification.readNotification();
-    }
-
-    private static void validateNotification(Member receiver, Notification notification) {
-//        if (notification.getReceiverId() != receiver.getId()) {
-//            throw new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_YOURS);
-//        }
     }
 }

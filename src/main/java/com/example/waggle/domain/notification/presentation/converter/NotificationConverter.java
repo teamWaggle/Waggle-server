@@ -15,6 +15,7 @@ public class NotificationConverter {
                 .notificationId(notification.getId())
                 .notificationType(notification.getType())
                 .isRead(notification.isRead())
+                .content(notification.getContent())
                 .sender(MemberConverter.toMemberSummaryDto(notification.getSender()))
                 .build();
     }
