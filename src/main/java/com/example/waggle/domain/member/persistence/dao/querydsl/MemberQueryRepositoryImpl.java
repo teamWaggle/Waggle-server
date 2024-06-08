@@ -19,7 +19,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         queryFactory.delete(follow)
                 .where(follow.toMember.id.eq(memberId).or(follow.fromMember.id.eq(memberId))).execute();
         queryFactory.delete(notification)
-                .where(notification.receiverId.eq(memberId).or(notification.sender.id.eq(memberId))).execute();
+                .where(notification.receiver.id.eq(memberId).or(notification.sender.id.eq(memberId))).execute();
         queryFactory.delete(pet).where(pet.member.id.eq(memberId)).execute();
         //TODO relations of chat
         queryFactory.delete(member).where(member.id.eq(memberId)).execute();

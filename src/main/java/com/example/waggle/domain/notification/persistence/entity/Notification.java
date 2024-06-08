@@ -1,6 +1,7 @@
 package com.example.waggle.domain.notification.persistence.entity;
 
 import com.example.waggle.domain.auditing.persistence.entity.BaseEntity;
+import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.follow.persistence.entity.Follow;
 import com.example.waggle.domain.member.persistence.entity.Member;
@@ -55,11 +56,12 @@ public class Notification extends BaseEntity {
                 .build();
     }
 
-    public static Notification of(Member member, Comment comment) {
+    public static Notification of(Member member, Comment comment, BoardType boardType) {
         return Notification.builder()
                 .sender(member)
                 .type(NotificationType.COMMENT)
                 .receiver(comment.getBoard().getMember())
+                .content(String.valueOf(boardType))
                 .isRead(false)
                 .build();
     }
