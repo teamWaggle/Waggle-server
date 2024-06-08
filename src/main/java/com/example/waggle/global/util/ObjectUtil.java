@@ -43,4 +43,15 @@ public class ObjectUtil {
         }
         return result;
     }
+
+    public static <T> Object deserialize(String value, Class<T> clazz) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object result = null;
+        try {
+            result = objectMapper.readValue(value, clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
 }
