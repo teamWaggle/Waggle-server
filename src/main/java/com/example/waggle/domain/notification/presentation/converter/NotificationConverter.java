@@ -5,6 +5,7 @@ import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.presentation.dto.NotificationResponse.NotificationCountDto;
 import com.example.waggle.domain.notification.presentation.dto.NotificationResponse.NotificationListDto;
 import com.example.waggle.domain.notification.presentation.dto.NotificationResponse.NotificationViewDto;
+import com.example.waggle.global.util.ObjectUtil;
 import org.springframework.data.domain.Page;
 
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class NotificationConverter {
                 .notificationId(notification.getId())
                 .notificationType(notification.getType())
                 .isRead(notification.isRead())
-                .content(notification.getContent())
+                .content(ObjectUtil.deserializeNotificationContent(notification))
                 .sender(MemberConverter.toMemberSummaryDto(notification.getSender()))
                 .build();
     }

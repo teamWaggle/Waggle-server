@@ -115,6 +115,7 @@ public enum ErrorStatus implements BaseCode {
     // 알림 관련 오류(4450 ~ 4499)
     NOTIFICATION_NOT_FOUND(NOT_FOUND, 4450, "존재하지 않는 알림입니다"),
     NOTIFICATION_NOT_YOURS(BAD_REQUEST, 4451, "당신의 알림이 아닙니다"),
+    NOTIFICATION_TYPE_INVALID(BAD_REQUEST, 4452, "설정되지 않은 알림타입입니다"),
 
     // 그 외(4500 ~ 4549)
     SEARCHING_KEYWORD_IS_TOO_SHORT(BAD_REQUEST, 4500, "검색어는 최소 2자입니다.");

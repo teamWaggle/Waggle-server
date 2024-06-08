@@ -1,6 +1,9 @@
 package com.example.waggle.global.util;
 
+import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest;
 import com.example.waggle.exception.object.general.GeneralException;
+import com.example.waggle.exception.object.handler.NotificationHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,5 +56,16 @@ public class ObjectUtil {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    public static Object deserializeNotificationContent(Notification notification) {
+        return switch (notification.getType()) {
+            case PARTICIPATION_REQUEST, PARTICIPATION_APPROVE ->
+                    deserialize(notification.getContent(), NotificationRequest.ParticipationDto.class);
+            case COMMENT -> deserialize(notification.getContent(), NotificationRequest.CommentDto.class);
+            case MENTIONED -> deserialize(notification.getContent(), NotificationRequest.MentionDto.class);
+            case FOLLOWED -> null;
+            default -> throw new NotificationHandler(ErrorStatus.NOTIFICATION_TYPE_INVALID);
+        };
     }
 }
