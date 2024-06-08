@@ -19,7 +19,7 @@ public class NotificationResponse {
     public static class NotificationViewDto {
         private Long notificationId;
         private boolean isRead;
-        private String content;
+        private Object content;
         private MemberSummaryDto sender;
         private NotificationType notificationType;
     }
