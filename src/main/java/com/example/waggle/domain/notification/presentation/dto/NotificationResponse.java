@@ -1,7 +1,7 @@
 package com.example.waggle.domain.notification.presentation.dto;
 
-import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +21,7 @@ public class NotificationResponse {
         private Long targetId;
         private Long receiverId;
         private boolean isRead;
+        private String content;
         private MemberSummaryDto sender;
         private NotificationType notificationType;
     }
