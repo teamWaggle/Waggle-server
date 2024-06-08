@@ -36,7 +36,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public boolean validateMemberUseBoard(Long boardId, BoardType boardType, Member member) {
-        Board board = findBoard(boardId, boardType);
+        Board board = findBoard(boardId, boardType);        //TODO remove private method because of not necessary
         return board.getMember().equals(member);
     }
 

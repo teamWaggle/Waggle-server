@@ -18,6 +18,7 @@ import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.util.BoardTypeUtil;
 import com.example.waggle.global.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +56,8 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
                         .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(member, comment, receiver))
+                .map(receiver -> Notification.of(member, comment, BoardTypeUtil.getBoardType(board)))
                 .collect(Collectors.toList());
-        notificationList.add(Notification.of(member, comment));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }

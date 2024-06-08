@@ -33,8 +33,8 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
     }
 
     private static void validateNotification(Member receiver, Notification notification) {
-        if (notification.getReceiverId() != receiver.getId()) {
-            throw new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_YOURS);
-        }
+//        if (notification.getReceiverId() != receiver.getId()) {
+//            throw new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_YOURS);
+//        }
     }
 }
