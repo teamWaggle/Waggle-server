@@ -18,8 +18,6 @@ public class NotificationResponse {
     @AllArgsConstructor
     public static class NotificationViewDto {
         private Long notificationId;
-        private Long targetId;
-        private Long receiverId;
         private boolean isRead;
         private String content;
         private MemberSummaryDto sender;
