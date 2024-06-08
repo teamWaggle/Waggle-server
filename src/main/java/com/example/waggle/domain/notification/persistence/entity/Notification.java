@@ -66,14 +66,16 @@ public class Notification extends BaseEntity {
                 .build();
     }
 
-    public static Notification of(Member member, Member receiver) {
+    public static Notification of(Member sender, Member receiver, String content) {
         return Notification.builder()
-                .sender(member)
+                .sender(sender)
                 .type(NotificationType.MENTIONED)
                 .receiver(receiver)
+                .content(content)
                 .isRead(false)
                 .build();
     }
+
 
     public void readNotification() {
         if (!this.isRead) {

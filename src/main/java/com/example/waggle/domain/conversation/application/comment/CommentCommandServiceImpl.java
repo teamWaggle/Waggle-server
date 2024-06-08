@@ -52,12 +52,15 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         Comment comment = buildComment(board, createCommentRequest, member);
         commentRepository.save(comment);
 
+        //MENTION
         List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
                         .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(member, comment, BoardTypeUtil.getBoardType(board)))
+                .map(receiver -> Notification.of(member, receiver, comment.getContent()))
                 .collect(Collectors.toList());
+        //COMMENT
+        notificationList.add(Notification.of(member, comment, BoardTypeUtil.getBoardType(board)));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
