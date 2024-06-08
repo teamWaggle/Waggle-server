@@ -57,10 +57,9 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         commentRepository.save(comment);
 
         //MENTION
-        String mentionContent = MentionDto.builder()
+        MentionDto mentionContent = MentionDto.builder()
                 .conversationContent(comment.getContent())
-                .build()
-                .toString();
+                .build();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
@@ -69,15 +68,14 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                         member,
                         receiver,
                         NotificationType.MENTIONED,
-                        mentionContent.toString()))
+                        mentionContent))
                 .collect(Collectors.toList());
 
         //COMMENT
-        String commentContent = CommentDto.builder()
+        CommentDto commentContent = CommentDto.builder()
                 .commentContent(comment.getContent())
                 .boardType(BoardTypeUtil.getBoardType(board))
-                .build()
-                .toString();
+                .build();
         notificationList.add(Notification.of(member,
                 board.getMember(),
                 NotificationType.COMMENT,
