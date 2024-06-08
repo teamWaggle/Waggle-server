@@ -2,6 +2,8 @@ package com.example.waggle.global.util;
 
 import com.example.waggle.exception.object.general.GeneralException;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
@@ -29,5 +31,16 @@ public class ObjectUtil {
 
     public static <T> boolean doesNotContain(List<T> objectList, T target) {
         return !objectList.contains(target);
+    }
+
+    public static String serialize(Object object) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String result = null;
+        try {
+            result = objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 }

@@ -11,7 +11,6 @@ import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
-import com.example.waggle.domain.notification.presentation.dto.NotificationRequest;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ReplyHandler;
@@ -24,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.MentionDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,10 +46,9 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         replyRepository.save(reply);
 
         //MENTION
-        String mentionContent = NotificationRequest.MentionDto.builder()
+        MentionDto mentionContent = MentionDto.builder()
                 .conversationContent(reply.getContent())
-                .build()
-                .toString();
+                .build();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(reply)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)

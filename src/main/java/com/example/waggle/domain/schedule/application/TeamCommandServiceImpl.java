@@ -152,7 +152,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 Notification.of(member,
                         team.getLeader(),
                         NotificationType.PARTICIPATION_REQUEST,
-                        String.valueOf(content))
+                        content)
         );
 
         return participation.getId();
@@ -186,7 +186,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                     Notification.of(member,
                             participation.getMember(),
                             NotificationType.PARTICIPATION_APPROVE,
-                            String.valueOf(content))
+                            content)
             );
         } else {
             participation.setStatus(ParticipationStatus.REJECTED);      //TODO remove it
