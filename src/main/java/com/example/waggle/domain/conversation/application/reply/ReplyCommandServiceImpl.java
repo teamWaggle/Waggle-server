@@ -10,6 +10,7 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ReplyHandler;
@@ -47,7 +48,11 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
                         .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(member, receiver, reply.getContent()))
+                .map(receiver -> Notification.of(
+                        member,
+                        receiver,
+                        NotificationType.MENTIONED,
+                        reply.getContent()))
                 .collect(Collectors.toList());
         notificationRepository.saveAll(notificationList);
         return reply.getId();
