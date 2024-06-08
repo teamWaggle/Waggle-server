@@ -142,6 +142,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
+
         notificationRepository.save(
                 Notification.of(member, participation)
         );
