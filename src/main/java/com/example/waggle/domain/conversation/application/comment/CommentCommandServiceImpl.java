@@ -11,6 +11,7 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
@@ -57,10 +58,18 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
                         .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(member, receiver, comment.getContent()))
+                .map(receiver -> Notification.of(
+                        member,
+                        receiver,
+                        NotificationType.MENTIONED,
+                        comment.getContent()))
                 .collect(Collectors.toList());
+
         //COMMENT
-        notificationList.add(Notification.of(member, comment, BoardTypeUtil.getBoardType(board)));
+        notificationList.add(Notification.of(member,
+                board.getMember(),
+                NotificationType.COMMENT,
+                String.valueOf(BoardTypeUtil.getBoardType(board))));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
