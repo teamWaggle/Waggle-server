@@ -11,6 +11,7 @@ import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ReplyHandler;
@@ -44,6 +45,10 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         replyRepository.save(reply);
 
         //MENTION
+        String mentionContent = NotificationRequest.MentionDto.builder()
+                .conversationContent(reply.getContent())
+                .build()
+                .toString();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(reply)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
@@ -52,7 +57,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                         member,
                         receiver,
                         NotificationType.MENTIONED,
-                        reply.getContent()))
+                        mentionContent))
                 .collect(Collectors.toList());
         notificationRepository.saveAll(notificationList);
         return reply.getId();

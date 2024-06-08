@@ -6,7 +6,7 @@ import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
-import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.ParticipationRequestDto;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.ParticipationDto;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberRepository;
@@ -144,7 +144,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
-        ParticipationRequestDto notificationRequest = ParticipationRequestDto.builder()
+        ParticipationDto content = ParticipationDto.builder()
                 .teamId(team.getId())
                 .teamName(team.getName())
                 .build();
@@ -152,7 +152,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 Notification.of(member,
                         team.getLeader(),
                         NotificationType.PARTICIPATION_REQUEST,
-                        String.valueOf(notificationRequest))
+                        String.valueOf(content))
         );
 
         return participation.getId();
@@ -178,7 +178,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
             validateLimitOfTeamCapacity(team);
             participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
-            ParticipationRequestDto notificationRequest = ParticipationRequestDto.builder()
+            ParticipationDto content = ParticipationDto.builder()
                     .teamId(team.getId())
                     .teamName(team.getName())
                     .build();
@@ -186,7 +186,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                     Notification.of(member,
                             participation.getMember(),
                             NotificationType.PARTICIPATION_APPROVE,
-                            String.valueOf(notificationRequest))
+                            String.valueOf(content))
             );
         } else {
             participation.setStatus(ParticipationStatus.REJECTED);      //TODO remove it

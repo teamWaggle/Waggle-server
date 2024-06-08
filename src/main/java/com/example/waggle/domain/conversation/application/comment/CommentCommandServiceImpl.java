@@ -12,6 +12,7 @@ import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.MentionDto;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
@@ -28,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.CommentDto;
 
 
 @Slf4j
@@ -54,6 +57,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         commentRepository.save(comment);
 
         //MENTION
+        String mentionContent = MentionDto.builder()
+                .conversationContent(comment.getContent())
+                .build()
+                .toString();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
@@ -62,14 +69,19 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                         member,
                         receiver,
                         NotificationType.MENTIONED,
-                        comment.getContent()))
+                        mentionContent.toString()))
                 .collect(Collectors.toList());
 
         //COMMENT
+        String commentContent = CommentDto.builder()
+                .commentContent(comment.getContent())
+                .boardType(BoardTypeUtil.getBoardType(board))
+                .build()
+                .toString();
         notificationList.add(Notification.of(member,
                 board.getMember(),
                 NotificationType.COMMENT,
-                String.valueOf(BoardTypeUtil.getBoardType(board))));
+                commentContent));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
