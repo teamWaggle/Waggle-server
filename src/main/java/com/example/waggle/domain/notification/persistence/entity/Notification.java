@@ -5,12 +5,13 @@ import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.follow.persistence.entity.Follow;
 import com.example.waggle.domain.member.persistence.entity.Member;
-import com.example.waggle.domain.schedule.persistence.entity.Participation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.ParticipationRequestDto;
 
 @Entity
 @Getter
@@ -38,11 +39,15 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "sender_id")
     private Member sender;
 
-    public static Notification of(Member member, Participation participation) {
+    public static Notification of(Member sender,
+                                  Member receiver,
+                                  NotificationType notificationType,
+                                  ParticipationRequestDto notificationRequest) {
         return Notification.builder()
-                .sender(member)
-                .type(NotificationType.PARTICIPATION_REQUEST)
-                .receiver(participation.getTeam().getLeader())
+                .sender(sender)
+                .receiver(receiver)
+                .type(notificationType)
+                .content(String.valueOf(notificationRequest))
                 .isRead(false)
                 .build();
     }

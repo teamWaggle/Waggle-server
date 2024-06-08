@@ -5,6 +5,8 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.ParticipationRequestDto;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberRepository;
@@ -142,10 +144,17 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
-
+        ParticipationRequestDto notificationRequest = ParticipationRequestDto.builder()
+                .teamId(team.getId())
+                .teamName(team.getName())
+                .build();
         notificationRepository.save(
-                Notification.of(member, participation)
+                Notification.of(member,
+                        team.getLeader(),
+                        NotificationType.PARTICIPATION_REQUEST,
+                        notificationRequest)
         );
+
         return participation.getId();
     }
 
@@ -169,8 +178,18 @@ public class TeamCommandServiceImpl implements TeamCommandService {
             validateLimitOfTeamCapacity(team);
             participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
+            ParticipationRequestDto notificationRequest = ParticipationRequestDto.builder()
+                    .teamId(team.getId())
+                    .teamName(team.getName())
+                    .build();
+            notificationRepository.save(
+                    Notification.of(member,
+                            participation.getMember(),
+                            NotificationType.PARTICIPATION_APPROVE,
+                            notificationRequest)
+            );
         } else {
-            participation.setStatus(ParticipationStatus.REJECTED);
+            participation.setStatus(ParticipationStatus.REJECTED);      //TODO remove it
         }
         participationRepository.save(participation);
     }
