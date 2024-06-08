@@ -2,7 +2,6 @@ package com.example.waggle.domain.notification.persistence.entity;
 
 import com.example.waggle.domain.auditing.persistence.entity.BaseEntity;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
-import com.example.waggle.domain.conversation.persistence.entity.Conversation;
 import com.example.waggle.domain.follow.persistence.entity.Follow;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
@@ -27,9 +26,12 @@ public class Notification extends BaseEntity {
 
     private boolean isRead;
 
-    private Long targetId;      //comment, team, follow
+    private String content;
 
-    private Long receiverId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
+    private Member receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
@@ -39,8 +41,7 @@ public class Notification extends BaseEntity {
         return Notification.builder()
                 .sender(member)
                 .type(NotificationType.PARTICIPATION_REQUEST)
-                .targetId(participation.getId())
-                .receiverId(participation.getTeam().getLeader().getId())
+                .receiver(participation.getTeam().getLeader())
                 .isRead(false)
                 .build();
     }
@@ -49,8 +50,7 @@ public class Notification extends BaseEntity {
         return Notification.builder()
                 .sender(member)
                 .type(NotificationType.FOLLOWED)
-                .targetId(follow.getId())
-                .receiverId(follow.getToMember().getId())
+                .receiver(follow.getToMember())
                 .isRead(false)
                 .build();
     }
@@ -59,18 +59,16 @@ public class Notification extends BaseEntity {
         return Notification.builder()
                 .sender(member)
                 .type(NotificationType.COMMENT)
-                .targetId(comment.getId())
-                .receiverId(comment.getBoard().getMember().getId())
+                .receiver(comment.getBoard().getMember())
                 .isRead(false)
                 .build();
     }
 
-    public static Notification of(Member member, Conversation conversation, Member receiver) {
+    public static Notification of(Member member, Member receiver) {
         return Notification.builder()
                 .sender(member)
                 .type(NotificationType.MENTIONED)
-                .targetId(conversation.getId())
-                .receiverId(receiver.getId())
+                .receiver(receiver)
                 .isRead(false)
                 .build();
     }
