@@ -1,5 +1,6 @@
 package com.example.waggle.domain.schedule.application;
 
+import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
@@ -34,6 +35,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final MemberScheduleRepository memberScheduleRepository;
+    private final BoardRepository boardRepository;
     private final ParticipationRepository participationRepository;
     private final NotificationRepository notificationRepository;
     private final AwsS3Service awsS3Service;
@@ -76,7 +78,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
-        validateTeamMemberIsOnlyOne(team);
         awsS3Service.deleteFile(team.getCoverImageUrl());
         teamRepository.deleteTeamWithRelations(teamId);
     }
@@ -87,11 +88,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, leader);
-        validateRemovedIsLeader(memberId, team);
-        Participation participation = participationRepository.findByTeamIdAndMemberId(teamId, memberId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.PARTICIPATION_NOT_FOUND));
-        participation.setStatus(ParticipationStatus.REJECTED);      //TODO not rejected, delete participation entity
+        validateRemovedIsNotLeader(memberId, team);
+        participationRepository.deleteByMemberIdAndTeamId(memberId, teamId);
         memberScheduleRepository.deleteAllByMemberId(memberId);
+        boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(memberId, teamId);
     }
 
@@ -100,7 +100,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
-        validateRemovedIsLeader(member.getId(), team);
+        validateRemovedIsNotLeader(member.getId(), team);
 
         memberScheduleRepository.deleteAllByMemberId(member.getId());
         participationRepository.deleteByMemberAndTeam(member, team);
@@ -125,7 +125,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
 
         validateCallerIsLeader(team, leader);
-        validateRemovedIsLeader(memberId, team);
+        validateRemovedIsNotLeader(memberId, team);
         validateMemberBelongsToTeam(team, member);
         team.updateLeader(member);
         participationRepository.save(leaderParticipation);
@@ -221,7 +221,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateRemovedIsLeader(Long memberId, Team team) {
+    private static void validateRemovedIsNotLeader(Long memberId, Team team) {
         if (team.getLeader().getId().equals(memberId)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED);
         }
@@ -249,11 +249,5 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .member(member)
                 .status(status)
                 .build();
-    }
-
-    private void validateTeamMemberIsOnlyOne(Team team) {
-        if (teamMemberRepository.countByTeam(team) > 1) {
-            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_IS_OVER_THAN_ONE);
-        }
     }
 }
