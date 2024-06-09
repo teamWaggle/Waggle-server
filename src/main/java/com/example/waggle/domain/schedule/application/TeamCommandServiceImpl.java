@@ -37,7 +37,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     private final ParticipationRepository participationRepository;
     private final NotificationRepository notificationRepository;
     private final AwsS3Service awsS3Service;
-    private final int teamCapacityLimit = 15;
+    private final int teamCapacityLimit = 20;
 
     @Override
     public Long createTeam(TeamRequest createTeamRequest, Member member) {
