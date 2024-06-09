@@ -87,8 +87,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     public void deleteTeamMemberByLeader(Long teamId, Long memberId, Member leader) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+
         validateCallerIsLeader(team, leader);
-        validateRemovedIsNotLeader(memberId, team);
+        validateTargetIsNotLeader(memberId, team);
+
         participationRepository.deleteByMemberIdAndTeamId(memberId, teamId);
         memberScheduleRepository.deleteAllByMemberId(memberId);
         boardRepository.deleteBoardsWithRelationsByMemberId(memberId);
@@ -100,9 +102,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
-        validateRemovedIsNotLeader(member.getId(), team);
+        validateTargetIsNotLeader(member.getId(), team);
 
         memberScheduleRepository.deleteAllByMemberId(member.getId());
+        boardRepository.deleteBoardsWithRelationsByMemberId(member.getId());
         participationRepository.deleteByMemberAndTeam(member, team);
         teamMemberRepository.deleteAllByMemberIdAndTeamId(member.getId(), teamId);
     }
@@ -125,7 +128,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
 
         validateCallerIsLeader(team, leader);
-        validateRemovedIsNotLeader(memberId, team);
+        validateTargetIsNotLeader(memberId, team);
         validateMemberBelongsToTeam(team, member);
         team.updateLeader(member);
         participationRepository.save(leaderParticipation);
@@ -180,7 +183,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                             content)
             );
         } else {
-            participation.setStatus(ParticipationStatus.REJECTED);      //TODO remove it
+            participationRepository.deleteByMemberAndTeam(member, team);
         }
         participationRepository.save(participation);
     }
@@ -191,15 +194,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .teamName(team.getName())
                 .build();
     }
-
-    private void validateMemberDuplication(Team team, Member member) {
-        boolean isValid = team.getTeamMembers().stream()
-                .noneMatch(teamMember -> teamMember.getMember().equals(member));
-        if (!isValid) {
-            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
-        }
-    }
-
 
     private void validateCallerIsLeader(Team team, Member member) {
         if (!team.getLeader().equals(member)) {
@@ -221,7 +215,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private static void validateRemovedIsNotLeader(Long memberId, Team team) {
+    private static void validateTargetIsNotLeader(Long memberId, Team team) {
         if (team.getLeader().getId().equals(memberId)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_CANNOT_BE_REMOVED);
         }
