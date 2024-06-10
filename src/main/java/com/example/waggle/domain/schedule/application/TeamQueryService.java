@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TeamQueryService {
 
@@ -21,10 +20,6 @@ public interface TeamQueryService {
     Team getTeamById(Long teamId);
 
     List<Participation> getParticipationList(Member leader, Long teamId);
-
-    Optional<Participation> getParticipation(Member member, Long teamId);
-
-    boolean isMemberOfTeam(Member member, Long teamId);
 
     Status getParticipationStatus(Member member, Long teamId);
 }
