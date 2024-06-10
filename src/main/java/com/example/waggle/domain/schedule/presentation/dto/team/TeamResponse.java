@@ -1,7 +1,7 @@
 package com.example.waggle.domain.schedule.presentation.dto.team;
 
-import com.example.waggle.domain.schedule.persistence.entity.TeamColor;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
+import com.example.waggle.domain.schedule.persistence.entity.TeamColor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,7 +66,7 @@ public class TeamResponse {
         private Status status;
 
         public enum Status {
-            PENDING, ACCEPTED, REJECTED, NONE
+            PENDING, ACCEPTED, NONE
         }
 
         public void setStatus(Status status) {

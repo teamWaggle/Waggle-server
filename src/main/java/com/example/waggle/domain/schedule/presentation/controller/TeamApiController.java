@@ -206,8 +206,7 @@ public class TeamApiController {
     public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
                                                                                   @PathVariable("teamId") Long teamId) {
         Optional<Participation> participation = teamQueryService.getParticipation(member, teamId);
-        boolean isMember = teamQueryService.isMemberOfTeam(member, teamId);
-        return ApiResponseDto.onSuccess(TeamConverter.toStatusDto(participation, isMember));
+        return ApiResponseDto.onSuccess(TeamConverter.toStatusDto(participation));
     }
 
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")

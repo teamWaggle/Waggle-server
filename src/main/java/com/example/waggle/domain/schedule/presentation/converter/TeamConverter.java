@@ -3,14 +3,13 @@ package com.example.waggle.domain.schedule.presentation.converter;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
-import com.example.waggle.domain.schedule.persistence.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
-import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.ParticipationStatusResponse;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.ParticipationStatusResponse.Status;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamDetailDto;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamSummaryDto;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamSummaryListDto;
+import com.example.waggle.global.util.MediaUtil;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -61,15 +60,17 @@ public class TeamConverter {
                 .build();
     }
 
-    public static ParticipationStatusResponse toStatusDto(Optional<Participation> participation, boolean isMember) {
-        ParticipationStatus status = ParticipationStatus.REJECTED;
+    public static ParticipationStatusResponse toStatusDto(Optional<Participation> participation) {
+        Status status = Status.NONE;
         if (participation.isPresent()) {
-            status = participation.get().getStatus();
-        } else if (isMember) {
-            status = ParticipationStatus.ACCEPTED;
+            switch (participation.get().getStatus()) {
+                case PENDING -> status = Status.PENDING;
+                case ACCEPTED -> status = Status.ACCEPTED;
+                default -> status = Status.NONE;
+            }
         }
         return ParticipationStatusResponse.builder()
-                .status(Status.valueOf(String.valueOf(status)))
+                .status(status)
                 .build();
 
     }
