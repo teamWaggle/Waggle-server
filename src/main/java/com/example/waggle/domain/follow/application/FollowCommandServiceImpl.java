@@ -6,6 +6,7 @@ import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import com.example.waggle.exception.object.handler.FollowHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -31,7 +32,11 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
         notificationRepository.save(
-                Notification.of(from, follow)
+                Notification.of(
+                        from,
+                        follow.getToMember(),
+                        NotificationType.FOLLOWED,
+                        null)
         );
         return follow.getId();
     }

@@ -26,4 +26,6 @@ public interface ChatRoomQueryService {
 
     Page<ChatRoom> getPagedChatRoomListByKeyword(String keyword, Pageable pageable);
 
+    Page<ChatRoom> getPagedChatRoomListByKeywordExcludingMember(Member member, String keyword, Pageable pageable);
+
 }

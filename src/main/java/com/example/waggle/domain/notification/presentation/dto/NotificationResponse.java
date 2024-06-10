@@ -1,7 +1,7 @@
 package com.example.waggle.domain.notification.presentation.dto;
 
-import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,11 +16,10 @@ public class NotificationResponse {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class NotificationViewDto {
+    public static class NotificationDto {
         private Long notificationId;
-        private Long targetId;
-        private Long receiverId;
         private boolean isRead;
+        private Object content;
         private MemberSummaryDto sender;
         private NotificationType notificationType;
     }
@@ -31,7 +30,7 @@ public class NotificationResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NotificationListDto {
-        private List<NotificationViewDto> notificationList;
+        private List<NotificationDto> notificationList;
     }
 
     @Data

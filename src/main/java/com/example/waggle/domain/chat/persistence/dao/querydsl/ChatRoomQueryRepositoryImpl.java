@@ -4,12 +4,12 @@ import static com.example.waggle.domain.chat.persistence.entity.QChatRoom.chatRo
 import static com.example.waggle.domain.chat.persistence.entity.QChatRoomMember.chatRoomMember;
 
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
+import com.example.waggle.domain.member.persistence.entity.Member;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -46,18 +46,47 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
     }
 
     @Override
-    public Page<ChatRoom> searchByKeyword(String keyword, Pageable pageable) {
-        List<ChatRoom> chatRooms = queryFactory.selectFrom(chatRoom)
-                .where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)))
+    public Page<ChatRoom> findChatRoomsByKeyword(String keyword, Pageable pageable) {
+        JPAQuery<ChatRoom> baseQuery = queryFactory.selectFrom(chatRoom);
+        JPAQuery<Long> countQuery = queryFactory.select(chatRoom.count()).from(chatRoom);
+
+        if (!(keyword == null || keyword.isEmpty())) {
+            baseQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+            countQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+        }
+
+        List<ChatRoom> chatRooms = baseQuery
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(chatRoom.count())
-                .from(chatRoom)
-                .where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)))
-                .fetchFirst();
-
-        return new PageImpl<>(chatRooms, pageable, total);
+        return PageableExecutionUtils.getPage(chatRooms, pageable, countQuery::fetchOne);
     }
+
+    @Override
+    public Page<ChatRoom> findChatRoomsByKeywordExcludingMember(Member member,
+                                                                String keyword,
+                                                                Pageable pageable) {
+        JPAQuery<ChatRoom> baseQuery = queryFactory.selectFrom(chatRoom);
+        JPAQuery<Long> countQuery = queryFactory.select(chatRoom.count()).from(chatRoom);
+
+        if (!(keyword == null || keyword.isEmpty())) {
+            baseQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+            countQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
+        }
+
+        baseQuery.join(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(chatRoomMember.member.id.ne(member.getId()));
+        countQuery.join(chatRoom.chatRoomMembers, chatRoomMember)
+                .where(chatRoomMember.member.id.ne(member.getId()));
+
+        List<ChatRoom> chatRooms = baseQuery
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(chatRooms, pageable, countQuery::fetchOne);
+    }
+
+
 }

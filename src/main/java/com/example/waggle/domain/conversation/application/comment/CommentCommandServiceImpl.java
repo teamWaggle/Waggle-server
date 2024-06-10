@@ -2,6 +2,7 @@ package com.example.waggle.domain.conversation.application.comment;
 
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
+import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
@@ -11,6 +12,8 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
+import com.example.waggle.domain.notification.persistence.entity.NotificationType;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.MentionDto;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ScheduleRepository;
 import com.example.waggle.exception.object.general.GeneralException;
@@ -26,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.CommentDto;
 
 
 @Slf4j
@@ -51,13 +56,30 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         Comment comment = buildComment(board, createCommentRequest, member);
         commentRepository.save(comment);
 
+        //MENTION
+        MentionDto mentionContent = MentionDto.builder()
+                .conversationContent(comment.getContent())
+                .build();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
                         .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(member, comment, receiver))
+                .map(receiver -> Notification.of(
+                        member,
+                        receiver,
+                        NotificationType.MENTIONED,
+                        mentionContent))
                 .collect(Collectors.toList());
-        notificationList.add(Notification.of(member, comment));
+
+        //COMMENT
+        CommentDto commentContent = CommentDto.builder()
+                .commentContent(comment.getContent())
+                .boardType(BoardType.fromDiscriminatorValue(board))
+                .build();
+        notificationList.add(Notification.of(member,
+                board.getMember(),
+                NotificationType.COMMENT,
+                commentContent));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
