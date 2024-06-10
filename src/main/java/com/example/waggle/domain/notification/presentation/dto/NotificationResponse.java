@@ -16,7 +16,7 @@ public class NotificationResponse {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class NotificationViewDto {
+    public static class NotificationDto {
         private Long notificationId;
         private boolean isRead;
         private Object content;
@@ -30,7 +30,7 @@ public class NotificationResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NotificationListDto {
-        private List<NotificationViewDto> notificationList;
+        private List<NotificationDto> notificationList;
     }
 
     @Data
