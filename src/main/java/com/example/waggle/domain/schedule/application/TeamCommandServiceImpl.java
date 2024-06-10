@@ -81,7 +81,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         validateCallerIsLeader(team, member);
-        awsS3Service.deleteFile(team.getCoverImageUrl());
+        if (MediaUtil.validateRemoveImgInS3(team.getCoverImageUrl(), null)) {
+            awsS3Service.deleteFile(team.getCoverImageUrl());
+        }
         teamRepository.deleteTeamWithRelations(teamId);
     }
 
@@ -130,7 +132,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         validateCallerIsLeader(team, leader);
         validateTargetIsNotLeader(memberId, team);
-        validateMemberBelongsToTeam(team, member);
+        validateMemberIsInTeam(team, member);
         team.updateLeader(member);
     }
 
@@ -140,6 +142,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
         validateNonExistenceOfParticipationRequest(team, member);
+        validateMemberIsNotInTeam(team, member);
 
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
@@ -181,7 +184,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                             content)
             );
         }
-        participationRepository.deleteByMemberAndTeam(member, team);
+        participationRepository.delete(participation);
     }
 
     private static ParticipationDto buildParticipationDto(Team team) {
@@ -197,11 +200,15 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         }
     }
 
-    private void validateMemberBelongsToTeam(Team team, Member member) {
-        boolean isMember = team.getTeamMembers().stream()
-                .anyMatch(tm -> tm.getMember().equals(member));
-        if (!isMember) {
+    private void validateMemberIsInTeam(Team team, Member member) {
+        if (!teamMemberRepository.existsByMemberAndTeam(member, team)) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_NOT_IN_TEAM);
+        }
+    }
+
+    private void validateMemberIsNotInTeam(Team team, Member member) {
+        if (teamMemberRepository.existsByMemberAndTeam(member, team)) {
+            throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
         }
     }
 

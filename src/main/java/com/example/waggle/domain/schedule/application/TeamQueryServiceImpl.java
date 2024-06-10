@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -61,19 +60,6 @@ public class TeamQueryServiceImpl implements TeamQueryService {
         if (!team.getLeader().equals(leader)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
-    }
-
-    @Override
-    public Optional<Participation> getParticipation(Member member, Long teamId) {
-        return participationRepository.findByTeamIdAndMemberId(teamId, member.getId());
-    }
-
-    @Override
-    public boolean isMemberOfTeam(Member member, Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-        return team.getTeamMembers().stream()
-                .anyMatch(teamMember -> teamMember.getMember().equals(member));
     }
 
     @Override
