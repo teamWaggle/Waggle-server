@@ -47,7 +47,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
         //MENTION
         MentionDto mentionContent = MentionDto.builder()
-                .content(reply.getContent())
+                .conversationContent(reply.getContent())
                 .build();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(reply)
                 .stream()
