@@ -76,9 +76,9 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
         }
 
         baseQuery.join(chatRoom.chatRoomMembers, chatRoomMember)
-                .where(chatRoomMember.member.id.ne(member.getId()).or(chatRoomMember.member.id.isNull()));
+                .where(chatRoomMember.member.id.ne(member.getId()));
         countQuery.join(chatRoom.chatRoomMembers, chatRoomMember)
-                .where(chatRoomMember.member.id.ne(member.getId()).or(chatRoomMember.member.id.isNull()));
+                .where(chatRoomMember.member.id.ne(member.getId()));
 
         List<ChatRoom> chatRooms = baseQuery
                 .offset(pageable.getOffset())
