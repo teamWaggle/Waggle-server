@@ -58,7 +58,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         //MENTION
         MentionDto mentionContent = MentionDto.builder()
-                .conversationContent(comment.getContent())
+                .content(comment.getContent())
                 .build();
         List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
                 .stream()
@@ -73,7 +73,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         //COMMENT
         CommentDto commentContent = CommentDto.builder()
-                .commentContent(comment.getContent())
+                .content(comment.getContent())
                 .boardType(BoardTypeUtil.getBoardType(board))
                 .build();
         notificationList.add(Notification.of(member,

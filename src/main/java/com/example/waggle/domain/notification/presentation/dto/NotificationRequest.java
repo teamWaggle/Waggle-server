@@ -25,7 +25,7 @@ public class NotificationRequest {
     @AllArgsConstructor
     public static class CommentDto {
         private BoardType boardType;
-        private String commentContent;
+        private String content;
     }
 
     @Data
@@ -34,6 +34,6 @@ public class NotificationRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MentionDto {
-        private String conversationContent;
+        private String content;
     }
 }
