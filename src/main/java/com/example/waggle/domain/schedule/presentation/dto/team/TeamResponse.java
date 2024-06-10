@@ -63,7 +63,7 @@ public class TeamResponse {
     @Schema
     public static class ParticipationStatusResponse {
 
-        private Status status;
+        private ParticipationStatus participationStatus;
     }
 
 }

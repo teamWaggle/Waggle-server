@@ -6,7 +6,7 @@ import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberReposito
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
-import com.example.waggle.domain.schedule.presentation.dto.team.Status;
+import com.example.waggle.domain.schedule.presentation.dto.team.ParticipationStatus;
 import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -63,13 +63,13 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
-    public Status getParticipationStatus(Member member, Long teamId) {
+    public ParticipationStatus getParticipationStatus(Member member, Long teamId) {
         if (teamMemberRepository.existsByMemberIdAndTeamId(member.getId(), teamId)) {
-            return Status.ACCEPTED;
+            return ParticipationStatus.ACCEPTED;
         }
         if (participationRepository.existsByMemberIdAndTeamId(member.getId(), teamId)) {
-            return Status.PENDING;
+            return ParticipationStatus.PENDING;
         }
-        return Status.NONE;
+        return ParticipationStatus.NONE;
     }
 }
