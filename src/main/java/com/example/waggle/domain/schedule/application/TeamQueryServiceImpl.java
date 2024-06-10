@@ -4,7 +4,6 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
-import com.example.waggle.domain.schedule.persistence.entity.ParticipationStatus;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
 import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
