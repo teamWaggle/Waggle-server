@@ -46,7 +46,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = buildTeam(createTeamRequest, member);
         teamRepository.save(team);
         addMemberToTeam(team, member);
-        buildParticipation(member, team, ParticipationStatus.ACCEPTED);
+        participationRepository.save(buildParticipation(member, team, ParticipationStatus.ACCEPTED));
         return team.getId();
     }
 
