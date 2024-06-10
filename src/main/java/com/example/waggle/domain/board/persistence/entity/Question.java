@@ -31,8 +31,4 @@ public class Question extends Board {
         this.status = status;
     }
 
-    public void increaseViewCount() {
-        viewCount++;
-    }
-
 }
