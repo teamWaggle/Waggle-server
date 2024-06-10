@@ -3,7 +3,7 @@ package com.example.waggle.domain.schedule.presentation.converter;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
-import com.example.waggle.domain.schedule.presentation.dto.team.Status;
+import com.example.waggle.domain.schedule.presentation.dto.team.ParticipationStatus;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.ParticipationStatusResponse;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamDetailDto;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamResponse.TeamSummaryDto;
@@ -58,9 +58,9 @@ public class TeamConverter {
                 .build();
     }
 
-    public static ParticipationStatusResponse toStatusDto(Status status) {
+    public static ParticipationStatusResponse toStatusDto(ParticipationStatus participationStatus) {
         return ParticipationStatusResponse.builder()
-                .status(status)
+                .participationStatus(participationStatus)
                 .build();
     }
 

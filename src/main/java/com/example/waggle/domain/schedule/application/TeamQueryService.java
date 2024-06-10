@@ -3,7 +3,7 @@ package com.example.waggle.domain.schedule.application;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
-import com.example.waggle.domain.schedule.presentation.dto.team.Status;
+import com.example.waggle.domain.schedule.presentation.dto.team.ParticipationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,5 +21,5 @@ public interface TeamQueryService {
 
     List<Participation> getParticipationList(Member leader, Long teamId);
 
-    Status getParticipationStatus(Member member, Long teamId);
+    ParticipationStatus getParticipationStatus(Member member, Long teamId);
 }
