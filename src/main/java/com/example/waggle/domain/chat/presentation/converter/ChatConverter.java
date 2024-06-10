@@ -18,6 +18,7 @@ import com.example.waggle.global.util.MediaUtil;
 import com.example.waggle.global.util.PageUtil;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 
@@ -71,17 +72,17 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatMessageDto toChatMessageDto(ChatMessage chatMessage, Member sender) {
-        String nickname = sender != null ? sender.getNickname() : "알 수 없음";
-        String profileImg =
-                sender != null ? MediaUtil.getProfileImg(sender) : MediaUtil.getDefaultMemberProfileImgUrl();
+    public static ChatMessageDto toChatMessageDto(ChatMessage chatMessage, Optional<Member> sender) {
+        String nickname = sender.map(Member::getNickname).orElse("알 수 없음");
+        String profileImg = sender.map(MediaUtil::getProfileImg).orElse(MediaUtil.getDefaultMemberProfileImgUrl());
+        String senderUserUrl = sender.map(Member::getUserUrl).orElse(null);
 
         return ChatMessageDto.builder()
                 .id(chatMessage.getId())
                 .chatRoomId(chatMessage.getChatRoomId())
                 .chatMessageType(chatMessage.getChatMessageType())
                 .content(chatMessage.getContent())
-                .senderUserUrl(sender.getUserUrl())
+                .senderUserUrl(senderUserUrl)
                 .senderNickname(nickname)
                 .senderProfileImgUrl(profileImg)
                 .sendTime(chatMessage.getSendTime())

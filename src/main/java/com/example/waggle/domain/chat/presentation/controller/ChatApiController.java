@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -187,7 +188,7 @@ public class ChatApiController {
     }
 
     private ChatMessageDto buildChatMessageDto(ChatMessage chatMessage) {
-        Member sender = memberQueryService.findOptionalMemberByUserUrl(chatMessage.getSenderUserUrl()).orElse(null);
+        Optional<Member> sender = memberQueryService.findOptionalMemberByUserUrl(chatMessage.getSenderUserUrl());
         return ChatConverter.toChatMessageDto(chatMessage, sender);
     }
 
