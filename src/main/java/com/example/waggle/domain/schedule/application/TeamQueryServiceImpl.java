@@ -2,9 +2,11 @@ package com.example.waggle.domain.schedule.application;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
+import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
 import com.example.waggle.domain.schedule.persistence.entity.Participation;
 import com.example.waggle.domain.schedule.persistence.entity.Team;
+import com.example.waggle.domain.schedule.presentation.dto.team.Status;
 import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class TeamQueryServiceImpl implements TeamQueryService {
 
     private final TeamRepository teamRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final ParticipationRepository participationRepository;
 
     @Override
@@ -71,5 +74,16 @@ public class TeamQueryServiceImpl implements TeamQueryService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         return team.getTeamMembers().stream()
                 .anyMatch(teamMember -> teamMember.getMember().equals(member));
+    }
+
+    @Override
+    public Status getParticipationStatus(Member member, Long teamId) {
+        if (teamMemberRepository.existsByMemberIdAndTeamId(member.getId(), teamId)) {
+            return Status.ACCEPTED;
+        }
+        if (participationRepository.existsByMemberIdAndTeamId(member.getId(), teamId)) {
+            return Status.PENDING;
+        }
+        return Status.NONE;
     }
 }
