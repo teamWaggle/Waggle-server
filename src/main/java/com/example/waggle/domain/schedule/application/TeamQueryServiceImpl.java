@@ -50,10 +50,14 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     public List<Participation> getParticipationList(Member leader, Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        validateIsLeader(leader, team);
+        return participationRepository.findByTeam(team);
+    }
+
+    private static void validateIsLeader(Member leader, Team team) {
         if (!team.getLeader().equals(leader)) {
             throw new TeamHandler(ErrorStatus.TEAM_LEADER_UNAUTHORIZED);
         }
-        return participationRepository.findByTeamAndStatus(team, ParticipationStatus.PENDING);
     }
 
     @Override
