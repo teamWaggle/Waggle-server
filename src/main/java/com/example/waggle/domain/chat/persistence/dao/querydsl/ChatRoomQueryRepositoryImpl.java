@@ -75,9 +75,9 @@ public class ChatRoomQueryRepositoryImpl implements ChatRoomQueryRepository {
             countQuery.where(chatRoom.name.contains(keyword).or(chatRoom.description.contains(keyword)));
         }
 
-        baseQuery.leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
+        baseQuery.join(chatRoom.chatRoomMembers, chatRoomMember)
                 .where(chatRoomMember.member.id.ne(member.getId()).or(chatRoomMember.member.id.isNull()));
-        countQuery.leftJoin(chatRoom.chatRoomMembers, chatRoomMember)
+        countQuery.join(chatRoom.chatRoomMembers, chatRoomMember)
                 .where(chatRoomMember.member.id.ne(member.getId()).or(chatRoomMember.member.id.isNull()));
 
         List<ChatRoom> chatRooms = baseQuery
