@@ -22,6 +22,5 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
     void deleteByMemberIdAndTeamId(Long memberId, Long teamId);
 
-    List<Participation> findByTeamAndStatus(Team team, ParticipationStatus status);
-
+    List<Participation> findByTeam(Team team);
 }

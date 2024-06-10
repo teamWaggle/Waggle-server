@@ -12,7 +12,10 @@ import com.example.waggle.domain.schedule.persistence.dao.jpa.MemberScheduleRepo
 import com.example.waggle.domain.schedule.persistence.dao.jpa.ParticipationRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamMemberRepository;
 import com.example.waggle.domain.schedule.persistence.dao.jpa.TeamRepository;
-import com.example.waggle.domain.schedule.persistence.entity.*;
+import com.example.waggle.domain.schedule.persistence.entity.Participation;
+import com.example.waggle.domain.schedule.persistence.entity.Team;
+import com.example.waggle.domain.schedule.persistence.entity.TeamColor;
+import com.example.waggle.domain.schedule.persistence.entity.TeamMember;
 import com.example.waggle.domain.schedule.presentation.dto.team.TeamRequest;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.TeamHandler;
@@ -46,7 +49,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Team team = buildTeam(createTeamRequest, member);
         teamRepository.save(team);
         addMemberToTeam(team, member);
-        participationRepository.save(buildParticipation(member, team, ParticipationStatus.ACCEPTED));
         return team.getId();
     }
 
@@ -125,15 +127,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Participation leaderParticipation = buildParticipation(leader, team, ParticipationStatus.ACCEPTED);
-
 
         validateCallerIsLeader(team, leader);
         validateTargetIsNotLeader(memberId, team);
         validateMemberBelongsToTeam(team, member);
         team.updateLeader(member);
-        participationRepository.save(leaderParticipation);
-        participationRepository.deleteByMemberAndTeam(member, team);
     }
 
     @Override
@@ -143,7 +141,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         validateNonExistenceOfParticipationRequest(team, member);
 
-        Participation participation = buildParticipation(member, team, ParticipationStatus.PENDING);
+        Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
 
         ParticipationDto content = buildParticipationDto(team);
@@ -174,7 +172,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         if (accept) {
             validateLimitOfTeamCapacity(team);
-            participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
             ParticipationDto content = buildParticipationDto(team);
             notificationRepository.save(
@@ -183,10 +180,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                             NotificationType.PARTICIPATION_APPROVE,
                             content)
             );
-        } else {
-            participationRepository.deleteByMemberAndTeam(member, team);
         }
-        participationRepository.save(participation);
+        participationRepository.deleteByMemberAndTeam(member, team);
     }
 
     private static ParticipationDto buildParticipationDto(Team team) {
@@ -238,11 +233,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         teamMemberRepository.save(teamMember);
     }
 
-    private static Participation buildParticipation(Member member, Team team, ParticipationStatus status) {
+    private static Participation buildParticipation(Member member, Team team) {
         return Participation.builder()
                 .team(team)
                 .member(member)
-                .status(status)
                 .build();
     }
 }
