@@ -121,11 +121,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Participation leaderParticipation = Participation.builder()
-                .member(leader)
-                .team(team)
-                .status(ParticipationStatus.ACCEPTED)
-                .build();
+        Participation leaderParticipation = buildParticipation(leader, team, ParticipationStatus.ACCEPTED);
+
 
         validateCallerIsLeader(team, leader);
         validateRemovedIsLeader(memberId, team);
@@ -142,12 +139,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
         validateNonExistenceOfParticipationRequest(team, member);
 
-        Participation participation = buildParticipation(member, team);
+        Participation participation = buildParticipation(member, team, ParticipationStatus.PENDING);
         participationRepository.save(participation);
-        ParticipationDto content = ParticipationDto.builder()
-                .teamId(team.getId())
-                .teamName(team.getName())
-                .build();
+
+        ParticipationDto content = buildParticipationDto(team);
         notificationRepository.save(
                 Notification.of(member,
                         team.getLeader(),
@@ -168,7 +163,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         validateCallerIsLeader(team, leader);
-
         Participation participation = participationRepository.findByTeamAndMember(team,
                         member)
                 .orElseThrow(() -> new TeamHandler(
@@ -178,10 +172,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
             validateLimitOfTeamCapacity(team);
             participation.setStatus(ParticipationStatus.ACCEPTED);
             addMemberToTeam(team, member);
-            ParticipationDto content = ParticipationDto.builder()
-                    .teamId(team.getId())
-                    .teamName(team.getName())
-                    .build();
+            ParticipationDto content = buildParticipationDto(team);
             notificationRepository.save(
                     Notification.of(member,
                             participation.getMember(),
@@ -192,6 +183,13 @@ public class TeamCommandServiceImpl implements TeamCommandService {
             participation.setStatus(ParticipationStatus.REJECTED);      //TODO remove it
         }
         participationRepository.save(participation);
+    }
+
+    private static ParticipationDto buildParticipationDto(Team team) {
+        return ParticipationDto.builder()
+                .teamId(team.getId())
+                .teamName(team.getName())
+                .build();
     }
 
     private void validateMemberDuplication(Team team, Member member) {
@@ -245,11 +243,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         teamMemberRepository.save(teamMember);
     }
 
-    private static Participation buildParticipation(Member member, Team team) {
+    private static Participation buildParticipation(Member member, Team team, ParticipationStatus status) {
         return Participation.builder()
                 .team(team)
                 .member(member)
-                .status(ParticipationStatus.PENDING)
+                .status(status)
                 .build();
     }
 
