@@ -64,14 +64,6 @@ public class TeamResponse {
     public static class ParticipationStatusResponse {
 
         private Status status;
-
-        public enum Status {
-            PENDING, ACCEPTED, NONE
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
-        }
     }
 
 }

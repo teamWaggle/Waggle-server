@@ -23,4 +23,6 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     void deleteByMemberIdAndTeamId(Long memberId, Long teamId);
 
     List<Participation> findByTeam(Team team);
+
+    boolean existsByMemberIdAndTeamId(Long memberId, Long teamId);
 }
