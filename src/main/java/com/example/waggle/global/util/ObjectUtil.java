@@ -14,6 +14,7 @@ import java.util.List;
 
 public class ObjectUtil {
     private static final int MIN_KEYWORD_LENGTH = 2;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static boolean isPresent(@Nullable Object[] array) {
         return !ObjectUtils.isEmpty(array);
@@ -37,25 +38,19 @@ public class ObjectUtil {
     }
 
     public static String serialize(Object object) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String result = null;
         try {
-            result = objectMapper.writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return result;
     }
 
     public static <T> Object deserialize(String value, Class<T> clazz) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object result = null;
         try {
-            result = objectMapper.readValue(value, clazz);
+            return objectMapper.readValue(value, clazz);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return result;
     }
 
     public static Object deserializeNotificationContent(Notification notification) {
