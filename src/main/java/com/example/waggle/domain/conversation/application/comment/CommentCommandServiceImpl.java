@@ -2,6 +2,7 @@ package com.example.waggle.domain.conversation.application.comment;
 
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
+import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
@@ -20,7 +21,6 @@ import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
-import com.example.waggle.global.util.BoardTypeUtil;
 import com.example.waggle.global.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +74,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         //COMMENT
         CommentDto commentContent = CommentDto.builder()
                 .content(comment.getContent())
-                .boardType(BoardTypeUtil.getBoardType(board))
+                .boardType(BoardType.fromDiscriminatorValue(board))
                 .build();
         notificationList.add(Notification.of(member,
                 board.getMember(),
