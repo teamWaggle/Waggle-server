@@ -15,6 +15,7 @@ import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ReplyHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,19 +47,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         replyRepository.save(reply);
 
         //MENTION
-        MentionDto mentionContent = MentionDto.builder()
-                .conversationContent(reply.getContent())
-                .build();
-        List<Notification> notificationList = ParseUtil.parsingUserUrl(reply)
-                .stream()
-                .map(userUrl -> memberRepository.findByUserUrl(userUrl)
-                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(
-                        member,
-                        receiver,
-                        NotificationType.MENTIONED,
-                        mentionContent))
-                .collect(Collectors.toList());
+        List<Notification> notificationList = buildNotificationListByMention(reply, buildMentionDto(reply));
         notificationRepository.saveAll(notificationList);
         return reply.getId();
     }
@@ -69,6 +58,9 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
         validateMember(reply, member);
         reply.changeContent(updateReplyRequest.getContent());
+        //MENTION
+        List<Notification> notificationList = buildNotificationListByMention(reply, buildMentionDto(reply));
+        notificationRepository.saveAll(notificationList);
         return reply.getId();
     }
 
@@ -99,6 +91,27 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .member(member)
                 .comment(comment)
                 .content(createReplyRequest.getContent())
+                .build();
+    }
+
+    private List<Notification> buildNotificationListByMention(Reply reply, MentionDto content) {
+        return ParseUtil.parsingUserUrl(reply)
+                .stream()
+                .map(userUrl -> memberRepository.findByUserUrl(userUrl)
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
+                .map(receiver -> Notification.builder()
+                        .sender(reply.getMember())
+                        .receiver(receiver)
+                        .type(NotificationType.MENTIONED)
+                        .isRead(false)
+                        .content(ObjectUtil.serialize(content))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private MentionDto buildMentionDto(Reply reply) {
+        return MentionDto.builder()
+                .conversationContent(reply.getContent())
                 .build();
     }
 }
