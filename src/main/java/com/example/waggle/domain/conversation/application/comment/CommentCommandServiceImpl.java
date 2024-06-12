@@ -21,6 +21,7 @@ import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,29 +58,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         commentRepository.save(comment);
 
         //MENTION
-        MentionDto mentionContent = MentionDto.builder()
-                .conversationContent(comment.getContent())
-                .build();
-        List<Notification> notificationList = ParseUtil.parsingUserUrl(comment)
-                .stream()
-                .map(userUrl -> memberRepository.findByUserUrl(userUrl)
-                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
-                .map(receiver -> Notification.of(
-                        member,
-                        receiver,
-                        NotificationType.MENTIONED,
-                        mentionContent))
-                .collect(Collectors.toList());
+        List<Notification> notificationList = buildNotificationListByMention(comment, buildMentionDto(comment));
 
         //COMMENT
-        CommentDto commentContent = CommentDto.builder()
-                .commentContent(comment.getContent())
-                .boardType(BoardType.fromDiscriminatorValue(board))
-                .build();
-        notificationList.add(Notification.of(member,
-                board.getMember(),
-                NotificationType.COMMENT,
-                commentContent));
+        notificationList.add(buildNotificationByComment(comment, buildCommentDto(comment)));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
@@ -91,6 +73,9 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         validateMember(comment, member);
 
         comment.changeContent(updateCommentRequest.getContent());
+        //MENTION
+        List<Notification> notificationList = buildNotificationListByMention(comment, buildMentionDto(comment));
+        notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
 
@@ -130,6 +115,44 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .content(createCommentRequest.getContent())
                 .board(board)
                 .member(member)
+                .build();
+    }
+
+    private Notification buildNotificationByComment(Comment comment, CommentDto content) {
+        return Notification.builder()
+                .sender(comment.getMember())
+                .receiver(comment.getBoard().getMember())
+                .isRead(false)
+                .type(NotificationType.COMMENT)
+                .content(ObjectUtil.serialize(content))
+                .build();
+    }
+
+    private List<Notification> buildNotificationListByMention(Comment comment, MentionDto content) {
+        return ParseUtil.parsingUserUrl(comment)
+                .stream()
+                .map(userUrl -> memberRepository.findByUserUrl(userUrl)
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND)))
+                .map(receiver -> Notification.builder()
+                        .sender(comment.getMember())
+                        .receiver(receiver)
+                        .type(NotificationType.MENTIONED)
+                        .isRead(false)
+                        .content(ObjectUtil.serialize(content))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private CommentDto buildCommentDto(Comment comment) {
+        return CommentDto.builder()
+                .commentContent(comment.getContent())
+                .boardType(BoardType.fromDiscriminatorValue(comment.getBoard()))
+                .build();
+    }
+
+    private MentionDto buildMentionDto(Comment comment) {
+        return MentionDto.builder()
+                .conversationContent(comment.getContent())
                 .build();
     }
 }

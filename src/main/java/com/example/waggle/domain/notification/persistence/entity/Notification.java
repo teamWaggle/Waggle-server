@@ -2,7 +2,6 @@ package com.example.waggle.domain.notification.persistence.entity;
 
 import com.example.waggle.domain.auditing.persistence.entity.BaseEntity;
 import com.example.waggle.domain.member.persistence.entity.Member;
-import com.example.waggle.global.util.ObjectUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,19 +33,6 @@ public class Notification extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private Member sender;
-
-    public static Notification of(Member sender,
-                                  Member receiver,
-                                  NotificationType notificationType,
-                                  Object content) {
-        return Notification.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .type(notificationType)
-                .content(ObjectUtil.serialize(content))
-                .isRead(false)
-                .build();
-    }
 
 
     public void readNotification() {
