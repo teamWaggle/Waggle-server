@@ -33,7 +33,9 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         validateFollowing(from, followee);
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
-        notificationRepository.save(buildNotification(follow, buildFollowDto(followee)));
+        notificationRepository.save(buildNotification(
+                follow,
+                buildFollowDto(followee)));
         return follow.getId();
     }
 
