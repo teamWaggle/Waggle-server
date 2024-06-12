@@ -11,6 +11,7 @@ import com.example.waggle.domain.notification.presentation.dto.NotificationReque
 import com.example.waggle.exception.object.handler.FollowHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
+import com.example.waggle.global.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,14 +33,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         validateFollowing(from, followee);
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
-        FollowDto content = buildFollowDto(followee);
-        notificationRepository.save(
-                Notification.of(
-                        from,
-                        follow.getToMember(),
-                        NotificationType.FOLLOWED,
-                        content)
-        );
+        notificationRepository.save(buildNotification(follow, buildFollowDto(followee)));
         return follow.getId();
     }
 
@@ -72,5 +66,15 @@ public class FollowCommandServiceImpl implements FollowCommandService {
 
     private static FollowDto buildFollowDto(Member followee) {
         return FollowDto.builder().followeeNickname(followee.getNickname()).build();
+    }
+
+    private static Notification buildNotification(Follow follow, FollowDto content) {
+        return Notification.builder()
+                .sender(follow.getFromMember())
+                .receiver(follow.getToMember())
+                .isRead(false)
+                .content(ObjectUtil.serialize(content))
+                .type(NotificationType.FOLLOWED)
+                .build();
     }
 }
