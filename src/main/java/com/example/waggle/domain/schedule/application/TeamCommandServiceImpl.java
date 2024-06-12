@@ -22,6 +22,7 @@ import com.example.waggle.exception.object.handler.TeamHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.service.aws.AwsS3Service;
 import com.example.waggle.global.util.MediaUtil;
+import com.example.waggle.global.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -147,14 +148,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         Participation participation = buildParticipation(member, team);
         participationRepository.save(participation);
 
-        ParticipationDto content = buildParticipationDto(team);
-        notificationRepository.save(
-                Notification.of(member,
-                        team.getLeader(),
-                        NotificationType.PARTICIPATION_REQUEST,
-                        content)
-        );
-
+        notificationRepository.save(buildRequestNotification(
+                member,
+                team,
+                buildParticipationDto(team)));
         return participation.getId();
     }
 
@@ -168,21 +165,17 @@ public class TeamCommandServiceImpl implements TeamCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         validateCallerIsLeader(team, leader);
-        Participation participation = participationRepository.findByTeamAndMember(team,
-                        member)
+        Participation participation = participationRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new TeamHandler(
                         ErrorStatus.TEAM_PARTICIPATION_NOT_FOUND));
 
         if (accept) {
             validateLimitOfTeamCapacity(team);
             addMemberToTeam(team, member);
-            ParticipationDto content = buildParticipationDto(team);
-            notificationRepository.save(
-                    Notification.of(member,
-                            participation.getMember(),
-                            NotificationType.PARTICIPATION_APPROVE,
-                            content)
-            );
+            notificationRepository.save(buildResponseNotification(
+                    member,
+                    team,
+                    buildParticipationDto(team)));
         }
         participationRepository.delete(participation);
     }
@@ -244,6 +237,26 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         return Participation.builder()
                 .team(team)
                 .member(member)
+                .build();
+    }
+
+    private Notification buildRequestNotification(Member requestMember, Team team, ParticipationDto content) {
+        return Notification.builder()
+                .sender(requestMember)
+                .receiver(team.getLeader())
+                .type(NotificationType.PARTICIPATION_REQUEST)
+                .isRead(false)
+                .content(ObjectUtil.serialize(content))
+                .build();
+    }
+
+    private Notification buildResponseNotification(Member approvedMember, Team team, ParticipationDto content) {
+        return Notification.builder()
+                .sender(team.getLeader())
+                .receiver(approvedMember)
+                .type(NotificationType.PARTICIPATION_APPROVE)
+                .isRead(false)
+                .content(ObjectUtil.serialize(content))
                 .build();
     }
 }
