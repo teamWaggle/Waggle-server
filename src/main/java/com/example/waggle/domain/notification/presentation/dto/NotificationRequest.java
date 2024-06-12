@@ -36,4 +36,13 @@ public class NotificationRequest {
     public static class MentionDto {
         private String conversationContent;
     }
+
+    @Data
+    @Builder
+    @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FollowDto {
+        private String followeeNickname;
+    }
 }

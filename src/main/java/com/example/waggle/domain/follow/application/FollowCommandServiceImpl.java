@@ -7,6 +7,7 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.FollowDto;
 import com.example.waggle.exception.object.handler.FollowHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -31,15 +32,17 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         validateFollowing(from, followee);
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
+        FollowDto content = buildFollowDto(followee);
         notificationRepository.save(
                 Notification.of(
                         from,
                         follow.getToMember(),
                         NotificationType.FOLLOWED,
-                        null)
+                        content)
         );
         return follow.getId();
     }
+
 
     @Override
     public void unFollow(Member from, String to) {
@@ -65,5 +68,9 @@ public class FollowCommandServiceImpl implements FollowCommandService {
                 .fromMember(member)
                 .toMember(followee)
                 .build();
+    }
+
+    private static FollowDto buildFollowDto(Member followee) {
+        return FollowDto.builder().followeeNickname(followee.getNickname()).build();
     }
 }
