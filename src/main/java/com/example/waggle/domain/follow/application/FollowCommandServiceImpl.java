@@ -7,11 +7,9 @@ import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
-import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.FollowDto;
 import com.example.waggle.exception.object.handler.FollowHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
-import com.example.waggle.global.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,9 +31,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         validateFollowing(from, followee);
         Follow follow = buildFollow(from, followee);
         followRepository.save(follow);
-        notificationRepository.save(buildNotification(
-                follow,
-                buildFollowDto(followee)));
+        notificationRepository.save(buildNotification(follow));
         return follow.getId();
     }
 
@@ -66,16 +62,12 @@ public class FollowCommandServiceImpl implements FollowCommandService {
                 .build();
     }
 
-    private static FollowDto buildFollowDto(Member followee) {
-        return FollowDto.builder().followeeNickname(followee.getNickname()).build();
-    }
-
-    private static Notification buildNotification(Follow follow, FollowDto content) {
+    private static Notification buildNotification(Follow follow) {
         return Notification.builder()
                 .sender(follow.getFromMember())
                 .receiver(follow.getToMember())
                 .isRead(false)
-                .content(ObjectUtil.serialize(content))
+                .content(null)
                 .type(NotificationType.FOLLOWED)
                 .build();
     }

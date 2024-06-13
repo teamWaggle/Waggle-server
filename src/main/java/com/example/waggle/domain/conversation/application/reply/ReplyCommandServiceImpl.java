@@ -11,6 +11,7 @@ import com.example.waggle.domain.member.persistence.entity.Role;
 import com.example.waggle.domain.notification.persistence.dao.NotificationRepository;
 import com.example.waggle.domain.notification.persistence.entity.Notification;
 import com.example.waggle.domain.notification.persistence.entity.NotificationType;
+import com.example.waggle.domain.notification.presentation.dto.NotificationRequest.ReplyDto;
 import com.example.waggle.exception.object.handler.CommentHandler;
 import com.example.waggle.exception.object.handler.MemberHandler;
 import com.example.waggle.exception.object.handler.ReplyHandler;
@@ -48,6 +49,8 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
 
         //MENTION
         List<Notification> notificationList = buildNotificationListByMention(reply, buildMentionDto(reply));
+        //REPLY
+        notificationList.add(buildNotificationByReply(reply, buildReplyDto(reply)));
         notificationRepository.saveAll(notificationList);
         return reply.getId();
     }
@@ -94,6 +97,16 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
                 .build();
     }
 
+    private Notification buildNotificationByReply(Reply reply, ReplyDto content) {
+        return Notification.builder()
+                .sender(reply.getMember())
+                .receiver(reply.getComment().getMember())
+                .isRead(false)
+                .type(NotificationType.REPLY)
+                .content(ObjectUtil.serialize(content))
+                .build();
+    }
+
     private List<Notification> buildNotificationListByMention(Reply reply, MentionDto content) {
         return ParseUtil.parsingUserUrl(reply)
                 .stream()
@@ -112,6 +125,13 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     private MentionDto buildMentionDto(Reply reply) {
         return MentionDto.builder()
                 .conversationContent(reply.getContent())
+                .build();
+    }
+
+    private ReplyDto buildReplyDto(Reply reply) {
+        return ReplyDto.builder()
+                .commentContent(reply.getComment().getContent())
+                .replyContent(reply.getContent())
                 .build();
     }
 }

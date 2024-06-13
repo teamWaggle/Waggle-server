@@ -59,6 +59,7 @@ public class ObjectUtil {
                     deserialize(notification.getContent(), NotificationRequest.ParticipationDto.class);
             case COMMENT -> deserialize(notification.getContent(), NotificationRequest.CommentDto.class);
             case MENTIONED -> deserialize(notification.getContent(), NotificationRequest.MentionDto.class);
+            case REPLY -> deserialize(notification.getContent(), NotificationRequest.ReplyDto.class);
             case FOLLOWED -> null;
             default -> throw new NotificationHandler(ErrorStatus.NOTIFICATION_TYPE_INVALID);
         };
