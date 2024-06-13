@@ -33,8 +33,9 @@ public class NotificationRequest {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MentionDto {
-        private String conversationContent;
+    public static class ReplyDto {
+        private String commentContent;
+        private String replyContent;
     }
 
     @Data
@@ -42,7 +43,8 @@ public class NotificationRequest {
     @Schema
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class FollowDto {
-        private String followeeNickname;
+    public static class MentionDto {
+        private String conversationContent;
     }
+
 }
