@@ -18,12 +18,12 @@ import lombok.NoArgsConstructor;
 @Schema
 public class TeamRequest {
 
-    @NotEmpty
-    @Size(max = 20, message = "이름은 최대 20자까지 작성할 수 있습니다.")
+    @NotEmpty(message = "이름을 입력해주세요.")
+    @Size(max = 20, message = "이름은 최대 20자까지 입력할 수 있습니다.")
     private String name;
 
-    @NotEmpty
-    @Size(max = 30, message = "설명은 최대 30자까지 작성할 수 있습니다.")
+    @NotEmpty(message = "설명을 입력해주세요.")
+    @Size(max = 30, message = "설명은 최대 30자까지 입력할 수 있습니다.")
     private String description;
 
     private String coverImageUrl;

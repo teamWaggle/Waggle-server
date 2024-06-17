@@ -34,6 +34,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+<<<<<<< HEAD
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,17 @@ import java.util.stream.Collectors;
 import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
 import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
 import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
+=======
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+>>>>>>> [Refactor/#294] Enhance validation message
 
 @Slf4j
 @RequiredArgsConstructor

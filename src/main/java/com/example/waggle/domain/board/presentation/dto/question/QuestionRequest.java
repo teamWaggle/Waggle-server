@@ -17,14 +17,14 @@ import lombok.NoArgsConstructor;
 @Schema
 public class QuestionRequest {
 
-    @NotEmpty(message = "내용을 작성해주세요.")
+    @NotEmpty(message = "내용을 입력해 주세요.")
     @Size(max = 1500, message = "내용은 최대 1500자까지 작성할 수 있습니다.")
     private String content;
 
-    @Size(min = 2, max = 20, message = "제목을 2자 이상 20자 이하로 작성해주세요.")
+    @Size(min = 2, max = 20, message = "제목을 2자 이상 20자 이하로 입력해 주세요.")
     private String title;
 
-    @Size(max = 5, message = "해시태그는 최대 5개까지 작성할 수 있습니다.")
+    @Size(max = 5, message = "해시태그는 최대 5개까지 입력할 수 있습니다.")
     @ValidHashtag
     private List<String> hashtagList;
 
