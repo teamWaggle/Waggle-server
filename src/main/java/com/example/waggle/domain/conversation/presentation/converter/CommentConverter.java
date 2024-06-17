@@ -1,7 +1,7 @@
 package com.example.waggle.domain.conversation.presentation.converter;
 
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.*;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.*;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.global.util.PageUtil;
 import org.springframework.data.domain.Page;

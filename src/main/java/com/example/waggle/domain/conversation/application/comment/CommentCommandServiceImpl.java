@@ -1,12 +1,14 @@
 package com.example.waggle.domain.conversation.application.comment;
 
+import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.CommentDto;
+
 import com.example.waggle.domain.board.persistence.dao.board.jpa.BoardRepository;
 import com.example.waggle.domain.board.persistence.entity.Board;
 import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRequest;
+import com.example.waggle.domain.conversation.presentation.dto.ConversationRequest;
 import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
@@ -23,15 +25,12 @@ import com.example.waggle.exception.object.handler.ScheduleHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.ParseUtil;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.CommentDto;
 
 
 @Slf4j
@@ -49,7 +48,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Long createComment(Long boardId, CommentRequest createCommentRequest, Member member) {
+    public Long createComment(Long boardId, ConversationRequest createCommentRequest, Member member) {
         validateAccessSchedule(boardId, member);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUND));
@@ -67,7 +66,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     }
 
     @Override
-    public Long updateComment(Long commentId, CommentRequest updateCommentRequest, Member member) {
+    public Long updateComment(Long commentId, ConversationRequest updateCommentRequest, Member member) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
         validateMember(comment, member);
@@ -110,7 +109,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         }
     }
 
-    private Comment buildComment(Board board, CommentRequest createCommentRequest, Member member) {
+    private Comment buildComment(Board board, ConversationRequest createCommentRequest, Member member) {
         return Comment.builder()
                 .content(createCommentRequest.getContent())
                 .board(board)

@@ -1,8 +1,8 @@
 package com.example.waggle.domain.conversation.application.comment;
 
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.QuestionCommentViewDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.SirenCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.QuestionCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.SirenCommentViewDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

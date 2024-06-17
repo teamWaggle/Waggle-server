@@ -1,11 +1,16 @@
 package com.example.waggle.domain.conversation.presentation.controller;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import static com.example.waggle.global.util.PageUtil.OLDEST_SORTING;
+import static com.example.waggle.global.util.PageUtil.REPLY_SIZE;
+
 import com.example.waggle.domain.conversation.application.reply.ReplyCommandService;
 import com.example.waggle.domain.conversation.application.reply.ReplyQueryService;
 import com.example.waggle.domain.conversation.persistence.entity.Reply;
 import com.example.waggle.domain.conversation.presentation.converter.ReplyConverter;
-import com.example.waggle.domain.conversation.presentation.dto.reply.ReplyRequest;
-import com.example.waggle.domain.conversation.presentation.dto.reply.ReplyResponse.ReplyListDto;
+import com.example.waggle.domain.conversation.presentation.dto.ConversationRequest;
+import com.example.waggle.domain.conversation.presentation.dto.ReplyResponse.ReplyListDto;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.dto.ApiResponseDto;
@@ -19,12 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
-
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
-import static com.example.waggle.global.util.PageUtil.OLDEST_SORTING;
-import static com.example.waggle.global.util.PageUtil.REPLY_SIZE;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +51,7 @@ public class ReplyApiController {
     }, status = AUTH)
     @PostMapping("/{commentId}")
     public ApiResponseDto<Long> createReply(@PathVariable("commentId") Long commentId,
-                                            @RequestBody ReplyRequest createReplyRequest,
+                                            @RequestBody ConversationRequest createReplyRequest,
                                             @AuthUser Member member) {
         Long replyId = replyCommandService.createReply(commentId, createReplyRequest, member);
         return ApiResponseDto.onSuccess(replyId);
@@ -55,7 +63,7 @@ public class ReplyApiController {
     }, status = AUTH)
     @PutMapping("/{replyId}")
     public ApiResponseDto<Long> updateReply(@PathVariable("replyId") Long replyId,
-                                            @RequestBody ReplyRequest updateReplyRequest,
+                                            @RequestBody ConversationRequest updateReplyRequest,
                                             @AuthUser Member member) {
         Long updatedReplyId = replyCommandService.updateReply(replyId, updateReplyRequest, member);
         return ApiResponseDto.onSuccess(updatedReplyId);

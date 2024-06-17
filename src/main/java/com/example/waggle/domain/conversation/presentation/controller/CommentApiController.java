@@ -1,12 +1,22 @@
 package com.example.waggle.domain.conversation.presentation.controller;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import static com.example.waggle.global.util.PageUtil.COMMENT_SIZE;
+import static com.example.waggle.global.util.PageUtil.LATEST_SORTING;
+import static com.example.waggle.global.util.PageUtil.getCommentSortingMethod;
+
 import com.example.waggle.domain.board.persistence.entity.BoardType;
 import com.example.waggle.domain.conversation.application.comment.CommentCommandService;
 import com.example.waggle.domain.conversation.application.comment.CommentQueryService;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.conversation.presentation.converter.CommentConverter;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentRequest;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.*;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.CommentListDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.QuestionCommentListDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.QuestionCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.SirenCommentListDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.SirenCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.ConversationRequest;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.exception.payload.dto.ApiResponseDto;
@@ -20,11 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
-
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
-import static com.example.waggle.global.util.PageUtil.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,7 +94,7 @@ public class CommentApiController {
     }, status = AUTH)
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> createComment(@PathVariable("boardId") Long boardId,
-                                              @RequestBody CommentRequest createCommentRequest,
+                                              @RequestBody ConversationRequest createCommentRequest,
                                               @AuthUser Member member) {
         Long commentId = commentCommandService.createComment(boardId, createCommentRequest, member);
         return ApiResponseDto.onSuccess(commentId);
@@ -92,7 +106,7 @@ public class CommentApiController {
     }, status = AUTH)
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable("commentId") Long commentId,
-                                              @RequestBody CommentRequest updateCommentRequest,
+                                              @RequestBody ConversationRequest updateCommentRequest,
                                               @AuthUser Member member) {
         Long updatedCommentId = commentCommandService.updateComment(commentId, updateCommentRequest, member);
         return ApiResponseDto.onSuccess(updatedCommentId);
