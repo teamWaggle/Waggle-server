@@ -25,6 +25,7 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -94,7 +95,7 @@ public class CommentApiController {
     }, status = AUTH)
     @PostMapping("/{boardId}")
     public ApiResponseDto<Long> createComment(@PathVariable("boardId") Long boardId,
-                                              @RequestBody ConversationRequest createCommentRequest,
+                                              @RequestBody @Valid ConversationRequest createCommentRequest,
                                               @AuthUser Member member) {
         Long commentId = commentCommandService.createComment(boardId, createCommentRequest, member);
         return ApiResponseDto.onSuccess(commentId);
@@ -106,7 +107,7 @@ public class CommentApiController {
     }, status = AUTH)
     @PutMapping("/{commentId}")
     public ApiResponseDto<Long> updateComment(@PathVariable("commentId") Long commentId,
-                                              @RequestBody ConversationRequest updateCommentRequest,
+                                              @RequestBody @Valid ConversationRequest updateCommentRequest,
                                               @AuthUser Member member) {
         Long updatedCommentId = commentCommandService.updateComment(commentId, updateCommentRequest, member);
         return ApiResponseDto.onSuccess(updatedCommentId);

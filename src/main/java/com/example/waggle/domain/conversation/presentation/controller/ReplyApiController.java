@@ -19,6 +19,7 @@ import com.example.waggle.global.annotation.auth.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -51,7 +52,7 @@ public class ReplyApiController {
     }, status = AUTH)
     @PostMapping("/{commentId}")
     public ApiResponseDto<Long> createReply(@PathVariable("commentId") Long commentId,
-                                            @RequestBody ConversationRequest createReplyRequest,
+                                            @RequestBody @Valid ConversationRequest createReplyRequest,
                                             @AuthUser Member member) {
         Long replyId = replyCommandService.createReply(commentId, createReplyRequest, member);
         return ApiResponseDto.onSuccess(replyId);
@@ -63,7 +64,7 @@ public class ReplyApiController {
     }, status = AUTH)
     @PutMapping("/{replyId}")
     public ApiResponseDto<Long> updateReply(@PathVariable("replyId") Long replyId,
-                                            @RequestBody ConversationRequest updateReplyRequest,
+                                            @RequestBody @Valid ConversationRequest updateReplyRequest,
                                             @AuthUser Member member) {
         Long updatedReplyId = replyCommandService.updateReply(replyId, updateReplyRequest, member);
         return ApiResponseDto.onSuccess(updatedReplyId);
