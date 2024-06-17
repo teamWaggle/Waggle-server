@@ -236,7 +236,7 @@ public class MemberApiController {
     @ApiErrorCodeExample(status = AUTH)
     @PutMapping("/password")
     public ApiResponseDto<Long> updatePassword(@AuthUser Member member,
-                                               @RequestBody PasswordDto updatePasswordRequest) {
+                                               @RequestBody @Valid PasswordDto updatePasswordRequest) {
         memberCommandService.updatePassword(member.getId(), updatePasswordRequest.getPassword());
         return ApiResponseDto.onSuccess(member.getId());
     }
