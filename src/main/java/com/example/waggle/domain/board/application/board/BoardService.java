@@ -13,5 +13,4 @@ public interface BoardService {
 
     boolean validateMemberUseBoard(Long boardId, BoardType boardType, Member member);
 
-
 }
