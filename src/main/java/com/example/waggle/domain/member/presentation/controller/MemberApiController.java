@@ -1,5 +1,8 @@
 package com.example.waggle.domain.member.presentation.controller;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+
 import com.example.waggle.domain.chat.application.ChatRoomQueryService;
 import com.example.waggle.domain.follow.application.FollowQueryService;
 import com.example.waggle.domain.member.application.MemberCommandService;
@@ -27,17 +30,22 @@ import com.example.waggle.global.util.ObjectUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,7 +65,7 @@ public class MemberApiController {
     @Operation(summary = "회원가입", description = "회원정보를 통해 회원가입을 진행합니다. 임의의 userUrl과 nickname을 넣어줍니다.")
     @ApiErrorCodeExample
     @PostMapping
-    public ApiResponseDto<Long> signUp(@RequestBody @Validated MemberCredentialsDto registerMemberRequest) {
+    public ApiResponseDto<Long> signUp(@RequestBody @Valid MemberCredentialsDto registerMemberRequest) {
         Long memberId = memberCommandService.signUp(registerMemberRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -66,7 +74,7 @@ public class MemberApiController {
     @ApiErrorCodeExample(status = AUTH)
     @PutMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> initializeMemberProfile(
-            @RequestPart("memberProfileRequest") MemberProfileDto memberProfileRequest,
+            @RequestPart("memberProfileRequest") @Valid MemberProfileDto memberProfileRequest,
             @AuthUser Member member) {
         memberProfileRequest.setMemberProfileImg(MediaUtil.removePrefix(memberProfileRequest.getMemberProfileImg()));
         Long memberId = memberCommandService.initializeMemberProfile(memberProfileRequest, member);
@@ -78,8 +86,9 @@ public class MemberApiController {
             ErrorStatus.MEDIA_REQUEST_IS_EMPTY
     }, status = AUTH)
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> updateInfo(@RequestPart("updateMemberRequest") MemberUpdateDto updateMemberRequest,
-                                           @AuthUser Member member) {
+    public ApiResponseDto<Long> updateInfo(
+            @RequestPart("updateMemberRequest") @Valid MemberUpdateDto updateMemberRequest,
+            @AuthUser Member member) {
         updateMemberRequest.setMemberProfileImg(MediaUtil.removePrefix(updateMemberRequest.getMemberProfileImg()));
         Long memberId = memberCommandService.updateMemberProfile(updateMemberRequest, member);
         return ApiResponseDto.onSuccess(memberId);
@@ -121,7 +130,7 @@ public class MemberApiController {
     @Operation(summary = "이메일 전송", description = "사용자에게 인증 메일을 전송합니다.")
     @ApiErrorCodeExample
     @PostMapping("/email/send")
-    public ApiResponseDto<Boolean> sendMail(@RequestBody @Validated EmailSendDto sendEmailRequest) {
+    public ApiResponseDto<Boolean> sendMail(@RequestBody @Valid EmailSendDto sendEmailRequest) {
         emailService.sendMail(sendEmailRequest.getEmail(), "email");
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
@@ -131,7 +140,7 @@ public class MemberApiController {
             ErrorStatus.MEMBER_NOT_FOUND
     })
     @PostMapping("/email/verify")
-    public ApiResponseDto<Boolean> verifyMail(@RequestBody EmailVerificationDto verifyEmailRequest) {
+    public ApiResponseDto<Boolean> verifyMail(@RequestBody @Valid EmailVerificationDto verifyEmailRequest) {
         memberCommandService.verifyMail(verifyEmailRequest);
         return ApiResponseDto.onSuccess(Boolean.TRUE);
     }
@@ -142,7 +151,7 @@ public class MemberApiController {
     })
     @PostMapping("/email/verify/password")
     public ApiResponseDto<Long> verifyMailForPasswordChanging(
-            @RequestBody EmailVerificationDto emailVerificationRequest) {
+            @RequestBody @Valid EmailVerificationDto emailVerificationRequest) {
         Long memberId = memberCommandService.verifyEmailForPasswordChange(emailVerificationRequest);
         return ApiResponseDto.onSuccess(memberId);
     }
@@ -153,7 +162,7 @@ public class MemberApiController {
     })
     @PutMapping("/{memberId}/password")
     public ApiResponseDto<Long> verifyMailForPasswordChanging(@PathVariable("memberId") Long memberId,
-                                                              @RequestBody PasswordDto updatePasswordRequest) {
+                                                              @RequestBody @Valid PasswordDto updatePasswordRequest) {
         memberCommandService.updatePassword(memberId, updatePasswordRequest.getPassword());
         return ApiResponseDto.onSuccess(memberId);
     }

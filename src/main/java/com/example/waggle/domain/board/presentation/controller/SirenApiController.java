@@ -1,5 +1,11 @@
 package com.example.waggle.domain.board.presentation.controller;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.BOARD_DATA_CHANGE;
+import static com.example.waggle.global.util.PageUtil.LATEST_SORTING;
+import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
+
 import com.example.waggle.domain.board.application.siren.SirenCacheService;
 import com.example.waggle.domain.board.application.siren.SirenCommandService;
 import com.example.waggle.domain.board.application.siren.SirenQueryService;
@@ -23,21 +29,24 @@ import com.example.waggle.global.util.ObjectUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.*;
-import static com.example.waggle.global.util.PageUtil.LATEST_SORTING;
-import static com.example.waggle.global.util.PageUtil.SIREN_SIZE;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,7 +66,7 @@ public class SirenApiController {
             ErrorStatus.MEDIA_PREFIX_IS_WRONG
     }, status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createSiren(@RequestPart("createSirenRequest") @Validated SirenRequest createSirenRequest,
+    public ApiResponseDto<Long> createSiren(@RequestPart("createSirenRequest") @Valid SirenRequest createSirenRequest,
                                             @AuthUser Member member) {
         List<String> removedPrefixMedia = createSirenRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());
@@ -70,7 +79,7 @@ public class SirenApiController {
     @ApiErrorCodeExample(status = BOARD_DATA_CHANGE)
     @PutMapping(value = "/{sirenId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateSiren(@PathVariable("sirenId") Long sirenId,
-                                            @RequestPart("updateSirenRequest") @Validated SirenRequest updateSirenRequest,
+                                            @RequestPart("updateSirenRequest") @Valid SirenRequest updateSirenRequest,
                                             @AuthUser Member member) {
         List<String> removedPrefixMedia = updateSirenRequest.getMediaList().stream()
                 .map(media -> MediaUtil.removePrefix(media)).collect(Collectors.toList());

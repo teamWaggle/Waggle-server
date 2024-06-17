@@ -1,5 +1,8 @@
 package com.example.waggle.domain.pet.presentation.controller;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.pet.application.PetCommandService;
 import com.example.waggle.domain.pet.application.PetQueryService;
@@ -15,16 +18,19 @@ import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +46,7 @@ public class PetApiController {
     @Operation(summary = "반려견 정보 입력 🔑", description = "반려견 정보를 입력합니다. 입력한 반려견의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample(status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createPet(@RequestPart("createPetRequest") @Validated PetRequest createPetRequest,
+    public ApiResponseDto<Long> createPet(@RequestPart("createPetRequest") @Valid PetRequest createPetRequest,
                                           @AuthUser Member member) {
         createPetRequest.setPetProfileImg(MediaUtil.removePrefix(createPetRequest.getPetProfileImg()));
         Long petId = petCommandService.createPet(createPetRequest, member);
@@ -55,7 +61,7 @@ public class PetApiController {
     }, status = AUTH)
     @PutMapping(value = "/{petId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updatePet(@PathVariable("petId") Long petId,
-                                          @RequestPart("updatePetRequest") @Validated PetRequest updatePetRequest,
+                                          @RequestPart("updatePetRequest") @Valid PetRequest updatePetRequest,
                                           @AuthUser Member member) {
         updatePetRequest.setPetProfileImg(MediaUtil.removePrefix(updatePetRequest.getPetProfileImg()));
         Long result = petCommandService.updatePet(petId, updatePetRequest, member);
