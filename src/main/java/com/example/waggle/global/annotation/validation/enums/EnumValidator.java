@@ -1,4 +1,4 @@
-package com.example.waggle.global.annotation.valid.enums;
+package com.example.waggle.global.annotation.validation.enums;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,4 +1,4 @@
-package com.example.waggle.global.annotation.valid.localTime;
+package com.example.waggle.global.annotation.validation.localTime;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
