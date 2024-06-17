@@ -1,4 +1,4 @@
-package com.example.waggle.domain.conversation.presentation.dto.comment;
+package com.example.waggle.domain.conversation.presentation.dto;
 
 import com.example.waggle.domain.board.persistence.entity.ResolutionStatus;
 import com.example.waggle.domain.board.persistence.entity.SirenCategory;

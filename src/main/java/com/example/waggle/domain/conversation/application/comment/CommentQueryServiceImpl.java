@@ -2,8 +2,8 @@ package com.example.waggle.domain.conversation.application.comment;
 
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.QuestionCommentViewDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.SirenCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.QuestionCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.SirenCommentViewDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

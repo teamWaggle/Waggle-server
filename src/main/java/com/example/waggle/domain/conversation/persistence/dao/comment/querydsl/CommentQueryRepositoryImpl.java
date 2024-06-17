@@ -1,23 +1,22 @@
 package com.example.waggle.domain.conversation.persistence.dao.comment.querydsl;
 
 
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.QuestionCommentViewDto;
-import com.example.waggle.domain.conversation.presentation.dto.comment.CommentResponse.SirenCommentViewDto;
+import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
+import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
+import static com.example.waggle.domain.conversation.persistence.entity.QComment.comment;
+import static com.example.waggle.domain.conversation.persistence.entity.QReply.reply;
+
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.QuestionCommentViewDto;
+import com.example.waggle.domain.conversation.presentation.dto.CommentResponse.SirenCommentViewDto;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.example.waggle.domain.board.persistence.entity.QQuestion.question;
-import static com.example.waggle.domain.board.persistence.entity.QSiren.siren;
-import static com.example.waggle.domain.conversation.persistence.entity.QComment.comment;
-import static com.example.waggle.domain.conversation.persistence.entity.QReply.reply;
 
 @Repository
 @RequiredArgsConstructor

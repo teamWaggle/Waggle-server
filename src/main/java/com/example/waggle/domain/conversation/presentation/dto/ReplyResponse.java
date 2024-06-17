@@ -1,4 +1,4 @@
-package com.example.waggle.domain.conversation.presentation.dto.reply;
+package com.example.waggle.domain.conversation.presentation.dto;
 
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import io.swagger.v3.oas.annotations.media.Schema;

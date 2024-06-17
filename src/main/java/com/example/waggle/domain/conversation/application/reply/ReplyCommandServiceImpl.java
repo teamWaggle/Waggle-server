@@ -1,10 +1,12 @@
 package com.example.waggle.domain.conversation.application.reply;
 
+import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.MentionDto;
+
 import com.example.waggle.domain.conversation.persistence.dao.comment.jpa.CommentRepository;
 import com.example.waggle.domain.conversation.persistence.dao.reply.ReplyRepository;
 import com.example.waggle.domain.conversation.persistence.entity.Comment;
 import com.example.waggle.domain.conversation.persistence.entity.Reply;
-import com.example.waggle.domain.conversation.presentation.dto.reply.ReplyRequest;
+import com.example.waggle.domain.conversation.presentation.dto.ConversationRequest;
 import com.example.waggle.domain.member.persistence.dao.jpa.MemberRepository;
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.persistence.entity.Role;
@@ -18,15 +20,12 @@ import com.example.waggle.exception.object.handler.ReplyHandler;
 import com.example.waggle.exception.payload.code.ErrorStatus;
 import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.ParseUtil;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.domain.notification.presentation.dto.NotificationRequest.MentionDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +39,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     private final NotificationRepository notificationRepository;
 
     @Override
-    public Long createReply(Long commentId, ReplyRequest createReplyRequest, Member member) {
+    public Long createReply(Long commentId, ConversationRequest createReplyRequest, Member member) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
@@ -56,7 +55,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
     }
 
     @Override
-    public Long updateReply(Long replyId, ReplyRequest updateReplyRequest, Member member) {
+    public Long updateReply(Long replyId, ConversationRequest updateReplyRequest, Member member) {
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new ReplyHandler(ErrorStatus.REPLY_NOT_FOUND));
         validateMember(reply, member);
@@ -89,7 +88,7 @@ public class ReplyCommandServiceImpl implements ReplyCommandService {
         }
     }
 
-    private static Reply buildReply(Comment comment, ReplyRequest createReplyRequest, Member member) {
+    private static Reply buildReply(Comment comment, ConversationRequest createReplyRequest, Member member) {
         return Reply.builder()
                 .member(member)
                 .comment(comment)
