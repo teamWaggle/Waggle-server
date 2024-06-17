@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class TokenApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping
-    public ApiResponseDto<JwtToken> login(@RequestBody MemberCredentialsDto loginRequest,
+    public ApiResponseDto<JwtToken> login(@RequestBody @Valid MemberCredentialsDto loginRequest,
                                           HttpServletResponse response) {
         JwtToken jwtToken = tokenService.login(loginRequest);
         CookieUtil.addCookie(response, "refresh_token", jwtToken.getRefreshToken(), week);
@@ -66,7 +67,8 @@ public class TokenApiController {
         Optional<String> refreshToken = CookieUtil.getCookie(request, "refresh_token")
                 .map(cookie -> cookie.getValue());
         refreshToken.ifPresent(token -> removeRefreshInRedis(request, response, token));
-        CookieStatus cookieStatus = refreshToken.isPresent() ? CookieStatus.EXIST_REFRESH : CookieStatus.NOT_EXIST_REFRESH;
+        CookieStatus cookieStatus =
+                refreshToken.isPresent() ? CookieStatus.EXIST_REFRESH : CookieStatus.NOT_EXIST_REFRESH;
         return ApiResponseDto.onSuccess(cookieStatus);
     }
 
