@@ -19,6 +19,7 @@ import com.example.waggle.global.util.ScheduleUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -55,7 +56,7 @@ public class ScheduleApiController {
     }, status = AUTH)
     @PostMapping("/{teamId}")
     public ApiResponseDto<Long> createSchedule(@PathVariable("teamId") Long teamId,
-                                               @RequestBody @Validated ScheduleRequest createScheduleRequest,
+                                               @RequestBody @Valid ScheduleRequest createScheduleRequest,
                                                @AuthUser Member member) {
         Long createdScheduleId = scheduleCommandService.createSchedule(teamId, createScheduleRequest, member);
         return ApiResponseDto.onSuccess(createdScheduleId);

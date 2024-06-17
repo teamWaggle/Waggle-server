@@ -1,5 +1,9 @@
 package com.example.waggle.domain.schedule.presentation.controller;
 
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
+import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
+
 import com.example.waggle.domain.member.persistence.entity.Member;
 import com.example.waggle.domain.member.presentation.converter.MemberConverter;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryListDto;
@@ -20,6 +24,10 @@ import com.example.waggle.global.util.MediaUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -50,7 +58,7 @@ public class TeamApiController {
     @Operation(summary = "팀 생성 🔑", description = "사용자가 팀을 생성합니다. 작성한 팀의 정보를 저장하고 팀의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample(status = AUTH)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Validated TeamRequest createTeamRequest,
+    public ApiResponseDto<Long> createTeam(@RequestPart("createTeamRequest") @Valid TeamRequest createTeamRequest,
                                            @AuthUser Member member) {
         createTeamRequest.setCoverImageUrl(MediaUtil.removePrefix(createTeamRequest.getCoverImageUrl()));
         Long createdTeamId = teamCommandService.createTeam(createTeamRequest, member);
@@ -64,7 +72,7 @@ public class TeamApiController {
     }, status = AUTH)
     @PutMapping(value = "/{teamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponseDto<Long> updateTeam(@PathVariable("teamId") Long teamId,
-                                           @RequestPart("updateTeamRequest") @Validated TeamRequest updateTeamRequest,
+                                           @RequestPart("updateTeamRequest") @Valid TeamRequest updateTeamRequest,
                                            @AuthUser Member member) {
         updateTeamRequest.setCoverImageUrl(MediaUtil.removePrefix(updateTeamRequest.getCoverImageUrl()));
         Long updatedTeamId = teamCommandService.updateTeam(teamId, updateTeamRequest, member);
