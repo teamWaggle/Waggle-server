@@ -27,6 +27,7 @@ import com.example.waggle.global.util.PageUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,7 @@ public class ChatApiController {
             ErrorStatus._INTERNAL_SERVER_ERROR
     })
     @PostMapping("/rooms")
-    public ApiResponseDto<Long> createChatRoom(@AuthUser Member member, @RequestBody ChatRoomRequest request) {
+    public ApiResponseDto<Long> createChatRoom(@AuthUser Member member, @RequestBody @Valid ChatRoomRequest request) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.createChatRoom(member, request));
     }
 
@@ -90,7 +91,7 @@ public class ChatApiController {
     })
     @PutMapping("/rooms/{chatRoomId}")
     public ApiResponseDto<Long> updateChatRoom(@AuthUser Member member, @PathVariable("chatRoomId") Long chatRoomId,
-                                               @RequestBody ChatRoomRequest request) {
+                                               @RequestBody @Valid ChatRoomRequest request) {
         return ApiResponseDto.onSuccess(chatRoomCommandService.updateChatRoom(member, chatRoomId, request));
     }
 
