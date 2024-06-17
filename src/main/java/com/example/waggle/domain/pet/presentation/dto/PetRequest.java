@@ -24,10 +24,11 @@ public class PetRequest {
     @Size(max = 100, message = "설명은 최대 100자까지 입력할 수 있습니다.")
     private String description;
 
-    @Size(max = 50, message = "품종은 최대 50자까지 입력할 수 있습니다.")
+    @Size(max = 50, message = "견종은 최대 50자까지 입력할 수 있습니다.")
     private String breed;
 
     @Size(max = 10, message = "나이는 최대 10자까지 입력할 수 있습니다.")
+
     private String age;
 
     @ValidEnum(target = Gender.class, message = "유효한 성별을 선택해주세요.")
