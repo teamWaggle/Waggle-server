@@ -14,7 +14,7 @@ jib {
     }
     container {
         creationTime = "USE_CURRENT_TIMESTAMP"
-        jvmFlags = ['-Dspring.profiles.active=dev', '-XX:+UseContainerSupport']
+        jvmFlags = ['-Dspring.profiles.active=prod', '-XX:+UseContainerSupport']
         ports = ['8080']
     }
 }

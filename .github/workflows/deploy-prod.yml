@@ -55,7 +55,7 @@ jobs:
           aws_secret_key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           application_name: waggle-prod
           environment_name: Waggle-prod-env
-          version_label: waggle-dev-${{steps.current-time.outputs.formattedTime}}
+          version_label: waggle-prod-${{steps.current-time.outputs.formattedTime}}
           region: ${{ secrets.PROD_AWS_REGION }}
           deployment_package: deploy/deploy.zip
           wait_for_environment_recovery: 500
