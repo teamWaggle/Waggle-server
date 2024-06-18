@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.getName(), ((HttpServletRequest) request).getRequestURI(), authentication.getAuthorities());
         } else {
             String uri = ((HttpServletRequest) request).getRequestURI();
-            if (!uri.equals("/health-check")) {
+            if (!uri.equals("/health-check") || !uri.equals("/health")) {
                 log.info("no valid JWT token found, uri: {}", uri);
             }
         }
