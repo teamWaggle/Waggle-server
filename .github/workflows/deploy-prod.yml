@@ -43,7 +43,7 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy/.platform/nginx/conf.d
-          cp docker-compose-prod.yml deploy/docker-compose-prod.yml
+          cp docker-compose-prod.yml deploy/docker-compose.yml
           cp -r .ebextensions-dev deploy/.ebextensions
           cp .platform/nginx/conf.d/proxy-dev.conf deploy/.platform/nginx/conf.d/proxy.conf
           cd deploy && zip -r deploy.zip .
