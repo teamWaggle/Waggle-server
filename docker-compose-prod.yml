@@ -18,7 +18,7 @@ services:
       - "2181:2181"
 
   application:
-    image: 905418335051.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-dev:latest
+    image: 905418335051.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-prod-ecr:latest
     ports:
       - "8080:8080"
     depends_on:
