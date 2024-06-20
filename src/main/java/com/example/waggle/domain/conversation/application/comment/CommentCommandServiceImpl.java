@@ -58,10 +58,10 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         commentRepository.save(comment);
 
         //MENTION
-        List<Notification> notificationList = buildNotificationListByMention(comment, buildMentionDto(comment));
+        List<Notification> notificationList = buildMentionNotification(comment, buildMentionDto(comment));
 
         //COMMENT
-        notificationList.add(buildNotificationByComment(comment, buildCommentDto(comment)));
+        notificationList.add(buildCommentNotification(comment, buildCommentDto(comment)));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
@@ -74,7 +74,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         comment.changeContent(updateCommentRequest.getContent());
         //MENTION
-        List<Notification> notificationList = buildNotificationListByMention(comment, buildMentionDto(comment));
+        List<Notification> notificationList = buildMentionNotification(comment, buildMentionDto(comment));
         notificationRepository.saveAll(notificationList);
         return comment.getId();
     }
@@ -118,7 +118,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .build();
     }
 
-    private Notification buildNotificationByComment(Comment comment, CommentDto content) {
+    private Notification buildCommentNotification(Comment comment, CommentDto content) {
         return Notification.builder()
                 .sender(comment.getMember())
                 .receiver(comment.getBoard().getMember())
@@ -128,7 +128,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .build();
     }
 
-    private List<Notification> buildNotificationListByMention(Comment comment, MentionDto content) {
+    private List<Notification> buildMentionNotification(Comment comment, MentionDto content) {
         return ParseUtil.parsingUserUrl(comment)
                 .stream()
                 .map(userUrl -> memberRepository.findByUserUrl(userUrl)
