@@ -26,7 +26,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,17 +33,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-<<<<<<< HEAD
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
-import static com.example.waggle.global.util.PageUtil.TEAM_RECOMMEND_SIZE;
-=======
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
->>>>>>> [Refactor/#294] Enhance validation message
 
 @Slf4j
 @RequiredArgsConstructor
@@ -224,7 +211,8 @@ public class TeamApiController {
     @GetMapping("/{teamId}/participation/status")
     public ApiResponseDto<ParticipationStatusResponse> getTeamParticipationStatus(@AuthUser Member member,
                                                                                   @PathVariable("teamId") Long teamId) {
-        return ApiResponseDto.onSuccess(TeamConverter.toStatusDto(teamQueryService.getParticipationStatus(member, teamId)));
+        return ApiResponseDto.onSuccess(
+                TeamConverter.toStatusDto(teamQueryService.getParticipationStatus(member, teamId)));
     }
 
     @Operation(summary = "사용자 팀 조회", description = "해당 사용자가 속한 팀 정보를 페이징하여 제공합니다.")
