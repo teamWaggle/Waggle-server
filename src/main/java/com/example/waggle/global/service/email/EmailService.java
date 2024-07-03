@@ -32,18 +32,18 @@ public class EmailService {
 
     @Async
     public void sendMail(String email, String type) {
-        String authNum = createCode();
+        String authCode = generateAuthCode();
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(email); // 메일 수신자
+            mimeMessageHelper.setTo(email);
             mimeMessageHelper.setFrom(new InternetAddress("teamwagglewaggle@gmail.com", "Waggle"));
-            mimeMessageHelper.setSubject("[와글] 회원가입을 위해 메일을 인증해 주세요."); // 메일 제목
-            mimeMessageHelper.setText(setContext(authNum, type), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setSubject("[와글] 회원가입을 위해 메일을 인증해 주세요.");
+            mimeMessageHelper.setText(setContext(authCode, type), true);
             javaMailSender.send(mimeMessage);
-            redisService.setValueWithExpiration(AUTH_CODE_PREFIX + email, authNum, expire_period);
+            redisService.setValueWithExpiration(AUTH_CODE_PREFIX + email, authCode, expire_period);
         } catch (MessagingException e) {
             throw new MemberHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
         } catch (UnsupportedEncodingException e) {
@@ -52,23 +52,12 @@ public class EmailService {
     }
 
 
-    public String createCode() {
+    public String generateAuthCode() {
         Random random = new Random();
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
 
-        for (int i = 0; i < 8; i++) {
-            int index = random.nextInt(4);
-
-            switch (index) {
-                case 0:
-                    key.append((char) ((int) random.nextInt(26) + 97));
-                    break;
-                case 1:
-                    key.append((char) ((int) random.nextInt(26) + 65));
-                    break;
-                default:
-                    key.append(random.nextInt(9));
-            }
+        for (int i = 0; i < 6; i++) {
+            key.append(random.nextInt(10));
         }
         return key.toString();
     }
