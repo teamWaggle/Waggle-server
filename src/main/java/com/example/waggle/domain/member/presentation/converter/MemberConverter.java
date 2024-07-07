@@ -1,9 +1,9 @@
 package com.example.waggle.domain.member.presentation.converter;
 
 import com.example.waggle.domain.member.persistence.entity.Member;
+import com.example.waggle.domain.member.presentation.dto.MemberResponse.*;
 import com.example.waggle.global.util.EmailUtil;
 import com.example.waggle.global.util.MediaUtil;
-import com.example.waggle.domain.member.presentation.dto.MemberResponse.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +16,7 @@ public class MemberConverter {
                 .userUrl(member.getUserUrl())
                 .nickname(member.getNickname())
                 .profileImgUrl(MediaUtil.getProfileImg(member))
+                .name(member.getName())
                 .build();
     }
 

@@ -31,6 +31,7 @@ public class MemberResponse {
         private String userUrl;
         private String nickname;
         private String profileImgUrl;
+        private String name;
     }
 
     @Data
