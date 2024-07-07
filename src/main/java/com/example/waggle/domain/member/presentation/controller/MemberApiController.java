@@ -1,8 +1,5 @@
 package com.example.waggle.domain.member.presentation.controller;
 
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
-import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
-
 import com.example.waggle.domain.chat.application.ChatRoomQueryService;
 import com.example.waggle.domain.follow.application.FollowQueryService;
 import com.example.waggle.domain.member.application.MemberCommandService;
@@ -17,7 +14,7 @@ import com.example.waggle.domain.member.presentation.dto.MemberRequest.PasswordD
 import com.example.waggle.domain.member.presentation.dto.MemberResponse;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberDetailDto;
 import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberMentionListDto;
-import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberStorageDto;
+import com.example.waggle.domain.member.presentation.dto.MemberResponse.MemberSummaryDto;
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailSendDto;
 import com.example.waggle.domain.member.presentation.dto.VerifyMailRequest.EmailVerificationDto;
 import com.example.waggle.exception.payload.code.ErrorStatus;
@@ -31,21 +28,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.ADMIN;
+import static com.example.waggle.global.annotation.api.PredefinedErrorStatus.AUTH;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -111,8 +103,8 @@ public class MemberApiController {
     @Operation(summary = "프론트 저장용 회원 정보 조회 🔑", description = "Access Token을 통해 memberId, userUrl을 조회합니다.")
     @ApiErrorCodeExample(status = AUTH)
     @GetMapping("/info")
-    public ApiResponseDto<MemberStorageDto> getMemberInfoByAuth(@AuthUser Member member) {
-        return ApiResponseDto.onSuccess(MemberConverter.toMemberStorageDto(member));
+    public ApiResponseDto<MemberSummaryDto> getMemberInfoByAuth(@AuthUser Member member) {
+        return ApiResponseDto.onSuccess(MemberConverter.toMemberSummaryDto(member));
     }
 
     @Operation(summary = "회원 검색", description = "nickname 일부 혹은 전체를 검색하여 검색어에 해당하는 모든 회원을 조회합니다.")
