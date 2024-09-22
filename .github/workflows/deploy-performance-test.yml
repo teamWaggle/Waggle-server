@@ -33,6 +33,11 @@ jobs:
       - name: Build with Gradle & Upload Image to ECR
         run: ./gradlew -Pdev clean jib
 
+      - name: Remove old Docker images (dev server)
+        run: |
+          docker rmi -f 654654421569.dkr.ecr.ap-northeast-2.amazonaws.com/waggle/prod:latest || true
+          docker system prune -a --force || true
+
       - name: Get current time
         uses: josStorer/get-current-time@v2
         id: current-time
