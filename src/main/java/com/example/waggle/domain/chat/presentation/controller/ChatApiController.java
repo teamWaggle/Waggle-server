@@ -1,7 +1,5 @@
 package com.example.waggle.domain.chat.presentation.controller;
 
-import static com.example.waggle.global.util.PageUtil.CHAT_ROOM_SIZE;
-
 import com.example.waggle.domain.chat.application.ChatMessageQueryService;
 import com.example.waggle.domain.chat.application.ChatRoomCommandService;
 import com.example.waggle.domain.chat.application.ChatRoomQueryService;
@@ -9,12 +7,7 @@ import com.example.waggle.domain.chat.persistence.entity.ChatMessage;
 import com.example.waggle.domain.chat.persistence.entity.ChatRoom;
 import com.example.waggle.domain.chat.presentation.converter.ChatConverter;
 import com.example.waggle.domain.chat.presentation.dto.ChatMessageDto;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ActiveChatRoomDto;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ActiveChatRoomListDto;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatMessageListDto;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomDetailDto;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomJoinDto;
-import com.example.waggle.domain.chat.presentation.dto.ChatResponse.ChatRoomListDto;
+import com.example.waggle.domain.chat.presentation.dto.ChatResponse.*;
 import com.example.waggle.domain.chat.presentation.dto.ChatRoomRequest;
 import com.example.waggle.domain.member.application.MemberQueryService;
 import com.example.waggle.domain.member.persistence.entity.Member;
@@ -24,28 +17,25 @@ import com.example.waggle.global.annotation.api.ApiErrorCodeExample;
 import com.example.waggle.global.annotation.auth.AuthUser;
 import com.example.waggle.global.util.ObjectUtil;
 import com.example.waggle.global.util.PageUtil;
+import com.example.waggle.security.jwt.dto.JwtToken;
+import com.example.waggle.security.jwt.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.waggle.global.util.PageUtil.CHAT_ROOM_SIZE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,6 +49,7 @@ public class ChatApiController {
     private final ChatRoomQueryService chatRoomQueryService;
     private final ChatMessageQueryService chatMessageQueryService;
     private final MemberQueryService memberQueryService;
+    private final TokenService tokenService;
 
     @Operation(summary = "채팅방 생성 🔑", description = "사용자가 새로운 채팅방을 생성합니다. 생성 성공 시 채팅방의 고유 ID를 반환합니다.")
     @ApiErrorCodeExample({
@@ -223,5 +214,10 @@ public class ChatApiController {
         return ApiResponseDto.onSuccess(
                 ChatConverter.toChatRoomListDto(
                         chatRoomQueryService.getPagedChatRoomListByKeywordExcludingMember(member, keyword, pageable)));
+    }
+
+    @GetMapping("/test")
+    public ApiResponseDto<JwtToken> test(@RequestParam("memberId") Long memberId) {
+        return ApiResponseDto.onSuccess(tokenService.generateTestToken(memberId));
     }
 }

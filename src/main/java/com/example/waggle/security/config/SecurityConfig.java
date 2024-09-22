@@ -165,6 +165,7 @@ public class SecurityConfig {
                 antMatcher(HttpMethod.GET, "/api/recommends/{boardId}/memberList"),
                 antMatcher(HttpMethod.GET, "/api/follows/list/**"),
                 antMatcher(HttpMethod.GET, "/api/chat/rooms/**"),
+                antMatcher(HttpMethod.GET, "/api/chat/test"),
                 antMatcher("/ws/chat/**"),
                 antMatcher("/chat/**"),
                 antMatcher("/webjars/**"),

@@ -203,4 +203,18 @@ public class TokenServiceImpl implements TokenService {
     public boolean existsRefreshToken(String refreshToken) {
         return redisService.getValue(refreshToken) != null;
     }
+
+    @Override
+    public JwtToken generateTestToken(Long memberId) {
+        Member member = memberQueryService.getMemberById(memberId);
+        if (!member.getAuthProvider().equals(WAGGLE)) {
+            throw new AuthenticationHandler(ErrorStatus.AUTH_PROVIDER_IS_NOT_MATCH);
+        }
+        Authentication authentication;
+        authentication = new UsernamePasswordAuthenticationToken(member, "", member.getAuthorities());
+
+        JwtToken jwtToken = generateToken(authentication);
+        jwtToken.setMember(MemberConverter.toMemberSummaryDto(member));
+        return jwtToken;
+    }
 }

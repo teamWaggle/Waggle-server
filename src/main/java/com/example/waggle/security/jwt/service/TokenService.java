@@ -20,4 +20,7 @@ public interface TokenService {
     boolean logout(String refreshToken);
 
     boolean existsRefreshToken(String refreshToken);
+
+    JwtToken generateTestToken(Long memberId);
+
 }
