@@ -23,7 +23,7 @@
 </div>
 <div class="container" id="app" v-cloak>
     <div>
-        <h2>{{chatRoom.name}}</h2>
+        <h2>{{ chatRoom.name }}</h2>
     </div>
     <div class="input-group">
         <div class="input-group-prepend">
@@ -36,7 +36,7 @@
     </div>
     <ul class="list-group">
         <li class="list-group-item" v-for="message in messages">
-            {{message.senderNickname}}: {{message.content}}
+            {{ message.senderNickname }}: {{ message.content }}
         </li>
     </ul>
     <div></div>
@@ -154,7 +154,7 @@
             },
             connect: function () {
                 console.log('Attempting to connect...');
-                this.ws = Stomp.over(new WebSocket("ws://" + window.location.host + "/ws/chat"));
+                this.ws = Stomp.over(new WebSocket("wss://" + window.location.host + "/ws/chat"));
                 this.ws.connect({
                     'Authorization': 'Bearer ' + this.accessToken
                 }, (frame) => {
