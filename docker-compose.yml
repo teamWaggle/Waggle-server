@@ -17,12 +17,18 @@ services:
     ports:
       - "2181:2181"
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
   application:
     image: 654654421569.dkr.ecr.ap-northeast-2.amazonaws.com/waggle/prod:latest
     ports:
       - "8080:8080"
     depends_on:
       - kafka
+      - redis
     env_file:
       - .env
 

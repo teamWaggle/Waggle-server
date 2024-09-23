@@ -70,8 +70,8 @@ spring:
     type: redis
 
   redis:
-    host: ${REDIS_HOST_NAME}
-    port: ${REDIS_PORT}
+    host: redis
+    port: 6379
 
 server:
   error:
