@@ -9,7 +9,7 @@ jib {
         }
     }
     to {
-        image = "905418335051.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-prod-ecr"
+        image = "060795922368.dkr.ecr.ap-northeast-2.amazonaws.com/waggle-prod-ecr"
         tags = ["latest", "${project.name}-" + System.currentTimeMillis()]
     }
     container {
