@@ -92,7 +92,7 @@ cloud:
       access-key: ${S3_ACCESS_KEY}
       secret-key: ${S3_SECRET_KEY}
     s3:
-      bucket: waggle-prod-bucket
+      bucket: waggle-prod-s3
     region:
       static: ap-northeast-2
     stack:
